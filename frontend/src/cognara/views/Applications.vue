@@ -15,7 +15,8 @@
         >新建应用</t-button
       >
     </header>
-    <t-alert v-if="error" theme="error" :message="error" /><ResourceListToolbar
+    <t-alert v-if="error || collection.error" theme="error" :message="error || collection.error" />
+    <t-button v-if="collection.error" variant="text" @click="retry">重试加载</t-button><ResourceListToolbar
       v-model="scope"
       v-model:query="query"
       hide-scopes
@@ -35,7 +36,7 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="item in filtered" :key="item.app_id">
+              <tr v-for="item in items" :key="item.app_id">
                 <td>
                   <strong>{{ item.draft.basic.name }}</strong>
                   <p class="meta">{{ item.draft.basic.description }}</p>
@@ -61,7 +62,7 @@
         >
         <article
           v-else
-          v-for="item in filtered"
+          v-for="item in items"
           :key="item.app_id"
           class="application-card"
         >
@@ -79,17 +80,15 @@
       </div>
       <EmptyState
         v-else
-        title="当前没有可用应用"
-        description="应用需要先发布并获得使用授权。"
+         :title="query ? '未找到匹配应用' : '当前没有可用应用'"
+        :description="query ? '请尝试更换或清空搜索条件。' : '应用需要先发布并获得使用授权。'"
         ><t-button v-if="manage" theme="primary" @click="createVisible = true"
           >新建应用</t-button
         ></EmptyState
       ></t-loading
-    ><EmptyState
-      v-if="items.length && !filtered.length"
-      title="未找到匹配应用"
-      description="请尝试更换或清空搜索条件。"
-    /><t-drawer
+    ><div v-if="collection.nextCursor !== null" class="spaced">
+      <t-button :loading="loading" @click="collection.next()">加载更多应用</t-button>
+    </div><t-drawer
       v-model:visible="createVisible"
       header="创建认知应用"
       size="600px"
@@ -123,7 +122,8 @@
   </section>
 </template>
 <script setup lang="ts">
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, reactive, watch } from "vue";
+import { PagedCollection } from "../pagedCollection";
 import { useRoute, useRouter } from "vue-router";
 import { api, post, prefix } from "../api";
 import type { Application } from "../types";
@@ -133,9 +133,9 @@ import ResourceCardAvatar from "@/components/ResourceCardAvatar.vue";
 const route = useRoute(),
   router = useRouter(),
   manage = computed(() => route.path.startsWith("/build")),
-  loading = ref(true),
+
   error = ref(""),
-  items = ref<Application[]>([]),
+
   query = ref(""),
   scope = ref("all"),
   createVisible = ref(false),
@@ -144,28 +144,20 @@ const route = useRoute(),
   name = ref(""),
   description = ref(""),
   templateId = ref("channel-replenishment");
-const filtered = computed(() =>
-  items.value.filter((x) =>
-    (x.draft.basic.name + x.draft.basic.description).includes(query.value),
-  ),
-);
-function date(v: string) {
-  return new Date(v).toLocaleString("zh-CN");
+const collection = reactive(new PagedCollection<Application>(async (query, cursor) => {
+  const params = new URLSearchParams({ purpose: manage.value ? "MANAGE" : "USE", query });
+  if (cursor !== null) params.set("cursor", cursor);
+  return api(prefix + "/apps?" + params);
+}, item => item.app_id));
+const items = computed(() => collection.items), loading = computed(() => collection.loading);
+watch([query, manage], () => {
+  void collection.reset(query.value);
+}, { immediate: true });
+function retry() {
+  if (collection.items.length && collection.nextCursor !== null) void collection.next();
+  else void collection.reset(query.value);
 }
-onMounted(load);
-async function load() {
-  try {
-    items.value = (
-      await api<{ items: Application[] }>(
-        prefix + "/apps?purpose=" + (manage.value ? "MANAGE" : "USE"),
-      )
-    ).items;
-  } catch (e) {
-    error.value = (e as Error).message;
-  } finally {
-    loading.value = false;
-  }
-}
+function date(v: string) { return new Date(v).toLocaleString("zh-CN"); }
 async function enter(a: Application) {
   try {
     const s = await post(prefix + `/apps/${a.app_id}/sessions`, {});

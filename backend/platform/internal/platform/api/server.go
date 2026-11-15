@@ -278,14 +278,14 @@ func (s *Server) listApps(w http.ResponseWriter, r *http.Request) error {
 		if !manage && !s.canUse(st, p, a) {
 			continue
 		}
-		if q := strings.ToLower(r.URL.Query().Get("query")); q != "" && !strings.Contains(strings.ToLower(a.Draft.Basic.Name+a.Draft.Basic.Description), q) {
-			continue
-		}
 		if !manage {
 			rel, _ := app.Current(a)
 			a.Draft = app.Config{Basic: rel.Config.Basic, ConversationDefaults: rel.Config.ConversationDefaults}
 			a.Revision = ""
 			a.Releases = nil
+		}
+		if q := strings.ToLower(r.URL.Query().Get("query")); q != "" && !strings.Contains(strings.ToLower(a.Draft.Basic.Name+a.Draft.Basic.Description), q) {
+			continue
 		}
 		items = append(items, a)
 	}
@@ -507,7 +507,12 @@ func (s *Server) releases(w http.ResponseWriter, r *http.Request) error {
 		return e
 	}
 	items := append([]app.Release{}, a.Releases...)
-	sort.Slice(items, func(i, j int) bool { return items[i].PublishedAt > items[j].PublishedAt })
+	sort.Slice(items, func(i, j int) bool {
+		if items[i].PublishedAt == items[j].PublishedAt {
+			return items[i].ID > items[j].ID
+		}
+		return items[i].PublishedAt > items[j].PublishedAt
+	})
 	out, e := page(items, r)
 	if e != nil {
 		return e
