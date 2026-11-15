@@ -3,8 +3,6 @@ package mockae
 
 import (
 	"bytes"
-	"crypto/sha256"
-	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	api "github.com/Tencent/WeKnora/internal/platform/api"
@@ -24,6 +22,7 @@ type Server struct {
 	services                  map[string]map[string]any
 	requests                  map[string]record
 	principals                map[string]string
+	contexts                  map[string]contextReceipt
 }
 type record struct {
 	Digest, Operation, ExecutionID, ServiceID string
@@ -31,7 +30,7 @@ type record struct {
 }
 
 func New(callback, token string) *Server {
-	return &Server{CallbackURL: callback, ServiceToken: token, executions: map[string]map[string]any{}, services: map[string]map[string]any{}, requests: map[string]record{}, principals: map[string]string{}}
+	return &Server{CallbackURL: callback, ServiceToken: token, executions: map[string]map[string]any{}, services: map[string]map[string]any{}, requests: map[string]record{}, principals: map[string]string{}, contexts: map[string]contextReceipt{}}
 }
 func (s *Server) callback(r *http.Request, path string, body any) (map[string]any, error) {
 	b, _ := json.Marshal(body)
@@ -74,6 +73,11 @@ func (s *Server) identity(r *http.Request) (map[string]any, error) {
 	if strings.HasSuffix(r.URL.Path, "/cancel") {
 		purpose = "execution_cancel"
 	}
+	if r.URL.Path == "/internal/v1/assets/discover" || r.URL.Path == "/internal/v1/assets/context" || strings.HasSuffix(r.URL.Path, "/content-projection") {
+		if hint := r.Header.Get("X-Invocation-Purpose"); hint == "application_configuration" || hint == "application_turn" {
+			purpose = hint
+		}
+	}
 	out, e := s.callback(r, "/internal/v1/identity/introspect", map[string]any{"audience": "cognitive-business", "purpose": purpose})
 	if e != nil || out["active"] != true {
 		return nil, fmt.Errorf("invalid delegation")
@@ -106,26 +110,6 @@ func errResponse(w http.ResponseWriter, status int, code, message string) {
 }
 func (s *Server) Handler() http.Handler {
 	m := http.NewServeMux()
-	protect := func(h func(http.ResponseWriter, *http.Request, map[string]any)) {
-		returnfunc := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			if r.Header.Get("Authorization") != "Bearer "+s.ServiceToken {
-				errResponse(w, 401, "AUTHENTICATION_REQUIRED", "服务身份无效")
-				return
-			}
-			p, e := s.identity(r)
-			if e != nil {
-				errResponse(w, 401, "AUTHENTICATION_REQUIRED", "委托无效或用途不匹配")
-				return
-			}
-			if p["tenant_id"] != "42" {
-				errResponse(w, 403, "AUTHORIZATION_DENIED", "当前企业不在验证数据范围内")
-				return
-			}
-			h(w, r, p)
-		})
-		_ = returnfunc
-	}
-	_ = protect
 	add := func(pattern string, h func(http.ResponseWriter, *http.Request, map[string]any)) {
 		m.HandleFunc(pattern, func(w http.ResponseWriter, r *http.Request) {
 			if r.Header.Get("Authorization") != "Bearer "+s.ServiceToken {
@@ -225,7 +209,7 @@ func (s *Server) assetContext(w http.ResponseWriter, r *http.Request, p map[stri
 		api.ErrorResponse(w, e)
 		return
 	}
-	if len(req.Refs) < 1 || len(req.Refs) > 20 {
+	if len(req.Refs) < 1 || len(req.Refs) > 20 || (req.Level != "SUMMARY" && req.Level != "STANDARD" && req.Level != "EXECUTION_CONTEXT") {
 		errResponse(w, 400, "INVALID_REQUEST", "资产引用数量无效")
 		return
 	}
@@ -235,9 +219,37 @@ func (s *Server) assetContext(w http.ResponseWriter, r *http.Request, p map[stri
 			errResponse(w, 403, "AUTHORIZATION_DENIED", "无权读取资产内容")
 			return
 		}
-		items = append(items, map[string]any{"asset_id": a.AssetID, "resolved_version": "v1", "professional_content": map[string]any{"definition": "原始缺口=max(生产需求×单位用量×损耗系数−当前可用量,0)", "as_of": "2026-04-02"}, "execution_readiness": "READY", "usage_constraints": []string{"不承诺交期；不纳入替代料与后续到货"}, "related_refs": []any{}})
+		if a.AssetID != "inventory-policy" && a.AssetID != "chip-gap-metric" {
+			errResponse(w, 404, "ASSET_UNAVAILABLE", "资产不存在")
+			return
+		}
+		ready := "READY"
+		definition := "原始缺口=max(生产需求×单位用量×损耗系数−当前可用量,0)"
+		if a.AssetID == "inventory-policy" {
+			ready = "NOT_APPLICABLE"
+			definition = "库存可用量口径需核对在途与占用；分析不等于交期承诺。"
+		}
+		items = append(items, map[string]any{"asset_id": a.AssetID, "resolved_version": "v1", "professional_content": map[string]any{"definition": definition, "as_of": "2026-04-02"}, "execution_readiness": ready, "usage_constraints": []string{"不承诺交期；不纳入替代料与后续到货"}, "related_refs": []any{}})
 	}
-	api.Write(w, map[string]any{"items": items, "context_receipt": "context-east-42-v1"})
+	receipt := app.ID("context")
+	versions := map[string]string{}
+	for _, a := range req.Refs {
+		versions[a.AssetID] = "v1"
+	}
+	s.mu.Lock()
+	for key, old := range s.contexts {
+		if time.Now().After(old.Expires) {
+			delete(s.contexts, key)
+		}
+	}
+	if len(s.contexts) >= 10000 {
+		s.mu.Unlock()
+		errResponse(w, 503, "CAPABILITY_UNAVAILABLE", "上下文凭据容量已满")
+		return
+	}
+	s.contexts[receipt] = contextReceipt{Binding: contextBinding(p), Versions: versions, Expires: time.Now().Add(5 * time.Minute), Level: req.Level}
+	s.mu.Unlock()
+	api.Write(w, map[string]any{"items": items, "context_receipt": receipt})
 }
 func (s *Server) discover(w http.ResponseWriter, r *http.Request, p map[string]any) {
 	var req struct {
@@ -333,7 +345,8 @@ func (s *Server) executeService(w http.ResponseWriter, r *http.Request, p map[st
 		} `json:"arguments"`
 		Correlation map[string]string `json:"correlation_context"`
 	}
-	if e := api.Decode(r, &req); e != nil {
+	digest, decodeErr := decodeRequest(r, &req)
+	if e := decodeErr; e != nil {
 		api.ErrorResponse(w, e)
 		return
 	}
@@ -369,15 +382,13 @@ func (s *Server) executeService(w http.ResponseWriter, r *http.Request, p map[st
 		errResponse(w, 400, "INVALID_REQUEST", "缺少幂等键")
 		return
 	}
-	b, _ := json.Marshal(req)
-	sum := sha256.Sum256(b)
-	digest := "sha256:" + hex.EncodeToString(sum[:])
+
 	owner := fmt.Sprint(p["tenant_id"]) + ":" + fmt.Sprint(p["application_id"]) + ":" + fmt.Sprint(p["actor_user_id"])
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	idx := owner + ":" + key
 	if old, ok := s.requests[idx]; ok {
-		if old.Digest != digest {
+		if old.Digest != digest || old.Operation != "SERVICE_EXECUTION" {
 			errResponse(w, 409, "IDEMPOTENCY_CONFLICT", "同键载荷不同")
 			return
 		}
@@ -403,9 +414,7 @@ func (s *Server) executeService(w http.ResponseWriter, r *http.Request, p map[st
 	}
 	api.Write(w, service)
 }
-func (s *Server) execute(w http.ResponseWriter, r *http.Request, p map[string]any) {
-	errResponse(w, 503, "CAPABILITY_UNAVAILABLE", "直接指标/规则执行的专业适配尚未启用；请使用已批准的验证服务")
-}
+
 func (s *Server) owned(p map[string]any, id string) bool {
 	owner := fmt.Sprint(p["tenant_id"]) + ":" + fmt.Sprint(p["application_id"]) + ":" + fmt.Sprint(p["actor_user_id"])
 	return s.principals[id] == owner
@@ -448,6 +457,10 @@ func (s *Server) lookup(w http.ResponseWriter, r *http.Request, p map[string]any
 		api.ErrorResponse(w, e)
 		return
 	}
+	if (req.Operation != "DIRECT_EXECUTION" && req.Operation != "SERVICE_EXECUTION") || req.Key == "" || !validDigest(req.Digest) {
+		errResponse(w, 400, "INVALID_REQUEST", "恢复参数无效")
+		return
+	}
 	owner := fmt.Sprint(p["tenant_id"]) + ":" + fmt.Sprint(p["application_id"]) + ":" + fmt.Sprint(p["actor_user_id"])
 	s.mu.Lock()
 	defer s.mu.Unlock()
@@ -458,6 +471,10 @@ func (s *Server) lookup(w http.ResponseWriter, r *http.Request, p map[string]any
 	}
 	if x.Digest != req.Digest || x.Operation != req.Operation {
 		errResponse(w, 409, "IDEMPOTENCY_CONFLICT", "原请求摘要不一致")
+		return
+	}
+	if x.Operation == "DIRECT_EXECUTION" {
+		api.Write(w, map[string]any{"operation": x.Operation, "state": "COMPLETED", "execution_id": x.ExecutionID, "execution_result": x.Result, "safe_to_resubmit_same_key": false})
 		return
 	}
 	api.Write(w, map[string]any{"operation": x.Operation, "state": "COMPLETED", "service_execution_id": x.ServiceID, "service_result": x.Result, "safe_to_resubmit_same_key": false})

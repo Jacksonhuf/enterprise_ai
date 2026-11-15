@@ -168,7 +168,9 @@
             :options="resourceOptions"
             @change="resetAction" /></t-form-item
         ><t-form-item label="允许操作"
-          ><t-input :value="actionLabel(grant.action)" readonly /></t-form-item
+          ><t-select
+            v-model="grant.action"
+            :options="grantActions" /></t-form-item
         ><t-form-item label="数据范围"
           ><t-select
             v-model="grant.scope"
@@ -400,6 +402,15 @@ function resetResource() {
   grant.value.resource_id = resourceOptions.value[0]?.value || "";
   resetAction();
 }
+const grantActions = computed(() =>
+  grant.value.resource_type === "ASSET" &&
+  grant.value.resource_id === "chip-gap-metric"
+    ? [
+        { label: "读取资产上下文", value: "asset.context.read" },
+        { label: "执行正式指标", value: "execution.invoke" },
+      ]
+    : [{ label: actionLabel(grant.value.action), value: grant.value.action }],
+);
 function resetAction() {
   grant.value.action =
     grant.value.resource_type === "APPLICATION"

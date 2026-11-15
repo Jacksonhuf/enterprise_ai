@@ -81,18 +81,21 @@ func (s *Server) chat(w http.ResponseWriter, r *http.Request) error {
 			}
 		}
 	}
+	var checks []agentruntime.ResourceCheck
 	var result json.RawMessage
 	var remoteErr error
 	if release.Config.ModelPrompt.ModelID != "validation-only" {
 		engine := &agentruntime.Engine{Models: s.Models, Client: s.Client, Authorize: s.CanResource}
 		run, err := engine.Run(ctx, agentruntime.Request{Principal: p, Release: release, Session: session, MessageID: answer.ID, Query: req.Query})
 		if err != nil {
+
 			return fail(503, "CAPABILITY_UNAVAILABLE", "模型或受控工具执行未成功，未生成业务结论")
 		}
 		answer.Content = run.Content
 		answer.Result = run.ServiceResult
 		answer.ExecutionID = run.ExecutionID
 		result = run.ServiceResult
+		checks = run.CheckedResources
 	} else if order == "" || (quantity == 0 && len(match) == 0) {
 		answer.Content = "请明确订单与目标数量，例如：SO1002需求增加到350后，有多少物料缺口？当前验证只计算需求、库存与原始缺口，不生成交期承诺。"
 	} else if order != "SO1002" || quantity < 1 || quantity > 100000 {
@@ -136,8 +139,13 @@ func (s *Server) chat(w http.ResponseWriter, r *http.Request) error {
 			answer.ExecutionID = response.Steps[0].ExecutionID
 		}
 	}
-	if result != nil && !s.CanResource(p, "SERVICE", "replenishment-gap", "service.invoke") {
-		return fail(403, "AUTHORIZATION_DENIED", "服务授权已变更，请重新核对权限")
+	if release.Config.ModelPrompt.ModelID == "validation-only" && result != nil {
+		checks = append(checks, agentruntime.ResourceCheck{Type: "SERVICE", ID: "replenishment-gap", Action: "service.invoke"})
+	}
+	for _, c := range checks {
+		if !s.CanResource(p, c.Type, c.ID, c.Action) {
+			return fail(403, "AUTHORIZATION_DENIED", "资源授权已变更，请重新核对权限")
+		}
 	}
 	// Revocation is checked again before persisting or exposing a remote result.
 	if _, e = s.owned(p, session.ID); e != nil {
@@ -147,6 +155,15 @@ func (s *Server) chat(w http.ResponseWriter, r *http.Request) error {
 		return fail(409, "EXECUTION_TIMEOUT", "本次接收已停止；远端执行状态须另行确认")
 	}
 	if e = s.Store.Update(func(st *app.State) error {
+		current, exists := st.Apps[session.AppID]
+		if !exists || !s.canUse(*st, p, current) {
+			return fail(403, "AUTHORIZATION_DENIED", "应用使用授权已撤销")
+		}
+		for _, c := range checks {
+			if !s.canResource(*st, p, c.Type, c.ID, c.Action) {
+				return fail(403, "AUTHORIZATION_DENIED", "资源授权已撤销")
+			}
+		}
 		v := st.Sessions[session.ID]
 		if len(v.Messages) == 0 && !req.DisableTitle {
 			v.Title = string([]rune(req.Query)[:min(len([]rune(req.Query)), 30)])

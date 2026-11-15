@@ -91,6 +91,7 @@
                   value: 'cognitive_get_asset_context',
                 },
                 { label: '资产发现', value: 'cognitive_discover_assets' },
+                { label: '正式指标执行', value: 'cognitive_execute' },
               ]" /></t-form-item
           ><t-alert
             theme="info"

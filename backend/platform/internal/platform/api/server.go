@@ -127,7 +127,9 @@ func (s *Server) canUse(st app.State, p governance.Principal, a app.App) bool {
 	return false
 }
 func (s *Server) CanResource(p governance.Principal, kind, id, action string) bool {
-	st := s.Store.Read()
+	return s.canResource(s.Store.Read(), p, kind, id, action)
+}
+func (s *Server) canResource(st app.State, p governance.Principal, kind, id, action string) bool {
 	if p.TenantID != "42" || p.Scope != "east" {
 		return false
 	}
@@ -148,15 +150,36 @@ func (s *Server) CanResource(p governance.Principal, kind, id, action string) bo
 		return false
 	}
 	if kind == "EXECUTION" {
+		reqExecutionID := id
 		if action != "evidence.read" {
 			return false
 		}
 		kind = "SERVICE"
 		id = "replenishment-gap"
 		action = "service.invoke"
+		for _, session := range st.Sessions {
+			if session.AppID != p.ApplicationID || session.OwnerID != p.UserID || session.TenantID != p.TenantID {
+				continue
+			}
+			for _, m := range session.Messages {
+				if m.ExecutionID == reqExecutionID && m.ReleaseID == p.ReleaseID && m.TurnID == p.TurnID {
+					var meta struct {
+						Asset string `json:"target_asset_id"`
+					}
+					if json.Unmarshal(m.Result, &meta) == nil && meta.Asset != "" {
+						kind = "ASSET"
+						id = meta.Asset
+						action = "execution.invoke"
+						if !s.canResource(st, p, "ASSET", meta.Asset, "asset.context.read") {
+							return false
+						}
+					}
+				}
+			}
+		}
 	}
 	for _, g := range st.Grants {
-		if g.Active && g.TenantID == p.TenantID && g.SubjectType == "APPLICATION" && g.SubjectID == p.ApplicationID && g.ResourceType == kind && g.ResourceID == id && g.Action == action && g.Scope == p.Scope {
+		if g.Active && g.TenantID == p.TenantID && g.SubjectType == "APPLICATION" && g.SubjectID == p.ApplicationID && g.ResourceType == kind && g.ResourceID == id && (g.Action == action || (kind == "ASSET" && action == "asset.discover" && (g.Action == "asset.context.read" || g.Action == "execution.invoke"))) && g.Scope == p.Scope {
 			return true
 		}
 	}

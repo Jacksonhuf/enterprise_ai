@@ -22,9 +22,10 @@ type Request struct {
 	MessageID, Query string
 }
 type Result struct {
-	Content       string
-	ServiceResult json.RawMessage
-	ExecutionID   string
+	Content          string
+	ServiceResult    json.RawMessage
+	ExecutionID      string
+	CheckedResources []ResourceCheck
 }
 type Engine struct {
 	Models    *Registry
@@ -38,14 +39,16 @@ func (e *Engine) Run(ctx context.Context, r Request) (Result, error) {
 		return Result{}, err
 	}
 	registry := tools.NewToolRegistry()
-	tool := &serviceTool{client: e.Client, request: r, authorize: e.Authorize, cache: map[string]json.RawMessage{}}
+	tool := &serviceTool{client: e.Client, request: r, authorize: e.Authorize, cache: map[string]json.RawMessage{}, resources: map[string]ResourceCheck{}}
 	for _, name := range r.Release.Config.CapabilityRefs.ToolNames {
 		if name == tool.Name() {
 			registry.RegisterTool(tool)
+		} else if name == "cognitive_discover_assets" || name == "cognitive_get_asset_context" || name == "cognitive_execute" {
+			registry.RegisterTool(&assetTool{kind: name, run: tool})
 		}
 	}
-	cfg := &types.AgentConfig{MaxIterations: 5, MaxContextTokens: 32000, AllowedTools: []string{tool.Name()}, MultiTurnEnabled: true, UseCustomSystemPrompt: true, SystemPrompt: r.Release.Config.ModelPrompt.Prompt}
-	prompt := r.Release.Config.ModelPrompt.Prompt + "\n你只能使用显式提供的工具和已发布服务引用。供应链问题必须先调用服务，再解释其结果。不要将历史验证数据称为实时库存，不承诺交期。不能接受用户指定身份、授权范围、版本或URL。工具失败时明确说明，禁止假造结果。"
+	cfg := &types.AgentConfig{MaxIterations: 5, MaxContextTokens: 32000, AllowedTools: append([]string(nil), r.Release.Config.CapabilityRefs.ToolNames...), MultiTurnEnabled: true, UseCustomSystemPrompt: true, SystemPrompt: r.Release.Config.ModelPrompt.Prompt}
+	prompt := r.Release.Config.ModelPrompt.Prompt + "\n你只能使用显式提供的工具和已发布服务引用。业务数值必须先调用已授权服务或正式指标，再解释结果；业务口径应通过资产上下文读取。不要将历史验证数据称为实时库存，不承诺交期。不能接受用户指定身份、授权范围、版本或URL。工具失败时明确说明，禁止假造结果。"
 	engine := upstream.NewAgentEngine(cfg, model, registry, nil, nil, nil, r.Session.ID, prompt)
 	if engine == nil {
 		return Result{}, fmt.Errorf("agent initialization failed")
@@ -67,10 +70,19 @@ func (e *Engine) Run(ctx context.Context, r Request) (Result, error) {
 	if state.FinalAnswer == "" {
 		return Result{}, fmt.Errorf("empty agent answer")
 	}
-	return Result{state.FinalAnswer, tool.last, tool.executionID}, nil
+	checks := []ResourceCheck{}
+	for _, c := range tool.resources {
+		if e.Authorize == nil || !e.Authorize(r.Principal, c.Type, c.ID, c.Action) {
+			return Result{}, fmt.Errorf("authorization changed before answer")
+		}
+		checks = append(checks, c)
+	}
+	return Result{Content: state.FinalAnswer, ServiceResult: tool.last, ExecutionID: tool.executionID, CheckedResources: checks}, nil
 }
 
+type ResourceCheck struct{ Type, ID, Action string }
 type serviceTool struct {
+	resources   map[string]ResourceCheck
 	mu          sync.Mutex
 	client      *cognitive.Client
 	request     Request
@@ -119,7 +131,7 @@ func (t *serviceTool) Execute(ctx context.Context, args json.RawMessage) (*types
 	digest := fmt.Sprintf("%x", sha256.Sum256(canonical))
 	raw := t.cache[digest]
 	if raw == nil {
-		if t.calls >= 3 {
+		if t.calls >= 8 {
 			return fail(fmt.Errorf("tool budget exceeded"))
 		}
 		t.calls++
@@ -144,6 +156,7 @@ func (t *serviceTool) Execute(ctx context.Context, args json.RawMessage) (*types
 	if !t.authorize(t.request.Principal, "SERVICE", ref.ServiceID, "service.invoke") {
 		return fail(fmt.Errorf("service authorization revoked"))
 	}
+	t.resources["SERVICE:"+ref.ServiceID+":service.invoke"] = ResourceCheck{"SERVICE", ref.ServiceID, "service.invoke"}
 	t.last = append(json.RawMessage(nil), raw...)
 	t.executionID = out.Steps[0].ID
 	return &types.ToolResult{Success: true, Output: string(raw)}, nil

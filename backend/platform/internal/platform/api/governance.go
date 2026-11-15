@@ -109,7 +109,7 @@ func (s *Server) createGrant(w http.ResponseWriter, r *http.Request) error {
 		case "SERVICE":
 			valid = req.ResourceID == "replenishment-gap" && req.Action == "service.invoke"
 		case "ASSET":
-			valid = (req.ResourceID == "chip-gap-metric" && req.Action == "execution.invoke") || (req.ResourceID == "inventory-policy" && req.Action == "asset.context.read")
+			valid = (req.ResourceID == "chip-gap-metric" && (req.Action == "execution.invoke" || req.Action == "asset.context.read")) || (req.ResourceID == "inventory-policy" && req.Action == "asset.context.read")
 		default:
 			valid = false
 		}

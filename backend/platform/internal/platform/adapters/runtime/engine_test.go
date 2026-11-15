@@ -44,8 +44,8 @@ func fixtureModel(t *testing.T, toolArgs string) (*Registry, *atomic.Int32) {
 		}
 		var chunk any
 		if !hasResult {
-			if len(req.Tools) != 1 {
-				t.Errorf("expected one controlled tool, got %d", len(req.Tools))
+			if len(req.Tools) != 2 {
+				t.Errorf("expected only the two selected controlled tools, got %d", len(req.Tools))
 			}
 			chunk = map[string]any{"choices": []any{map[string]any{"index": 0, "delta": map[string]any{"tool_calls": []any{map[string]any{"index": 0, "id": "provider-call", "type": "function", "function": map[string]any{"name": "cognitive_call_service", "arguments": toolArgs}}}}, "finish_reason": "tool_calls"}}}
 		} else {

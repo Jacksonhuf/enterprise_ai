@@ -42,6 +42,7 @@ func (c *Client) Do(ctx context.Context, p governance.Principal, method, path st
 	req.Header.Set("Authorization", "Bearer "+c.ServiceToken)
 	req.Header.Set("X-Delegation-Token", governance.Sign(p, c.SigningKey))
 	req.Header.Set("X-Request-ID", applications.ID("request"))
+	req.Header.Set("X-Invocation-Purpose", p.Purpose)
 	if key != "" {
 		req.Header.Set("Idempotency-Key", key)
 	}

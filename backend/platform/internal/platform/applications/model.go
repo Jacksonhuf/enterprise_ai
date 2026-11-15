@@ -239,7 +239,7 @@ func (s *Store) seed() {
 	rel := Release{"release-seed-1", "channel-replenishment", cfg, "初始验证场景", Now(), "demo-admin"}
 	rid := rel.ID
 	s.state.Apps["channel-replenishment"] = App{"channel-replenishment", "agent-validation", "42", "demo-engineer", cfg, "draft-1", &rid, []Release{rel}, Now()}
-	s.state.Grants = []Grant{{"grant-app", "42", "GROUP", "all-users", "APPLICATION", "channel-replenishment", "application.use", "east", true}, {"grant-service", "42", "APPLICATION", "channel-replenishment", "SERVICE", "replenishment-gap", "service.invoke", "east", true}, {"grant-asset-1", "42", "APPLICATION", "channel-replenishment", "ASSET", "inventory-policy", "asset.context.read", "east", true}, {"grant-asset-2", "42", "APPLICATION", "channel-replenishment", "ASSET", "chip-gap-metric", "execution.invoke", "east", true}}
+	s.state.Grants = []Grant{{"grant-metric-context", "42", "APPLICATION", "channel-replenishment", "ASSET", "chip-gap-metric", "asset.context.read", "east", true}, {"grant-app", "42", "GROUP", "all-users", "APPLICATION", "channel-replenishment", "application.use", "east", true}, {"grant-service", "42", "APPLICATION", "channel-replenishment", "SERVICE", "replenishment-gap", "service.invoke", "east", true}, {"grant-asset-1", "42", "APPLICATION", "channel-replenishment", "ASSET", "inventory-policy", "asset.context.read", "east", true}, {"grant-asset-2", "42", "APPLICATION", "channel-replenishment", "ASSET", "chip-gap-metric", "execution.invoke", "east", true}}
 }
 func Current(a App) (Release, bool) {
 	if a.CurrentReleaseID == nil {
