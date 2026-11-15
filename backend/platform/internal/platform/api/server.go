@@ -554,6 +554,13 @@ func (s *Server) owned(p governance.Principal, id string) (app.Session, error) {
 }
 func (s *Server) sessions(w http.ResponseWriter, r *http.Request) error {
 	p := Principal(r)
+	appID := r.URL.Query().Get("app_id")
+	if appID == "" {
+		return fail(400, "INVALID_REQUEST", "请选择应用")
+	}
+	if _, e := s.getApp(p, appID, false); e != nil {
+		return e
+	}
 	items := []app.Session{}
 	for _, v := range s.Store.Read().Sessions {
 		if v.OwnerID == p.UserID && v.TenantID == p.TenantID && v.AppID == r.URL.Query().Get("app_id") {
@@ -572,7 +579,11 @@ func (s *Server) session(w http.ResponseWriter, r *http.Request) error {
 	}
 	a := s.Store.Read().Apps[v.AppID]
 	rel, _ := app.Current(a)
-	v.Messages = s.visibleMessages(Principal(r), v)
+	if r.URL.Query().Get("include_messages") == "false" {
+		v.Messages = nil
+	} else {
+		v.Messages = s.visibleMessages(Principal(r), v)
+	}
 	Write(w, map[string]any{"session": v, "application": map[string]any{"app_id": a.ID, "name": rel.Config.Basic.Name, "welcome": rel.Config.ConversationDefaults.Welcome, "suggested_questions": rel.Config.ConversationDefaults.SuggestedQuestions}})
 	return nil
 }
@@ -583,26 +594,54 @@ func (s *Server) messages(w http.ResponseWriter, r *http.Request) error {
 	}
 	n := 20
 	if q := r.URL.Query().Get("limit"); q != "" {
-		if x, e := strconv.Atoi(q); e == nil && x > 0 {
-			n = min(x, 200)
+		x, err := strconv.Atoi(q)
+		if err != nil || x < 1 || x > 200 {
+			return fail(400, "INVALID_REQUEST", "每页数量应为1到200")
+		}
+		n = x
+	}
+	before := r.URL.Query().Get("before_time")
+	beforeID := r.URL.Query().Get("before_message_id")
+	if before != "" && beforeID != "" {
+		return fail(400, "INVALID_REQUEST", "请选择一种消息游标")
+	}
+	end := len(v.Messages)
+	if beforeID != "" {
+		end = -1
+		for i, m := range v.Messages {
+			if m.ID == beforeID {
+				end = i
+				break
+			}
+		}
+		if end < 0 {
+			return fail(400, "INVALID_REQUEST", "消息游标不属于当前会话")
 		}
 	}
-	items := []app.Message{}
-	before := r.URL.Query().Get("before_time")
+	visible := s.visibleMessages(Principal(r), v)
+	items := append([]app.Message{}, visible[:end]...)
 	if before != "" {
-		if _, e := time.Parse(time.RFC3339Nano, before); e != nil {
+		boundary, err := time.Parse(time.RFC3339Nano, before)
+		if err != nil {
 			return fail(400, "INVALID_REQUEST", "时间格式无效")
 		}
-	}
-	for _, m := range s.visibleMessages(Principal(r), v) {
-		if before == "" || m.CreatedAt < before {
-			items = append(items, m)
+		items = []app.Message{}
+		for _, m := range visible {
+			created, err := time.Parse(time.RFC3339Nano, m.CreatedAt)
+			if err == nil && created.Before(boundary) {
+				items = append(items, m)
+			}
 		}
 	}
-	if len(items) > n {
+	more := len(items) > n
+	if more {
 		items = items[len(items)-n:]
 	}
-	Write(w, map[string]any{"success": true, "data": items})
+	var next any
+	if more && len(items) > 0 {
+		next = items[0].ID
+	}
+	Write(w, map[string]any{"success": true, "data": items, "has_more": more, "next_before_message_id": next})
 	return nil
 }
 func (s *Server) assets(w http.ResponseWriter, r *http.Request) error {

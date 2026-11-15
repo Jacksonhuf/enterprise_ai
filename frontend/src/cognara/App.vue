@@ -19,6 +19,8 @@
             <div class="nav-group-label">当前应用</div>
             <button class="nav-link" @click="newChat">＋ 新建对话</button>
             <div class="nav-group-label">历史对话</div>
+            <p v-if="sessionError" class="meta">{{ sessionError }}</p>
+            <button v-if="sessionError" class="nav-link" @click="loadSessions">重新加载历史</button>
             <router-link
               v-for="s in sessions"
               :key="s.session_id"
@@ -98,14 +100,24 @@ import { computed, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import Brand from "./components/Brand.vue";
 import { useCognaraAuth } from "./stores/auth";
-import { api, post, prefix } from "./api";
+import { api, post, prefix, formatAPIError } from "./api";
 const auth = useCognaraAuth(),
   route = useRoute(),
   router = useRouter();
 const collapsed = ref(localStorage.getItem("cognara_collapsed") === "true"),
   accountOpen = ref(false),
   navQuery = ref(""),
-  sessions = ref<any[]>([]);
+  sessions = ref<any[]>([]), sessionError = ref("");
+let sessionGeneration = 0;
+async function loadSessions() {
+  const generation = ++sessionGeneration;
+  sessions.value = []; sessionError.value = "";
+  if (!isChat.value) return;
+  try {
+    const res = await api("/api/v1/sessions?app_id=" + encodeURIComponent(String(route.params.appId)));
+    if (generation === sessionGeneration) sessions.value = res.items || [];
+  } catch (e) { if (generation === sessionGeneration) sessionError.value = formatAPIError(e); }
+}
 watch(collapsed, (v) => localStorage.setItem("cognara_collapsed", String(v)));
 const isChat = computed(() => route.path.includes("/chat/"));
 const roleLabel = computed(
@@ -152,20 +164,15 @@ watch(
   () => route.fullPath,
   async () => {
     accountOpen.value = false;
-    if (isChat.value) {
-      const res = await api(
-        prefix.replace("/cognitive", "") +
-          "/sessions?app_id=" +
-          route.params.appId,
-      ).catch(() => ({ items: [] }));
-      sessions.value = res.items || [];
-    }
+    await loadSessions();
   },
   { immediate: true },
 );
 async function newChat() {
-  const s = await post(prefix + `/apps/${route.params.appId}/sessions`, {});
-  router.push(`/apps/${route.params.appId}/chat/${s.session_id}`);
+  try {
+    const s = await post(prefix + `/apps/${route.params.appId}/sessions`, {});
+    router.push(`/apps/${route.params.appId}/chat/${s.session_id}`);
+  } catch (e) { sessionError.value = formatAPIError(e); }
 }
 function logout() {
   auth.logout();

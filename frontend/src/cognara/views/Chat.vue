@@ -8,6 +8,11 @@
       <span class="badge success">已发布</span>
     </header>
     <t-alert v-if="error" theme="error" :message="error" />
+    <t-alert v-if="history.error" theme="error" :message="history.error" />
+    <div class="history-actions">
+      <t-button :disabled="running" :loading="history.loading" variant="text" @click="refreshHistory">刷新记录</t-button>
+      <t-button v-if="history.cursor" :disabled="running" :loading="history.loading" variant="outline" @click="loadOlder">加载较早消息</t-button>
+    </div>
     <div ref="scrollArea" class="chat-scroll">
       <div v-if="!messages.length" class="chat-welcome">
         <img src="/brand/cognara-mark.svg" alt="" />
@@ -144,13 +149,13 @@
   </section>
 </template>
 <script setup lang="ts">
-import { ref, onMounted, nextTick } from "vue";
+import { ref, reactive, computed, onMounted, nextTick } from "vue";
+import { MessageHistory } from "../messageHistory";
 import { useRoute, onBeforeRouteLeave } from "vue-router";
 import { MessagePlugin } from "tdesign-vue-next";
 import { api, prefix, sendTurn, formatAPIError } from "../api";
 import type { Message } from "../types";
 const route = useRoute(),
-  messages = ref<Message[]>([]),
   application = ref<any>({ suggested_questions: [] }),
   draft = ref(""),
   running = ref(false),
@@ -160,6 +165,22 @@ const route = useRoute(),
   evidence = ref<any>(null),
   evidenceError = ref(""),
   evidenceLoading = ref(false);
+const history = reactive(new MessageHistory(cursor => {
+  const params = new URLSearchParams({ limit: "50" });
+  if (cursor !== null) params.set("before_message_id", cursor);
+  return api(`/api/v1/messages/${encodeURIComponent(String(route.params.sessionId))}/load?` + params);
+}));
+const messages = computed(() => history.items);
+async function refreshHistory() {
+  evidenceVisible.value = false; evidence.value = null;
+  await history.refresh(); await bottom();
+}
+async function loadOlder() {
+  const area = scrollArea.value;
+  const previousHeight = area?.scrollHeight || 0, previousTop = area?.scrollTop || 0;
+  await history.older(); await nextTick();
+  if (area) area.scrollTop = previousTop + area.scrollHeight - previousHeight;
+}
 let controller: AbortController | null = null;
 function stopReceiving() {
   controller?.abort();
@@ -173,14 +194,11 @@ async function bottom() {
 }
 onMounted(async () => {
   try {
-    const data = await api(`/api/v1/sessions/${route.params.sessionId}`);
+    const data = await api(`/api/v1/sessions/${route.params.sessionId}?include_messages=false`);
     if (data.session.app_id !== route.params.appId)
       throw new Error("会话与应用不匹配");
     application.value = data.application;
-    messages.value = (
-      await api(`/api/v1/messages/${route.params.sessionId}/load?limit=200`)
-    ).data;
-    bottom();
+    await refreshHistory();
   } catch (e) {
     error.value = formatAPIError(e);
   }
@@ -207,19 +225,15 @@ async function send() {
       String(route.params.sessionId),
       query,
       (type, data) => {
-        if (type === "answer") messages.value.push(data);
+        if (type === "answer") history.items.push(data);
       },
       controller.signal,
     );
-    messages.value = (
-      await api(`/api/v1/messages/${route.params.sessionId}/load?limit=200`)
-    ).data;
-    bottom();
+    await refreshHistory();
   } catch (e) {
     if ((e as Error).name === "AbortError") {
-      draft.value = query;
-      error.value =
-        "已停止接收，请通过历史记录核对执行结果；停止接收不代表远端取消。";
+      await refreshHistory();
+      error.value = "已停止接收并尝试刷新历史。停止接收不代表远端取消，请核对结果后再决定是否重新提问。";
     } else {
       error.value = formatAPIError(e);
       draft.value = query;
@@ -253,3 +267,7 @@ async function copy(text: string) {
   }
 }
 </script>
+
+<style scoped>
+.history-actions { display: flex; gap: 8px; padding: 8px 20px; }
+</style>
