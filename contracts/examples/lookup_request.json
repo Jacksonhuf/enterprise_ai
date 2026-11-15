@@ -1,0 +1,5 @@
+{
+  "operation": "DIRECT_EXECUTION",
+  "idempotency_key": "call_demo",
+  "request_digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+}

@@ -1,0 +1,20 @@
+{
+  "metric_request": "ExecutionRequest",
+  "rule_request": "ExecutionRequest",
+  "execution_success": "ExecutionResponse",
+  "execution_failed": "ExecutionResponse",
+  "service_request": "ServiceExecutionRequest",
+  "identity_active": "IntrospectResponse",
+  "identity_inactive": "IntrospectResponse",
+  "authorization": "AuthorizationResponse",
+  "audit_event": "AuditEvent",
+  "asset_context": "AssetContextResponse",
+  "reference_validation_request": "ReferenceValidationRequest",
+  "reference_validation_response": "ReferenceValidationResponse",
+  "lookup_request": "ExecutionLookupRequest",
+  "lookup_complete": "ExecutionLookupResponse",
+  "lookup_unknown": "ExecutionLookupResponse",
+  "cancel_request": "CancelRequest",
+  "cancel_accepted": "CancelResponse",
+  "resource_projection": "ResourceProjectionResponse"
+}

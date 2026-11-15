@@ -1,0 +1,3524 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Cognara F/G to A-E Proposed Integration Contracts",
+    "version": "0.3.0",
+    "description": "18 proposed internal operations, not a deployed API. Preserves v0.2 core and adds five feature-gated proposals. One Go platform-api, one Python cognition-api. Only metric/rule direct execution payloads are formalized. Public UI APIs are documented separately."
+  },
+  "servers": [
+    {
+      "url": "https://provider.invalid",
+      "description": "Replace with authorized Go or Python provider; not a deployed endpoint."
+    }
+  ],
+  "paths": {
+    "/internal/v1/identity/introspect": {
+      "post": {
+        "operationId": "FGX_01",
+        "summary": "FGX-01 proposed Go G1",
+        "x-provider": "Go G1",
+        "x-implementation-status": "NOT_IMPLEMENTED_IN_AUDITED_FORKS",
+        "security": [
+          {
+            "ServiceAuth": [],
+            "Delegation": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Validated business response; caller must inspect business status/error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IntrospectResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Protocol error; 400/401/403/404/409/429/500/503/504 as applicable.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/IntrospectRequest"
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "X-Request-ID",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/ID"
+            }
+          },
+          {
+            "name": "traceparent",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/internal/v1/authorization/check": {
+      "post": {
+        "operationId": "FGX_02",
+        "summary": "FGX-02 proposed Go G1",
+        "x-provider": "Go G1",
+        "x-implementation-status": "NOT_IMPLEMENTED_IN_AUDITED_FORKS",
+        "security": [
+          {
+            "ServiceAuth": [],
+            "Delegation": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Validated business response; caller must inspect business status/error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthorizationResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Protocol error; 400/401/403/404/409/429/500/503/504 as applicable.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AuthorizationRequest"
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "X-Request-ID",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/ID"
+            }
+          },
+          {
+            "name": "traceparent",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/internal/v1/assets/discover": {
+      "post": {
+        "operationId": "FGX_03",
+        "summary": "FGX-03 proposed Python A",
+        "x-provider": "Python A",
+        "x-implementation-status": "NOT_IMPLEMENTED_IN_AUDITED_FORKS",
+        "security": [
+          {
+            "ServiceAuth": [],
+            "Delegation": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Validated business response; caller must inspect business status/error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DiscoverAssetsResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Protocol error; 400/401/403/404/409/429/500/503/504 as applicable.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DiscoverAssetsRequest"
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "X-Request-ID",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/ID"
+            }
+          },
+          {
+            "name": "traceparent",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/internal/v1/assets/context": {
+      "post": {
+        "operationId": "FGX_04",
+        "summary": "FGX-04 proposed Python A",
+        "x-provider": "Python A",
+        "x-implementation-status": "NOT_IMPLEMENTED_IN_AUDITED_FORKS",
+        "security": [
+          {
+            "ServiceAuth": [],
+            "Delegation": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Validated business response; caller must inspect business status/error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AssetContextResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Protocol error; 400/401/403/404/409/429/500/503/504 as applicable.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AssetContextRequest"
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "X-Request-ID",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/ID"
+            }
+          },
+          {
+            "name": "traceparent",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/internal/v1/services/discover": {
+      "post": {
+        "operationId": "FGX_05",
+        "summary": "FGX-05 proposed Python E",
+        "x-provider": "Python E",
+        "x-implementation-status": "NOT_IMPLEMENTED_IN_AUDITED_FORKS",
+        "security": [
+          {
+            "ServiceAuth": [],
+            "Delegation": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Validated business response; caller must inspect business status/error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DiscoverServicesResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Protocol error; 400/401/403/404/409/429/500/503/504 as applicable.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DiscoverServicesRequest"
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "X-Request-ID",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/ID"
+            }
+          },
+          {
+            "name": "traceparent",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/internal/v1/executions": {
+      "post": {
+        "operationId": "FGX_06",
+        "summary": "FGX-06 proposed Python D",
+        "x-provider": "Python D",
+        "x-implementation-status": "NOT_IMPLEMENTED_IN_AUDITED_FORKS",
+        "security": [
+          {
+            "ServiceAuth": [],
+            "Delegation": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Validated business response; caller must inspect business status/error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExecutionResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Protocol error; 400/401/403/404/409/429/500/503/504 as applicable.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExecutionRequest"
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/ID"
+            },
+            "description": "Requires durable server implementation; do not auto-retry unknown outcomes before implemented."
+          },
+          {
+            "name": "X-Request-ID",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/ID"
+            }
+          },
+          {
+            "name": "traceparent",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/internal/v1/service-executions": {
+      "post": {
+        "operationId": "FGX_07",
+        "summary": "FGX-07 proposed Python E",
+        "x-provider": "Python E",
+        "x-implementation-status": "NOT_IMPLEMENTED_IN_AUDITED_FORKS",
+        "security": [
+          {
+            "ServiceAuth": [],
+            "Delegation": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Validated business response; caller must inspect business status/error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceExecutionResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Protocol error; 400/401/403/404/409/429/500/503/504 as applicable.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ServiceExecutionRequest"
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/ID"
+            },
+            "description": "Requires durable server implementation; do not auto-retry unknown outcomes before implemented."
+          },
+          {
+            "name": "X-Request-ID",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/ID"
+            }
+          },
+          {
+            "name": "traceparent",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/internal/v1/executions/{id}/evidence": {
+      "get": {
+        "operationId": "FGX_08",
+        "summary": "FGX-08 proposed Python D",
+        "x-provider": "Python D",
+        "x-implementation-status": "NOT_IMPLEMENTED_IN_AUDITED_FORKS",
+        "security": [
+          {
+            "ServiceAuth": [],
+            "Delegation": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Validated business response; caller must inspect business status/error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EvidenceResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Protocol error; 400/401/403/404/409/429/500/503/504 as applicable.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/ID"
+            }
+          },
+          {
+            "name": "X-Request-ID",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/ID"
+            }
+          },
+          {
+            "name": "traceparent",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/internal/v1/service-executions/{id}": {
+      "get": {
+        "operationId": "FGX_09",
+        "summary": "FGX-09 proposed Python E",
+        "x-provider": "Python E",
+        "x-implementation-status": "NOT_IMPLEMENTED_IN_AUDITED_FORKS",
+        "security": [
+          {
+            "ServiceAuth": [],
+            "Delegation": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Validated business response; caller must inspect business status/error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceExecutionResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Protocol error; 400/401/403/404/409/429/500/503/504 as applicable.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/ID"
+            }
+          },
+          {
+            "name": "X-Request-ID",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/ID"
+            }
+          },
+          {
+            "name": "traceparent",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/internal/v1/audit-events": {
+      "post": {
+        "operationId": "FGX_10",
+        "summary": "FGX-10 proposed Go G2",
+        "x-provider": "Go G2",
+        "x-implementation-status": "NOT_IMPLEMENTED_IN_AUDITED_FORKS",
+        "security": [
+          {
+            "ServiceAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Validated business response; caller must inspect business status/error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EventReceipt"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Protocol error; 400/401/403/404/409/429/500/503/504 as applicable.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AuditEvent"
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/ID"
+            },
+            "description": "Requires durable server implementation; do not auto-retry unknown outcomes before implemented."
+          },
+          {
+            "name": "X-Request-ID",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/ID"
+            }
+          },
+          {
+            "name": "traceparent",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/internal/v1/operations/status": {
+      "get": {
+        "operationId": "FGX_11",
+        "summary": "FGX-11 proposed Python Operations",
+        "x-provider": "Python Operations",
+        "x-implementation-status": "NOT_IMPLEMENTED_IN_AUDITED_FORKS",
+        "security": [
+          {
+            "ServiceAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Validated business response; caller must inspect business status/error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OperationsResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Protocol error; 400/401/403/404/409/429/500/503/504 as applicable.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "X-Request-ID",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/ID"
+            }
+          },
+          {
+            "name": "traceparent",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/internal/v1/usage-events": {
+      "post": {
+        "operationId": "FGX_12",
+        "summary": "FGX-12 proposed Go G4",
+        "x-provider": "Go G4",
+        "x-implementation-status": "NOT_IMPLEMENTED_IN_AUDITED_FORKS",
+        "security": [
+          {
+            "ServiceAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Validated business response; caller must inspect business status/error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EventReceipt"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Protocol error; 400/401/403/404/409/429/500/503/504 as applicable.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UsageEvent"
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/ID"
+            },
+            "description": "Requires durable server implementation; do not auto-retry unknown outcomes before implemented."
+          },
+          {
+            "name": "X-Request-ID",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/ID"
+            }
+          },
+          {
+            "name": "traceparent",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/internal/v1/config/resolve": {
+      "post": {
+        "operationId": "FGX_13",
+        "summary": "FGX-13 proposed Go G4",
+        "x-provider": "Go G4",
+        "x-implementation-status": "NOT_IMPLEMENTED_IN_AUDITED_FORKS",
+        "security": [
+          {
+            "ServiceAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Validated business response; caller must inspect business status/error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConfigResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Protocol error; 400/401/403/404/409/429/500/503/504 as applicable.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConfigRequest"
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "X-Request-ID",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/ID"
+            }
+          },
+          {
+            "name": "traceparent",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/internal/v1/execution-requests/lookup": {
+      "post": {
+        "operationId": "FGX_14",
+        "summary": "FGX_14 proposed Python D/E recovery facade",
+        "x-provider": "Python D/E recovery facade",
+        "x-feature-gate": "ATOMIC_IDEMPOTENCY_LOOKUP",
+        "x-implementation-status": "PROPOSED_NOT_IMPLEMENTED",
+        "security": [
+          {
+            "ServiceAuth": [],
+            "Delegation": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Business response; enforce state-specific semantics.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExecutionLookupResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "400/401/403/404/409/429/500/503/504; no downgrade or implied permission.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExecutionLookupRequest"
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "X-Request-ID",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/ID"
+            }
+          },
+          {
+            "name": "traceparent",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/internal/v1/executions/{id}/cancel": {
+      "post": {
+        "operationId": "FGX_15",
+        "summary": "FGX_15 proposed Python D",
+        "x-provider": "Python D",
+        "x-feature-gate": "EXECUTION_CANCEL",
+        "x-implementation-status": "PROPOSED_NOT_IMPLEMENTED",
+        "security": [
+          {
+            "ServiceAuth": [],
+            "Delegation": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Business response; enforce state-specific semantics.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CancelResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "400/401/403/404/409/429/500/503/504; no downgrade or implied permission.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CancelRequest"
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/ID"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/ID"
+            }
+          },
+          {
+            "name": "X-Request-ID",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/ID"
+            }
+          },
+          {
+            "name": "traceparent",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/internal/v1/service-executions/{id}/cancel": {
+      "post": {
+        "operationId": "FGX_16",
+        "summary": "FGX_16 proposed Python E",
+        "x-provider": "Python E",
+        "x-feature-gate": "SERVICE_EXECUTION_CANCEL",
+        "x-implementation-status": "PROPOSED_NOT_IMPLEMENTED",
+        "security": [
+          {
+            "ServiceAuth": [],
+            "Delegation": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Business response; enforce state-specific semantics.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CancelResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "400/401/403/404/409/429/500/503/504; no downgrade or implied permission.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CancelRequest"
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/ID"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/ID"
+            }
+          },
+          {
+            "name": "X-Request-ID",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/ID"
+            }
+          },
+          {
+            "name": "traceparent",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/internal/v1/references/validate": {
+      "post": {
+        "operationId": "FGX_17",
+        "summary": "FGX_17 proposed Python A/E reference facade",
+        "x-provider": "Python A/E reference facade",
+        "x-feature-gate": "REFERENCE_VALIDATION",
+        "x-implementation-status": "PROPOSED_NOT_IMPLEMENTED",
+        "security": [
+          {
+            "ServiceAuth": [],
+            "Delegation": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Business response; enforce state-specific semantics.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReferenceValidationResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "400/401/403/404/409/429/500/503/504; no downgrade or implied permission.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReferenceValidationRequest"
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "X-Request-ID",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/ID"
+            }
+          },
+          {
+            "name": "traceparent",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/internal/v1/resources/{id}/content-projection": {
+      "get": {
+        "operationId": "FGX_18",
+        "summary": "FGX_18 proposed Python C1 facade",
+        "x-provider": "Python C1 facade",
+        "x-feature-gate": "RESOURCE_PROJECTION",
+        "x-implementation-status": "PROPOSED_NOT_IMPLEMENTED",
+        "security": [
+          {
+            "ServiceAuth": [],
+            "Delegation": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Business response; enforce state-specific semantics.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResourceProjectionResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "400/401/403/404/409/429/500/503/504; no downgrade or implied permission.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/ID"
+            }
+          },
+          {
+            "name": "X-Request-ID",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/ID"
+            }
+          },
+          {
+            "name": "traceparent",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ID": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 128
+      },
+      "TenantID": {
+        "type": "string",
+        "pattern": "^[1-9][0-9]{0,19}$",
+        "description": "Canonical uint64 decimal; receiver must also reject overflow above 18446744073709551615."
+      },
+      "Scalar": {
+        "type": [
+          "string",
+          "number",
+          "integer",
+          "boolean",
+          "null"
+        ]
+      },
+      "ParameterMap": {
+        "type": "object",
+        "maxProperties": 64,
+        "additionalProperties": {
+          "$ref": "#/components/schemas/Scalar"
+        }
+      },
+      "Correlation": {
+        "type": "object",
+        "properties": {
+          "turn_id": {
+            "$ref": "#/components/schemas/ID"
+          },
+          "application_release_id": {
+            "$ref": "#/components/schemas/ID"
+          },
+          "assistant_message_id": {
+            "$ref": "#/components/schemas/ID"
+          },
+          "tool_call_id": {
+            "$ref": "#/components/schemas/ID"
+          }
+        },
+        "required": [
+          "turn_id",
+          "application_release_id",
+          "assistant_message_id",
+          "tool_call_id"
+        ],
+        "additionalProperties": false
+      },
+      "AssetRef": {
+        "type": "object",
+        "properties": {
+          "asset_id": {
+            "$ref": "#/components/schemas/ID"
+          }
+        },
+        "required": [
+          "asset_id"
+        ],
+        "additionalProperties": false
+      },
+      "ServiceRef": {
+        "type": "object",
+        "properties": {
+          "service_id": {
+            "$ref": "#/components/schemas/ID"
+          },
+          "version": {
+            "$ref": "#/components/schemas/ID"
+          }
+        },
+        "required": [
+          "service_id",
+          "version"
+        ],
+        "additionalProperties": false
+      },
+      "ErrorDetail": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "enum": [
+              "INVALID_REQUEST",
+              "AUTHENTICATION_REQUIRED",
+              "AUTHORIZATION_DENIED",
+              "ASSET_UNAVAILABLE",
+              "VERSION_INCOMPATIBLE",
+              "CAPABILITY_UNAVAILABLE",
+              "EXECUTION_ERROR",
+              "RESOURCE_LIMIT_EXCEEDED",
+              "INTERNAL_ERROR",
+              "IDEMPOTENCY_CONFLICT",
+              "EXECUTION_TIMEOUT",
+              "CANCELLATION_NOT_SUPPORTED",
+              "REFERENCE_NOT_READY"
+            ]
+          },
+          "message": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512
+          },
+          "retryable": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "code",
+          "message",
+          "retryable"
+        ],
+        "additionalProperties": false
+      },
+      "ErrorEnvelope": {
+        "type": "object",
+        "properties": {
+          "request_id": {
+            "$ref": "#/components/schemas/ID"
+          },
+          "error": {
+            "$ref": "#/components/schemas/ErrorDetail"
+          }
+        },
+        "required": [
+          "request_id",
+          "error"
+        ],
+        "additionalProperties": false
+      },
+      "Filter": {
+        "type": "object",
+        "properties": {
+          "property": {
+            "$ref": "#/components/schemas/ID"
+          },
+          "operator": {
+            "type": "string",
+            "enum": [
+              "eq",
+              "in"
+            ]
+          },
+          "value": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Scalar"
+              },
+              {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Scalar"
+                }
+              }
+            ]
+          }
+        },
+        "required": [
+          "property",
+          "operator",
+          "value"
+        ],
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "operator": {
+                  "const": "in"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "value": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Scalar"
+                  }
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "operator": {
+                  "const": "eq"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "value": {
+                  "$ref": "#/components/schemas/Scalar"
+                }
+              }
+            }
+          }
+        ]
+      },
+      "MetricPayload": {
+        "type": "object",
+        "properties": {
+          "parameters": {
+            "$ref": "#/components/schemas/ParameterMap"
+          },
+          "dimensions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ID"
+            }
+          },
+          "filters": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Filter"
+            }
+          }
+        },
+        "required": [
+          "parameters"
+        ],
+        "additionalProperties": false
+      },
+      "RulePayload": {
+        "type": "object",
+        "properties": {
+          "inputs": {
+            "$ref": "#/components/schemas/ParameterMap"
+          }
+        },
+        "required": [
+          "inputs"
+        ],
+        "additionalProperties": false
+      },
+      "ExecutionRequest": {
+        "type": "object",
+        "properties": {
+          "capability_type": {
+            "type": "string",
+            "enum": [
+              "BASIC_METRIC",
+              "BASIC_RULE"
+            ]
+          },
+          "target": {
+            "$ref": "#/components/schemas/AssetRef"
+          },
+          "payload": {
+            "type": "object"
+          },
+          "preconditions": {
+            "type": "object",
+            "properties": {
+              "context_receipt": {
+                "$ref": "#/components/schemas/ID"
+              }
+            },
+            "required": [
+              "context_receipt"
+            ],
+            "additionalProperties": false
+          },
+          "execution_options": {
+            "type": "object",
+            "properties": {
+              "max_rows": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 1000
+              }
+            },
+            "required": [],
+            "additionalProperties": false
+          },
+          "correlation_context": {
+            "$ref": "#/components/schemas/Correlation"
+          }
+        },
+        "required": [
+          "capability_type",
+          "target",
+          "payload",
+          "correlation_context",
+          "preconditions"
+        ],
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "capability_type": {
+                  "const": "BASIC_METRIC"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "payload": {
+                  "$ref": "#/components/schemas/MetricPayload"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "capability_type": {
+                  "const": "BASIC_RULE"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "payload": {
+                  "$ref": "#/components/schemas/RulePayload"
+                }
+              }
+            }
+          }
+        ],
+        "description": "Proposed minimal profile. Other three capability types deliberately rejected until domain schemas are specified. Not a deployed API."
+      },
+      "ToolExecutionArguments": {
+        "type": "object",
+        "properties": {
+          "capability_type": {
+            "type": "string",
+            "enum": [
+              "BASIC_METRIC",
+              "BASIC_RULE"
+            ]
+          },
+          "target": {
+            "$ref": "#/components/schemas/AssetRef"
+          },
+          "payload": {
+            "type": "object"
+          }
+        },
+        "required": [
+          "capability_type",
+          "target",
+          "payload"
+        ],
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "capability_type": {
+                  "const": "BASIC_METRIC"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "payload": {
+                  "$ref": "#/components/schemas/MetricPayload"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "capability_type": {
+                  "const": "BASIC_RULE"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "payload": {
+                  "$ref": "#/components/schemas/RulePayload"
+                }
+              }
+            }
+          }
+        ],
+        "description": "Proposed minimal profile. Other three capability types deliberately rejected until domain schemas are specified. Not a deployed API."
+      },
+      "Dependency": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "ASSET",
+              "MAPPING",
+              "RESOURCE",
+              "RUNTIME_CONFIG"
+            ]
+          },
+          "id": {
+            "$ref": "#/components/schemas/ID"
+          },
+          "version": {
+            "$ref": "#/components/schemas/ID"
+          }
+        },
+        "required": [
+          "type",
+          "id",
+          "version"
+        ],
+        "additionalProperties": false
+      },
+      "EvidenceRef": {
+        "type": "object",
+        "properties": {
+          "execution_id": {
+            "$ref": "#/components/schemas/ID"
+          }
+        },
+        "required": [
+          "execution_id"
+        ],
+        "additionalProperties": false
+      },
+      "ExecutionResponse": {
+        "type": "object",
+        "properties": {
+          "execution_id": {
+            "$ref": "#/components/schemas/ID"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "SUCCESS",
+              "EMPTY",
+              "PARTIAL",
+              "FAILED"
+            ]
+          },
+          "result": {
+            "anyOf": [
+              {
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "actual_dependencies": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Dependency"
+            }
+          },
+          "evidence_ref": {
+            "$ref": "#/components/schemas/EvidenceRef"
+          },
+          "partial_reason": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512
+          },
+          "error": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ErrorDetail"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "execution_id",
+          "status",
+          "result",
+          "actual_dependencies",
+          "evidence_ref",
+          "error"
+        ],
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "status": {
+                  "const": "FAILED"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "error": {
+                  "$ref": "#/components/schemas/ErrorDetail"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "status": {
+                  "const": "PARTIAL"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "partial_reason"
+              ]
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "status": {
+                  "enum": [
+                    "SUCCESS",
+                    "EMPTY"
+                  ]
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "error": {
+                  "type": "null"
+                }
+              }
+            }
+          }
+        ]
+      },
+      "ServiceExecutionRequest": {
+        "type": "object",
+        "properties": {
+          "service_ref": {
+            "$ref": "#/components/schemas/ServiceRef"
+          },
+          "channel": {
+            "const": "INTERNAL_APPLICATION",
+            "type": "string"
+          },
+          "arguments": {
+            "type": "object"
+          },
+          "correlation_context": {
+            "$ref": "#/components/schemas/Correlation"
+          }
+        },
+        "required": [
+          "service_ref",
+          "channel",
+          "arguments",
+          "correlation_context"
+        ],
+        "additionalProperties": false
+      },
+      "ServiceStep": {
+        "type": "object",
+        "properties": {
+          "step_id": {
+            "$ref": "#/components/schemas/ID"
+          },
+          "execution_id": {
+            "$ref": "#/components/schemas/ID"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "SUCCESS",
+              "EMPTY",
+              "PARTIAL",
+              "FAILED"
+            ]
+          }
+        },
+        "required": [
+          "step_id",
+          "execution_id",
+          "status"
+        ],
+        "additionalProperties": false
+      },
+      "ServiceExecutionResponse": {
+        "type": "object",
+        "properties": {
+          "service_execution_id": {
+            "$ref": "#/components/schemas/ID"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "SUCCESS",
+              "EMPTY",
+              "PARTIAL",
+              "FAILED"
+            ]
+          },
+          "service_ref": {
+            "$ref": "#/components/schemas/ServiceRef"
+          },
+          "dependency_snapshot_ref": {
+            "$ref": "#/components/schemas/ID"
+          },
+          "result": {
+            "anyOf": [
+              {
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "step_executions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ServiceStep"
+            }
+          },
+          "partial_reason": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512
+          },
+          "error": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ErrorDetail"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "service_execution_id",
+          "status",
+          "service_ref",
+          "dependency_snapshot_ref",
+          "result",
+          "step_executions",
+          "error"
+        ],
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "status": {
+                  "const": "FAILED"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "error": {
+                  "$ref": "#/components/schemas/ErrorDetail"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "status": {
+                  "const": "PARTIAL"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "partial_reason"
+              ]
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "status": {
+                  "enum": [
+                    "SUCCESS",
+                    "EMPTY"
+                  ]
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "error": {
+                  "type": "null"
+                }
+              }
+            }
+          }
+        ]
+      },
+      "ClientPrincipal": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "APPLICATION",
+              "AGENT"
+            ]
+          },
+          "id": {
+            "$ref": "#/components/schemas/ID"
+          },
+          "responsibility_ref": {
+            "$ref": "#/components/schemas/ID"
+          }
+        },
+        "required": [
+          "type",
+          "id"
+        ],
+        "additionalProperties": false
+      },
+      "PrincipalContext": {
+        "type": "object",
+        "properties": {
+          "tenant_id": {
+            "$ref": "#/components/schemas/TenantID"
+          },
+          "actor_user_id": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ID"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "client": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ClientPrincipal"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "mode": {
+            "type": "string",
+            "enum": [
+              "DIRECT_USER",
+              "ON_BEHALF_OF_USER",
+              "BACKGROUND_AGENT"
+            ]
+          },
+          "delegation_id": {
+            "$ref": "#/components/schemas/ID"
+          },
+          "application_release_id": {
+            "$ref": "#/components/schemas/ID"
+          },
+          "turn_id": {
+            "$ref": "#/components/schemas/ID"
+          },
+          "audience": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "application_id": {
+            "$ref": "#/components/schemas/ID"
+          }
+        },
+        "required": [
+          "tenant_id",
+          "actor_user_id",
+          "client",
+          "mode",
+          "delegation_id",
+          "audience",
+          "expires_at"
+        ],
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "mode": {
+                  "const": "ON_BEHALF_OF_USER"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "actor_user_id": {
+                  "$ref": "#/components/schemas/ID"
+                },
+                "client": {
+                  "$ref": "#/components/schemas/ClientPrincipal"
+                }
+              },
+              "required": [
+                "application_id",
+                "application_release_id",
+                "turn_id"
+              ]
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "mode": {
+                  "const": "DIRECT_USER"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "actor_user_id": {
+                  "$ref": "#/components/schemas/ID"
+                },
+                "client": {
+                  "type": "null"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "mode": {
+                  "const": "BACKGROUND_AGENT"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "actor_user_id": {
+                  "type": "null"
+                },
+                "client": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "const": "AGENT",
+                      "type": "string"
+                    },
+                    "id": {
+                      "$ref": "#/components/schemas/ID"
+                    },
+                    "responsibility_ref": {
+                      "$ref": "#/components/schemas/ID"
+                    }
+                  },
+                  "required": [
+                    "type",
+                    "id",
+                    "responsibility_ref"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        ]
+      },
+      "IntrospectRequest": {
+        "type": "object",
+        "properties": {
+          "audience": {
+            "const": "cognitive-business",
+            "type": "string"
+          },
+          "purpose": {
+            "type": "string",
+            "enum": [
+              "application_turn",
+              "application_configuration",
+              "evidence_read",
+              "execution_recovery",
+              "execution_cancel"
+            ]
+          }
+        },
+        "required": [
+          "audience",
+          "purpose"
+        ],
+        "additionalProperties": false
+      },
+      "IntrospectResponse": {
+        "oneOf": [
+          {
+            "type": "object",
+            "properties": {
+              "active": {
+                "const": false,
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "active"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "active": {
+                "const": true,
+                "type": "boolean"
+              },
+              "principal_context": {
+                "$ref": "#/components/schemas/PrincipalContext"
+              }
+            },
+            "required": [
+              "active",
+              "principal_context"
+            ],
+            "additionalProperties": false
+          }
+        ]
+      },
+      "ResourceRef": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "ASSET",
+              "RESOURCE",
+              "SERVICE",
+              "APPLICATION",
+              "EXECUTION"
+            ]
+          },
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64
+          }
+        },
+        "required": [
+          "type",
+          "id"
+        ],
+        "additionalProperties": false
+      },
+      "AuthorizationRequest": {
+        "type": "object",
+        "properties": {
+          "action": {
+            "type": "string",
+            "enum": [
+              "asset.discover",
+              "asset.context.read",
+              "execution.invoke",
+              "service.invoke",
+              "resource.access",
+              "evidence.read",
+              "service.discover",
+              "reference.validate",
+              "execution.cancel",
+              "service_execution.read"
+            ]
+          },
+          "resource": {
+            "$ref": "#/components/schemas/ResourceRef"
+          },
+          "context": {
+            "type": "object",
+            "properties": {
+              "entrypoint": {
+                "type": "string",
+                "enum": [
+                  "DIRECT",
+                  "APPLICATION_CONFIGURATION",
+                  "APPLICATION_RUNTIME",
+                  "SERVICE_RUNTIME",
+                  "AUDIT_VIEW"
+                ]
+              },
+              "capability_type": {
+                "type": "string",
+                "enum": [
+                  "RELATIONAL_SEMANTIC_QUERY",
+                  "GRAPH_QUERY",
+                  "DOCUMENT_RETRIEVAL",
+                  "BASIC_METRIC",
+                  "BASIC_RULE"
+                ]
+              },
+              "service_version": {
+                "$ref": "#/components/schemas/ID"
+              }
+            },
+            "required": [
+              "entrypoint"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "action",
+          "resource",
+          "context"
+        ],
+        "additionalProperties": false
+      },
+      "ScopeConstraint": {
+        "type": "object",
+        "properties": {
+          "resource_id": {
+            "$ref": "#/components/schemas/ID"
+          },
+          "scope_ref": {
+            "$ref": "#/components/schemas/ID"
+          }
+        },
+        "required": [
+          "resource_id",
+          "scope_ref"
+        ],
+        "additionalProperties": false
+      },
+      "AuthorizationResponse": {
+        "type": "object",
+        "properties": {
+          "decision": {
+            "type": "string",
+            "enum": [
+              "ALLOW",
+              "DENY"
+            ]
+          },
+          "decision_id": {
+            "$ref": "#/components/schemas/ID"
+          },
+          "policy_revision": {
+            "$ref": "#/components/schemas/ID"
+          },
+          "scope_constraints": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ScopeConstraint"
+            }
+          }
+        },
+        "required": [
+          "decision",
+          "decision_id",
+          "policy_revision",
+          "scope_constraints"
+        ],
+        "additionalProperties": false
+      },
+      "DiscoverAssetsRequest": {
+        "type": "object",
+        "properties": {
+          "query": {
+            "type": "string",
+            "maxLength": 256
+          },
+          "asset_types": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "SEMANTIC_MODEL",
+                "TERM",
+                "METRIC",
+                "RULE",
+                "KNOWLEDGE",
+                "METHOD",
+                "DOCUMENT"
+              ]
+            }
+          },
+          "domain_ref": {
+            "$ref": "#/components/schemas/ID"
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100
+          },
+          "cursor": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 2048
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [],
+        "additionalProperties": false
+      },
+      "AssetSummary": {
+        "type": "object",
+        "properties": {
+          "asset_id": {
+            "$ref": "#/components/schemas/ID"
+          },
+          "asset_type": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 255
+          },
+          "summary": {
+            "type": "string",
+            "maxLength": 2048
+          },
+          "effective_version": {
+            "$ref": "#/components/schemas/ID"
+          }
+        },
+        "required": [
+          "asset_id",
+          "asset_type",
+          "name",
+          "effective_version"
+        ],
+        "additionalProperties": false
+      },
+      "DiscoverAssetsResponse": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AssetSummary"
+            }
+          },
+          "next_cursor": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 2048
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "items",
+          "next_cursor"
+        ],
+        "additionalProperties": false
+      },
+      "AssetContextRequest": {
+        "type": "object",
+        "properties": {
+          "asset_refs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AssetRef"
+            },
+            "minItems": 1,
+            "maxItems": 20
+          },
+          "level": {
+            "type": "string",
+            "enum": [
+              "SUMMARY",
+              "STANDARD",
+              "EXECUTION_CONTEXT"
+            ]
+          }
+        },
+        "required": [
+          "asset_refs",
+          "level"
+        ],
+        "additionalProperties": false
+      },
+      "AssetContextItem": {
+        "type": "object",
+        "properties": {
+          "asset_id": {
+            "$ref": "#/components/schemas/ID"
+          },
+          "resolved_version": {
+            "$ref": "#/components/schemas/ID"
+          },
+          "professional_content": {
+            "type": "object"
+          },
+          "execution_readiness": {
+            "type": "string",
+            "enum": [
+              "READY",
+              "NOT_READY",
+              "NOT_APPLICABLE"
+            ]
+          },
+          "usage_constraints": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 512
+            }
+          },
+          "related_refs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AssetRef"
+            }
+          }
+        },
+        "required": [
+          "asset_id",
+          "resolved_version",
+          "professional_content",
+          "execution_readiness",
+          "usage_constraints",
+          "related_refs"
+        ],
+        "additionalProperties": false
+      },
+      "AssetContextResponse": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AssetContextItem"
+            }
+          },
+          "context_receipt": {
+            "$ref": "#/components/schemas/ID"
+          }
+        },
+        "required": [
+          "items",
+          "context_receipt"
+        ],
+        "additionalProperties": false
+      },
+      "DiscoverServicesRequest": {
+        "type": "object",
+        "properties": {
+          "query": {
+            "type": "string",
+            "maxLength": 256
+          },
+          "channel": {
+            "type": "string",
+            "const": "INTERNAL_APPLICATION"
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100
+          },
+          "cursor": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 2048
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "channel"
+        ],
+        "additionalProperties": false
+      },
+      "ServiceContract": {
+        "type": "object",
+        "properties": {
+          "service_id": {
+            "$ref": "#/components/schemas/ID"
+          },
+          "service_version": {
+            "$ref": "#/components/schemas/ID"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 255
+          },
+          "service_kind": {
+            "type": "string",
+            "enum": [
+              "BASIC",
+              "SCENARIO"
+            ]
+          },
+          "channel": {
+            "type": "string",
+            "const": "INTERNAL_APPLICATION"
+          },
+          "input_schema": {
+            "type": "object"
+          },
+          "output_schema": {
+            "type": "object"
+          },
+          "contract_revision": {
+            "$ref": "#/components/schemas/ID"
+          }
+        },
+        "required": [
+          "service_id",
+          "service_version",
+          "name",
+          "service_kind",
+          "channel",
+          "input_schema",
+          "output_schema",
+          "contract_revision"
+        ],
+        "additionalProperties": false
+      },
+      "DiscoverServicesResponse": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ServiceContract"
+            }
+          },
+          "next_cursor": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 2048
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "items",
+          "next_cursor"
+        ],
+        "additionalProperties": false
+      },
+      "EvidenceResponse": {
+        "type": "object",
+        "properties": {
+          "execution_id": {
+            "$ref": "#/components/schemas/ID"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "SUCCESS",
+              "EMPTY",
+              "PARTIAL",
+              "FAILED"
+            ]
+          },
+          "actual_dependencies": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Dependency"
+            }
+          },
+          "source_references": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "calculation_basis": {
+            "type": "object"
+          },
+          "redactions": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 512
+            }
+          }
+        },
+        "required": [
+          "execution_id",
+          "status",
+          "actual_dependencies",
+          "source_references",
+          "calculation_basis",
+          "redactions"
+        ],
+        "additionalProperties": false
+      },
+      "EventSubject": {
+        "type": "object",
+        "properties": {
+          "tenant_id": {
+            "$ref": "#/components/schemas/TenantID"
+          },
+          "actor_user_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 64
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "client_id": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ID"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "tenant_id",
+          "actor_user_id",
+          "client_id"
+        ],
+        "additionalProperties": false
+      },
+      "AuditEvent": {
+        "type": "object",
+        "properties": {
+          "event_id": {
+            "$ref": "#/components/schemas/ID"
+          },
+          "event_type": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64
+          },
+          "occurred_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "producer": {
+            "type": "string",
+            "enum": [
+              "A",
+              "B",
+              "C",
+              "D",
+              "E",
+              "F",
+              "G"
+            ]
+          },
+          "subject": {
+            "$ref": "#/components/schemas/EventSubject"
+          },
+          "resource": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 32
+              },
+              "id": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 64
+              }
+            },
+            "required": [
+              "type",
+              "id"
+            ],
+            "additionalProperties": false
+          },
+          "action": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64
+          },
+          "outcome": {
+            "type": "string",
+            "enum": [
+              "success",
+              "accepted",
+              "denied",
+              "failed",
+              "partial",
+              "canceled"
+            ]
+          },
+          "correlation": {
+            "type": "object",
+            "properties": {
+              "turn_id": {
+                "anyOf": [
+                  {
+                    "$ref": "#/components/schemas/ID"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "execution_id": {
+                "anyOf": [
+                  {
+                    "$ref": "#/components/schemas/ID"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "service_execution_id": {
+                "anyOf": [
+                  {
+                    "$ref": "#/components/schemas/ID"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            },
+            "required": [],
+            "additionalProperties": false
+          },
+          "evidence_ref": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/EvidenceRef"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "event_id",
+          "event_type",
+          "occurred_at",
+          "producer",
+          "subject",
+          "resource",
+          "action",
+          "outcome",
+          "correlation"
+        ],
+        "additionalProperties": false
+      },
+      "EventReceipt": {
+        "type": "object",
+        "properties": {
+          "event_id": {
+            "$ref": "#/components/schemas/ID"
+          },
+          "receipt_status": {
+            "type": "string",
+            "enum": [
+              "ACCEPTED",
+              "DUPLICATE"
+            ]
+          }
+        },
+        "required": [
+          "event_id",
+          "receipt_status"
+        ],
+        "additionalProperties": false
+      },
+      "OperationsResponse": {
+        "type": "object",
+        "properties": {
+          "sampled_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "modules": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "module": {
+                  "type": "string",
+                  "enum": [
+                    "A",
+                    "B",
+                    "C",
+                    "D",
+                    "E"
+                  ]
+                },
+                "status": {
+                  "type": "string",
+                  "enum": [
+                    "UP",
+                    "DEGRADED",
+                    "DOWN",
+                    "UNKNOWN"
+                  ]
+                },
+                "summary": {
+                  "type": "string",
+                  "maxLength": 512
+                }
+              },
+              "required": [
+                "module",
+                "status",
+                "summary"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "integration_capabilities": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "enum": [
+                    "REFERENCE_VALIDATION",
+                    "ATOMIC_IDEMPOTENCY_LOOKUP",
+                    "EXECUTION_CANCEL",
+                    "SERVICE_EXECUTION_CANCEL",
+                    "RESOURCE_PROJECTION"
+                  ]
+                },
+                "enabled": {
+                  "type": "boolean"
+                },
+                "reason": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 512
+                }
+              },
+              "required": [
+                "name",
+                "enabled"
+              ],
+              "additionalProperties": false
+            }
+          }
+        },
+        "required": [
+          "sampled_at",
+          "modules"
+        ],
+        "additionalProperties": false
+      },
+      "UsageEvent": {
+        "type": "object",
+        "properties": {
+          "event_id": {
+            "$ref": "#/components/schemas/ID"
+          },
+          "occurred_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "producer": {
+            "type": "string",
+            "enum": [
+              "A",
+              "B",
+              "C",
+              "D",
+              "E",
+              "F"
+            ]
+          },
+          "tenant_id": {
+            "$ref": "#/components/schemas/TenantID"
+          },
+          "application_id": {
+            "$ref": "#/components/schemas/ID"
+          },
+          "capability": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64
+          },
+          "count": {
+            "type": "number",
+            "minimum": 0
+          },
+          "unit": {
+            "type": "string",
+            "enum": [
+              "CALL",
+              "TOKEN",
+              "MILLISECOND"
+            ]
+          },
+          "execution_id": {
+            "$ref": "#/components/schemas/ID"
+          }
+        },
+        "required": [
+          "event_id",
+          "occurred_at",
+          "producer",
+          "tenant_id",
+          "capability",
+          "count",
+          "unit"
+        ],
+        "additionalProperties": false
+      },
+      "ConfigRequest": {
+        "type": "object",
+        "properties": {
+          "keys": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            },
+            "minItems": 1,
+            "maxItems": 50,
+            "uniqueItems": true
+          },
+          "known_revision": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ID"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "keys"
+        ],
+        "additionalProperties": false
+      },
+      "ConfigResponse": {
+        "type": "object",
+        "properties": {
+          "revision": {
+            "$ref": "#/components/schemas/ID"
+          },
+          "values": {
+            "$ref": "#/components/schemas/ParameterMap"
+          }
+        },
+        "required": [
+          "revision",
+          "values"
+        ],
+        "additionalProperties": false
+      },
+      "PinnedReference": {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": [
+              "ASSET",
+              "SERVICE"
+            ]
+          },
+          "id": {
+            "$ref": "#/components/schemas/ID"
+          },
+          "version": {
+            "$ref": "#/components/schemas/ID"
+          },
+          "contract_revision": {
+            "$ref": "#/components/schemas/ID"
+          }
+        },
+        "required": [
+          "kind",
+          "id",
+          "version"
+        ],
+        "additionalProperties": false
+      },
+      "ReferenceValidationRequest": {
+        "type": "object",
+        "properties": {
+          "references": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PinnedReference"
+            },
+            "minItems": 1,
+            "maxItems": 100
+          },
+          "draft_revision": {
+            "$ref": "#/components/schemas/ID"
+          },
+          "purpose": {
+            "type": "string",
+            "const": "APPLICATION_RELEASE"
+          }
+        },
+        "required": [
+          "references",
+          "draft_revision",
+          "purpose"
+        ],
+        "additionalProperties": false
+      },
+      "ReferenceCheck": {
+        "type": "object",
+        "properties": {
+          "reference": {
+            "$ref": "#/components/schemas/PinnedReference"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "VALID",
+              "DENIED",
+              "NOT_READY",
+              "VERSION_INCOMPATIBLE",
+              "UNAVAILABLE"
+            ]
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512
+          }
+        },
+        "required": [
+          "reference",
+          "status"
+        ],
+        "additionalProperties": false
+      },
+      "ReferenceValidationResponse": {
+        "type": "object",
+        "properties": {
+          "validation_id": {
+            "$ref": "#/components/schemas/ID"
+          },
+          "draft_revision": {
+            "$ref": "#/components/schemas/ID"
+          },
+          "valid_until": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "PASS",
+              "BLOCKED"
+            ]
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReferenceCheck"
+            }
+          }
+        },
+        "required": [
+          "validation_id",
+          "draft_revision",
+          "valid_until",
+          "status",
+          "items"
+        ],
+        "additionalProperties": false,
+        "description": "Receipt binds caller/tenant/references/revisions server-side; not a grant or a reservation. PASS requires every item VALID; validate again at execution.",
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "status": {
+                  "const": "PASS"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "items": {
+                  "items": {
+                    "properties": {
+                      "status": {
+                        "const": "VALID"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ]
+      },
+      "ExecutionLookupRequest": {
+        "type": "object",
+        "properties": {
+          "operation": {
+            "type": "string",
+            "enum": [
+              "DIRECT_EXECUTION",
+              "SERVICE_EXECUTION"
+            ]
+          },
+          "idempotency_key": {
+            "$ref": "#/components/schemas/ID"
+          },
+          "request_digest": {
+            "type": "string",
+            "pattern": "^sha256:[0-9a-f]{64}$"
+          }
+        },
+        "required": [
+          "operation",
+          "idempotency_key",
+          "request_digest"
+        ],
+        "additionalProperties": false
+      },
+      "ExecutionLookupResponse": {
+        "type": "object",
+        "properties": {
+          "operation": {
+            "type": "string",
+            "enum": [
+              "DIRECT_EXECUTION",
+              "SERVICE_EXECUTION"
+            ]
+          },
+          "state": {
+            "type": "string",
+            "enum": [
+              "NOT_FOUND",
+              "IN_PROGRESS",
+              "COMPLETED",
+              "FAILED",
+              "CANCELED",
+              "UNKNOWN"
+            ]
+          },
+          "execution_id": {
+            "$ref": "#/components/schemas/ID"
+          },
+          "service_execution_id": {
+            "$ref": "#/components/schemas/ID"
+          },
+          "execution_result": {
+            "$ref": "#/components/schemas/ExecutionResponse"
+          },
+          "service_result": {
+            "$ref": "#/components/schemas/ServiceExecutionResponse"
+          },
+          "safe_to_resubmit_same_key": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "operation",
+          "state",
+          "safe_to_resubmit_same_key"
+        ],
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "state": {
+                  "enum": [
+                    "COMPLETED",
+                    "FAILED"
+                  ]
+                },
+                "operation": {
+                  "const": "DIRECT_EXECUTION"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "execution_id",
+                "execution_result"
+              ]
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "state": {
+                  "enum": [
+                    "COMPLETED",
+                    "FAILED"
+                  ]
+                },
+                "operation": {
+                  "const": "SERVICE_EXECUTION"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "service_execution_id",
+                "service_result"
+              ]
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "state": {
+                  "enum": [
+                    "IN_PROGRESS",
+                    "COMPLETED",
+                    "FAILED",
+                    "CANCELED",
+                    "UNKNOWN"
+                  ]
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "safe_to_resubmit_same_key": {
+                  "const": false
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "operation": {
+                  "const": "DIRECT_EXECUTION"
+                },
+                "state": {
+                  "const": "FAILED"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "execution_result": {
+                  "properties": {
+                    "status": {
+                      "const": "FAILED"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "operation": {
+                  "const": "DIRECT_EXECUTION"
+                },
+                "state": {
+                  "const": "COMPLETED"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "execution_result": {
+                  "properties": {
+                    "status": {
+                      "enum": [
+                        "SUCCESS",
+                        "EMPTY",
+                        "PARTIAL"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "operation": {
+                  "const": "SERVICE_EXECUTION"
+                },
+                "state": {
+                  "const": "FAILED"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "service_result": {
+                  "properties": {
+                    "status": {
+                      "const": "FAILED"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "operation": {
+                  "const": "SERVICE_EXECUTION"
+                },
+                "state": {
+                  "const": "COMPLETED"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "service_result": {
+                  "properties": {
+                    "status": {
+                      "enum": [
+                        "SUCCESS",
+                        "EMPTY",
+                        "PARTIAL"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "description": "NOT_FOUND alone never proves a request was not executed. True resubmit flag requires durable atomic idempotency admission and current authorization. terminal responses must match state and operation."
+      },
+      "CancelRequest": {
+        "type": "object",
+        "properties": {
+          "reason": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          }
+        },
+        "required": [
+          "reason"
+        ],
+        "additionalProperties": false
+      },
+      "CancelResponse": {
+        "type": "object",
+        "properties": {
+          "cancel_request_id": {
+            "$ref": "#/components/schemas/ID"
+          },
+          "target_id": {
+            "$ref": "#/components/schemas/ID"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "ACCEPTED",
+              "CANCELED",
+              "ALREADY_TERMINAL",
+              "NOT_SUPPORTED"
+            ]
+          },
+          "message": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512
+          }
+        },
+        "required": [
+          "cancel_request_id",
+          "target_id",
+          "status"
+        ],
+        "additionalProperties": false
+      },
+      "ResourceProjectionResponse": {
+        "type": "object",
+        "properties": {
+          "resource_id": {
+            "$ref": "#/components/schemas/ID"
+          },
+          "resolved_version": {
+            "$ref": "#/components/schemas/ID"
+          },
+          "display_name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 255
+          },
+          "projection": {
+            "type": "object",
+            "properties": {
+              "media_type": {
+                "type": "string",
+                "enum": [
+                  "text/plain",
+                  "text/markdown"
+                ]
+              },
+              "text": {
+                "type": "string",
+                "maxLength": 32000
+              },
+              "truncated": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "media_type",
+              "text",
+              "truncated"
+            ],
+            "additionalProperties": false
+          },
+          "source_references": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "source_id": {
+                  "$ref": "#/components/schemas/ID"
+                },
+                "locator": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 512
+                }
+              },
+              "required": [
+                "source_id"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "redactions": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 512
+            }
+          }
+        },
+        "required": [
+          "resource_id",
+          "resolved_version",
+          "display_name",
+          "projection",
+          "source_references",
+          "redactions"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "securitySchemes": {
+      "ServiceAuth": {
+        "type": "http",
+        "scheme": "bearer"
+      },
+      "Delegation": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-Delegation-Token"
+      }
+    }
+  }
+}

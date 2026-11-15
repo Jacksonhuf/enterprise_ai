@@ -1,0 +1,17 @@
+{
+  "resource_id": "document_demo",
+  "resolved_version": "v1",
+  "display_name": "库存管理制度",
+  "projection": {
+    "media_type": "text/plain",
+    "text": "已授权制度摘录（演示）。",
+    "truncated": true
+  },
+  "source_references": [
+    {
+      "source_id": "document_demo",
+      "locator": "page:3"
+    }
+  ],
+  "redactions": []
+}

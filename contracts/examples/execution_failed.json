@@ -1,0 +1,20 @@
+{
+  "execution_id": "exec_demo",
+  "status": "FAILED",
+  "result": null,
+  "actual_dependencies": [
+    {
+      "type": "ASSET",
+      "id": "asset_demo",
+      "version": "asset_version_demo"
+    }
+  ],
+  "evidence_ref": {
+    "execution_id": "exec_demo"
+  },
+  "error": {
+    "code": "AUTHORIZATION_DENIED",
+    "message": "Access denied",
+    "retryable": false
+  }
+}

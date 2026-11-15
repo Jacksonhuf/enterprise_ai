@@ -1,0 +1,15 @@
+{
+  "items": [
+    {
+      "asset_id": "asset_demo",
+      "resolved_version": "v1",
+      "professional_content": {
+        "definition": "演示口径"
+      },
+      "execution_readiness": "READY",
+      "usage_constraints": [],
+      "related_refs": []
+    }
+  ],
+  "context_receipt": "context_demo"
+}

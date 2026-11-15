@@ -1,0 +1,20 @@
+{
+  "capability_type": "BASIC_RULE",
+  "target": {
+    "asset_id": "rule_demo"
+  },
+  "payload": {
+    "inputs": {
+      "inventory": 10
+    }
+  },
+  "correlation_context": {
+    "turn_id": "turn_demo",
+    "application_release_id": "release_demo",
+    "assistant_message_id": "message_demo",
+    "tool_call_id": "tool_demo"
+  },
+  "preconditions": {
+    "context_receipt": "context_rule_demo"
+  }
+}

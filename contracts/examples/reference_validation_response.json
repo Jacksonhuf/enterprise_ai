@@ -1,0 +1,25 @@
+{
+  "validation_id": "validation_demo",
+  "draft_revision": "draft_3",
+  "valid_until": "2026-11-15T10:05:00Z",
+  "status": "PASS",
+  "items": [
+    {
+      "reference": {
+        "kind": "ASSET",
+        "id": "asset_demo",
+        "version": "v1"
+      },
+      "status": "VALID"
+    },
+    {
+      "reference": {
+        "kind": "SERVICE",
+        "id": "svc_demo",
+        "version": "v1",
+        "contract_revision": "contract_demo"
+      },
+      "status": "VALID"
+    }
+  ]
+}

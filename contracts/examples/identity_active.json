@@ -1,0 +1,18 @@
+{
+  "active": true,
+  "principal_context": {
+    "tenant_id": "42",
+    "actor_user_id": "user_demo",
+    "client": {
+      "type": "APPLICATION",
+      "id": "app_demo"
+    },
+    "mode": "ON_BEHALF_OF_USER",
+    "delegation_id": "delegation_demo",
+    "application_release_id": "release_demo",
+    "turn_id": "turn_demo",
+    "audience": "cognitive-business",
+    "expires_at": "2026-11-15T10:05:00Z",
+    "application_id": "app_demo"
+  }
+}
