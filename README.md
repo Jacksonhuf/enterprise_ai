@@ -108,3 +108,29 @@ SQLite 适配需启用 CGO 并安装 C 编译器；默认 JSON 适配不依赖 S
 恢复保证仅覆盖已经持久化完成的消息。进行中执行恢复、A–E发送方发件箱、生产身份与分布式部署仍待整合。A–E原始证据由业务服务负责保存；Mock重启后仍可能无法读取旧执行证据。
 
 接口校验需要日期时间格式依赖；校验器在缺少该依赖时会直接失败，避免静默跳过。对话输入上限按4000个Unicode码点检查，中文按字符计数。
+
+## 第五轮：PostgreSQL 与程序启动验证
+
+已增加可选 PostgreSQL 适配，复用仓库已有 pgx 驱动。连接串只从服务端环境变量读取，默认变量名为 `COGNARA_POSTGRES_DSN`，可用 `--postgres-dsn-env`选择变量名。启动命令：
+
+```bash
+cd backend/platform
+go run ./cmd/cognara-dev --demo --storage postgres
+```
+
+应用需要在目标schema创建/读写`cognara_fg_state`表；启动迁移串行化，已有状态不重新播种。更新使用事务和行锁；取消和超时传递到数据库。`GET /health`用于进程存活检查，`GET /ready`检查持久化状态可读且版本受支持，失败返回503；两者不代表所有外部模型与A–E服务都健康。
+
+当前 PostgreSQL 表使用JSONB保存现有聚合状态，以保持接口与旧数据结构兼容。这是事务与连接的验证适配，不是最终归一化生产表设计、数据库RLS或分布式部署方案。仍使用本地验证身份，需要显式`--demo`。
+
+### 真实数据库与启动测试
+
+将`COGNARA_TEST_POSTGRES_DSN`设为专用测试数据库的postgres URL后：
+
+```bash
+make check-postgres
+make verify-postgres
+```
+
+数据库集成测试创建并清理独立临时schema；程序启动验证会在专用测试库中保存验证应用与消息。不要将测试变量指向业务数据库。GitHub Actions使用独立PostgreSQL 15服务，并强制要求真实数据库测试，避免未配置时静默跳过。
+
+`make verify-runtime`会编译开发程序，并验证JSON和SQLite模式的启动、业务调用、退出、重启及重放。三个模式均已进行真实进程验证，记录见[第五轮测试报告](docs/development/test-report-v0.5.md)。

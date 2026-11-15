@@ -143,7 +143,7 @@ func (s *Server) createGrant(w http.ResponseWriter, r *http.Request) error {
 		return fail(400, "INVALID_REQUEST", "资源或操作不在当前支持的授权集合内")
 	}
 	g := app.Grant{ID: app.ID("grant"), TenantID: p.TenantID, SubjectType: req.SubjectType, SubjectID: req.SubjectID, ResourceType: req.ResourceType, ResourceID: req.ResourceID, Action: req.Action, Scope: req.Scope, Active: true}
-	if e := s.Store.Update(func(st *app.State) error {
+	if e := s.Store.UpdateContext(r.Context(), func(st *app.State) error {
 		st.Grants = append(st.Grants, g)
 		appendAudit(st, p, "authorization.grant", g.ResourceID, "success", "", requestID(r))
 		return nil
@@ -158,7 +158,7 @@ func (s *Server) revokeGrant(w http.ResponseWriter, r *http.Request) error {
 	if e := s.requireAdmin(p); e != nil {
 		return e
 	}
-	e := s.Store.Update(func(st *app.State) error {
+	e := s.Store.UpdateContext(r.Context(), func(st *app.State) error {
 		for i, g := range st.Grants {
 			if g.ID == r.PathValue("id") && g.TenantID == p.TenantID {
 				st.Grants[i].Active = false
@@ -227,7 +227,7 @@ func (s *Server) saveSettings(w http.ResponseWriter, r *http.Request) error {
 	if sec != "public" {
 		key = p.UserID + ":" + sec
 	}
-	if e := s.Store.Update(func(st *app.State) error { st.Settings[key] = b; return nil }); e != nil {
+	if e := s.Store.UpdateContext(r.Context(), func(st *app.State) error { st.Settings[key] = b; return nil }); e != nil {
 		return e
 	}
 	s.event(p, "settings.update", sec, "success", "")

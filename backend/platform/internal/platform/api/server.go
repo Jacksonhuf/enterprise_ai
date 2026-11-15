@@ -192,6 +192,15 @@ func (s *Server) Handler() http.Handler {
 	s.running = map[string]context.CancelFunc{}
 	m := http.NewServeMux()
 	add := func(p string, h Handler) { m.HandleFunc(p, s.authenticated(h)) }
+	m.HandleFunc("GET /ready", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json; charset=utf-8")
+		if s.Store.Check() != nil {
+			w.WriteHeader(503)
+			Write(w, map[string]any{"status": "DOWN", "persistence": "DOWN", "mode": "validation"})
+			return
+		}
+		Write(w, map[string]any{"status": "UP", "persistence": "UP", "mode": "validation"})
+	})
 	m.HandleFunc("GET /health", func(w http.ResponseWriter, r *http.Request) {
 		Write(w, map[string]any{"status": "UP", "mode": "validation", "model_execution": s.configuredModels()})
 	})
@@ -317,7 +326,7 @@ func (s *Server) createApp(w http.ResponseWriter, r *http.Request) error {
 		return fail(400, "INVALID_REQUEST", "创建方式无效")
 	}
 	a := app.App{ID: app.ID("app"), AgentID: app.ID("agent"), TenantID: p.TenantID, OwnerID: p.UserID, Draft: cfg, Revision: app.ID("draft"), Releases: []app.Release{}, UpdatedAt: app.Now()}
-	if e := s.Store.Update(func(st *app.State) error { st.Apps[a.ID] = a; return nil }); e != nil {
+	if e := s.Store.UpdateContext(r.Context(), func(st *app.State) error { st.Apps[a.ID] = a; return nil }); e != nil {
 		return e
 	}
 	s.event(p, "application.create", a.ID, "success", "")
@@ -360,7 +369,7 @@ func (s *Server) saveDraft(w http.ResponseWriter, r *http.Request) error {
 		return e
 	}
 	var out app.App
-	e := s.Store.Update(func(st *app.State) error {
+	e := s.Store.UpdateContext(r.Context(), func(st *app.State) error {
 		a := st.Apps[r.PathValue("app_id")]
 		if a.Revision != req.Expected {
 			return fail(409, "VERSION_INCOMPATIBLE", "草稿已被更新，请刷新后比较")
@@ -448,7 +457,7 @@ func (s *Server) checkRelease(w http.ResponseWriter, r *http.Request) error {
 		return nil
 	}
 	check := app.Check{ID: app.ID("check"), AppID: a.ID, Revision: a.Revision, UserID: p.UserID, ExpiresAt: time.Now().Add(5 * time.Minute), ValidationID: v.ID}
-	if e = s.Store.Update(func(st *app.State) error { st.Checks[check.ID] = check; return nil }); e != nil {
+	if e = s.Store.UpdateContext(r.Context(), func(st *app.State) error { st.Checks[check.ID] = check; return nil }); e != nil {
 		return e
 	}
 	Write(w, map[string]any{"check_id": check.ID, "draft_revision": check.Revision, "valid_until": check.ExpiresAt, "status": "PASS", "issues": []string{}})
@@ -469,7 +478,7 @@ func (s *Server) release(w http.ResponseWriter, r *http.Request) error {
 		return e
 	}
 	var out app.Release
-	e := s.Store.Update(func(st *app.State) error {
+	e := s.Store.UpdateContext(r.Context(), func(st *app.State) error {
 		a := st.Apps[r.PathValue("app_id")]
 		c, ok := st.Checks[req.CheckID]
 		if !ok || c.AppID != a.ID || c.UserID != p.UserID || c.Revision != a.Revision || req.Revision != a.Revision || time.Now().After(c.ExpiresAt) {
@@ -522,7 +531,7 @@ func (s *Server) createSession(w http.ResponseWriter, r *http.Request) error {
 		req.Title = "新的补货分析"
 	}
 	sess := app.Session{ID: app.ID("session"), AppID: a.ID, TenantID: p.TenantID, OwnerID: p.UserID, Title: req.Title, Messages: []app.Message{}}
-	if e = s.Store.Update(func(st *app.State) error { st.Sessions[sess.ID] = sess; return nil }); e != nil {
+	if e = s.Store.UpdateContext(r.Context(), func(st *app.State) error { st.Sessions[sess.ID] = sess; return nil }); e != nil {
 		return e
 	}
 	Write(w, sess)
@@ -754,7 +763,7 @@ func (s *Server) InternalHandler() http.Handler {
 			sum := sha256.Sum256(b)
 			digest := hex.EncodeToString(sum[:])
 			receipt := "ACCEPTED"
-			e := s.Store.Update(func(st *app.State) error {
+			e := s.Store.UpdateContext(r.Context(), func(st *app.State) error {
 				k := "42:" + kind + ":" + producer + ":" + id
 				if old, ok := st.Receipts[k]; ok {
 					if old != digest {

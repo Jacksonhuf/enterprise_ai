@@ -3,6 +3,24 @@ on: [push, pull_request]
 jobs:
   validation:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: cognara_test
+          POSTGRES_PASSWORD: validation-only-password
+          POSTGRES_DB: cognara_validation
+        ports:
+          - '127.0.0.1:5432:5432'
+        options: >-
+          --health-cmd "pg_isready -U cognara_test -d cognara_validation"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      COGNARA_TEST_POSTGRES_DSN: postgres://cognara_test:validation-only-password@127.0.0.1:5432/cognara_validation?sslmode=disable
+      COGNARA_POSTGRES_DSN: postgres://cognara_test:validation-only-password@127.0.0.1:5432/cognara_validation?sslmode=disable
+      COGNARA_REQUIRE_POSTGRES_TESTS: '1'
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
@@ -21,5 +39,9 @@ jobs:
       - run: python -m pip install 'jsonschema[format-nongpl]==4.26.0'
       - run: COGNARA_CONTRACT_CAPTURE=/tmp/cognara-contract.jsonl go test -C backend/platform -tags=nomsgpack -p 1 -race -count=1 ./internal/platform/... ./cmd/cognara-dev
       - run: python scripts/validate-contract-capture.py /tmp/cognara-contract.jsonl
+      - run: go build -C backend/platform -tags=nomsgpack -o /tmp/cognara-dev ./cmd/cognara-dev
+      - run: python scripts/verify-runtime.py --binary /tmp/cognara-dev --storage json
+      - run: python scripts/verify-runtime.py --binary /tmp/cognara-dev --storage sqlite
+      - run: python scripts/verify-runtime.py --binary /tmp/cognara-dev --storage postgres
       - run: npm ci && npm run test:cognara && npx vue-tsc --noEmit -p tsconfig.cognara.json && npm run build
         working-directory: frontend

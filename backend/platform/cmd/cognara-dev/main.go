@@ -24,7 +24,8 @@ import (
 func main() {
 	port := flag.Int("port", 8080, "loopback HTTP port")
 	mockPort := flag.Int("mock-port", 8081, "A-E contract fixture port")
-	storage := flag.String("storage", "json", "json or sqlite local persistence")
+	storage := flag.String("storage", "json", "json, sqlite or postgres persistence")
+	dsnEnv := flag.String("postgres-dsn-env", "COGNARA_POSTGRES_DSN", "environment variable containing the PostgreSQL DSN")
 	data := flag.String("data", ".devdata/state.json", "local F/G persistence path")
 	modelConfig := flag.String("model-config", "", "non-secret model registry JSON; credentials are environment references")
 	cognitiveURL := flag.String("cognitive-url", "", "external A-E base URL; empty starts the local fixture")
@@ -40,6 +41,8 @@ func main() {
 		store, e = app.Open(*data)
 	case "sqlite":
 		store, e = app.OpenSQLite(*data)
+	case "postgres":
+		store, e = app.OpenPostgres(os.Getenv(*dsnEnv))
 	default:
 		log.Fatal("unsupported storage adapter")
 	}

@@ -110,7 +110,7 @@ func (s *Server) updateException(w http.ResponseWriter, r *http.Request) error {
 		return fail(400, "INVALID_REQUEST", "异常状态参数无效")
 	}
 	var out map[string]any
-	e := s.Store.Update(func(st *app.State) error {
+	e := s.Store.UpdateContext(r.Context(), func(st *app.State) error {
 		for i, item := range st.Exceptions {
 			if item["id"] != r.PathValue("id") || item["tenant_id"] != p.TenantID {
 				continue

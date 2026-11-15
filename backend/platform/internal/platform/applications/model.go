@@ -1,6 +1,7 @@
 package applications
 
 import (
+	"context"
 	"crypto/rand"
 	"database/sql"
 	"encoding/hex"
@@ -141,10 +142,11 @@ type State struct {
 	Exceptions []map[string]any           `json:"exceptions"`
 }
 type Store struct {
-	db    *sql.DB
-	mu    sync.Mutex
-	path  string
-	state State
+	dialect string
+	db      *sql.DB
+	mu      sync.Mutex
+	path    string
+	state   State
 }
 
 func Open(path string) (*Store, error) {
@@ -162,21 +164,22 @@ func Open(path string) (*Store, error) {
 	}
 	return s, nil
 }
-func (s *Store) init() {
-	if s.state.Apps == nil {
-		s.state.Apps = map[string]App{}
+func (s *Store) init() { initializeState(&s.state) }
+func initializeState(state *State) {
+	if state.Apps == nil {
+		state.Apps = map[string]App{}
 	}
-	if s.state.Sessions == nil {
-		s.state.Sessions = map[string]Session{}
+	if state.Sessions == nil {
+		state.Sessions = map[string]Session{}
 	}
-	if s.state.Checks == nil {
-		s.state.Checks = map[string]Check{}
+	if state.Checks == nil {
+		state.Checks = map[string]Check{}
 	}
-	if s.state.Settings == nil {
-		s.state.Settings = map[string]json.RawMessage{}
+	if state.Settings == nil {
+		state.Settings = map[string]json.RawMessage{}
 	}
-	if s.state.Receipts == nil {
-		s.state.Receipts = map[string]string{}
+	if state.Receipts == nil {
+		state.Receipts = map[string]string{}
 	}
 }
 func clone(v State) State {
@@ -199,14 +202,21 @@ func (s *Store) Read() State {
 }
 
 // A mutation commits an isolated copy only after durable atomic replacement succeeds.
-func (s *Store) Update(fn func(*State) error) error {
+func (s *Store) Update(fn func(*State) error) error { return s.UpdateContext(context.Background(), fn) }
+func (s *Store) UpdateContext(ctx context.Context, fn func(*State) error) error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
+	if err := ctx.Err(); err != nil {
+		return err
+	}
 	if s.db != nil {
-		return s.updateSQL(fn)
+		return s.updateSQLContext(ctx, fn)
 	}
 	next := clone(s.state)
 	if err := fn(&next); err != nil {
+		return err
+	}
+	if err := ctx.Err(); err != nil {
 		return err
 	}
 	if s.path != "" {

@@ -77,3 +77,13 @@ SSE为本轮开发入口的消息协议；还不是对全部WeKnora原流事件�
 消息响应新增可选字段：`resource_uses: [{type,id,action}]`、`authorization_profile: number`、`content_redacted: boolean`。原会话及重放路由与参数保持不变。脱敏消息不包含result、execution_id或资源消费列表；业务资源关联由服务端填写。
 
 未承诺：进行中执行的跨进程恢复、A–E证据持久化及发送方发件箱、生产SSO/PostgreSQL/多节点、全量页面视觉验收。当前完成的是F/G接收与展示侧的可靠性验证。
+
+## 第五轮更新：PostgreSQL 与运行验收
+
+已通过现有pgx驱动增加PostgreSQL JSONB聚合存储，串行化启动迁移，行锁保护跨连接状态更新，显式拒绝未知版本并保留原记录。数据库读写设有超时；请求取消传递到数据库事务。既有JSON/SQLite接口保持，现有数据不会自动迁移或重置。
+
+新增`GET /ready`，持久化可读且版本可识别时返回`{status:"UP", persistence:"UP", mode:"validation"}`，失败503并返回DOWN；`/health`继续为进程存活，不承诺所有外部依赖可用。主程序新增`--storage postgres`及`--postgres-dsn-env`，连接串来自环境变量，不放入命令行参数。
+
+39项Go测试已在真实PostgreSQL下全部执行，包含两个API宿主共享权限、事务回滚/取消、启动竞争和恢复。编译主程序的JSON/SQLite/PostgreSQL启动、业务调用、正常退出、重启与重放均通过；CI加入独立数据库服务，缺少真实数据库配置时强制失败。
+
+上文“PostgreSQL尚未接入”描述旧轮次，现已有事务验证适配。仍待实现归一化生产表、数据库级租户隔离、正式迁移、共享身份/签名与分布式运行，以及其他已列出的真实服务和视觉验收。
