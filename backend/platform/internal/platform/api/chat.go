@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	agentruntime "github.com/Tencent/WeKnora/internal/platform/adapters/runtime"
 	app "github.com/Tencent/WeKnora/internal/platform/applications"
 	"net/http"
 	"regexp"
@@ -82,7 +83,17 @@ func (s *Server) chat(w http.ResponseWriter, r *http.Request) error {
 	}
 	var result json.RawMessage
 	var remoteErr error
-	if order == "" || (quantity == 0 && len(match) == 0) {
+	if release.Config.ModelPrompt.ModelID != "validation-only" {
+		engine := &agentruntime.Engine{Models: s.Models, Client: s.Client, Authorize: s.CanResource}
+		run, err := engine.Run(ctx, agentruntime.Request{Principal: p, Release: release, Session: session, MessageID: answer.ID, Query: req.Query})
+		if err != nil {
+			return fail(503, "CAPABILITY_UNAVAILABLE", "模型或受控工具执行未成功，未生成业务结论")
+		}
+		answer.Content = run.Content
+		answer.Result = run.ServiceResult
+		answer.ExecutionID = run.ExecutionID
+		result = run.ServiceResult
+	} else if order == "" || (quantity == 0 && len(match) == 0) {
 		answer.Content = "请明确订单与目标数量，例如：SO1002需求增加到350后，有多少物料缺口？当前验证只计算需求、库存与原始缺口，不生成交期承诺。"
 	} else if order != "SO1002" || quantity < 1 || quantity > 100000 {
 		answer.Content = "当前验证集只支持SO1002，目标数量必须为1至100000的正整数。本次未执行计算。"

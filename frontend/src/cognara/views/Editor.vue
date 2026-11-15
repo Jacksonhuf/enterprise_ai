@@ -41,12 +41,7 @@
           ><t-form-item label="主模型" required-mark
             ><t-select
               v-model="config.model_prompt.model_id"
-              :options="[
-                {
-                  label: '验证运行 · 未启用模型解释',
-                  value: 'validation-only',
-                },
-              ]" /></t-form-item
+              :options="modelOptions" /></t-form-item
           ><t-form-item label="提示词" required-mark
             ><t-textarea
               v-model="config.model_prompt.prompt"
@@ -54,7 +49,7 @@
               :maxlength="16000" /></t-form-item
           ><t-alert
             theme="info"
-            message="当前服务执行使用已核算的场景数据。接入真实模型前，不将此验证运行标记为大模型推理。" /></template
+            message="验证模式不调用模型；选择已配置模型后使用原有Agent引擎，业务数值仍由受控服务计算。" /></template
         ><template v-if="tab === 'refs'"
           ><t-form-item label="认知资产"
             ><div class="reference-box">
@@ -68,8 +63,9 @@
                       (x) => x.asset_id !== a.asset_id,
                     )
                 "
-                >{{ assetName(a.asset_id) }}</t-tag
-              ><t-button variant="outline" @click="openAssets"
+                >{{ assetName(a.asset_id) }}</t-tag><t-button
+                variant="outline"
+                @click="openAssets"
                 >选择资产</t-button
               >
             </div></t-form-item
@@ -200,6 +196,9 @@ import { useRoute, useRouter, onBeforeRouteLeave } from "vue-router";
 import { MessagePlugin } from "tdesign-vue-next";
 import { api, put, post, prefix } from "../api";
 import type { Application, Config, Asset, Service } from "../types";
+const modelOptions = ref([
+  { label: "确定性验证 · 不调用模型", value: "validation-only" },
+]);
 const route = useRoute(),
   router = useRouter(),
   application = ref<Application | null>(null),
@@ -252,6 +251,13 @@ function assetName(id: string) {
 }
 onMounted(async () => {
   try {
+    modelOptions.value = (await api(prefix + "/models")).items.map(
+      (m: any) => ({
+        label: m.name,
+        value: m.id,
+        disabled: m.id !== "validation-only" && !m.credential_configured,
+      }),
+    );
     application.value = await api<Application>(
       prefix + `/apps/${route.params.appId}`,
     );

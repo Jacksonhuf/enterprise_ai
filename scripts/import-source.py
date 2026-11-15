@@ -27,7 +27,7 @@ def main():
     if STAMP.exists():
         if STAMP.read_text().strip() != REVISION:
             raise SystemExit('Source revision mismatch. Review migration before importing another revision.')
-        if (ROOT/'backend/platform/internal/agent/act.go').exists() and (ROOT/'frontend/src/components/EmptyState.vue').exists():
+        if (ROOT/'backend/platform/internal/agent/act.go').exists() and (ROOT/'frontend/src/components/EmptyState.vue').exists() and (ROOT/'backend/platform/website-docs').is_dir():
             print('Pinned upstream source is already available.')
             return
     with tempfile.TemporaryDirectory(prefix='cognara-source-') as temp:
@@ -42,7 +42,7 @@ def main():
         copy_missing(checkout/'frontend', ROOT/'frontend')
         copy_missing(checkout/'frontend/src/main.ts', ROOT/'frontend/src/upstream-main.ts')
         backend=ROOT/'backend/platform'
-        for name in ['cmd','internal','config','migrations','third_party','licenses','testdata','client','go.mod','go.sum','LICENSE','THIRD_PARTY_NOTICES.md','VERSION']:
+        for name in ['docs','website-docs','cmd','internal','config','migrations','third_party','licenses','testdata','client','go.mod','go.sum','LICENSE','THIRD_PARTY_NOTICES.md','VERSION']:
             copy_missing(checkout/name, backend/name)
         for name in ['client','proto']:
             copy_missing(checkout/'docreader'/name, backend/'docreader'/name)

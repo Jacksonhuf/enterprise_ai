@@ -2,6 +2,7 @@ package applications
 
 import (
 	"crypto/rand"
+	"database/sql"
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
@@ -131,6 +132,7 @@ type State struct {
 	Exceptions []map[string]any           `json:"exceptions"`
 }
 type Store struct {
+	db    *sql.DB
 	mu    sync.Mutex
 	path  string
 	state State
@@ -174,12 +176,26 @@ func clone(v State) State {
 	_ = json.Unmarshal(b, &out)
 	return out
 }
-func (s *Store) Read() State { s.mu.Lock(); defer s.mu.Unlock(); return clone(s.state) }
+func (s *Store) Read() State {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	if s.db != nil {
+		st, err := s.readSQL()
+		if err != nil {
+			return State{}
+		}
+		return st
+	}
+	return clone(s.state)
+}
 
 // A mutation commits an isolated copy only after durable atomic replacement succeeds.
 func (s *Store) Update(fn func(*State) error) error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
+	if s.db != nil {
+		return s.updateSQL(fn)
+	}
 	next := clone(s.state)
 	if err := fn(&next); err != nil {
 		return err

@@ -6,5 +6,11 @@
     "src/cognara/**/*.vue",
     "src/main.ts"
   ],
-  "compilerOptions": { "noUnusedLocals": false, "noUnusedParameters": false }
+  "compilerOptions": {
+    "noUnusedLocals": false,
+    "noUnusedParameters": false
+  },
+  "exclude": [
+    "src/cognara/**/*.test.ts"
+  ]
 }

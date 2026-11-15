@@ -11,5 +11,5 @@ dev-ui: bootstrap
 	cd frontend && npm ci && npm run dev
 
 check: bootstrap
-	cd backend/platform && $(GO) test -race ./internal/platform/... ./cmd/cognara-dev
-	cd frontend && npx vue-tsc --noEmit -p tsconfig.cognara.json && npm run build
+	cd backend/platform && GOGC=30 GOMAXPROCS=2 $(GO) test -tags=nomsgpack -p 1 -race ./internal/platform/... ./cmd/cognara-dev
+	cd frontend && npm run test:cognara && npx vue-tsc --noEmit -p tsconfig.cognara.json && npm run build

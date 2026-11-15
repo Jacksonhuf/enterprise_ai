@@ -62,8 +62,9 @@
           aria-label="账户菜单"
           :aria-expanded="accountOpen"
         >
-          <span class="avatar">{{ auth.user?.name?.slice(0, 1) || "人" }}</span
-          ><span v-if="!collapsed"
+          <span class="avatar">{{
+            auth.user?.name?.slice(0, 1) || "人"
+          }}</span><span v-if="!collapsed"
             ><strong>{{ auth.user?.name }}</strong
             ><small>演示企业 · {{ roleLabel }}</small></span
           >
@@ -82,7 +83,11 @@
     <section class="workspace">
       <div class="validation-banner">
         <span class="status-dot"></span>验证环境 · 合成数据 · 2026-04-02历史时点
-        <span class="banner-side">认知服务使用 Mock；模型解释未启用</span>
+        <span class="banner-side"
+          >业务数据为验证集；{{
+            auth.modelsConfigured ? "模型按应用发布配置运行" : "模型未配置"
+          }}</span
+        >
       </div>
       <main class="page-canvas"><router-view :key="route.fullPath" /></main>
     </section>

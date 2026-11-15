@@ -6,6 +6,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"errors"
+	agentruntime "github.com/Tencent/WeKnora/internal/platform/adapters/runtime"
 	app "github.com/Tencent/WeKnora/internal/platform/applications"
 	"github.com/Tencent/WeKnora/internal/platform/connectors/cognitive"
 	"github.com/Tencent/WeKnora/internal/platform/governance"
@@ -66,6 +67,7 @@ func Principal(r *http.Request) governance.Principal {
 
 type Handler func(http.ResponseWriter, *http.Request) error
 type Server struct {
+	Models       *agentruntime.Registry
 	Store        *app.Store
 	Client       *cognitive.Client
 	ServiceToken string
@@ -86,6 +88,10 @@ func (s *Server) authenticated(h Handler) http.HandlerFunc {
 		p, err := governance.DemoIdentity(strings.TrimPrefix(r.Header.Get("Authorization"), "Bearer "))
 		if err != nil {
 			ErrorResponse(w, fail(401, "AUTHENTICATION_REQUIRED", "请先选择验证账户登录"))
+			return
+		}
+		if err = s.Store.Check(); err != nil {
+			ErrorResponse(w, fail(503, "CAPABILITY_UNAVAILABLE", "持久化服务不可用"))
 			return
 		}
 		r = r.WithContext(context.WithValue(r.Context(), principalKey{}, p))
@@ -176,8 +182,11 @@ func (s *Server) Handler() http.Handler {
 	m := http.NewServeMux()
 	add := func(p string, h Handler) { m.HandleFunc(p, s.authenticated(h)) }
 	m.HandleFunc("GET /health", func(w http.ResponseWriter, r *http.Request) {
-		Write(w, map[string]any{"status": "UP", "mode": "validation", "model_execution": false})
+		Write(w, map[string]any{"status": "UP", "mode": "validation", "model_execution": s.configuredModels()})
 	})
+	add("GET /api/v1/cognitive/models", s.models)
+	add("POST /api/v1/cognitive/models/{id}/test", s.testModel)
+	add("GET /api/v1/cognitive/runtime-status", s.runtimeStatus)
 	add("GET /api/v1/cognitive/me", func(w http.ResponseWriter, r *http.Request) error { Write(w, Principal(r)); return nil })
 	add("GET /api/v1/cognitive/apps", s.listApps)
 	add("POST /api/v1/cognitive/apps", s.createApp)
@@ -375,6 +384,11 @@ func (s *Server) checkRelease(w http.ResponseWriter, r *http.Request) error {
 	}
 	if e = validateConfig(a.Draft); e != nil {
 		return e
+	}
+	if a.Draft.ModelPrompt.ModelID != "validation-only" {
+		if _, err := s.Models.Client(a.Draft.ModelPrompt.ModelID); err != nil {
+			return fail(409, "REFERENCE_NOT_READY", "模型配置或凭据不可用")
+		}
 	}
 	refs := []map[string]any{}
 	p.Purpose = "application_configuration"
@@ -642,6 +656,10 @@ func (s *Server) InternalHandler() http.Handler {
 		return func(w http.ResponseWriter, r *http.Request) {
 			if r.Header.Get("Authorization") != "Bearer "+s.ServiceToken {
 				ErrorResponse(w, fail(401, "AUTHENTICATION_REQUIRED", "服务凭据无效"))
+				return
+			}
+			if s.Store.Check() != nil {
+				ErrorResponse(w, fail(503, "CAPABILITY_UNAVAILABLE", "持久化服务不可用"))
 				return
 			}
 			h(w, r)

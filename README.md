@@ -10,7 +10,7 @@
 - Cognara 蓝色视觉主题、可折叠侧栏、左下账户、按角色显示入口。
 - 资产与服务授权目录；配置页的只读连接状态及个人非敏感偏好保存。
 
-**这是本地契约验证版本，尚不是完整产品。** A–E 使用独立 HTTP Mock；开发主程序采用确定性场景调度，不调用大模型，也尚未接入 WeKnora 生产 Agent/Session 引擎。上游主服务、前端组件与源码通过导入脚本保留在功能目录中，供后续逐步移植。不能把导入源码等同于所有功能已经上线。
+**这是本地契约验证版本，尚不是完整产品。** A–E 使用独立 HTTP Mock；开发主程序默认采用确定性场景调度；配置模型后，已接入 WeKnora ReAct Agent 引擎与原协议客户端。原生产 Session 服务、SSO与数据库服务尚未完成整合。上游主服务、前端组件与源码通过导入脚本保留在功能目录中，供后续逐步移植。不能把导入源码等同于所有功能已经上线。
 
 ## 启动
 
@@ -62,3 +62,29 @@ python scripts/validate-contract-capture.py /tmp/cognara-contract.jsonl
 `make check`检查本次新增模块和当前前端入口；不代表整个上游测试套件或原主服务集成均通过。详见 [开发状态](docs/development/implementation-status.md) 和 [来源与复用记录](docs/provenance/upstream.md)。
 
 上游参考文件不重复提交，`.gitignore`只跟踪产品扩展与固定依赖清单。若需要修改导入文件，应显式使用`git add -f 路径`将该文件纳入版本管理，并在来源记录中说明补丁。不要仅修改未跟踪的参考文件。
+
+## 第二轮：模型引擎与 SQLite
+
+已接入固定版本 WeKnora `AgentEngine` / `ToolRegistry` / OpenAI-compatible Chat Completions 客户端；不是另写一个模型循环。只注册当前发布允许的受控服务工具，不开放系统命令、任意URL、SQL或Python沙箱。
+
+模型配置示例见 `docs/development/models.example.json`。复制后填写自己的网关地址与模型名，密钥只设置在该配置引用的环境变量中；不要把密钥写进 JSON 或提交仓库。启动示例：
+
+```bash
+cd backend/platform
+go run ./cmd/cognara-dev --demo --model-config ../../docs/development/models.local.json
+```
+
+模型配置页可查看注册状态及测试连接。随后在应用配置中选择主模型、保存并重新发布。未配置时继续使用 `validation-only`。测试连接会发起一次真实模型请求；协议自动化测试使用本地模型响应夹具，不消耗外部模型额度。当前没有真实提供方凭据，尚未完成商业模型服务实测。
+
+可选 SQLite 存储（原 JSON 默认不变）：
+
+```bash
+cd backend/platform
+go run ./cmd/cognara-dev --demo --storage sqlite --data .devdata/state.db
+```
+
+SQLite 使用 WAL、即时事务与每次读取重新加载状态，支持独立连接间的授权/配置可见性及事务回滚。这是本地持久化适配，不代表 PostgreSQL、多租户生产身份或多节点部署已经完成。切换存储不会自动迁移原 JSON 文件；请保留旧文件并显式选择原适配器读取旧数据。
+
+受限内存环境的竞态检查采用 `-tags=nomsgpack -p 1`，关闭当前 JSON API 不使用的 Gin MessagePack 编解码，减少编译峰值内存。
+
+SQLite 适配需启用 CGO 并安装 C 编译器；默认 JSON 适配不依赖 SQLite 服务。完整验证记录见 [第二轮测试记录](docs/development/test-report-v0.2.md)。

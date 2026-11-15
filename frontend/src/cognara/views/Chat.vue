@@ -90,6 +90,8 @@
       />
       <div class="composer-bottom">
         <span class="meta">Enter发送 · Shift+Enter换行</span
+        ><t-button v-if="running" variant="outline" @click="stopReceiving"
+          >停止接收</t-button
         ><t-button
           theme="primary"
           :loading="running"
@@ -156,6 +158,9 @@ const route = useRoute(),
   evidenceError = ref(""),
   evidenceLoading = ref(false);
 let controller: AbortController | null = null;
+function stopReceiving() {
+  controller?.abort();
+}
 async function bottom() {
   await nextTick();
   scrollArea.value?.scrollTo({
@@ -208,7 +213,11 @@ async function send() {
     ).data;
     bottom();
   } catch (e) {
-    if ((e as Error).name !== "AbortError") {
+    if ((e as Error).name === "AbortError") {
+      draft.value = query;
+      error.value =
+        "已停止接收，请通过历史记录核对执行结果；停止接收不代表远端取消。";
+    } else {
       error.value = (e as Error).message;
       draft.value = query;
     }

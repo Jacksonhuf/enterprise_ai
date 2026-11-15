@@ -4,6 +4,8 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"fmt"
+	agentruntime "github.com/Tencent/WeKnora/internal/platform/adapters/runtime"
 	api "github.com/Tencent/WeKnora/internal/platform/api"
 	app "github.com/Tencent/WeKnora/internal/platform/applications"
 	"github.com/Tencent/WeKnora/internal/platform/connectors/cognitive"
@@ -24,6 +26,7 @@ type fixture struct {
 	store  *app.Store
 	host   *httptest.Server
 	client *cognitive.Client
+	server *api.Server
 }
 
 func setup(t *testing.T) *fixture {
@@ -40,7 +43,7 @@ func setup(t *testing.T) *fixture {
 	c.BaseURL = m.URL
 	t.Cleanup(h.Close)
 	t.Cleanup(m.Close)
-	return &fixture{t, st, h, c}
+	return &fixture{t, st, h, c, s}
 }
 func (f *fixture) request(identity, method, path string, body any, want int) []byte {
 	f.t.Helper()
@@ -216,4 +219,96 @@ func TestServiceIdempotencyAndUsageCallbacks(t *testing.T) {
 	if !ok || remote.Status != 409 {
 		t.Fatalf("conflicting replay accepted %v", e)
 	}
+}
+
+func TestModelAgentToMockBusinessServiceEndToEnd(t *testing.T) {
+	f := setup(t)
+	t.Setenv("SSRF_WHITELIST", "127.0.0.1")
+	t.Setenv("COGNARA_E2E_MODEL_KEY", "e2e-fixture-key")
+	provider := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		var req struct {
+			Stream   bool             `json:"stream"`
+			Messages []map[string]any `json:"messages"`
+		}
+		json.NewDecoder(r.Body).Decode(&req)
+		if !req.Stream {
+			fmt.Fprint(w, `{"choices":[{"message":{"role":"assistant","content":"OK"},"finish_reason":"stop"}]}`)
+			return
+		}
+		hasTool := false
+		for _, m := range req.Messages {
+			if m["role"] == "tool" {
+				hasTool = true
+			}
+		}
+		w.Header().Set("Content-Type", "text/event-stream")
+		if !hasTool {
+			fmt.Fprint(w, `data: {"choices":[{"index":0,"delta":{"tool_calls":[{"index":0,"id":"e2e-tool","type":"function","function":{"name":"cognitive_call_service","arguments":"{\"service_id\":\"replenishment-gap\",\"arguments\":{\"order_id\":\"SO1002\",\"target_quantity\":350}}"}}]},"finish_reason":"tool_calls"}]}`+"\n\n")
+		} else {
+			fmt.Fprint(w, `data: {"choices":[{"index":0,"delta":{"content":"芯片原始缺口276.6；未纳入后续到货，不承诺交期。"},"finish_reason":"stop"}]}`+"\n\n")
+		}
+		fmt.Fprint(w, "data: [DONE]\n\n")
+	}))
+	defer provider.Close()
+	models, e := agentruntime.New([]agentruntime.ModelConfig{{ID: "e2e", Name: "模型协议验证", Model: "fixture", BaseURL: provider.URL + "/v1", APIKeyEnv: "COGNARA_E2E_MODEL_KEY", HTTP: provider.Client()}})
+	if e != nil {
+		t.Fatal(e)
+	}
+	f.server.Models = models
+	if e = f.store.Update(func(st *app.State) error {
+		a := st.Apps["channel-replenishment"]
+		rel, _ := app.Current(a)
+		rel.ID = "model-release"
+		rel.Config.ModelPrompt.ModelID = "e2e"
+		a.Releases = append(a.Releases, rel)
+		a.CurrentReleaseID = &rel.ID
+		st.Apps[a.ID] = a
+		return nil
+	}); e != nil {
+		t.Fatal(e)
+	}
+	f.request("demo-user", "GET", "/api/v1/cognitive/models", nil, 403)
+	catalog := f.request("demo-admin", "GET", "/api/v1/cognitive/models", nil, 200)
+	if bytes.Contains(catalog, []byte("e2e-fixture-key")) {
+		t.Fatal("credential leaked")
+	}
+	f.request("demo-user", "POST", "/api/v1/cognitive/models/e2e/test", map[string]any{}, 403)
+	f.request("demo-admin", "POST", "/api/v1/cognitive/models/e2e/test", map[string]any{}, 200)
+	id := f.session()
+	out := f.request("demo-user", "POST", "/api/v1/agent-chat/"+id, map[string]string{"query": "核查SO1002增加到350的原始缺口"}, 200)
+	if !bytes.Contains(out, []byte("276.6")) || !bytes.Contains(out, []byte("execution_id")) {
+		t.Fatal(string(out))
+	}
+	if len(f.store.Read().Usage) != 1 {
+		t.Fatal("model tool did not reach actual mock callback")
+	}
+}
+
+func TestSQLiteBackedHTTPRecoveryAndFailureClosed(t *testing.T) {
+	f := setup(t)
+	path := filepath.Join(t.TempDir(), "http-state.db")
+	db, e := app.OpenSQLite(path)
+	if e != nil {
+		t.Fatal(e)
+	}
+	f.server.Store = db
+	f.store = db
+	id := f.session()
+	f.request("demo-user", "POST", "/api/v1/agent-chat/"+id, map[string]string{"query": "SO1002需求增加到350"}, 200)
+	if e = db.Close(); e != nil {
+		t.Fatal(e)
+	}
+	f.request("demo-user", "GET", "/api/v1/cognitive/apps", nil, 503)
+	restored, e := app.OpenSQLite(path)
+	if e != nil {
+		t.Fatal(e)
+	}
+	defer restored.Close()
+	f.server.Store = restored
+	f.store = restored
+	messages := decode(t, f.request("demo-user", "GET", "/api/v1/messages/"+id+"/load", nil, 200))["data"].([]any)
+	if len(messages) != 2 || len(restored.Read().Usage) != 1 {
+		t.Fatal("DB reopen lost persisted conversation or events")
+	}
+	f.request("demo-engineer", "GET", "/api/v1/sessions/"+id, nil, 404)
 }

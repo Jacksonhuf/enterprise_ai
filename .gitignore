@@ -37,3 +37,5 @@ __pycache__/
 !/backend/platform/internal/
 /backend/platform/internal/*
 !/backend/platform/internal/platform/
+
+*.local.json

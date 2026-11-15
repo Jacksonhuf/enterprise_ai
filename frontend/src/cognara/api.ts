@@ -66,22 +66,29 @@ export async function sendTurn(
   const reader = response.body.getReader();
   const decoder = new TextDecoder();
   let buffer = "";
-  for (;;) {
-    const { done, value } = await reader.read();
-    buffer += decoder.decode(value, { stream: !done });
-    buffer = buffer.replace(/\r\n/g, "\n");
-    let split: number;
-    while ((split = buffer.indexOf("\n\n")) >= 0) {
-      const frame = buffer.slice(0, split);
-      buffer = buffer.slice(split + 2);
-      let type = "message";
-      const lines: string[] = [];
-      for (const line of frame.split("\n")) {
-        if (line.startsWith("event:")) type = line.slice(6).trim();
-        if (line.startsWith("data:")) lines.push(line.slice(5).trimStart());
+  try {
+    for (;;) {
+      const { done, value } = await reader.read();
+      buffer += decoder.decode(value, { stream: !done });
+      if (buffer.length > 2 * 1024 * 1024)
+        throw new Error("消息流超过大小限制");
+      buffer = buffer.replace(/\r\n/g, "\n");
+      let split: number;
+      while ((split = buffer.indexOf("\n\n")) >= 0) {
+        const frame = buffer.slice(0, split);
+        buffer = buffer.slice(split + 2);
+        let type = "message";
+        const lines: string[] = [];
+        for (const line of frame.split("\n")) {
+          if (line.startsWith("event:")) type = line.slice(6).trim();
+          if (line.startsWith("data:")) lines.push(line.slice(5).trimStart());
+        }
+        if (lines.length) onEvent(type, JSON.parse(lines.join("\n")));
       }
-      if (lines.length) onEvent(type, JSON.parse(lines.join("\n")));
+      if (done) break;
     }
-    if (done) break;
+  } finally {
+    await reader.cancel().catch(() => {});
+    reader.releaseLock();
   }
 }

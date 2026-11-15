@@ -7,7 +7,7 @@ WeKnora fork： https://github.com/Jacksonhuf/WeKnora
 
 当前活跃界面复用 `ResourceListToolbar.vue`、`ResourceCardAvatar.vue`、`EmptyState.vue`、通用图标及离线图标保护，沿用 Vue/Pinia/Vue Router/TDesign 与国际化基础。`src/upstream-main.ts`保留原入口；新入口是`src/main.ts`。本轮新增 Cognara 页面、契约HTTP适配和本地开发宿主。
 
-原 Go 主服务、Agent、会话、租户管理源码已导入，但尚未接入本轮开发宿主；不能声称这些引擎已经参与新调用链。开发宿主先验证产品API及A–E边界，避免在原业务模型中强行加入未经验证的字段。
+原 Go 主服务、会话与租户服务尚未整体接入开发宿主。第二轮已实际接入原 AgentEngine、ToolRegistry、模型消息类型与 Chat Completions 协议客户端，并以端到端HTTP测试验证；其他服务仍不能视为已上线。
 
 未启动或移植 Python DocReader 服务。保留 Go DocReader 客户端/协议供原 Go 源码引用；部分原 Go embed 所需 Python 文件或协议生成文件可能仍随源码存在，不能据此认为 Python 服务已启用。Python技能沙箱与原高级沙箱能力在新入口不可用。
 

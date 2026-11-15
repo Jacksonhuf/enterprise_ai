@@ -78,8 +78,10 @@
                   v-if="c.key === 'active'"
                   class="badge"
                   :class="row.active ? 'success' : ''"
-                  >{{ row.active ? "有效" : "已撤销" }}</span
-                ><template v-else>{{ display(row[c.key]) }}</template>
+                  >{{ row.active ? "有效" : "已撤销" }}</span><template
+                  v-else
+                  >{{ display(row[c.key]) }}</template
+                >
               </td>
               <td class="table-actions">
                 <t-button variant="text" @click="selected = row">详情</t-button
@@ -117,8 +119,9 @@
       @close="selected = null"
       ><div v-if="selected" class="detail-list">
         <div v-for="c in columns" :key="c.key">
-          <span>{{ c.label }}</span
-          ><strong>{{ display(selected[c.key]) }}</strong>
+          <span>{{ c.label }}</span><strong>{{
+            display(selected[c.key])
+          }}</strong>
         </div>
         <div v-if="selected.execution_id">
           <span>执行关联</span><code>{{ selected.execution_id }}</code>
