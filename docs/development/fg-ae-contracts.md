@@ -409,3 +409,9 @@ Semantica的Explorer共享API Key、图会话和stdio MCP不直接等同平台�
 ### 授权写入兼容语义（第八轮）
 
 创建授权仍返回200与原Grant结构；同企业、主体类型/ID、资源类型/ID、操作和范围均相同的有效授权，在事务内复用原grant_id，不重复写authorization.grant事件。主体和资源归属在同一事务内复核。重复撤销本企业已撤销记录成功但不重复写authorization.revoke事件；撤销后重新授权创建新记录并保留历史。现存重复记录不自动合并。
+
+### 目录分页与版本约束（第九轮）
+
+GET /api/v1/cognitive/selectors/assets和/selectors/services接受既有query、cursor、limit。代理按v0.3转发到内部发现接口：query至多256字符，cursor至多2048字符，limit为1–100；无效参数400且不请求上游。服务channel由平台固定为INTERNAL_APPLICATION，cursor保持不透明。
+
+应用service_refs仍为原结构，但同一service_id只能出现一次，保存草稿或发布检查发现重复返回400 INVALID_REQUEST。选择不同版本需显式替换原版本，不改变其他服务引用。此约束与受控服务工具按service_id查找发布引用的既有执行方式一致。

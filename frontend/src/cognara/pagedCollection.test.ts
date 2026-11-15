@@ -31,3 +31,11 @@ test("Paged collection rejects nonadvancing cursors without losing existing rows
   await state.reset(); await state.next(); assert.match(state.error,/未前进/);
   assert.deepEqual(state.items,[{id:"first"}]);
 });
+
+test("Paged collections clear previously displayed resources on authorization loss",async()=>{
+  const { APIError } = await import("./api");
+  let calls=0;
+  const state=new PagedCollection<Item>(async()=>{if(++calls===1)return {items:[{id:"restricted"}],next_cursor:"20"};throw new APIError(403,"AUTHORIZATION_DENIED","授权已撤销","trace_1");},x=>x.id);
+  await state.reset();await state.next();
+  assert.deepEqual(state.items,[]);assert.equal(state.nextCursor,null);assert.match(state.error,/trace_1/);
+});

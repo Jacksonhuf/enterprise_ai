@@ -65,7 +65,7 @@
                 "
                 >{{ assetName(a.asset_id) }}</t-tag><t-button
                 variant="outline"
-                @click="openAssets"
+                :loading="pickerLoading" @click="openAssets"
                 >选择资产</t-button
               >
             </div></t-form-item
@@ -73,11 +73,11 @@
             ><div class="reference-box">
               <t-tag
                 v-for="s in config.capability_refs.service_refs"
-                :key="s.service_id"
+                :key="serviceKey(s)"
                 closable
-                @close="config.capability_refs.service_refs = []"
-                >补货缺口分析 · {{ s.version }}</t-tag
-              ><t-button variant="outline" @click="openServices"
+                @close="config.capability_refs.service_refs = config.capability_refs.service_refs.filter(x => serviceKey(x) !== serviceKey(s))"
+                >{{ services.find(x => x.service_id === s.service_id && x.service_version === s.version)?.name || s.service_id }} · {{ s.version }}</t-tag
+              ><t-button variant="outline" :loading="pickerLoading" @click="openServices"
                 >选择服务版本</t-button
               >
             </div></t-form-item
@@ -131,10 +131,7 @@
           ><t-checkbox
             :checked="selected.includes(x.id)"
             @change="
-              (v: boolean) =>
-                (selected = v
-                  ? [...selected, x.id]
-                  : selected.filter((i) => i !== x.id))
+              (v: boolean) => togglePicker(x.id, v)
             "
           />
           <div>
@@ -195,6 +192,8 @@
 import { ref, computed, onMounted } from "vue";
 import { useRoute, useRouter, onBeforeRouteLeave } from "vue-router";
 import { MessagePlugin } from "tdesign-vue-next";
+import { loadAllOptions } from "../applicationOptions";
+import { serviceKey, toggleServiceVersion, resolveServiceSelection } from "../capabilitySelection";
 import { api, put, post, prefix } from "../api";
 import type { Application, Config, Asset, Service } from "../types";
 const modelOptions = ref([
@@ -220,26 +219,32 @@ const route = useRoute(),
   check = ref<any>(null),
   releaseNote = ref(""),
   pickerVisible = ref(false),
+  pickerLoading = ref(false),
   pickerKind = ref("assets"),
   pickerQuery = ref(""),
   selected = ref<string[]>([]),
   assets = ref<Asset[]>([]),
   services = ref<Service[]>([]);
 const dirty = computed(() => baseline.value !== JSON.stringify(config.value));
-const pickerRows = computed(() =>
-  (pickerKind.value === "assets"
-    ? assets.value.map((a) => ({
-        id: a.asset_id,
-        name: a.name,
-        description: a.summary,
-      }))
-    : services.value.map((s) => ({
-        id: s.service_id,
-        name: s.name,
-        description: s.service_version + " · 内部应用渠道",
-      }))
-  ).filter((x) => x.name.includes(pickerQuery.value)),
-);
+const serviceReferences = computed(() => [
+  ...config.value.capability_refs.service_refs,
+  ...services.value.map(s => ({service_id:s.service_id,version:s.service_version})),
+]);
+const pickerRows = computed(() => {
+  const rows = pickerKind.value === "assets"
+    ? assets.value.map(a => ({id:a.asset_id,name:a.name,description:a.summary}))
+    : services.value.map(s => ({id:serviceKey({service_id:s.service_id,version:s.service_version}),name:s.name,description:s.service_version + " · 内部应用渠道"}));
+  const existing = pickerKind.value === "assets"
+    ? config.value.capability_refs.asset_refs.map(ref => ({id:ref.asset_id,name:ref.asset_id,description:"已有引用 · 未在可发现目录返回；发布时仍需检查"}))
+    : config.value.capability_refs.service_refs.map(ref => ({id:serviceKey(ref),name:ref.service_id,description:ref.version + " · 已有引用；发布时仍需检查"}));
+  const known = new Set(rows.map(row=>row.id));
+  return [...rows,...existing.filter(row=>!known.has(row.id))].filter(row => (row.name + row.description).toLowerCase().includes(pickerQuery.value.toLowerCase()));
+});
+function togglePicker(id:string, checked:boolean) {
+  selected.value = pickerKind.value === "services"
+    ? toggleServiceVersion(selected.value,id,checked,serviceReferences.value)
+    : checked ? [...new Set([...selected.value,id])] : selected.value.filter(value=>value!==id);
+}
 function assetName(id: string) {
   return (
     assets.value.find((x) => x.asset_id === id)?.name ||
@@ -247,7 +252,7 @@ function assetName(id: string) {
       "inventory-policy": "渠道库存管理制度",
       "chip-gap-metric": "物料原始缺口",
     }[id] ||
-    "已引用资产"
+    id
   );
 }
 onMounted(async () => {
@@ -327,39 +332,40 @@ async function publish() {
     publishing.value = false;
   }
 }
+async function loadOptions<T>(kind:string, key:(value:T)=>string) {
+  return loadAllOptions<T>(cursor => {
+    const params = new URLSearchParams({limit:"100"});
+    if (cursor !== null) params.set("cursor",cursor);
+    return api(prefix + "/selectors/" + kind + "?" + params);
+  }, key);
+}
 async function openAssets() {
+  if (pickerLoading.value) return;
+  pickerLoading.value=true; error.value="";
   try {
-    assets.value = (await api(prefix + "/selectors/assets")).items;
-    pickerKind.value = "assets";
-    selected.value = config.value.capability_refs.asset_refs.map(
-      (x) => x.asset_id,
-    );
+    assets.value = await loadOptions<Asset>("assets", asset=>asset.asset_id);
+    pickerKind.value = "assets"; pickerQuery.value = "";
+    selected.value = config.value.capability_refs.asset_refs.map(x=>x.asset_id);
     pickerVisible.value = true;
-  } catch (e) {
-    error.value = (e as Error).message;
-  }
+  } catch (e) { error.value=(e as Error).message; }
+  finally { pickerLoading.value=false; }
 }
 async function openServices() {
+  if (pickerLoading.value) return;
+  pickerLoading.value=true; error.value="";
   try {
-    services.value = (await api(prefix + "/selectors/services")).items;
-    pickerKind.value = "services";
-    selected.value = config.value.capability_refs.service_refs.map(
-      (x) => x.service_id,
-    );
+    services.value = await loadOptions<Service>("services", service=>serviceKey({service_id:service.service_id,version:service.service_version}));
+    pickerKind.value = "services"; pickerQuery.value = "";
+    selected.value = config.value.capability_refs.service_refs.map(serviceKey);
     pickerVisible.value = true;
-  } catch (e) {
-    error.value = (e as Error).message;
-  }
+  } catch (e) { error.value=(e as Error).message; }
+  finally { pickerLoading.value=false; }
 }
 function confirmPicker() {
-  if (pickerKind.value === "assets")
-    config.value.capability_refs.asset_refs = selected.value.map(
-      (asset_id) => ({ asset_id }),
-    );
-  else
-    config.value.capability_refs.service_refs = services.value
-      .filter((x) => selected.value.includes(x.service_id))
-      .map((x) => ({ service_id: x.service_id, version: x.service_version }));
-  pickerVisible.value = false;
+  try {
+    if (pickerKind.value === "assets") config.value.capability_refs.asset_refs=selected.value.map(asset_id=>({asset_id}));
+    else config.value.capability_refs.service_refs=resolveServiceSelection(selected.value,serviceReferences.value);
+    pickerVisible.value=false;
+  } catch (e) { error.value=(e as Error).message; }
 }
 </script>
