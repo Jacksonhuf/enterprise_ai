@@ -259,10 +259,11 @@ onMounted(async () => {
         disabled: m.id !== "validation-only" && !m.credential_configured,
       }),
     );
-    application.value = await api<Application>(
+    const loaded = await api<Application>(
       prefix + `/apps/${route.params.appId}`,
     );
-    config.value = structuredClone(application.value.draft);
+    config.value = structuredClone(loaded.draft);
+    application.value = loaded;
     baseline.value = JSON.stringify(config.value);
   } catch (e) {
     error.value = (e as Error).message;

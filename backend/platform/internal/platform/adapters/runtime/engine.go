@@ -67,6 +67,9 @@ func (e *Engine) Run(ctx context.Context, r Request) (Result, error) {
 	if tool.failure != nil {
 		return Result{}, tool.failure
 	}
+	if len(tool.last) == 0 || tool.executionID == "" {
+		return Result{Content: "本轮未取得已授权服务或正式指标的执行结果，尚不能生成业务结论。请明确业务对象、目标数量及需要调用的能力。"}, nil
+	}
 	if state.FinalAnswer == "" {
 		return Result{}, fmt.Errorf("empty agent answer")
 	}

@@ -11,7 +11,7 @@ import (
 	"strings"
 )
 
-var qtyPattern = regexp.MustCompile(`(?:到|为|至)\s*(-?[0-9]+)`)
+var qtyPattern = regexp.MustCompile(`(?:到|为|至)\s*([+-]?[0-9][0-9.eE,+-]*)`)
 var orderPattern = regexp.MustCompile(`SO[0-9]+`)
 
 func (s *Server) chat(w http.ResponseWriter, r *http.Request) error {

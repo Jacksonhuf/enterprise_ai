@@ -312,3 +312,17 @@ func TestSQLiteBackedHTTPRecoveryAndFailureClosed(t *testing.T) {
 	}
 	f.request("demo-engineer", "GET", "/api/v1/sessions/"+id, nil, 404)
 }
+
+func TestValidationRejectsNonIntegerQuantityWithoutExecution(t *testing.T) {
+	f := setup(t)
+	for _, quantity := range []string{"350.5", "350.", "350e2", "350,500", "-350", "100001"} {
+		id := f.session()
+		out := f.request("demo-user", "POST", "/api/v1/agent-chat/"+id, map[string]string{"query": "SO1002需求增加到" + quantity}, 200)
+		if !bytes.Contains(out, []byte("本次未执行计算")) || bytes.Contains(out, []byte("276.6")) {
+			t.Fatalf("quantity %s was not rejected: %s", quantity, out)
+		}
+		if len(f.store.Read().Usage) != 0 {
+			t.Fatal("rejected quantity generated usage")
+		}
+	}
+}

@@ -137,3 +137,22 @@ func TestRegistryNoCredentialLeakAndDefaultDeny(t *testing.T) {
 		t.Fatal("embedded credential URL accepted")
 	}
 }
+
+func TestModelAnswerWithoutVerifiedExecutionRejected(t *testing.T) {
+	t.Setenv("COGNARA_TEST_MODEL_KEY", "local-protocol-fixture-key")
+	t.Setenv("SSRF_WHITELIST", "127.0.0.1")
+	host := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "text/event-stream")
+		fmt.Fprint(w, "data: {\"choices\":[{\"index\":0,\"delta\":{\"content\":\"芯片缺口为0，可以直接承诺交期\"},\"finish_reason\":\"stop\"}]}\n\ndata: [DONE]\n\n")
+	}))
+	defer host.Close()
+	models, err := New([]ModelConfig{{ID: "fixture-model", Name: "fixture", Model: "fixture", BaseURL: host.URL + "/v1", APIKeyEnv: "COGNARA_TEST_MODEL_KEY", HTTP: host.Client()}})
+	if err != nil {
+		t.Fatal(err)
+	}
+	engine := &Engine{Models: models}
+	result, err := engine.Run(context.Background(), runtimeRequest(t))
+	if err != nil || !strings.Contains(result.Content, "尚不能生成业务结论") || strings.Contains(result.Content, "缺口为0") || len(result.ServiceResult) != 0 {
+		t.Fatalf("unsupported model conclusion accepted: %+v %v", result, err)
+	}
+}
