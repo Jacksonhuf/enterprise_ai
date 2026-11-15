@@ -1,0 +1,27 @@
+{
+  "capability_type": "BASIC_METRIC",
+  "target": {
+    "asset_id": "asset_demo"
+  },
+  "payload": {
+    "parameters": {
+      "period": "2026-10"
+    },
+    "dimensions": [
+      "warehouse"
+    ],
+    "filters": []
+  },
+  "preconditions": {
+    "context_receipt": "context_demo"
+  },
+  "execution_options": {
+    "max_rows": 100
+  },
+  "correlation_context": {
+    "turn_id": "turn_demo",
+    "application_release_id": "release_demo",
+    "assistant_message_id": "message_demo",
+    "tool_call_id": "tool_demo"
+  }
+}

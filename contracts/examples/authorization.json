@@ -1,0 +1,11 @@
+{
+  "decision": "ALLOW",
+  "decision_id": "decision_demo",
+  "policy_revision": "revision_demo",
+  "scope_constraints": [
+    {
+      "resource_id": "resource_demo",
+      "scope_ref": "scope_demo"
+    }
+  ]
+}

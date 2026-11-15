@@ -1,0 +1,29 @@
+{
+  "execution_id": "exec_demo",
+  "status": "SUCCESS",
+  "result": {
+    "type": "TABLE",
+    "columns": [
+      {
+        "name": "value",
+        "data_type": "DECIMAL"
+      }
+    ],
+    "rows": [
+      [
+        "4.25"
+      ]
+    ]
+  },
+  "actual_dependencies": [
+    {
+      "type": "ASSET",
+      "id": "asset_demo",
+      "version": "asset_version_demo"
+    }
+  ],
+  "evidence_ref": {
+    "execution_id": "exec_demo"
+  },
+  "error": null
+}

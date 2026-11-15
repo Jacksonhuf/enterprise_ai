@@ -1,0 +1,17 @@
+{
+  "references": [
+    {
+      "kind": "ASSET",
+      "id": "asset_demo",
+      "version": "v1"
+    },
+    {
+      "kind": "SERVICE",
+      "id": "svc_demo",
+      "version": "v1",
+      "contract_revision": "contract_demo"
+    }
+  ],
+  "draft_revision": "draft_3",
+  "purpose": "APPLICATION_RELEASE"
+}

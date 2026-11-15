@@ -1,0 +1,9 @@
+[
+  {
+    "id": "enterprise-chat",
+    "name": "企业主模型",
+    "base_url": "https://YOUR-GATEWAY-DOMAIN/v1",
+    "model": "YOUR-MODEL-NAME",
+    "api_key_env": "COGNARA_MODEL_API_KEY"
+  }
+]

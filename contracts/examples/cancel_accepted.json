@@ -1,0 +1,6 @@
+{
+  "cancel_request_id": "cancel_demo",
+  "target_id": "exec_demo",
+  "status": "ACCEPTED",
+  "message": "取消已受理，尚未确认执行中止"
+}

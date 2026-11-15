@@ -1,0 +1,16 @@
+{
+  "service_ref": {
+    "service_id": "svc_demo",
+    "version": "v1"
+  },
+  "channel": "INTERNAL_APPLICATION",
+  "arguments": {
+    "warehouse_id": "warehouse_demo"
+  },
+  "correlation_context": {
+    "turn_id": "turn_demo",
+    "application_release_id": "release_demo",
+    "assistant_message_id": "message_demo",
+    "tool_call_id": "tool_demo"
+  }
+}
