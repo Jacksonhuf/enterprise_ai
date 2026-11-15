@@ -399,3 +399,9 @@ B1 TTL导入是语义模型专业入口，不经通用DocReader，不应随文�
 - [Semantica专业服务源码](https://github.com/Jacksonhuf/semantica/blob/1e14db0af8d78890b9a1513b49bef264cbb59e9b/semantica/server.py)
 
 Semantica的Explorer共享API Key、图会话和stdio MCP不直接等同平台多租户业务服务；其SPARQL路径不等同Ontop；PolicyEngine不代替G1。继续按V0.2记录的薄封装与边界改造，不将上游能力名称改名后当作接入完成。
+
+### 对话历史兼容扩展（第七轮）
+
+消息读取`GET /api/v1/messages/{session_id}/load`新增可选`before_message_id`，与`before_time`互斥，仅接受本会话的消息ID。保留`success/data`，增加`has_more: boolean`及`next_before_message_id: string|null`。默认20条，`limit`限定1–200；无效游标/时间/数量400。`before_time`按真实时间比较，ID游标按保存顺序向前读取，继续执行现有授权与脱敏。
+
+会话详情可加`include_messages=false`，只读元数据，不在详情响应中加载历史，默认行为保持。会话目录`GET /api/v1/sessions?app_id=...`校验当前应用使用权，缺app_id返回400，无权403，其他企业应用404。
