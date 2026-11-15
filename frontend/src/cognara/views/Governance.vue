@@ -149,9 +149,11 @@
       v-model:visible="grantVisible"
       header="新增资源授权"
       size="640px"
-      :confirm-btn="{ content: '保存授权', loading: saving }"
+      :confirm-btn="{ content: '保存授权', loading: saving, disabled: appsLoading || !!appsError }"
       @confirm="saveGrant"
-      ><t-form label-align="top"
+      ><t-alert v-if="appsError" theme="error" :message="appsError" />
+      <t-button v-if="appsError" variant="text" @click="loadApps">重新加载应用选项</t-button>
+      <t-loading :loading="appsLoading"><t-form label-align="top"
         ><t-form-item label="主体类型"
           ><t-select
             v-model="grant.subject_type"
@@ -164,6 +166,7 @@
         ><t-form-item label="授权主体"
           ><t-select
             v-model="grant.subject_id"
+            filterable
             :options="subjectOptions" /></t-form-item
         ><t-form-item label="资源类型"
           ><t-select
@@ -180,6 +183,7 @@
         ><t-form-item label="资源"
           ><t-select
             v-model="grant.resource_id"
+            filterable
             :options="resourceOptions"
             @change="resetAction" /></t-form-item
         ><t-form-item label="允许操作"
@@ -191,7 +195,7 @@
             v-model="grant.scope"
             :options="[
               { label: '华东渠道 · 验证范围', value: 'east' },
-            ]" /></t-form-item></t-form
+            ]" /></t-form-item></t-form></t-loading
       ><t-alert
         theme="info"
         message="当前验证集只支持显式列出的主体、资源和操作；不接受任意范围表达式。"
@@ -203,6 +207,7 @@ import { ref, computed, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { DialogPlugin, MessagePlugin } from "tdesign-vue-next";
 import { api, post, prefix, formatAPIError } from "../api";
+import { loadApplicationOptions } from "../applicationOptions";
 import EmptyState from "@/components/EmptyState.vue";
 const route = useRoute(),
   router = useRouter(),
@@ -214,6 +219,8 @@ const route = useRoute(),
   grantVisible = ref(false),
   saving = ref(false),
   apps = ref<any[]>([]),
+  appsLoading = ref(false),
+  appsError = ref(""),
   grant = ref({
     subject_type: "GROUP",
     subject_id: "all-users",
@@ -375,9 +382,21 @@ function changeTab(v: any) {
 onMounted(async () => {
   await load();
   if (isAccess.value) {
-    apps.value = (await api(prefix + "/apps?purpose=MANAGE")).items;
+    await loadApps();
   }
 });
+async function loadApps() {
+  if (appsLoading.value) return;
+  appsLoading.value = true; appsError.value = ""; apps.value = [];
+  try {
+    apps.value = await loadApplicationOptions(cursor => {
+      const params = new URLSearchParams({ purpose: "MANAGE", limit: "100" });
+      if (cursor !== null) params.set("cursor", cursor);
+      return api(prefix + "/apps?" + params);
+    });
+  } catch (e) { appsError.value = formatAPIError(e); }
+  finally { appsLoading.value = false; }
+}
 async function load() {
   loading.value = true;
   error.value = "";
@@ -478,12 +497,14 @@ function resetAction() {
           : "asset.context.read";
 }
 async function saveGrant() {
+  if (saving.value || appsLoading.value || appsError.value) return;
+  error.value = "";
   saving.value = true;
   try {
     await post(prefix + "/governance/grants", grant.value);
     grantVisible.value = false;
     await load();
-    MessagePlugin.success("授权已保存，后续访问将重新鉴权");
+    MessagePlugin.success("授权已生效；相同有效授权不会重复创建");
   } catch (e) {
     error.value = formatAPIError(e);
   } finally {

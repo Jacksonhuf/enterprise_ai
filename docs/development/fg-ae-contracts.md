@@ -405,3 +405,7 @@ Semantica的Explorer共享API Key、图会话和stdio MCP不直接等同平台�
 消息读取`GET /api/v1/messages/{session_id}/load`新增可选`before_message_id`，与`before_time`互斥，仅接受本会话的消息ID。保留`success/data`，增加`has_more: boolean`及`next_before_message_id: string|null`。默认20条，`limit`限定1–200；无效游标/时间/数量400。`before_time`按真实时间比较，ID游标按保存顺序向前读取，继续执行现有授权与脱敏。
 
 会话详情可加`include_messages=false`，只读元数据，不在详情响应中加载历史，默认行为保持。会话目录`GET /api/v1/sessions?app_id=...`校验当前应用使用权，缺app_id返回400，无权403，其他企业应用404。
+
+### 授权写入兼容语义（第八轮）
+
+创建授权仍返回200与原Grant结构；同企业、主体类型/ID、资源类型/ID、操作和范围均相同的有效授权，在事务内复用原grant_id，不重复写authorization.grant事件。主体和资源归属在同一事务内复核。重复撤销本企业已撤销记录成功但不重复写authorization.revoke事件；撤销后重新授权创建新记录并保留历史。现存重复记录不自动合并。
