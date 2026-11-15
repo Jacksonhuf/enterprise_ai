@@ -1,10 +1,8 @@
 package api
 
 import (
-	"bytes"
 	"context"
 	"encoding/json"
-	"fmt"
 	agentruntime "github.com/Tencent/WeKnora/internal/platform/adapters/runtime"
 	app "github.com/Tencent/WeKnora/internal/platform/applications"
 	"net/http"
@@ -49,7 +47,7 @@ func (s *Server) chat(w http.ResponseWriter, r *http.Request) error {
 	defer func() { cancel(); s.mu.Lock(); delete(s.running, session.ID); s.mu.Unlock() }()
 	turn := app.ID("turn")
 	user := app.Message{ID: app.ID("message"), SessionID: session.ID, Role: "user", Content: req.Query, CreatedAt: app.Now(), Completed: true}
-	answer := app.Message{ID: app.ID("message"), SessionID: session.ID, Role: "assistant", CreatedAt: app.Now(), ReleaseID: release.ID, TurnID: turn, Completed: true}
+	answer := app.Message{ID: app.ID("message"), SessionID: session.ID, Role: "assistant", CreatedAt: app.Now(), ReleaseID: release.ID, TurnID: turn, Completed: true, AuthorizationProfile: 1}
 	p.ApplicationID = a.ID
 	p.ReleaseID = release.ID
 	p.TurnID = turn
@@ -86,7 +84,7 @@ func (s *Server) chat(w http.ResponseWriter, r *http.Request) error {
 	var remoteErr error
 	if release.Config.ModelPrompt.ModelID != "validation-only" {
 		engine := &agentruntime.Engine{Models: s.Models, Client: s.Client, Authorize: s.CanResource}
-		run, err := engine.Run(ctx, agentruntime.Request{Principal: p, Release: release, Session: session, MessageID: answer.ID, Query: req.Query})
+		run, err := engine.Run(ctx, agentruntime.Request{Principal: p, Release: release, Session: app.Session{ID: session.ID, AppID: session.AppID, TenantID: session.TenantID, OwnerID: session.OwnerID, Title: session.Title, Messages: s.visibleMessages(p, session)}, MessageID: answer.ID, Query: req.Query})
 		if err != nil {
 
 			return fail(503, "CAPABILITY_UNAVAILABLE", "模型或受控工具执行未成功，未生成业务结论")
@@ -147,6 +145,7 @@ func (s *Server) chat(w http.ResponseWriter, r *http.Request) error {
 			return fail(403, "AUTHORIZATION_DENIED", "资源授权已变更，请重新核对权限")
 		}
 	}
+	answer.Resources = append([]app.ResourceUse(nil), checks...)
 	// Revocation is checked again before persisting or exposing a remote result.
 	if _, e = s.owned(p, session.ID); e != nil {
 		return e
@@ -175,20 +174,10 @@ func (s *Server) chat(w http.ResponseWriter, r *http.Request) error {
 		return e
 	}
 	s.event(p, "application.turn", a.ID, "success", answer.ExecutionID)
-	var stream bytes.Buffer
-	emit := func(t string, data any) {
-		b, _ := json.Marshal(data)
-		fmt.Fprintf(&stream, "event: %s\ndata: %s\n\n", t, b)
-	}
-	emit("agent_query", map[string]any{"message_id": answer.ID, "query": req.Query, "turn_id": turn, "application_release_id": release.ID})
-	emit("answer", answer)
-	emit("done", map[string]any{"message_id": answer.ID, "done": true})
-	s.mu.Lock()
-	s.streams[answer.ID] = append([]byte{}, stream.Bytes()...)
-	s.mu.Unlock()
+	stream := completedStream(answer, req.Query)
 	w.Header().Set("Content-Type", "text/event-stream")
 	w.Header().Set("Cache-Control", "no-cache")
-	_, _ = w.Write(stream.Bytes())
+	_, _ = w.Write(stream)
 	if f, ok := w.(http.Flusher); ok {
 		f.Flush()
 	}
@@ -236,23 +225,29 @@ func (s *Server) continueStream(w http.ResponseWriter, r *http.Request) error {
 	if id == "" {
 		return fail(400, "INVALID_REQUEST", "message_id为必填项")
 	}
-	found := false
-	for _, m := range v.Messages {
-		if m.ID == id {
-			found = true
+	var found *app.Message
+	query := ""
+	for i, m := range v.Messages {
+		if m.ID == id && m.Role == "assistant" {
+			copy := m
+			found = &copy
+			if i > 0 && v.Messages[i-1].Role == "user" {
+				query = v.Messages[i-1].Content
+			}
+			break
 		}
 	}
-	if !found {
+	if found == nil {
 		return fail(404, "ASSET_UNAVAILABLE", "消息不存在")
 	}
-	s.mu.Lock()
-	b := append([]byte{}, s.streams[id]...)
-	s.mu.Unlock()
-	if len(b) == 0 {
-		return fail(404, "ASSET_UNAVAILABLE", "流缓存已过期，请读取历史消息")
+	if !found.Completed {
+		return fail(409, "REFERENCE_NOT_READY", "未完成执行不能作为完成消息重放")
+	}
+	if !s.canReadMessage(s.Store.Read(), Principal(r), v, *found) {
+		return fail(403, "AUTHORIZATION_DENIED", "消息对应资源授权已变更")
 	}
 	w.Header().Set("Content-Type", "text/event-stream")
 	w.Header().Set("Cache-Control", "no-cache")
-	_, _ = w.Write(b)
+	_, _ = w.Write(completedStream(*found, query))
 	return nil
 }

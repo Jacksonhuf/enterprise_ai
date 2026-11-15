@@ -70,17 +70,25 @@ type App struct {
 	Releases         []Release `json:"releases"`
 	UpdatedAt        string    `json:"updated_at"`
 }
+type ResourceUse struct {
+	Type   string `json:"type"`
+	ID     string `json:"id"`
+	Action string `json:"action"`
+}
 type Message struct {
-	ID          string          `json:"id"`
-	SessionID   string          `json:"session_id"`
-	Role        string          `json:"role"`
-	Content     string          `json:"content"`
-	CreatedAt   string          `json:"created_at"`
-	ReleaseID   string          `json:"application_release_id,omitempty"`
-	TurnID      string          `json:"turn_id,omitempty"`
-	ExecutionID string          `json:"execution_id,omitempty"`
-	Result      json.RawMessage `json:"result,omitempty"`
-	Completed   bool            `json:"is_completed"`
+	Resources            []ResourceUse   `json:"resource_uses,omitempty"`
+	AuthorizationProfile int             `json:"authorization_profile,omitempty"`
+	ContentRedacted      bool            `json:"content_redacted,omitempty"`
+	ID                   string          `json:"id"`
+	SessionID            string          `json:"session_id"`
+	Role                 string          `json:"role"`
+	Content              string          `json:"content"`
+	CreatedAt            string          `json:"created_at"`
+	ReleaseID            string          `json:"application_release_id,omitempty"`
+	TurnID               string          `json:"turn_id,omitempty"`
+	ExecutionID          string          `json:"execution_id,omitempty"`
+	Result               json.RawMessage `json:"result,omitempty"`
+	Completed            bool            `json:"is_completed"`
 }
 type Session struct {
 	ID       string    `json:"session_id"`
@@ -110,6 +118,7 @@ type Grant struct {
 	Active       bool   `json:"active"`
 }
 type Event struct {
+	TenantID    string `json:"tenant_id,omitempty"`
 	ID          string `json:"event_id"`
 	OccurredAt  string `json:"occurred_at"`
 	ActorID     string `json:"actor_user_id"`

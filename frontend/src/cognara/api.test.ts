@@ -77,3 +77,37 @@ test("Malformed SSE is rejected and the underlying stream is canceled", async (t
   await assert.rejects(() => sendTurn("s", "query", () => {}), SyntaxError);
   assert.equal(canceled, true);
 });
+
+test("Request tracing preserves safe IDs and rejects unsafe response identifiers", async (t) => {
+  const { formatAPIError } = await import("./api");
+  let index = 0;
+  t.mock.method(
+    globalThis,
+    "fetch",
+    async () =>
+      new Response(
+        JSON.stringify({
+          request_id:
+            index++ === 0 ? "request_trace123" : "untrusted/id?value=secret",
+          error: { code: "CAPABILITY_UNAVAILABLE", message: "服务不可用" },
+        }),
+        { status: 503 },
+      ),
+  );
+  let first: any;
+  try {
+    await api("/failure");
+  } catch (e) {
+    first = e;
+  }
+  assert.equal(first.requestId, "request_trace123");
+  assert.match(formatAPIError(first), /request_trace123/);
+  let second: any;
+  try {
+    await api("/failure");
+  } catch (e) {
+    second = e;
+  }
+  assert.equal(second.requestId, undefined);
+  assert.equal(formatAPIError(second), "服务不可用");
+});

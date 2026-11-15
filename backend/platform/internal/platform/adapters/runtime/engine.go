@@ -80,7 +80,7 @@ func (e *Engine) Run(ctx context.Context, r Request) (Result, error) {
 	return Result{Content: state.FinalAnswer, ServiceResult: tool.last, ExecutionID: tool.executionID, CheckedResources: checks}, nil
 }
 
-type ResourceCheck struct{ Type, ID, Action string }
+type ResourceCheck = app.ResourceUse
 type serviceTool struct {
 	resources   map[string]ResourceCheck
 	mu          sync.Mutex

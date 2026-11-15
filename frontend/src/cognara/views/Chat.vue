@@ -32,6 +32,9 @@
         <div class="message-label">
           {{ m.role === "user" ? "你" : application.name }}
         </div>
+        <t-tag v-if="m.content_redacted" theme="warning" variant="light"
+          >访问受限</t-tag
+        >
         <div class="message-content">{{ m.content }}</div>
         <div v-if="m.result?.result?.rows" class="result-card">
           <div class="result-title">
@@ -144,7 +147,7 @@
 import { ref, onMounted, nextTick } from "vue";
 import { useRoute, onBeforeRouteLeave } from "vue-router";
 import { MessagePlugin } from "tdesign-vue-next";
-import { api, prefix, sendTurn } from "../api";
+import { api, prefix, sendTurn, formatAPIError } from "../api";
 import type { Message } from "../types";
 const route = useRoute(),
   messages = ref<Message[]>([]),
@@ -179,7 +182,7 @@ onMounted(async () => {
     ).data;
     bottom();
   } catch (e) {
-    error.value = (e as Error).message;
+    error.value = formatAPIError(e);
   }
 });
 onBeforeRouteLeave(() => {
@@ -218,7 +221,7 @@ async function send() {
       error.value =
         "已停止接收，请通过历史记录核对执行结果；停止接收不代表远端取消。";
     } else {
-      error.value = (e as Error).message;
+      error.value = formatAPIError(e);
       draft.value = query;
     }
   } finally {
@@ -236,7 +239,7 @@ async function showEvidence(m: Message) {
         `/evidence/${m.execution_id}?session_id=${route.params.sessionId}&message_id=${m.id}`,
     );
   } catch (e) {
-    evidenceError.value = (e as Error).message;
+    evidenceError.value = formatAPIError(e);
   } finally {
     evidenceLoading.value = false;
   }

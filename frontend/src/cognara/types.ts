@@ -38,6 +38,9 @@ export interface Message {
   execution_id?: string;
   result?: ServiceResult;
   is_completed: boolean;
+  content_redacted?: boolean;
+  resource_uses?: { type: string; id: string; action: string }[];
+  authorization_profile?: number;
 }
 export interface ServiceResult {
   service_execution_id: string;

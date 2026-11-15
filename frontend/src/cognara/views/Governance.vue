@@ -91,6 +91,12 @@
                   theme="danger"
                   @click="confirmRevoke(row)"
                   >撤销</t-button
+                ><t-button
+                  v-for="action in exceptionActions(row)"
+                  :key="action.status"
+                  variant="text"
+                  @click="transitionException(row, action)"
+                  >{{ action.label }}</t-button
                 >
               </td>
             </tr>
@@ -122,6 +128,15 @@
           <span>{{ c.label }}</span><strong>{{
             display(selected[c.key])
           }}</strong>
+        </div>
+        <div v-if="selected.request_id">
+          <span>请求编号</span><code>{{ selected.request_id }}</code>
+        </div>
+        <div v-if="selected.code">
+          <span>错误类型</span><strong>{{ selected.code }}</strong>
+        </div>
+        <div v-if="selected.route">
+          <span>接口</span><code>{{ selected.route }}</code>
         </div>
         <div v-if="selected.execution_id">
           <span>执行关联</span><code>{{ selected.execution_id }}</code>
@@ -187,7 +202,7 @@
 import { ref, computed, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { DialogPlugin, MessagePlugin } from "tdesign-vue-next";
-import { api, post, prefix } from "../api";
+import { api, post, prefix, formatAPIError } from "../api";
 import EmptyState from "@/components/EmptyState.vue";
 const route = useRoute(),
   router = useRouter(),
@@ -315,6 +330,9 @@ const labels: Record<string, string> = {
   "service.invoke": "调用服务",
   "execution.invoke": "执行正式指标",
   "asset.context.read": "读取资产上下文",
+  OPEN: "待处理",
+  ACKNOWLEDGED: "已确认",
+  RESOLVED: "已解决",
   success: "成功",
   denied: "拒绝",
   CALL: "次",
@@ -366,7 +384,7 @@ async function load() {
   try {
     data.value = await api(prefix + "/governance/" + section.value);
   } catch (e) {
-    error.value = (e as Error).message;
+    error.value = formatAPIError(e);
   } finally {
     loading.value = false;
   }
@@ -392,6 +410,44 @@ const resourceOptions = computed(() =>
           { label: "渠道库存管理制度", value: "inventory-policy" },
         ],
 );
+function exceptionActions(row: any) {
+  if (section.value !== "exceptions") return [];
+  return row.status === "OPEN"
+    ? [
+        { label: "确认", status: "ACKNOWLEDGED" },
+        { label: "标记解决", status: "RESOLVED" },
+      ]
+    : row.status === "ACKNOWLEDGED"
+      ? [{ label: "标记解决", status: "RESOLVED" }]
+      : row.status === "RESOLVED"
+        ? [{ label: "重新打开", status: "OPEN" }]
+        : [];
+}
+function transitionException(
+  row: any,
+  action: { label: string; status: string },
+) {
+  const dialog = DialogPlugin.confirm({
+    header: action.label + "异常",
+    body: "更新异常处理状态；业务执行需另行核对，不会自动重试。",
+    confirmBtn: action.label,
+    onConfirm: async () => {
+      try {
+        const updated = await post(
+          prefix + "/governance/exceptions/" + row.id + "/status",
+          { expected_revision: row.revision, status: action.status },
+        );
+        if (selected.value?.id === row.id) selected.value = updated;
+        await load();
+        MessagePlugin.success("异常状态已更新");
+        dialog.hide();
+      } catch (e) {
+        error.value = formatAPIError(e);
+        dialog.hide();
+      }
+    },
+  });
+}
 function resetGrant() {
   grant.value.subject_id = subjectOptions.value[0]?.value || "";
   grant.value.resource_type =
@@ -429,7 +485,7 @@ async function saveGrant() {
     await load();
     MessagePlugin.success("授权已保存，后续访问将重新鉴权");
   } catch (e) {
-    error.value = (e as Error).message;
+    error.value = formatAPIError(e);
   } finally {
     saving.value = false;
   }
@@ -447,7 +503,7 @@ function confirmRevoke(row: any) {
         dialog.hide();
         load();
       } catch (e) {
-        error.value = (e as Error).message;
+        error.value = formatAPIError(e);
         dialog.hide();
       }
     },

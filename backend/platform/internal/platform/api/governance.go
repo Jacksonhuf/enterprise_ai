@@ -3,6 +3,7 @@ package api
 import (
 	"encoding/json"
 	app "github.com/Tencent/WeKnora/internal/platform/applications"
+	"github.com/Tencent/WeKnora/internal/platform/governance"
 	"net/http"
 	"strings"
 	"time"
@@ -43,6 +44,15 @@ func (s *Server) governanceList(w http.ResponseWriter, r *http.Request) error {
 		rows := []app.Event{}
 		for i := len(st.Audit) - 1; i >= 0; i-- {
 			e := st.Audit[i]
+			if e.TenantID != "" && e.TenantID != p.TenantID {
+				continue
+			}
+			if e.TenantID == "" {
+				actor, err := governance.DemoIdentity(e.ActorID)
+				if err != nil || actor.TenantID != p.TenantID {
+					continue
+				}
+			}
 			if q := strings.ToLower(r.URL.Query().Get("query")); q != "" && !strings.Contains(strings.ToLower(e.Action+e.ResourceID+e.ActorID+e.ExecutionID), q) {
 				continue
 			}
@@ -50,9 +60,21 @@ func (s *Server) governanceList(w http.ResponseWriter, r *http.Request) error {
 		}
 		items = rows
 	case "exceptions":
-		items = st.Exceptions
+		rows := []map[string]any{}
+		for i := len(st.Exceptions) - 1; i >= 0; i-- {
+			if st.Exceptions[i]["tenant_id"] == p.TenantID {
+				rows = append(rows, st.Exceptions[i])
+			}
+		}
+		items = rows
 	case "usage":
-		items = st.Usage
+		rows := []map[string]any{}
+		for _, item := range st.Usage {
+			if item["tenant_id"] == p.TenantID {
+				rows = append(rows, item)
+			}
+		}
+		items = rows
 	case "status":
 		p.Purpose = "application_configuration"
 		b, e := s.Client.Do(r.Context(), p, "GET", "/internal/v1/operations/status", nil, "")
@@ -121,10 +143,13 @@ func (s *Server) createGrant(w http.ResponseWriter, r *http.Request) error {
 		return fail(400, "INVALID_REQUEST", "资源或操作不在当前支持的授权集合内")
 	}
 	g := app.Grant{ID: app.ID("grant"), TenantID: p.TenantID, SubjectType: req.SubjectType, SubjectID: req.SubjectID, ResourceType: req.ResourceType, ResourceID: req.ResourceID, Action: req.Action, Scope: req.Scope, Active: true}
-	if e := s.Store.Update(func(st *app.State) error { st.Grants = append(st.Grants, g); return nil }); e != nil {
+	if e := s.Store.Update(func(st *app.State) error {
+		st.Grants = append(st.Grants, g)
+		appendAudit(st, p, "authorization.grant", g.ResourceID, "success", "", requestID(r))
+		return nil
+	}); e != nil {
 		return e
 	}
-	s.event(p, "authorization.grant", g.ResourceID, "success", "")
 	Write(w, g)
 	return nil
 }
@@ -137,6 +162,7 @@ func (s *Server) revokeGrant(w http.ResponseWriter, r *http.Request) error {
 		for i, g := range st.Grants {
 			if g.ID == r.PathValue("id") && g.TenantID == p.TenantID {
 				st.Grants[i].Active = false
+				appendAudit(st, p, "authorization.revoke", g.ID, "success", "", requestID(r))
 				return nil
 			}
 		}
@@ -145,7 +171,6 @@ func (s *Server) revokeGrant(w http.ResponseWriter, r *http.Request) error {
 	if e != nil {
 		return e
 	}
-	s.event(p, "authorization.revoke", r.PathValue("id"), "success", "")
 	Write(w, map[string]bool{"success": true})
 	return nil
 }

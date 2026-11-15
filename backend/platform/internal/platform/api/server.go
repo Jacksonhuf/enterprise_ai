@@ -5,7 +5,6 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
-	"errors"
 	agentruntime "github.com/Tencent/WeKnora/internal/platform/adapters/runtime"
 	app "github.com/Tencent/WeKnora/internal/platform/applications"
 	"github.com/Tencent/WeKnora/internal/platform/connectors/cognitive"
@@ -32,22 +31,15 @@ func Write(w http.ResponseWriter, v any) {
 	_ = json.NewEncoder(w).Encode(v)
 }
 func ErrorResponse(w http.ResponseWriter, err error) {
+	id := w.Header().Get("X-Request-ID")
+	if id == "" {
+		id = app.ID("request")
+		w.Header().Set("X-Request-ID", id)
+	}
+	status, code, message := publicError(err)
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
-	var a *Error
-	if errors.As(err, &a) {
-		w.WriteHeader(a.Status)
-		Write(w, map[string]any{"error": map[string]any{"code": a.Code, "message": a.Message, "retryable": false}, "request_id": app.ID("request")})
-		return
-	}
-	var r *cognitive.RemoteError
-	if errors.As(err, &r) {
-		w.WriteHeader(r.Status)
-		w.Header().Set("Content-Type", "application/json")
-		_, _ = w.Write([]byte(r.Body))
-		return
-	}
-	w.WriteHeader(503)
-	Write(w, map[string]any{"request_id": app.ID("request"), "error": map[string]any{"code": "CAPABILITY_UNAVAILABLE", "message": "服务暂时不可用，请稍后重试", "retryable": false}})
+	w.WriteHeader(status)
+	Write(w, map[string]any{"request_id": id, "error": map[string]any{"code": code, "message": message, "retryable": false}})
 }
 func Decode(r *http.Request, v any) error {
 	d := json.NewDecoder(io.LimitReader(r.Body, 1<<20))
@@ -74,12 +66,11 @@ type Server struct {
 	SigningKey   []byte
 	mu           sync.Mutex
 	running      map[string]context.CancelFunc
-	streams      map[string][]byte
 }
 
 func (s *Server) event(p governance.Principal, action, resource, outcome, execution string) {
 	_ = s.Store.Update(func(st *app.State) error {
-		st.Audit = append(st.Audit, app.Event{ID: app.ID("event"), OccurredAt: app.Now(), ActorID: p.UserID, ClientID: p.ApplicationID, Action: action, ResourceID: resource, Outcome: outcome, RequestID: app.ID("request"), ExecutionID: execution})
+		st.Audit = append(st.Audit, app.Event{TenantID: p.TenantID, ID: app.ID("event"), OccurredAt: app.Now(), ActorID: p.UserID, ClientID: p.ApplicationID, Action: action, ResourceID: resource, Outcome: outcome, RequestID: app.ID("request"), ExecutionID: execution})
 		return nil
 	})
 }
@@ -96,9 +87,7 @@ func (s *Server) authenticated(h Handler) http.HandlerFunc {
 		}
 		r = r.WithContext(context.WithValue(r.Context(), principalKey{}, p))
 		if err = h(w, r); err != nil {
-			if r.Method != "GET" {
-				s.event(p, r.Method+" "+r.URL.Path, r.PathValue("app_id"), "denied", "")
-			}
+			s.recordFailure(r, p, err)
 			ErrorResponse(w, err)
 		}
 	}
@@ -201,7 +190,6 @@ func (s *Server) getApp(p governance.Principal, id string, build bool) (app.App,
 }
 func (s *Server) Handler() http.Handler {
 	s.running = map[string]context.CancelFunc{}
-	s.streams = map[string][]byte{}
 	m := http.NewServeMux()
 	add := func(p string, h Handler) { m.HandleFunc(p, s.authenticated(h)) }
 	m.HandleFunc("GET /health", func(w http.ResponseWriter, r *http.Request) {
@@ -229,12 +217,13 @@ func (s *Server) Handler() http.Handler {
 	add("POST /api/v1/sessions/{session_id}/stop", s.stop)
 	add("GET /api/v1/sessions/continue-stream/{session_id}", s.continueStream)
 	add("GET /api/v1/cognitive/governance/{section}", s.governanceList)
+	add("POST /api/v1/cognitive/governance/exceptions/{id}/status", s.updateException)
 	add("POST /api/v1/cognitive/governance/grants", s.createGrant)
 	add("DELETE /api/v1/cognitive/governance/grants/{id}", s.revokeGrant)
 	add("GET /api/v1/cognitive/settings/{section}", s.settings)
 	add("PUT /api/v1/cognitive/settings/{section}", s.saveSettings)
 	m.Handle("/internal/v1/", s.InternalHandler())
-	return m
+	return s.trace(m)
 }
 func page[T any](items []T, r *http.Request) (map[string]any, error) {
 	limit := 20
@@ -494,12 +483,12 @@ func (s *Server) release(w http.ResponseWriter, r *http.Request) error {
 		a.CurrentReleaseID = &out.ID
 		st.Apps[a.ID] = a
 		delete(st.Checks, req.CheckID)
+		appendAudit(st, p, "application.publish", out.AppID, "success", "", requestID(r))
 		return nil
 	})
 	if e != nil {
 		return e
 	}
-	s.event(p, "application.publish", out.AppID, "success", "")
 	Write(w, out)
 	return nil
 }
@@ -569,6 +558,7 @@ func (s *Server) session(w http.ResponseWriter, r *http.Request) error {
 	}
 	a := s.Store.Read().Apps[v.AppID]
 	rel, _ := app.Current(a)
+	v.Messages = s.visibleMessages(Principal(r), v)
 	Write(w, map[string]any{"session": v, "application": map[string]any{"app_id": a.ID, "name": rel.Config.Basic.Name, "welcome": rel.Config.ConversationDefaults.Welcome, "suggested_questions": rel.Config.ConversationDefaults.SuggestedQuestions}})
 	return nil
 }
@@ -590,7 +580,7 @@ func (s *Server) messages(w http.ResponseWriter, r *http.Request) error {
 			return fail(400, "INVALID_REQUEST", "时间格式无效")
 		}
 	}
-	for _, m := range v.Messages {
+	for _, m := range s.visibleMessages(Principal(r), v) {
 		if before == "" || m.CreatedAt < before {
 			items = append(items, m)
 		}
@@ -750,6 +740,10 @@ func (s *Server) InternalHandler() http.Handler {
 				ErrorResponse(w, e)
 				return
 			}
+			if !validEvent(kind, event) {
+				ErrorResponse(w, fail(400, "INVALID_REQUEST", "事件不符合接口契约"))
+				return
+			}
 			id, _ := event["event_id"].(string)
 			producer, _ := event["producer"].(string)
 			if id == "" || producer != "E" || r.Header.Get("Idempotency-Key") != id {
@@ -783,7 +777,12 @@ func (s *Server) InternalHandler() http.Handler {
 					action, _ := event["action"].(string)
 					outcome, _ := event["outcome"].(string)
 					when, _ := event["occurred_at"].(string)
-					st.Audit = append(st.Audit, app.Event{ID: id, OccurredAt: when, ActorID: actor, Action: action, Outcome: outcome})
+					client, _ := subject["client_id"].(string)
+					resource, _ := event["resource"].(map[string]any)
+					resourceID, _ := resource["id"].(string)
+					correlation, _ := event["correlation"].(map[string]any)
+					execution, _ := correlation["execution_id"].(string)
+					st.Audit = append(st.Audit, app.Event{TenantID: "42", ID: id, OccurredAt: when, ActorID: actor, ClientID: client, Action: action, Outcome: outcome, ResourceID: resourceID, ExecutionID: execution, RequestID: requestID(r)})
 				}
 				if kind == "usage-events" {
 					st.Usage = append(st.Usage, event)

@@ -3,6 +3,7 @@ export class APIError extends Error {
     public status: number,
     public code: string,
     message: string,
+    public requestId?: string,
   ) {
     super(message);
   }
@@ -27,6 +28,7 @@ export async function api<T = any>(
       response.status,
       data.error?.code || "REQUEST_FAILED",
       data.error?.message || "请求未完成",
+      safeRequestID(data.request_id),
     );
   return data;
 }
@@ -60,6 +62,7 @@ export async function sendTurn(
       response.status,
       e.error?.code,
       e.error?.message || "运行失败",
+      safeRequestID(e.request_id),
     );
   }
   if (!response.body) throw new Error("响应没有消息流");
@@ -91,4 +94,15 @@ export async function sendTurn(
     await reader.cancel().catch(() => {});
     reader.releaseLock();
   }
+}
+
+function safeRequestID(value: unknown) {
+  return typeof value === "string" && /^[A-Za-z0-9_-]{1,64}$/.test(value)
+    ? value
+    : undefined;
+}
+export function formatAPIError(error: unknown) {
+  if (error instanceof APIError && error.requestId)
+    return `${error.message}（请求编号：${error.requestId}）`;
+  return error instanceof Error ? error.message : "操作未完成";
 }
