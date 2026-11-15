@@ -170,7 +170,7 @@ func (s *Server) assets(w http.ResponseWriter, r *http.Request, p map[string]any
 		Query  string   `json:"query"`
 		Types  []string `json:"asset_types"`
 		Domain string   `json:"domain_ref"`
-		Limit  int      `json:"limit"`
+		Limit  *int     `json:"limit"`
 		Cursor *string  `json:"cursor"`
 	}
 	if e := api.Decode(r, &req); e != nil {
@@ -198,7 +198,7 @@ func (s *Server) assets(w http.ResponseWriter, r *http.Request, p map[string]any
 		}
 		rows = append(rows, a)
 	}
-	api.Write(w, map[string]any{"items": rows, "next_cursor": nil})
+	writeDiscoveryPage(w, rows, req.Limit, req.Cursor)
 }
 func (s *Server) assetContext(w http.ResponseWriter, r *http.Request, p map[string]any) {
 	var req struct {
@@ -255,7 +255,7 @@ func (s *Server) discover(w http.ResponseWriter, r *http.Request, p map[string]a
 	var req struct {
 		Channel string  `json:"channel"`
 		Query   string  `json:"query"`
-		Limit   int     `json:"limit"`
+		Limit   *int    `json:"limit"`
 		Cursor  *string `json:"cursor"`
 	}
 	if e := api.Decode(r, &req); e != nil {
@@ -270,7 +270,7 @@ func (s *Server) discover(w http.ResponseWriter, r *http.Request, p map[string]a
 	if s.authorize(r, "SERVICE", "replenishment-gap", "service.discover") == nil && (req.Query == "" || strings.Contains("补货缺口分析", req.Query)) {
 		rows = append(rows, map[string]any{"service_id": "replenishment-gap", "service_version": "v1.1", "name": "补货缺口分析", "service_kind": "SCENARIO", "channel": "INTERNAL_APPLICATION", "input_schema": map[string]any{"type": "object", "required": []string{"order_id", "target_quantity"}, "additionalProperties": false, "properties": map[string]any{"order_id": map[string]any{"type": "string", "enum": []string{"SO1002"}}, "target_quantity": map[string]any{"type": "integer", "minimum": 1, "maximum": 100000}}}, "output_schema": map[string]any{"type": "object"}, "contract_revision": "gap-contract-v1"})
 	}
-	api.Write(w, map[string]any{"items": rows, "next_cursor": nil})
+	writeDiscoveryPage(w, rows, req.Limit, req.Cursor)
 }
 func (s *Server) validate(w http.ResponseWriter, r *http.Request, p map[string]any) {
 	var req struct {
@@ -478,4 +478,34 @@ func (s *Server) lookup(w http.ResponseWriter, r *http.Request, p map[string]any
 		return
 	}
 	api.Write(w, map[string]any{"operation": x.Operation, "state": "COMPLETED", "service_execution_id": x.ServiceID, "service_result": x.Result, "safe_to_resubmit_same_key": false})
+}
+
+// The fixture uses numeric offsets; the platform proxy treats real service cursors as opaque.
+func writeDiscoveryPage[T any](w http.ResponseWriter, rows []T, requested *int, cursor *string) {
+	limit := 20
+	if requested != nil {
+		limit = *requested
+	}
+	if limit < 1 || limit > 100 {
+		errResponse(w, 400, "INVALID_REQUEST", "每页数量应为1到100")
+		return
+	}
+	start := 0
+	if cursor != nil {
+		n, err := strconv.Atoi(*cursor)
+		if err != nil || n < 0 {
+			errResponse(w, 400, "INVALID_REQUEST", "分页游标无效")
+			return
+		}
+		start = n
+	}
+	if start > len(rows) {
+		start = len(rows)
+	}
+	end := min(start+limit, len(rows))
+	var next any
+	if end < len(rows) {
+		next = strconv.Itoa(end)
+	}
+	api.Write(w, map[string]any{"items": rows[start:end], "next_cursor": next})
 }

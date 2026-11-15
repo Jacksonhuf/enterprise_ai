@@ -345,6 +345,13 @@ func validateConfig(c app.Config) error {
 	if strings.TrimSpace(c.Basic.Name) == "" || len([]rune(c.Basic.Name)) > 80 || strings.TrimSpace(c.ModelPrompt.ModelID) == "" || strings.TrimSpace(c.ModelPrompt.Prompt) == "" || len(c.ModelPrompt.Prompt) > 16000 {
 		return fail(400, "INVALID_REQUEST", "请填写名称、一个主模型及有效提示词")
 	}
+	services := map[string]bool{}
+	for _, ref := range c.CapabilityRefs.ServiceRefs {
+		if services[ref.ServiceID] {
+			return fail(400, "INVALID_REQUEST", "同一服务只能引用一个版本")
+		}
+		services[ref.ServiceID] = true
+	}
 	allowed := map[string]bool{"cognitive_discover_assets": true, "cognitive_get_asset_context": true, "cognitive_execute": true, "cognitive_call_service": true}
 	for _, n := range c.CapabilityRefs.ToolNames {
 		if !allowed[n] {
@@ -655,12 +662,8 @@ func (s *Server) assets(w http.ResponseWriter, r *http.Request) error {
 			body[k] = v
 		}
 	}
-	if l := r.URL.Query().Get("limit"); l != "" {
-		n, e := strconv.Atoi(l)
-		if e != nil {
-			return fail(400, "INVALID_REQUEST", "分页数量无效")
-		}
-		body["limit"] = n
+	if e := selectorPaging(r, body); e != nil {
+		return e
 	}
 	if t := r.URL.Query()["asset_types"]; len(t) > 0 {
 		body["asset_types"] = t
@@ -680,6 +683,9 @@ func (s *Server) services(w http.ResponseWriter, r *http.Request) error {
 	}
 	p.Purpose = "application_configuration"
 	body := map[string]any{"channel": "INTERNAL_APPLICATION", "query": r.URL.Query().Get("query")}
+	if e := selectorPaging(r, body); e != nil {
+		return e
+	}
 	b, e := s.Client.Do(r.Context(), p, "POST", "/internal/v1/services/discover", body, "")
 	if e != nil {
 		return e

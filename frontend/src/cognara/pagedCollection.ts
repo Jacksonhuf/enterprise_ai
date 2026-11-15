@@ -1,3 +1,4 @@
+import { APIError, formatAPIError } from "./api";
 export interface Page<T> { items: T[]; next_cursor?: string | null }
 
 // A new search invalidates earlier requests; a failed next page retains its cursor.
@@ -36,7 +37,10 @@ export class PagedCollection<T> {
       this.items = [...items.values()];
       this.nextCursor = next;
     } catch (e) {
-      if (generation === this.generation) this.error = (e as Error).message;
+      if (generation === this.generation) {
+        this.error = formatAPIError(e);
+        if (e instanceof APIError && [401,403,404].includes(e.status)) { this.items=[]; this.nextCursor=null; }
+      }
     } finally {
       if (generation === this.generation) this.loading = false;
     }
