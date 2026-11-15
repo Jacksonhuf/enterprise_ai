@@ -114,36 +114,44 @@ func (s *Server) createGrant(w http.ResponseWriter, r *http.Request) error {
 	if req.Scope != "east" {
 		return fail(400, "INVALID_REQUEST", "验证集当前只支持华东范围")
 	}
-	valid := false
-	switch req.SubjectType {
-	case "USER":
-		valid = req.SubjectID == "demo-user" || req.SubjectID == "demo-engineer" || req.SubjectID == "demo-admin"
-	case "GROUP":
-		valid = req.SubjectID == "all-users"
-	case "APPLICATION":
-		_, valid = s.Store.Read().Apps[req.SubjectID]
-	}
-	if !valid {
-		return fail(400, "INVALID_REQUEST", "授权主体不存在")
-	}
-	if req.SubjectType == "APPLICATION" {
-		switch req.ResourceType {
-		case "SERVICE":
-			valid = req.ResourceID == "replenishment-gap" && req.Action == "service.invoke"
-		case "ASSET":
-			valid = (req.ResourceID == "chip-gap-metric" && (req.Action == "execution.invoke" || req.Action == "asset.context.read")) || (req.ResourceID == "inventory-policy" && req.Action == "asset.context.read")
-		default:
-			valid = false
-		}
-	} else {
-		a, ok := s.Store.Read().Apps[req.ResourceID]
-		valid = ok && a.TenantID == p.TenantID && req.ResourceType == "APPLICATION" && req.Action == "application.use"
-	}
-	if !valid {
-		return fail(400, "INVALID_REQUEST", "资源或操作不在当前支持的授权集合内")
-	}
 	g := app.Grant{ID: app.ID("grant"), TenantID: p.TenantID, SubjectType: req.SubjectType, SubjectID: req.SubjectID, ResourceType: req.ResourceType, ResourceID: req.ResourceID, Action: req.Action, Scope: req.Scope, Active: true}
 	if e := s.Store.UpdateContext(r.Context(), func(st *app.State) error {
+		valid := false
+		switch req.SubjectType {
+		case "USER":
+			subject, err := governance.DemoIdentity(req.SubjectID)
+			valid = err == nil && subject.TenantID == p.TenantID
+		case "GROUP":
+			valid = req.SubjectID == "all-users" && p.TenantID == "42"
+		case "APPLICATION":
+			subject, ok := st.Apps[req.SubjectID]
+			valid = ok && subject.TenantID == p.TenantID
+		}
+		if !valid {
+			return fail(400, "INVALID_REQUEST", "授权主体不存在或不属于当前企业")
+		}
+		if req.SubjectType == "APPLICATION" {
+			switch req.ResourceType {
+			case "SERVICE":
+				valid = req.ResourceID == "replenishment-gap" && req.Action == "service.invoke"
+			case "ASSET":
+				valid = (req.ResourceID == "chip-gap-metric" && (req.Action == "execution.invoke" || req.Action == "asset.context.read")) || (req.ResourceID == "inventory-policy" && req.Action == "asset.context.read")
+			default:
+				valid = false
+			}
+		} else {
+			resource, ok := st.Apps[req.ResourceID]
+			valid = ok && resource.TenantID == p.TenantID && req.ResourceType == "APPLICATION" && req.Action == "application.use"
+		}
+		if !valid {
+			return fail(400, "INVALID_REQUEST", "资源或操作不在当前支持的授权集合内")
+		}
+		for _, existing := range st.Grants {
+			if existing.Active && existing.TenantID == g.TenantID && existing.SubjectType == g.SubjectType && existing.SubjectID == g.SubjectID && existing.ResourceType == g.ResourceType && existing.ResourceID == g.ResourceID && existing.Action == g.Action && existing.Scope == g.Scope {
+				g = existing
+				return nil
+			}
+		}
 		st.Grants = append(st.Grants, g)
 		appendAudit(st, p, "authorization.grant", g.ResourceID, "success", "", requestID(r))
 		return nil
@@ -161,6 +169,9 @@ func (s *Server) revokeGrant(w http.ResponseWriter, r *http.Request) error {
 	e := s.Store.UpdateContext(r.Context(), func(st *app.State) error {
 		for i, g := range st.Grants {
 			if g.ID == r.PathValue("id") && g.TenantID == p.TenantID {
+				if !g.Active {
+					return nil
+				}
 				st.Grants[i].Active = false
 				appendAudit(st, p, "authorization.revoke", g.ID, "success", "", requestID(r))
 				return nil
