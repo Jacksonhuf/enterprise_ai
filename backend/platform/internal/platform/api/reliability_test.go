@@ -12,6 +12,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"path/filepath"
+	"strings"
 	"sync"
 	"testing"
 )
@@ -326,4 +327,15 @@ func TestUnknownHistoryAuthorizationProfileIsHidden(t *testing.T) {
 		t.Fatal("unknown authorization profile exposed content")
 	}
 	f.request("demo-user", "GET", "/api/v1/sessions/continue-stream/"+id+"?message_id=future-message", nil, 403)
+}
+
+func TestQueryLimitCountsUnicodeCharacters(t *testing.T) {
+	f := setup(t)
+	id := f.session()
+	query := strings.Repeat("问", 2000)
+	f.request("demo-user", "POST", "/api/v1/agent-chat/"+id, map[string]string{"query": query}, 200)
+	if f.store.Read().Sessions[id].Messages[0].Content != query {
+		t.Fatal("Unicode query was truncated")
+	}
+	f.request("demo-user", "POST", "/api/v1/agent-chat/"+id, map[string]string{"query": strings.Repeat("问", 4001)}, 400)
 }

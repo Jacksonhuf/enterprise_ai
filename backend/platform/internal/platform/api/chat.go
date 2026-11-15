@@ -28,7 +28,7 @@ func (s *Server) chat(w http.ResponseWriter, r *http.Request) error {
 	if e = Decode(r, &req); e != nil {
 		return e
 	}
-	if strings.TrimSpace(req.Query) == "" || len(req.Query) > 4000 {
+	if strings.TrimSpace(req.Query) == "" || len([]rune(req.Query)) > 4000 {
 		return fail(400, "INVALID_REQUEST", "请输入有效业务问题")
 	}
 	a := s.Store.Read().Apps[session.AppID]

@@ -1,7 +1,9 @@
 package api
 
 import (
+	"regexp"
 	"strconv"
+	"strings"
 	"time"
 	"unicode/utf8"
 )
@@ -45,6 +47,9 @@ func eventTenant(value any) bool {
 	_, err := strconv.ParseUint(s, 10, 64)
 	return err == nil
 }
+
+var eventDateTime = regexp.MustCompile(`^[0-9]{4}-[0-9]{2}-[0-9]{2}[Tt][0-9]{2}:[0-9]{2}:[0-9]{2}(\.[0-9]+)?([Zz]|[+-]([01][0-9]|2[0-3]):[0-5][0-9])$`)
+
 func validEvent(kind string, e map[string]any) bool {
 	if !eventString(e["event_id"], 128) {
 		return false
@@ -53,7 +58,8 @@ func validEvent(kind string, e map[string]any) bool {
 	if !ok {
 		return false
 	}
-	if _, err := time.Parse(time.RFC3339Nano, stamp); err != nil {
+	parsed, err := time.Parse(time.RFC3339Nano, strings.ToUpper(stamp))
+	if err != nil || parsed.Year() < 1 || !eventDateTime.MatchString(stamp) {
 		return false
 	}
 	producer, ok := e["producer"].(string)

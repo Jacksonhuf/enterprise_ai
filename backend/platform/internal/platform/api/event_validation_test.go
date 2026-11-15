@@ -17,6 +17,17 @@ func TestEventValidationContractBoundaries(t *testing.T) {
 		}
 	}
 	usage["tenant_id"] = "42"
+	usage["occurred_at"] = "2026-11-15t10:00:00z"
+	if !validEvent("usage-events", usage) {
+		t.Fatal("valid lower-case RFC3339 rejected")
+	}
+	for _, stamp := range []string{"2026-11-15T10:00:00,1Z", "2026-11-15T10:00:00+24:00", "0000-11-15T10:00:00Z"} {
+		usage["occurred_at"] = stamp
+		if validEvent("usage-events", usage) {
+			t.Fatal("invalid date-time accepted")
+		}
+	}
+	usage["occurred_at"] = "2026-11-15T10:00:00Z"
 	usage["count"] = float64(-1)
 	if validEvent("usage-events", usage) {
 		t.Fatal("negative usage accepted")

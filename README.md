@@ -54,7 +54,7 @@ scripts/                       真实HTTP契约验证
 
 ```bash
 make check
-python -m pip install jsonschema==4.26.0
+python -m pip install 'jsonschema[format-nongpl]==4.26.0'
 COGNARA_CONTRACT_CAPTURE=/tmp/cognara-contract.jsonl go test -C backend/platform -count=1 ./internal/platform/api
 python scripts/validate-contract-capture.py /tmp/cognara-contract.jsonl
 ```
@@ -106,3 +106,5 @@ SQLite 适配需启用 CGO 并安装 C 编译器；默认 JSON 适配不依赖 S
 事件接收校验v0.3审计/用量字段；事件、去重凭据在同一次持久化更新中写入，补投可返回DUPLICATE而不重复入账。授权变更和发布也与对应审计记录同事务写入。审计、用量和异常均按企业隔离。
 
 恢复保证仅覆盖已经持久化完成的消息。进行中执行恢复、A–E发送方发件箱、生产身份与分布式部署仍待整合。A–E原始证据由业务服务负责保存；Mock重启后仍可能无法读取旧执行证据。
+
+接口校验需要日期时间格式依赖；校验器在缺少该依赖时会直接失败，避免静默跳过。对话输入上限按4000个Unicode码点检查，中文按字符计数。
