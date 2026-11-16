@@ -170,3 +170,14 @@ go run ./cmd/cognara-state-import --input /secure-backups/fg-state.json --expect
 ```
 
 不要先运行普通开发宿主初始化目标，已有种子状态也会导致导入拒绝。工具不覆盖已有记录，不修改源文件；失败可能留下空表，提交状态不明时先检查目标。导入只覆盖过渡聚合状态，不恢复外部A–E证据；正式生产表迁移仍待完成。详情见[第十九轮记录](docs/development/test-report-v0.19.md)。
+
+### 审计关系表迁移（显式、可选）
+
+停止目标应用，先导出并核对v1快照，同时保留独立数据库备份，再在副本测试：
+
+```bash
+cd backend/platform
+go run ./cmd/cognara-migrate-audit --apply
+```
+
+连接仍取COGNARA_MYSQL_DSN。工具将审计与状态版本同事务迁至v2；本版本程序支持v1/v2，旧程序不兼容v2。失败可能留下空审计表，不自动删表。**现有快照工具仅支持v1，迁移后须备份状态表与审计表，不能只备份JSON。** 回滚需要停机恢复迁移前数据库和匹配程序。该阶段仍保留聚合状态锁，详见[第二十轮记录](docs/development/test-report-v0.20.md)。
