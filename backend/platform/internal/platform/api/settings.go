@@ -105,7 +105,7 @@ func (s *Server) settings(w http.ResponseWriter, r *http.Request) error {
 			return err
 		}
 	}
-	st := s.Store.Read()
+	st := s.Store.ReadOperational()
 	value := settingsValue(st, p, section)
 	Write(w, map[string]any{"section": section, "values": value, "revision": settingsRevision(st, p, section, value), "mode": "validation", "connections_verified": false})
 	return nil
@@ -139,7 +139,7 @@ func (s *Server) saveSettings(w http.ResponseWriter, r *http.Request) error {
 	}
 	value, _ := json.Marshal(req.Values)
 	revision := ""
-	err := s.Store.UpdateContext(r.Context(), func(st *app.State) error {
+	err := s.Store.UpdateOperationalContext(r.Context(), func(st *app.State) error {
 		current := settingsValue(*st, p, section)
 		revision = settingsRevision(*st, p, section, current)
 		if req.Expected != nil && *req.Expected != revision {
@@ -169,7 +169,7 @@ func (s *Server) saveSettings(w http.ResponseWriter, r *http.Request) error {
 func (s *Server) me(w http.ResponseWriter, r *http.Request) error {
 	p := Principal(r)
 	var profile map[string]string
-	if json.Unmarshal(settingsValue(s.Store.Read(), p, "profile"), &profile) == nil {
+	if json.Unmarshal(settingsValue(s.Store.ReadOperational(), p, "profile"), &profile) == nil {
 		if name := strings.TrimSpace(profile["display_name"]); name != "" && len([]rune(name)) <= 80 {
 			p.Name = name
 		}

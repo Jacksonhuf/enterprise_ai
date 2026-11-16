@@ -10,6 +10,9 @@ import (
 
 func (s *Store) readSQL() (State, error) { return s.readSQLContext(context.Background()) }
 func (s *Store) readSQLContext(parent context.Context) (State, error) {
+	return s.readSQLContextAudit(parent, true)
+}
+func (s *Store) readSQLContextAudit(parent context.Context, includeAudit bool) (State, error) {
 	ctx, cancel := context.WithTimeout(parent, 5*time.Second)
 	defer cancel()
 	if s.dialect == "mysql" {
@@ -18,7 +21,7 @@ func (s *Store) readSQLContext(parent context.Context) (State, error) {
 			return State{}, e
 		}
 		defer tx.Rollback()
-		st, _, e := readStateRow(ctx, tx, false, true, true)
+		st, _, e := readStateRow(ctx, tx, false, true, includeAudit)
 		if e != nil {
 			return State{}, e
 		}
@@ -75,7 +78,7 @@ func readStateRow(ctx context.Context, tx *sql.Tx, lock, relational, includeAudi
 	return st, version, nil
 }
 
-func (s *Store) updateSQLContext(parent context.Context, fn func(*State) error) error {
+func (s *Store) updateSQLContext(parent context.Context, fn func(*State) error, operational bool) error {
 	ctx, cancel := context.WithTimeout(parent, 5*time.Second)
 	defer cancel()
 	tx, e := s.db.BeginTx(ctx, nil)
@@ -83,7 +86,7 @@ func (s *Store) updateSQLContext(parent context.Context, fn func(*State) error) 
 		return e
 	}
 	defer tx.Rollback()
-	next, version, e := readStateRow(ctx, tx, s.dialect == "postgres" || s.dialect == "mysql", s.dialect == "mysql", true)
+	next, version, e := readStateRow(ctx, tx, s.dialect == "postgres" || s.dialect == "mysql", s.dialect == "mysql", !operational)
 	if e != nil {
 		return e
 	}
@@ -93,7 +96,17 @@ func (s *Store) updateSQLContext(parent context.Context, fn func(*State) error) 
 	}
 	stored := next
 	if version == 2 {
-		if e = appendMySQLAudit(ctx, tx, previousAudit, next.Audit); e != nil {
+		if operational {
+			if len(next.Audit) > 0 {
+				var last uint64
+				if e = tx.QueryRowContext(ctx, `SELECT COALESCE(MAX(sequence_no),0) FROM cognara_fg_audit`).Scan(&last); e != nil {
+					return e
+				}
+				if e = insertMySQLAudit(ctx, tx, next.Audit, last); e != nil {
+					return e
+				}
+			}
+		} else if e = appendMySQLAudit(ctx, tx, previousAudit, next.Audit); e != nil {
 			return e
 		}
 		stored.Audit = nil
@@ -111,6 +124,9 @@ func (s *Store) updateSQLContext(parent context.Context, fn func(*State) error) 
 	}
 	if e = tx.Commit(); e != nil {
 		return e
+	}
+	if operational && version == 2 {
+		next.Audit = nil
 	}
 	s.state = next
 	return nil

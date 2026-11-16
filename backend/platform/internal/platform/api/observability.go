@@ -86,7 +86,7 @@ func (s *Server) recordFailure(r *http.Request, p governance.Principal, err erro
 	if r.Context().Err() != nil {
 		outcome = "canceled"
 	}
-	_ = s.Store.Update(func(st *app.State) error {
+	_ = s.Store.UpdateOperational(func(st *app.State) error {
 		appendAudit(st, p, r.Pattern, "", outcome, "", requestID(r))
 		if status >= 500 && r.Context().Err() == nil {
 			st.Exceptions = append(st.Exceptions, map[string]any{"id": app.ID("exception"), "tenant_id": p.TenantID, "name": "服务请求未完成", "module": "应用运行与配置", "request_id": requestID(r), "code": code, "route": r.Pattern, "http_status": status, "status": "OPEN", "revision": app.ID("exception_revision"), "occurred_at": app.Now(), "updated_at": app.Now()})
@@ -110,7 +110,7 @@ func (s *Server) updateException(w http.ResponseWriter, r *http.Request) error {
 		return fail(400, "INVALID_REQUEST", "异常状态参数无效")
 	}
 	var out map[string]any
-	e := s.Store.UpdateContext(r.Context(), func(st *app.State) error {
+	e := s.Store.UpdateOperationalContext(r.Context(), func(st *app.State) error {
 		for i, item := range st.Exceptions {
 			if item["id"] != r.PathValue("id") || item["tenant_id"] != p.TenantID {
 				continue

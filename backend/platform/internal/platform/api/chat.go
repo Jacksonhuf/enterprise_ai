@@ -31,7 +31,7 @@ func (s *Server) chat(w http.ResponseWriter, r *http.Request) error {
 	if strings.TrimSpace(req.Query) == "" || len([]rune(req.Query)) > 4000 {
 		return fail(400, "INVALID_REQUEST", "请输入有效业务问题")
 	}
-	a := s.Store.Read().Apps[session.AppID]
+	a := s.Store.ReadOperational().Apps[session.AppID]
 	release, ok := app.Current(a)
 	if !ok {
 		return fail(409, "VERSION_INCOMPATIBLE", "应用没有有效发布")
@@ -153,7 +153,7 @@ func (s *Server) chat(w http.ResponseWriter, r *http.Request) error {
 	if ctx.Err() != nil {
 		return fail(409, "EXECUTION_TIMEOUT", "本次接收已停止；远端执行状态须另行确认")
 	}
-	if e = s.Store.UpdateContext(r.Context(), func(st *app.State) error {
+	if e = s.Store.UpdateOperationalContext(r.Context(), func(st *app.State) error {
 		current, exists := st.Apps[session.AppID]
 		if !exists || !s.canUse(*st, p, current) {
 			return fail(403, "AUTHORIZATION_DENIED", "应用使用授权已撤销")
@@ -245,7 +245,7 @@ func (s *Server) continueStream(w http.ResponseWriter, r *http.Request) error {
 	if !found.Completed {
 		return fail(409, "REFERENCE_NOT_READY", "未完成执行不能作为完成消息重放")
 	}
-	if !s.canReadMessage(s.Store.Read(), Principal(r), v, *found) {
+	if !s.canReadMessage(s.Store.ReadOperational(), Principal(r), v, *found) {
 		return fail(403, "AUTHORIZATION_DENIED", "消息对应资源授权已变更")
 	}
 	w.Header().Set("Content-Type", "text/event-stream")

@@ -196,11 +196,15 @@ func clone(v State) State {
 	_ = json.Unmarshal(b, &out)
 	return out
 }
-func (s *Store) Read() State {
+func (s *Store) Read() State { return s.read(true) }
+
+// ReadOperational excludes historical audit rows on MySQL v2. Use audit queries for history.
+func (s *Store) ReadOperational() State { return s.read(false) }
+func (s *Store) read(includeAudit bool) State {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	if s.db != nil {
-		st, err := s.readSQL()
+		st, err := s.readSQLContextAudit(context.Background(), includeAudit)
 		if err != nil {
 			return State{}
 		}
@@ -212,13 +216,25 @@ func (s *Store) Read() State {
 // A mutation commits an isolated copy only after durable atomic replacement succeeds.
 func (s *Store) Update(fn func(*State) error) error { return s.UpdateContext(context.Background(), fn) }
 func (s *Store) UpdateContext(ctx context.Context, fn func(*State) error) error {
+	return s.updateContext(ctx, fn, false)
+}
+
+// Operational callbacks receive only a NEW audit event buffer on MySQL v2.
+// Existing audit records are never exposed or replaced through this path.
+func (s *Store) UpdateOperational(fn func(*State) error) error {
+	return s.UpdateOperationalContext(context.Background(), fn)
+}
+func (s *Store) UpdateOperationalContext(ctx context.Context, fn func(*State) error) error {
+	return s.updateContext(ctx, fn, true)
+}
+func (s *Store) updateContext(ctx context.Context, fn func(*State) error, operational bool) error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	if err := ctx.Err(); err != nil {
 		return err
 	}
 	if s.db != nil {
-		return s.updateSQLContext(ctx, fn)
+		return s.updateSQLContext(ctx, fn, operational)
 	}
 	next := clone(s.state)
 	if err := fn(&next); err != nil {

@@ -136,8 +136,13 @@ func appendMySQLAudit(ctx context.Context, tx *sql.Tx, previous, next []Event) e
 			return errors.New("audit records are immutable")
 		}
 	}
-	for i := len(previous); i < len(next); i++ {
-		event := next[i]
+	return insertMySQLAudit(ctx, tx, next[len(previous):], uint64(len(previous)))
+}
+func insertMySQLAudit(ctx context.Context, tx *sql.Tx, events []Event, last uint64) error {
+	for i, event := range events {
+		if uint64(i)+1 > ^uint64(0)-last {
+			return errors.New("audit sequence exhausted")
+		}
 		if event.ID == "" || len(event.TenantID) > 64 || len(event.ID) > 512 {
 			return errors.New("invalid audit identity")
 		}
@@ -156,7 +161,7 @@ func appendMySQLAudit(ctx context.Context, tx *sql.Tx, previous, next []Event) e
 		if e != nil {
 			return e
 		}
-		if _, e = tx.ExecContext(ctx, `INSERT INTO cognara_fg_audit(tenant_id,event_id,sequence_no,occurred_at,actor_id,action,resource_id,payload) VALUES(?,?,?,?,?,?,?,?)`, event.TenantID, event.ID, i+1, occurredColumn, event.ActorID, event.Action, event.ResourceID, string(raw)); e != nil {
+		if _, e = tx.ExecContext(ctx, `INSERT INTO cognara_fg_audit(tenant_id,event_id,sequence_no,occurred_at,actor_id,action,resource_id,payload) VALUES(?,?,?,?,?,?,?,?)`, event.TenantID, event.ID, last+uint64(i)+1, occurredColumn, event.ActorID, event.Action, event.ResourceID, string(raw)); e != nil {
 			return e
 		}
 	}

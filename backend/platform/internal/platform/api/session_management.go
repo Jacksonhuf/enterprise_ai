@@ -51,7 +51,7 @@ func (s *Server) renameSession(w http.ResponseWriter, r *http.Request) error {
 		return fail(400, "INVALID_REQUEST", "请提供1到80个字符的标题和当前版本")
 	}
 	var result app.Session
-	if e := s.Store.UpdateContext(r.Context(), func(st *app.State) error {
+	if e := s.Store.UpdateOperationalContext(r.Context(), func(st *app.State) error {
 		v, ok := st.Sessions[r.PathValue("id")]
 		if !ok || v.TenantID != p.TenantID || v.OwnerID != p.UserID {
 			return fail(404, "ASSET_UNAVAILABLE", "会话不存在或不可访问")
@@ -100,7 +100,7 @@ func (s *Server) sessions(w http.ResponseWriter, r *http.Request) error {
 	if appID == "" {
 		return fail(400, "INVALID_REQUEST", "请选择应用")
 	}
-	st := s.Store.Read()
+	st := s.Store.ReadOperational()
 	a, ok := st.Apps[appID]
 	if !ok || a.TenantID != p.TenantID {
 		return fail(404, "ASSET_UNAVAILABLE", "应用不存在或不可访问")
