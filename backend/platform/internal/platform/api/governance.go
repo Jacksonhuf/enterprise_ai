@@ -17,6 +17,11 @@ func (s *Server) governanceList(w http.ResponseWriter, r *http.Request) error {
 			return e
 		}
 	}
+	if r.PathValue("section") == "exceptions" {
+		if handled, e := s.exceptionDatabasePage(w, r); handled || e != nil {
+			return e
+		}
+	}
 	st := s.Store.ReadOperational()
 	section := r.PathValue("section")
 	var items any = []any{}
