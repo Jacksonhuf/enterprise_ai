@@ -94,7 +94,7 @@
         placeholder="例如：SO1002需求增加到350后，有多少物料缺口？"
         :autosize="{ minRows: 2, maxRows: 5 }"
         :maxlength="4000"
-        @keydown="keydown"
+        @keydown="(_value, context) => keydown(context.e)"
       />
       <div class="composer-bottom">
         <span class="meta">Enter发送 · Shift+Enter换行</span
@@ -149,11 +149,17 @@
   </section>
 </template>
 <script setup lang="ts">
+import { Alert as TAlert } from "tdesign-vue-next/es/alert";
+import { Button as TButton } from "tdesign-vue-next/es/button";
+import { Drawer as TDrawer } from "tdesign-vue-next/es/drawer";
+import { Loading as TLoading } from "tdesign-vue-next/es/loading";
+import { Tag as TTag } from "tdesign-vue-next/es/tag";
+import { Textarea as TTextarea } from "tdesign-vue-next/es/textarea";
 import { ref, reactive, computed, onMounted, nextTick } from "vue";
 import { invalidateSessionHistory } from "../sessionHistory";
 import { MessageHistory } from "../messageHistory";
 import { useRoute, onBeforeRouteLeave } from "vue-router";
-import { MessagePlugin } from "tdesign-vue-next";
+import { MessagePlugin } from "tdesign-vue-next/es/message";
 import { api, prefix, sendTurn, formatAPIError } from "../api";
 import type { Message } from "../types";
 const route = useRoute(),

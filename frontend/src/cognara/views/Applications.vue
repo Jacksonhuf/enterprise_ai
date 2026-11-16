@@ -16,11 +16,7 @@
       >
     </header>
     <t-alert v-if="error || collection.error" theme="error" :message="error || collection.error" />
-    <t-button v-if="collection.error" variant="text" @click="retry">重试加载</t-button><ResourceListToolbar
-      v-model="scope"
-      v-model:query="query"
-      hide-scopes
-    /><t-loading :loading="loading"
+    <t-button v-if="collection.error" variant="text" @click="retry">重试加载</t-button><div class="resource-search-toolbar"><ResourceSearchInput v-model="query" placeholder="搜索" /></div><t-loading :loading="loading"
       ><div
         v-if="items.length"
         :class="manage ? 'application-table' : 'application-grid'"
@@ -122,13 +118,24 @@
   </section>
 </template>
 <script setup lang="ts">
+import { Alert as TAlert } from "tdesign-vue-next/es/alert";
+import { Button as TButton } from "tdesign-vue-next/es/button";
+import { Drawer as TDrawer } from "tdesign-vue-next/es/drawer";
+import { Form as TForm } from "tdesign-vue-next/es/form";
+import { FormItem as TFormItem } from "tdesign-vue-next/es/form";
+import { Input as TInput } from "tdesign-vue-next/es/input";
+import { Loading as TLoading } from "tdesign-vue-next/es/loading";
+import { RadioButton as TRadioButton } from "tdesign-vue-next/es/radio";
+import { RadioGroup as TRadioGroup } from "tdesign-vue-next/es/radio";
+import { Select as TSelect } from "tdesign-vue-next/es/select";
+import { Textarea as TTextarea } from "tdesign-vue-next/es/textarea";
 import { ref, computed, reactive, watch } from "vue";
 import { PagedCollection } from "../pagedCollection";
 import { useRoute, useRouter } from "vue-router";
 import { api, post, prefix } from "../api";
 import type { Application } from "../types";
 import EmptyState from "@/components/EmptyState.vue";
-import ResourceListToolbar from "@/components/ResourceListToolbar.vue";
+import ResourceSearchInput from "@/components/ResourceSearchInput.vue";
 import ResourceCardAvatar from "@/components/ResourceCardAvatar.vue";
 const route = useRoute(),
   router = useRouter(),
@@ -137,7 +144,6 @@ const route = useRoute(),
   error = ref(""),
 
   query = ref(""),
-  scope = ref("all"),
   createVisible = ref(false),
   creating = ref(false),
   creationMode = ref("BLANK"),
@@ -189,3 +195,7 @@ async function create() {
   }
 }
 </script>
+
+<style scoped>
+.resource-search-toolbar { display:flex; align-items:center; flex-wrap:wrap; max-width:100%; }
+</style>

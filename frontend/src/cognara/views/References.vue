@@ -28,6 +28,11 @@
   </section>
 </template>
 <script setup lang="ts">
+import { Alert as TAlert } from "tdesign-vue-next/es/alert";
+import { Button as TButton } from "tdesign-vue-next/es/button";
+import { Drawer as TDrawer } from "tdesign-vue-next/es/drawer";
+import { Input as TInput } from "tdesign-vue-next/es/input";
+import { Loading as TLoading } from "tdesign-vue-next/es/loading";
 import { ref, computed, reactive, watch } from "vue";
 import { useRoute } from "vue-router";
 import { api, prefix } from "../api";

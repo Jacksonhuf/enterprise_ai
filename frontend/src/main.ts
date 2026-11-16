@@ -1,16 +1,12 @@
 import { createApp } from "vue";
 import { createPinia } from "pinia";
-import TDesign from "tdesign-vue-next";
 import "tdesign-vue-next/dist/tdesign.css";
 import App from "./cognara/App.vue";
 import { router } from "./cognara/router";
-import i18n from "./i18n";
 import "./cognara/theme.css";
 import { installTDesignIconOfflineGuard } from "./utils/tdesign-icon-offline";
 installTDesignIconOfflineGuard();
 const app = createApp(App);
 app.use(createPinia());
-app.use(TDesign);
-app.use(i18n);
 app.use(router);
 app.mount("#app");

@@ -28,6 +28,9 @@
   </div>
 </template>
 <script setup lang="ts">
+import { Alert as TAlert } from "tdesign-vue-next/es/alert";
+import { Button as TButton } from "tdesign-vue-next/es/button";
+import { Select as TSelect } from "tdesign-vue-next/es/select";
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 import Brand from "../components/Brand.vue";

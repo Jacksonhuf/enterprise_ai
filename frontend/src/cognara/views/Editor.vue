@@ -193,9 +193,23 @@
   <section v-else><t-alert v-if="error" theme="error" :message="error" /><t-button v-if="error" @click="reloadDraft">重新加载草稿</t-button><t-loading v-else :loading="true" text="正在读取应用配置" /></section>
 </template>
 <script setup lang="ts">
+import { Alert as TAlert } from "tdesign-vue-next/es/alert";
+import { Button as TButton } from "tdesign-vue-next/es/button";
+import { Checkbox as TCheckbox } from "tdesign-vue-next/es/checkbox";
+import { CheckboxGroup as TCheckboxGroup } from "tdesign-vue-next/es/checkbox";
+import { Drawer as TDrawer } from "tdesign-vue-next/es/drawer";
+import { Form as TForm } from "tdesign-vue-next/es/form";
+import { FormItem as TFormItem } from "tdesign-vue-next/es/form";
+import { Input as TInput } from "tdesign-vue-next/es/input";
+import { Loading as TLoading } from "tdesign-vue-next/es/loading";
+import { Select as TSelect } from "tdesign-vue-next/es/select";
+import { TabPanel as TTabPanel } from "tdesign-vue-next/es/tabs";
+import { Tabs as TTabs } from "tdesign-vue-next/es/tabs";
+import { Tag as TTag } from "tdesign-vue-next/es/tag";
+import { Textarea as TTextarea } from "tdesign-vue-next/es/textarea";
 import { ref, computed, onMounted, onBeforeUnmount, reactive } from "vue";
 import { useRoute, useRouter, onBeforeRouteLeave, onBeforeRouteUpdate } from "vue-router";
-import { MessagePlugin } from "tdesign-vue-next";
+import { MessagePlugin } from "tdesign-vue-next/es/message";
 import { ApplicationDraft } from "../applicationDraft";
 import { loadAllOptions } from "../applicationOptions";
 import { serviceKey, toggleServiceVersion, resolveServiceSelection } from "../capabilitySelection";

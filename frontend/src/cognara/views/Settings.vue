@@ -68,9 +68,17 @@
   </section>
 </template>
 <script setup lang="ts">
+import { Alert as TAlert } from "tdesign-vue-next/es/alert";
+import { Button as TButton } from "tdesign-vue-next/es/button";
+import { Form as TForm } from "tdesign-vue-next/es/form";
+import { FormItem as TFormItem } from "tdesign-vue-next/es/form";
+import { Input as TInput } from "tdesign-vue-next/es/input";
+import { Loading as TLoading } from "tdesign-vue-next/es/loading";
+import { Select as TSelect } from "tdesign-vue-next/es/select";
+import { Textarea as TTextarea } from "tdesign-vue-next/es/textarea";
 import { ref, computed, reactive, onMounted } from "vue";
 import { useRoute, onBeforeRouteLeave, onBeforeRouteUpdate } from "vue-router";
-import { MessagePlugin } from "tdesign-vue-next";
+import { MessagePlugin } from "tdesign-vue-next/es/message";
 import { api, put, post, prefix, formatAPIError } from "../api";
 import { SettingsDraft } from "../settingsDraft";
 
