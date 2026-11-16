@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"github.com/Tencent/WeKnora/internal/platform/testsupport"
+	"strings"
 	"testing"
 )
 
@@ -14,7 +15,7 @@ func TestMySQLRelationalAuditMigrationAndAtomicUpdates(t *testing.T) {
 		t.Fatal(e)
 	}
 	defer s.Close()
-	first := Event{ID: "event-one", TenantID: "42", Action: "test", OccurredAt: Now()}
+	first := Event{ID: strings.Repeat("界", 128), TenantID: "42", Action: "test", OccurredAt: "2026-11-16t00:00:00z"}
 	if e = s.Update(func(st *State) error { st.Audit = append(st.Audit, first); return nil }); e != nil {
 		t.Fatal(e)
 	}
@@ -34,7 +35,7 @@ func TestMySQLRelationalAuditMigrationAndAtomicUpdates(t *testing.T) {
 	}
 	if e = reopened.Update(func(st *State) error {
 		st.Settings["atomic"] = []byte(`"committed"`)
-		st.Audit = append(st.Audit, Event{ID: "event-two", TenantID: "42", Action: "save", OccurredAt: Now()})
+		st.Audit = append(st.Audit, Event{ID: strings.Repeat("😀", 128), TenantID: "42", Action: "save", OccurredAt: "0001-01-01t00:00:00z"})
 		return nil
 	}); e != nil {
 		t.Fatal(e)
@@ -58,6 +59,14 @@ func TestMySQLRelationalAuditMigrationAndAtomicUpdates(t *testing.T) {
 		t.Fatal(e)
 	}
 	defer db.Close()
+	if reopened.Read().Audit[1].OccurredAt != "0001-01-01t00:00:00z" {
+		t.Fatal("timestamp changed")
+	}
+	var projected sql.NullTime
+	// NULL projection is intentional for valid years outside MySQL's range.
+	if e = db.QueryRow("SELECT occurred_at FROM cognara_fg_audit WHERE sequence_no=2").Scan(&projected); e != nil || projected.Valid {
+		t.Fatal("historical date projection", e)
+	}
 	var version, count int
 	if e = db.QueryRow("SELECT schema_version FROM cognara_fg_state WHERE id=1").Scan(&version); e != nil || version != 2 {
 		t.Fatal("wrong version", e)

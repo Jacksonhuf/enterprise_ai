@@ -1,8 +1,8 @@
 CREATE TABLE IF NOT EXISTS cognara_fg_audit (
  tenant_id VARBINARY(64) NOT NULL,
- event_id VARBINARY(255) NOT NULL,
+ event_id VARBINARY(512) NOT NULL,
  sequence_no BIGINT UNSIGNED NOT NULL,
- occurred_at DATETIME(6) NOT NULL,
+ occurred_at DATETIME(6) NULL,
  actor_id VARCHAR(255) NOT NULL,
  action VARCHAR(255) NOT NULL,
  resource_id VARCHAR(255) NOT NULL,

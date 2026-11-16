@@ -10,6 +10,7 @@ import (
 	"fmt"
 	"github.com/go-sql-driver/mysql"
 	"reflect"
+	"strings"
 	"time"
 )
 
@@ -137,18 +138,25 @@ func appendMySQLAudit(ctx context.Context, tx *sql.Tx, previous, next []Event) e
 	}
 	for i := len(previous); i < len(next); i++ {
 		event := next[i]
-		if event.ID == "" || len(event.TenantID) > 64 || len(event.ID) > 255 {
+		if event.ID == "" || len(event.TenantID) > 64 || len(event.ID) > 512 {
 			return errors.New("invalid audit identity")
 		}
-		occurred, e := time.Parse(time.RFC3339Nano, event.OccurredAt)
-		if e != nil || occurred.Year() < 1000 || occurred.Year() > 9999 {
+		occurred, e := time.Parse(time.RFC3339Nano, strings.ToUpper(event.OccurredAt))
+		if e != nil || occurred.Year() < 1 {
 			return errors.New("audit timestamp invalid")
+		}
+		var occurredColumn any
+		utc := occurred.UTC()
+		// The existing contract permits years outside MySQL DATETIME's range.
+		// Preserve the exact source timestamp in payload; leave this projection NULL.
+		if utc.Year() >= 1000 && utc.Year() <= 9999 {
+			occurredColumn = utc.Format("2006-01-02 15:04:05.000000")
 		}
 		raw, e := json.Marshal(event)
 		if e != nil {
 			return e
 		}
-		if _, e = tx.ExecContext(ctx, `INSERT INTO cognara_fg_audit(tenant_id,event_id,sequence_no,occurred_at,actor_id,action,resource_id,payload) VALUES(?,?,?,?,?,?,?,?)`, event.TenantID, event.ID, i+1, occurred.UTC().Format("2006-01-02 15:04:05.000000"), event.ActorID, event.Action, event.ResourceID, string(raw)); e != nil {
+		if _, e = tx.ExecContext(ctx, `INSERT INTO cognara_fg_audit(tenant_id,event_id,sequence_no,occurred_at,actor_id,action,resource_id,payload) VALUES(?,?,?,?,?,?,?,?)`, event.TenantID, event.ID, i+1, occurredColumn, event.ActorID, event.Action, event.ResourceID, string(raw)); e != nil {
 			return e
 		}
 	}
@@ -163,7 +171,7 @@ func validateMySQLAuditSchema(ctx context.Context, tx *sql.Tx) error {
 	if engine != "InnoDB" {
 		return errors.New("audit engine incompatible")
 	}
-	expected := map[string]string{"tenant_id": "varbinary(64)", "event_id": "varbinary(255)", "sequence_no": "bigint unsigned", "occurred_at": "datetime(6)", "actor_id": "varchar(255)", "action": "varchar(255)", "resource_id": "varchar(255)", "payload": "json"}
+	expected := map[string]string{"tenant_id": "varbinary(64)", "event_id": "varbinary(512)", "sequence_no": "bigint unsigned", "occurred_at": "datetime(6)", "actor_id": "varchar(255)", "action": "varchar(255)", "resource_id": "varchar(255)", "payload": "json"}
 	rows, e := tx.QueryContext(ctx, `SELECT COLUMN_NAME,COLUMN_TYPE,IS_NULLABLE,EXTRA FROM information_schema.COLUMNS WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME='cognara_fg_audit'`)
 	if e != nil {
 		return e
@@ -175,7 +183,11 @@ func validateMySQLAuditSchema(ctx context.Context, tx *sql.Tx) error {
 			rows.Close()
 			return e
 		}
-		if expected[name] != kind || nullable != "NO" || extra != "" {
+		wantNullable := "NO"
+		if name == "occurred_at" {
+			wantNullable = "YES"
+		}
+		if expected[name] != kind || nullable != wantNullable || extra != "" {
 			rows.Close()
 			return errors.New("audit column incompatible")
 		}
