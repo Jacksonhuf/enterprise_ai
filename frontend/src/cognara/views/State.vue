@@ -14,6 +14,7 @@
   </section>
 </template>
 <script setup lang="ts">
+import { Button as TButton } from "tdesign-vue-next/es/button";
 import { computed } from "vue";
 import { useRoute } from "vue-router";
 import EmptyState from "@/components/EmptyState.vue";

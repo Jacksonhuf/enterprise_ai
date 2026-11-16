@@ -58,6 +58,14 @@
   <section v-else><t-alert v-if="error" theme="error" :message="error" /><t-button v-if="error" @click="load">重新加载</t-button><t-loading v-else :loading="true" text="正在读取应用详情" /></section>
 </template>
 <script setup lang="ts">
+import { Alert as TAlert } from "tdesign-vue-next/es/alert";
+import { Button as TButton } from "tdesign-vue-next/es/button";
+import { Drawer as TDrawer } from "tdesign-vue-next/es/drawer";
+import { Loading as TLoading } from "tdesign-vue-next/es/loading";
+import { RadioButton as TRadioButton } from "tdesign-vue-next/es/radio";
+import { RadioGroup as TRadioGroup } from "tdesign-vue-next/es/radio";
+import { TabPanel as TTabPanel } from "tdesign-vue-next/es/tabs";
+import { Tabs as TTabs } from "tdesign-vue-next/es/tabs";
 import { ref, reactive, computed, onMounted, watch } from "vue";
 import { useRoute } from "vue-router";
 import { api, prefix, formatAPIError } from "../api";

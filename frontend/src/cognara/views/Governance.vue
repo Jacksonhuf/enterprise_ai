@@ -213,9 +213,21 @@
   </section>
 </template>
 <script setup lang="ts">
+import { Alert as TAlert } from "tdesign-vue-next/es/alert";
+import { Button as TButton } from "tdesign-vue-next/es/button";
+import { DateRangePicker as TDateRangePicker } from "tdesign-vue-next/es/date-picker";
+import { Drawer as TDrawer } from "tdesign-vue-next/es/drawer";
+import { Form as TForm } from "tdesign-vue-next/es/form";
+import { FormItem as TFormItem } from "tdesign-vue-next/es/form";
+import { Input as TInput } from "tdesign-vue-next/es/input";
+import { Loading as TLoading } from "tdesign-vue-next/es/loading";
+import { Select as TSelect } from "tdesign-vue-next/es/select";
+import { TabPanel as TTabPanel } from "tdesign-vue-next/es/tabs";
+import { Tabs as TTabs } from "tdesign-vue-next/es/tabs";
 import { ref, computed, reactive, watch, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { DialogPlugin, MessagePlugin } from "tdesign-vue-next";
+import { DialogPlugin } from "tdesign-vue-next/es/dialog";
+import { MessagePlugin } from "tdesign-vue-next/es/message";
 import { api, post, prefix, formatAPIError } from "../api";
 import { PagedCollection } from "../pagedCollection";
 import { governanceParams, pagedGovernance } from "../governanceFilters";

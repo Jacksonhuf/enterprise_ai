@@ -45,3 +45,8 @@ jobs:
       - run: python scripts/verify-runtime.py --binary /tmp/cognara-dev --storage postgres
       - run: npm ci && npm run test:cognara && npx vue-tsc --noEmit -p tsconfig.cognara.json && npm run build
         working-directory: frontend
+      - run: npm run check:cognara-bundle
+        working-directory: frontend
+      - name: Browser smoke on production build
+        run: npm install --no-save --package-lock=false playwright-core@1.62.1 && CHROMIUM_EXECUTABLE_PATH="$(command -v google-chrome || command -v chromium)" COGNARA_SMOKE_BINARY=/tmp/cognara-dev npm run test:cognara-browser
+        working-directory: frontend

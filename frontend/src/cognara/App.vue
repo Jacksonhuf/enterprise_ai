@@ -102,6 +102,8 @@
   </div>
 </template>
 <script setup lang="ts">
+import { Dialog as TDialog } from "tdesign-vue-next/es/dialog";
+import { Input as TInput } from "tdesign-vue-next/es/input";
 import { computed, ref, watch, reactive } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import Brand from "./components/Brand.vue";
