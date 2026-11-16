@@ -14,7 +14,7 @@
       <EmptyState v-if="!collection.loading && !collection.items.length && !collection.error" title="暂无可引用内容" description="请检查授权范围或搜索条件。" />
     </t-loading>
     <t-button v-if="collection.nextCursor !== null" class="spaced" :loading="collection.loading" @click="collection.next()">加载更多</t-button>
-    <t-drawer :visible="!!selected" header="引用详情" size="640px" :footer="false" @close="selected = null">
+    <t-drawer :visible="!!selected" header="引用详情" size="760px" :footer="false" @close="selected = null">
       <template v-if="selected"><div class="detail-list">
         <div><span>名称</span><strong>{{ selected.name }}</strong></div>
         <div><span>类型</span><strong>{{ kindName(selected) }}</strong></div>
@@ -22,7 +22,12 @@
         <div><span>业务标识</span><strong>{{ selected.asset_id || selected.service_id }}</strong></div>
         <div><span>说明</span><p>{{ selected.summary || selected.description || "目录未提供业务说明" }}</p></div>
       </div>
-      <template v-if="isServices"><h2>服务输入参数</h2><table v-if="parameters.length" class="data-table"><thead><tr><th>参数</th><th>类型</th><th>必填</th><th>说明</th></tr></thead><tbody><tr v-for="row in parameters" :key="row.name"><td>{{ row.name }}</td><td>{{ row.type }}</td><td>{{ row.required ? "是" : "否" }}</td><td>{{ row.description || "—" }}</td></tr></tbody></table><p v-else class="muted">目录未提供参数明细。</p></template>
+      <template v-if="isServices">
+        <div class="detail-list"><div><span>契约修订</span><strong>{{ selected.contract_revision || "目录未提供" }}</strong></div></div>
+        <t-tabs v-model="contractTab"><t-tab-panel value="input" label="输入契约" /><t-tab-panel value="output" label="输出契约" /></t-tabs>
+        <ServiceContract :key="contractTab" :schema="contractTab === 'input' ? selected.input_schema : selected.output_schema" />
+        <t-alert class="spaced" theme="info" message="此页供契约阅读；实际调用仍需参数校验、发布引用及执行授权。" />
+      </template>
       <t-alert class="spaced" theme="info" message="目录可发现不等于已获执行授权。引用时保留服务版本，发布与运行仍重新检查权限。" /></template>
     </t-drawer>
   </section>
@@ -33,13 +38,16 @@ import { Button as TButton } from "tdesign-vue-next/es/button";
 import { Drawer as TDrawer } from "tdesign-vue-next/es/drawer";
 import { Input as TInput } from "tdesign-vue-next/es/input";
 import { Loading as TLoading } from "tdesign-vue-next/es/loading";
+import { TabPanel as TTabPanel, Tabs as TTabs } from "tdesign-vue-next/es/tabs";
+import ServiceContract from "../components/ServiceContract.vue";
 import { ref, computed, reactive, watch } from "vue";
 import { useRoute } from "vue-router";
 import { api, prefix } from "../api";
 import { PagedCollection } from "../pagedCollection";
 import { serviceKey } from "../capabilitySelection";
 import EmptyState from "@/components/EmptyState.vue";
-const route=useRoute(), isServices=computed(()=>route.path==="/services"), query=ref(""), selected=ref<any>(null);
+const route=useRoute(), isServices=computed(()=>route.path==="/services"), query=ref(""), selected=ref<any>(null), contractTab=ref("input");
+watch(selected,()=>{contractTab.value="input"});
 const key=(item:any)=>isServices.value?serviceKey({service_id:item.service_id,version:item.service_version}):item.asset_id;
 const collection=reactive(new PagedCollection<any>(async(query,cursor)=>{
   const params=new URLSearchParams({query});if(cursor!==null)params.set("cursor",cursor);
@@ -51,8 +59,4 @@ watch([query,isServices],refresh,{immediate:true});
 watch(()=>collection.error, error=>{if(error)selected.value=null});
 function kindName(item:any){return ({KNOWLEDGE:"知识库",METRIC:"业务指标",SCENARIO:"场景服务",RULE:"业务规则"} as Record<string,string>)[item.asset_type||item.service_kind] || (isServices.value?"认知服务":"认知资产")}
 function version(item:any){return item.service_version||item.effective_version||"目录未提供版本"}
-const parameters=computed(()=>Object.entries(selected.value?.input_schema?.properties || {}).map(([name,value])=>{
-  const schema=value as any;
-  return {name,type:schema.type || "未说明",required:(selected.value?.input_schema?.required || []).includes(name),description:schema.description || (schema.enum?"可选值："+schema.enum.join("、"):schema.minimum!==undefined?"最小值："+schema.minimum+(schema.maximum!==undefined?"；最大值："+schema.maximum:""):"")};
-}));
 </script>
