@@ -62,7 +62,7 @@ func governancePage(items any, r *http.Request, tenant, section string) (map[str
 	hasFrom, hasTo := q.Get("from_time") != "", q.Get("to_time") != ""
 	for _, field := range []string{"from_time", "to_time"} {
 		if value := q.Get(field); value != "" {
-			stamp, err := time.Parse(time.RFC3339Nano, value)
+			stamp, err := time.Parse(time.RFC3339Nano, strings.ToUpper(value))
 			if err != nil || stamp.Year() < 1 || section == "grants" {
 				return nil, fail(400, "INVALID_REQUEST", "时间范围无效或不适用于当前列表")
 			}
@@ -123,7 +123,7 @@ func governancePage(items any, r *http.Request, tenant, section string) (map[str
 		}
 		if hasFrom || hasTo {
 			value, _ := row["occurred_at"].(string)
-			stamp, e := time.Parse(time.RFC3339Nano, value)
+			stamp, e := time.Parse(time.RFC3339Nano, strings.ToUpper(value))
 			if e != nil || (hasFrom && stamp.Before(from)) || (hasTo && stamp.After(to)) {
 				continue
 			}

@@ -1,8 +1,11 @@
 package api_test
 
 import (
+	"bytes"
+	"encoding/json"
 	"fmt"
 	app "github.com/Tencent/WeKnora/internal/platform/applications"
+	"net/http"
 	"net/url"
 	"strings"
 	"testing"
@@ -151,5 +154,38 @@ func TestGovernanceUsageUnitAndTenantPagination(t *testing.T) {
 	}
 	if count != 15 {
 		t.Fatal("usage truncated", count)
+	}
+}
+
+func TestGovernanceLowercaseEventTimestampsRemainFilterable(t *testing.T) {
+	f := setup(t)
+	timestamp := "2026-11-16t00:00:00z"
+	usage := map[string]any{"event_id": "lowercase-usage", "occurred_at": timestamp, "producer": "E", "tenant_id": "42", "capability": "test", "count": 1, "unit": "CALL"}
+	audit := map[string]any{"event_id": "lowercase-audit", "event_type": "completed", "occurred_at": timestamp, "producer": "E", "subject": map[string]any{"tenant_id": "42", "actor_user_id": "demo-user", "client_id": "app-search"}, "resource": map[string]any{"type": "SERVICE", "id": "replenishment-gap"}, "action": "service.call", "outcome": "success", "correlation": map[string]any{}}
+	submit := func(path string, event map[string]any) {
+		raw, _ := json.Marshal(event)
+		req, _ := http.NewRequest("POST", f.host.URL+path, bytes.NewReader(raw))
+		req.Header.Set("Authorization", "Bearer fixture-service")
+		req.Header.Set("Content-Type", "application/json")
+		req.Header.Set("Idempotency-Key", event["event_id"].(string))
+		resp, err := http.DefaultClient.Do(req)
+		if err != nil {
+			t.Fatal(err)
+		}
+		defer resp.Body.Close()
+		if resp.StatusCode != 200 {
+			t.Fatalf("event rejected %d", resp.StatusCode)
+		}
+	}
+	submit("/internal/v1/usage-events", usage)
+	submit("/internal/v1/audit-events", audit)
+	for _, section := range []string{"audit", "usage"} {
+		for _, boundary := range []string{"2026-11-16T00:00:00Z", timestamp} {
+			result := decode(t, f.request("demo-admin", "GET", governanceBase+section+"?query=lowercase-&from_time="+url.QueryEscape(boundary)+"&to_time="+url.QueryEscape(boundary), nil, 200))
+			rows := result["items"].([]any)
+			if len(rows) != 1 || rows[0].(map[string]any)["occurred_at"] != timestamp {
+				t.Fatal("accepted lowercase event excluded or rewritten", section, result)
+			}
+		}
 	}
 }
