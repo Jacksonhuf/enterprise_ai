@@ -25,21 +25,26 @@ func settingsValue(st app.State, p governance.Principal, section string) json.Ra
 	if value, exists := st.Settings[settingsStorageKey(p, section)]; exists {
 		return value
 	}
-	// Personal legacy keys have a known owner in the validation identity map.
-	// Shared legacy keys belong only to the original validation tenant.
-	personal := section == "profile" || section == "general"
-	legacy, readLegacy := section, p.TenantID == "42"
-	if personal {
-		owner, err := governance.DemoIdentity(p.UserID)
-		legacy = p.UserID + ":" + section
-		readLegacy = err == nil && owner.TenantID == p.TenantID
-	}
-	if readLegacy {
+	legacy := settingsLegacyKey(p, section)
+	if legacy != "" {
 		if value := st.Settings[legacy]; value != nil {
 			return value
 		}
 	}
 	return json.RawMessage(`{}`)
+}
+func settingsLegacyKey(p governance.Principal, section string) string {
+	if section == "profile" || section == "general" {
+		owner, err := governance.DemoIdentity(p.UserID)
+		if err == nil && owner.TenantID == p.TenantID {
+			return p.UserID + ":" + section
+		}
+		return ""
+	}
+	if p.TenantID == "42" {
+		return section
+	}
+	return ""
 }
 func settingsRevision(st app.State, p governance.Principal, section string, value json.RawMessage) string {
 	key := settingsStorageKey(p, section)
@@ -139,7 +144,7 @@ func (s *Server) saveSettings(w http.ResponseWriter, r *http.Request) error {
 	}
 	value, _ := json.Marshal(req.Values)
 	revision := ""
-	err := s.Store.UpdateOperationalContext(r.Context(), func(st *app.State) error {
+	update := func(st *app.State) error {
 		current := settingsValue(*st, p, section)
 		revision = settingsRevision(*st, p, section, current)
 		if req.Expected != nil && *req.Expected != revision {
@@ -157,7 +162,27 @@ func (s *Server) saveSettings(w http.ResponseWriter, r *http.Request) error {
 		st.SettingRevisions[key] = revision
 		appendAudit(st, p, "settings.update", section, "success", "", requestID(r))
 		return nil
+	}
+	key := settingsStorageKey(p, section)
+	legacy := settingsLegacyKey(p, section)
+	handled, err := s.Store.UpdateMySQLSettingsContext(r.Context(), key, legacy, func(record app.SettingsRecord) (*app.SettingsPatch, error) {
+		st := app.State{Settings: map[string]json.RawMessage{}, SettingRevisions: map[string]string{key: record.Revision}}
+		if record.Canonical {
+			st.Settings[key] = record.Value
+		} else if legacy != "" {
+			st.Settings[legacy] = record.Value
+		}
+		if e := update(&st); e != nil {
+			return nil, e
+		}
+		if len(st.Audit) == 0 {
+			return nil, nil
+		}
+		return &app.SettingsPatch{Value: st.Settings[key], Revision: revision, Audit: st.Audit}, nil
 	})
+	if !handled && err == nil {
+		err = s.Store.UpdateOperationalContext(r.Context(), update)
+	}
 	if err != nil {
 		return err
 	}
