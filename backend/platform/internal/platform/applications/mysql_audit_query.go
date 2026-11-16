@@ -11,7 +11,18 @@ import (
 // QueryMySQLAudit uses tenant/sequence indexes and bounded batches. A predicate keeps
 // the existing Go search/time semantics, including legacy tenant mapping and NULL dates.
 // Empty tenant is a readiness probe: inspect state/schema without scanning audit rows.
+type AuditSQLFilter struct {
+	Outcome  string
+	From, To *time.Time
+}
+
 func (s *Store) QueryMySQLAudit(parent context.Context, tenant, after string, limit int, match func(Event) bool) ([]Event, bool, bool, error) {
+	return s.QueryMySQLAuditFiltered(parent, tenant, after, limit, AuditSQLFilter{}, match)
+}
+
+// SQL filters are conservative candidate restrictions. The callback remains the
+// final authority for exact time/search/legacy-tenant semantics.
+func (s *Store) QueryMySQLAuditFiltered(parent context.Context, tenant, after string, limit int, filter AuditSQLFilter, match func(Event) bool) ([]Event, bool, bool, error) {
 	if s.dialect != "mysql" {
 		return nil, false, false, nil
 	}
@@ -31,6 +42,12 @@ func (s *Store) QueryMySQLAudit(parent context.Context, tenant, after string, li
 	}
 	if limit < 1 || limit > 100 || match == nil {
 		return nil, false, true, errors.New("invalid audit query")
+	}
+	if filter.Outcome != "" && !map[string]bool{"success": true, "accepted": true, "denied": true, "failed": true, "partial": true, "canceled": true}[filter.Outcome] {
+		return nil, false, true, errors.New("invalid audit outcome")
+	}
+	if filter.From != nil && filter.To != nil && filter.From.After(*filter.To) {
+		return nil, false, true, errors.New("invalid audit time range")
 	}
 	decode := func(raw []byte, id, tenantID string) (Event, error) {
 		var event Event
@@ -82,6 +99,26 @@ func (s *Store) QueryMySQLAudit(parent context.Context, tenant, after string, li
 		if before != 0 {
 			query += ` AND sequence_no<?`
 			args = append(args, before)
+		}
+		if filter.Outcome != "" {
+			query += ` AND CAST(JSON_UNQUOTE(JSON_EXTRACT(payload,'$.outcome')) AS BINARY)=CAST(? AS BINARY)`
+			args = append(args, filter.Outcome)
+		}
+		for _, bound := range []struct {
+			stamp *time.Time
+			op    string
+		}{{filter.From, ">="}, {filter.To, "<="}} {
+			if bound.stamp == nil {
+				continue
+			}
+			utc := bound.stamp.UTC()
+			if utc.Year() < 1000 || utc.Year() > 9999 {
+				continue
+			}
+			// DATETIME(6) truncates nanoseconds. Include its entire microsecond bucket;
+			// NULL projections (valid ancient/out-of-range dates) are post-filtered in Go.
+			query += ` AND (occurred_at IS NULL OR occurred_at ` + bound.op + ` ?)`
+			args = append(args, utc.Format("2006-01-02 15:04:05.000000"))
 		}
 		query += ` ORDER BY sequence_no DESC LIMIT 200`
 		rows, e := tx.QueryContext(ctx, query, args...)

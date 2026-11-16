@@ -90,9 +90,11 @@ func governancePage(items any, r *http.Request, tenant, section string) (map[str
 }
 
 type governanceQuery struct {
-	limit  int
-	digest string
-	match  func(map[string]any) bool
+	outcome  string
+	from, to *time.Time
+	limit    int
+	digest   string
+	match    func(map[string]any) bool
 }
 
 func parseGovernanceQuery(r *http.Request, tenant, section string) (*governanceQuery, error) {
@@ -196,5 +198,12 @@ func parseGovernanceQuery(r *http.Request, tenant, section string) (*governanceQ
 	fingerprint, _ := json.Marshal([]string{tenant, section, query, status, outcome, unit, stamp(from, hasFrom), stamp(to, hasTo)})
 	hash := sha256.Sum256(fingerprint)
 	digest := hex.EncodeToString(hash[:])
-	return &governanceQuery{limit, digest, match}, nil
+	cfg := &governanceQuery{limit: limit, digest: digest, match: match, outcome: outcome}
+	if hasFrom {
+		cfg.from = &from
+	}
+	if hasTo {
+		cfg.to = &to
+	}
+	return cfg, nil
 }
