@@ -69,7 +69,7 @@ type Server struct {
 }
 
 func (s *Server) event(p governance.Principal, action, resource, outcome, execution string) {
-	_ = s.Store.Update(func(st *app.State) error {
+	_ = s.Store.UpdateOperational(func(st *app.State) error {
 		st.Audit = append(st.Audit, app.Event{TenantID: p.TenantID, ID: app.ID("event"), OccurredAt: app.Now(), ActorID: p.UserID, ClientID: p.ApplicationID, Action: action, ResourceID: resource, Outcome: outcome, RequestID: app.ID("request"), ExecutionID: execution})
 		return nil
 	})
@@ -116,7 +116,7 @@ func (s *Server) canUse(st app.State, p governance.Principal, a app.App) bool {
 	return false
 }
 func (s *Server) CanResource(p governance.Principal, kind, id, action string) bool {
-	return s.canResource(s.Store.Read(), p, kind, id, action)
+	return s.canResource(s.Store.ReadOperational(), p, kind, id, action)
 }
 func (s *Server) canResource(st app.State, p governance.Principal, kind, id, action string) bool {
 	if p.TenantID != "42" || p.Scope != "east" {
@@ -175,7 +175,7 @@ func (s *Server) canResource(st app.State, p governance.Principal, kind, id, act
 	return false
 }
 func (s *Server) getApp(p governance.Principal, id string, build bool) (app.App, error) {
-	a, ok := s.Store.Read().Apps[id]
+	a, ok := s.Store.ReadOperational().Apps[id]
 	if !ok || a.TenantID != p.TenantID {
 		return a, fail(404, "ASSET_UNAVAILABLE", "应用不存在或不可访问")
 	}
@@ -183,7 +183,7 @@ func (s *Server) getApp(p governance.Principal, id string, build bool) (app.App,
 		if err := s.requireBuild(p); err != nil {
 			return a, err
 		}
-	} else if !s.canUse(s.Store.Read(), p, a) {
+	} else if !s.canUse(s.Store.ReadOperational(), p, a) {
 		return a, fail(403, "AUTHORIZATION_DENIED", "当前账户没有应用使用权")
 	}
 	return a, nil
@@ -270,7 +270,7 @@ func (s *Server) listApps(w http.ResponseWriter, r *http.Request) error {
 			return e
 		}
 	}
-	st := s.Store.Read()
+	st := s.Store.ReadOperational()
 	items := []app.App{}
 	for _, a := range st.Apps {
 		if a.TenantID != p.TenantID {
@@ -327,7 +327,7 @@ func (s *Server) createApp(w http.ResponseWriter, r *http.Request) error {
 		return fail(400, "INVALID_REQUEST", "创建方式无效")
 	}
 	a := app.App{ID: app.ID("app"), AgentID: app.ID("agent"), TenantID: p.TenantID, OwnerID: p.UserID, Draft: cfg, Revision: app.ID("draft"), Releases: []app.Release{}, UpdatedAt: app.Now()}
-	if e := s.Store.UpdateContext(r.Context(), func(st *app.State) error { st.Apps[a.ID] = a; return nil }); e != nil {
+	if e := s.Store.UpdateOperationalContext(r.Context(), func(st *app.State) error { st.Apps[a.ID] = a; return nil }); e != nil {
 		return e
 	}
 	s.event(p, "application.create", a.ID, "success", "")
@@ -377,7 +377,7 @@ func (s *Server) saveDraft(w http.ResponseWriter, r *http.Request) error {
 		return e
 	}
 	var out app.App
-	e := s.Store.UpdateContext(r.Context(), func(st *app.State) error {
+	e := s.Store.UpdateOperationalContext(r.Context(), func(st *app.State) error {
 		a := st.Apps[r.PathValue("app_id")]
 		if a.Revision != req.Expected {
 			return fail(409, "VERSION_INCOMPATIBLE", "草稿已被更新，请刷新后比较")
@@ -465,7 +465,7 @@ func (s *Server) checkRelease(w http.ResponseWriter, r *http.Request) error {
 		return nil
 	}
 	check := app.Check{ID: app.ID("check"), AppID: a.ID, Revision: a.Revision, UserID: p.UserID, ExpiresAt: time.Now().Add(5 * time.Minute), ValidationID: v.ID}
-	if e = s.Store.UpdateContext(r.Context(), func(st *app.State) error { st.Checks[check.ID] = check; return nil }); e != nil {
+	if e = s.Store.UpdateOperationalContext(r.Context(), func(st *app.State) error { st.Checks[check.ID] = check; return nil }); e != nil {
 		return e
 	}
 	Write(w, map[string]any{"check_id": check.ID, "draft_revision": check.Revision, "valid_until": check.ExpiresAt, "status": "PASS", "issues": []string{}})
@@ -486,7 +486,7 @@ func (s *Server) release(w http.ResponseWriter, r *http.Request) error {
 		return e
 	}
 	var out app.Release
-	e := s.Store.UpdateContext(r.Context(), func(st *app.State) error {
+	e := s.Store.UpdateOperationalContext(r.Context(), func(st *app.State) error {
 		a := st.Apps[r.PathValue("app_id")]
 		c, ok := st.Checks[req.CheckID]
 		if !ok || c.AppID != a.ID || c.UserID != p.UserID || c.Revision != a.Revision || req.Revision != a.Revision || time.Now().After(c.ExpiresAt) {
@@ -549,7 +549,7 @@ func (s *Server) createSession(w http.ResponseWriter, r *http.Request) error {
 		req.Title = "新对话"
 	}
 	sess := app.Session{ID: app.ID("session"), AppID: a.ID, TenantID: p.TenantID, OwnerID: p.UserID, Title: req.Title, TitleCustomized: customized, CreatedAt: app.Now(), UpdatedAt: app.Now(), Revision: app.ID("revision"), Messages: []app.Message{}}
-	if e = s.Store.UpdateContext(r.Context(), func(st *app.State) error {
+	if e = s.Store.UpdateOperationalContext(r.Context(), func(st *app.State) error {
 		current, ok := st.Apps[a.ID]
 		if !ok || !s.canUse(*st, p, current) {
 			return fail(403, "AUTHORIZATION_DENIED", "应用使用授权已撤销")
@@ -563,7 +563,7 @@ func (s *Server) createSession(w http.ResponseWriter, r *http.Request) error {
 	return nil
 }
 func (s *Server) owned(p governance.Principal, id string) (app.Session, error) {
-	v, ok := s.Store.Read().Sessions[id]
+	v, ok := s.Store.ReadOperational().Sessions[id]
 	if !ok || v.TenantID != p.TenantID || v.OwnerID != p.UserID {
 		return v, fail(404, "ASSET_UNAVAILABLE", "会话不存在或不可访问")
 	}
@@ -578,7 +578,7 @@ func (s *Server) session(w http.ResponseWriter, r *http.Request) error {
 		return e
 	}
 	v = sessionMetadata(v)
-	a := s.Store.Read().Apps[v.AppID]
+	a := s.Store.ReadOperational().Apps[v.AppID]
 	rel, _ := app.Current(a)
 	if r.URL.Query().Get("include_messages") == "false" {
 		v.Messages = nil
@@ -807,7 +807,7 @@ func (s *Server) InternalHandler() http.Handler {
 			sum := sha256.Sum256(b)
 			digest := hex.EncodeToString(sum[:])
 			receipt := "ACCEPTED"
-			e := s.Store.UpdateContext(r.Context(), func(st *app.State) error {
+			e := s.Store.UpdateOperationalContext(r.Context(), func(st *app.State) error {
 				k := "42:" + kind + ":" + producer + ":" + id
 				if old, ok := st.Receipts[k]; ok {
 					if old != digest {

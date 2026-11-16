@@ -17,7 +17,7 @@ func (s *Server) governanceList(w http.ResponseWriter, r *http.Request) error {
 			return e
 		}
 	}
-	st := s.Store.Read()
+	st := s.Store.ReadOperational()
 	section := r.PathValue("section")
 	var items any = []any{}
 	switch section {
@@ -123,7 +123,7 @@ func (s *Server) createGrant(w http.ResponseWriter, r *http.Request) error {
 		return fail(400, "INVALID_REQUEST", "验证集当前只支持华东范围")
 	}
 	g := app.Grant{ID: app.ID("grant"), TenantID: p.TenantID, SubjectType: req.SubjectType, SubjectID: req.SubjectID, ResourceType: req.ResourceType, ResourceID: req.ResourceID, Action: req.Action, Scope: req.Scope, Active: true}
-	if e := s.Store.UpdateContext(r.Context(), func(st *app.State) error {
+	if e := s.Store.UpdateOperationalContext(r.Context(), func(st *app.State) error {
 		valid := false
 		switch req.SubjectType {
 		case "USER":
@@ -174,7 +174,7 @@ func (s *Server) revokeGrant(w http.ResponseWriter, r *http.Request) error {
 	if e := s.requireAdmin(p); e != nil {
 		return e
 	}
-	e := s.Store.UpdateContext(r.Context(), func(st *app.State) error {
+	e := s.Store.UpdateOperationalContext(r.Context(), func(st *app.State) error {
 		for i, g := range st.Grants {
 			if g.ID == r.PathValue("id") && g.TenantID == p.TenantID {
 				if !g.Active {

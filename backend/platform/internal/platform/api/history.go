@@ -78,7 +78,7 @@ func (s *Server) canReadMessage(st app.State, p governance.Principal, session ap
 	return false
 }
 func (s *Server) visibleMessages(p governance.Principal, session app.Session) []app.Message {
-	st := s.Store.Read()
+	st := s.Store.ReadOperational()
 	out := make([]app.Message, 0, len(session.Messages))
 	for _, m := range session.Messages {
 		if !s.canReadMessage(st, p, session, m) {
