@@ -101,6 +101,32 @@ try {
  assert.deepEqual(copiedApp.draft,{...publishedDraft.draft,basic:{name:'模板复制浏览器回归',description:'独立草稿验证'}});
  const unchangedSource=await page.evaluate(async()=>{const r=await fetch('/api/v1/cognitive/apps/channel-replenishment',{headers:{Authorization:'Bearer '+localStorage.getItem('cognara_demo_identity')}});if(!r.ok)throw Error('read source failed');return r.json()});
  assert.deepEqual(unchangedSource,publishedDraft);
+ // Publish the copy, then grant user access through the reviewed governance form.
+ await page.getByRole('button',{name:'检查并发布',exact:true}).click();
+ await page.locator('.publish-review').getByText('首次发布 · 尚无线上的发布版本',{exact:true}).waitFor();
+ await page.getByRole('button',{name:'确认发布',exact:true}).click();
+ await page.waitForURL('**/build/apps/'+copiedId);
+ const beforeUserAccess=await page.evaluate(async()=>{const r=await fetch('/api/v1/cognitive/apps?purpose=USE&limit=100',{headers:{Authorization:'Bearer demo-user'}});if(!r.ok)throw Error('read user catalogue failed');return r.json()});
+ assert.equal(beforeUserAccess.items.some(a=>a.app_id===copiedId),false);
+ const grantOptions=page.waitForResponse(r=>r.url().includes('/api/v1/cognitive/apps?')&&r.url().includes('purpose=MANAGE')&&r.url().includes('limit=100'));
+ await page.goto('http://127.0.0.1:14173/governance/access?tab=grants');assert.equal((await grantOptions).status(),200);
+ await page.getByRole('button',{name:'新增授权',exact:true}).click();
+ const grantForm=page.locator('.grant-form');
+ await grantForm.locator('.t-form__item').first().locator('.t-select').click();
+ await page.locator('.t-select-option').filter({hasText:/^用户$/}).click();
+ await grantForm.locator('.t-form__item').nth(3).locator('.t-select').click();
+ await page.locator('.t-select-option').filter({hasText:copiedApp.draft.basic.name}).click();
+ await page.getByRole('button',{name:'审阅授权',exact:true}).click();
+ const grantReview=page.locator('.grant-review');await grantReview.waitFor();
+ assert.match(await grantReview.innerText(),/张敏/);assert.ok((await grantReview.innerText()).includes(copiedApp.draft.basic.name));
+ const grantRequest=page.waitForRequest(r=>r.method()==='POST'&&r.url().endsWith('/api/v1/cognitive/governance/grants'));
+ const grantResponse=page.waitForResponse(r=>r.request().method()==='POST'&&r.url().endsWith('/api/v1/cognitive/governance/grants'));
+ await page.getByRole('button',{name:'确认授权',exact:true}).click();
+ const grantBody=(await grantRequest).postDataJSON();
+ assert.equal(grantBody.subject_type,'USER');assert.equal(grantBody.subject_id,'demo-user');
+ assert.equal(grantBody.resource_id,copiedId);assert.equal(grantBody.action,'application.use');
+ const grantHTTP=await grantResponse;assert.equal(grantHTTP.status(),200);const createdAccessGrant=await grantHTTP.json();
+ await page.getByRole('row').filter({hasText:copiedApp.draft.basic.name}).first().waitFor();
  // Exercise the saved preference through the actual form and a fresh page load.
  await page.goto('http://127.0.0.1:14173/settings/general');
  await page.waitForLoadState('networkidle');
@@ -120,5 +146,18 @@ try {
  await page.getByRole('button',{name:'进入验证工作台'}).click();await page.waitForURL('**/apps');assert.equal(await page.getByRole('link',{name:'身份与权限',exact:true}).count(),0);
  assert.equal(await page.locator('.app-shell').getAttribute('data-density'),'comfortable');
  await page.locator('.application-card').first().waitFor();assert.equal(await page.locator('.application-card').first().evaluate(el=>getComputedStyle(el).paddingTop),'24px');
- assert.deepEqual(failures,[]);console.log('PASS Chromium: login, chat Enter/Shift+Enter, business result, 13 routes, service input/output contract and raw definition, historical release restore/reload/live snapshot protection, checked publication diff/unchanged baseline/real publish, independent template selector/preview/versioned copy, saved density/timezone/reload/account isolation, no component/runtime errors');
+ // User can enter after authorization; revocation removes only the copied application's access.
+ const copiedCard=page.locator('.application-card').filter({hasText:copiedApp.draft.basic.name});
+ await copiedCard.waitFor();await copiedCard.getByRole('button',{name:'进入应用',exact:true}).click();await page.waitForURL('**/chat/**');
+ await page.goto('http://127.0.0.1:14173/apps');await page.evaluate(()=>localStorage.setItem('cognara_demo_identity','demo-admin'));
+ await page.goto('http://127.0.0.1:14173/governance/access?tab=grants');
+ const grantedRow=page.getByRole('row').filter({hasText:copiedApp.draft.basic.name});await grantedRow.waitFor();
+ await grantedRow.getByRole('button',{name:'撤销',exact:true}).click();
+ const revokeResponse=page.waitForResponse(r=>r.request().method()==='DELETE'&&r.url().endsWith('/governance/grants/'+createdAccessGrant.grant_id));
+ await page.getByRole('button',{name:'确认撤销',exact:true}).click();const revoked=await revokeResponse;assert.equal(revoked.status(),200);assert.equal((await revoked.json()).success,true);
+ await page.goto('http://127.0.0.1:14173/apps');await page.evaluate(()=>localStorage.setItem('cognara_demo_identity','demo-user'));
+ await page.goto('http://127.0.0.1:14173/apps');await page.waitForLoadState('networkidle');
+ assert.equal(await page.locator('.application-card').filter({hasText:copiedApp.draft.basic.name}).count(),0);
+ assert.equal(await page.locator('.application-card').filter({hasText:publishedDraft.draft.basic.name}).count(),1);
+ assert.deepEqual(failures,[]);console.log('PASS Chromium: login, chat Enter/Shift+Enter, business result, 13 routes, service input/output contract and raw definition, historical release restore/reload/live snapshot protection, checked publication diff/unchanged baseline/real publish, independent template selector/preview/versioned copy, reviewed user grant/entry/revocation isolation, saved density/timezone/reload/account isolation, no component/runtime errors');
 } finally {await browser?.close();if(server)await new Promise(r=>server.httpServer.close(r));backend.kill('SIGTERM');await new Promise(r=>backend.exitCode!==null?r():backend.once('exit',r));await rm(temp,{recursive:true,force:true});}
