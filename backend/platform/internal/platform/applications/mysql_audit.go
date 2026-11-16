@@ -1,7 +1,6 @@
 package applications
 
 import (
-	"bytes"
 	"context"
 	"database/sql"
 	_ "embed"
@@ -69,30 +68,14 @@ func MigrateMySQLAudit(parent context.Context, dsn string) error {
 	if e = tx.QueryRowContext(ctx, `SELECT COUNT(*) FROM cognara_fg_audit`).Scan(&count); e != nil || count != 0 {
 		return errors.New("MySQL audit migration target must be empty")
 	}
-	var st State
-	if json.Unmarshal(raw, &st) != nil {
-		return errors.New("MySQL migration state invalid")
-	}
-	var source map[string]json.RawMessage
-	if json.Unmarshal(raw, &source) != nil || source == nil {
-		return errors.New("MySQL migration state invalid")
-	}
-	if audit, ok := source["audit"]; ok {
-		decoder := json.NewDecoder(bytes.NewReader(audit))
-		decoder.DisallowUnknownFields()
-		var checked []Event
-		if decoder.Decode(&checked) != nil {
-			return errors.New("audit contains unsupported fields; source retained")
-		}
+	st, object, e := auditMigrationSource(raw)
+	if e != nil {
+		return e
 	}
 	if e = appendMySQLAudit(ctx, tx, nil, st.Audit); e != nil {
 		return errors.New("MySQL audit migration rejected; source retained")
 	}
 	// Preserve unknown aggregate fields during the one-time migration.
-	var object map[string]json.RawMessage
-	if json.Unmarshal(raw, &object) != nil || object == nil {
-		return errors.New("MySQL migration state invalid")
-	}
 	delete(object, "audit")
 	next, e := json.Marshal(object)
 	if e != nil {
