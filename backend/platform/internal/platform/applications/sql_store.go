@@ -18,7 +18,7 @@ func (s *Store) readSQLContext(parent context.Context) (State, error) {
 			return State{}, e
 		}
 		defer tx.Rollback()
-		st, _, e := readStateRow(ctx, tx, false, true)
+		st, _, e := readStateRow(ctx, tx, false, true, true)
 		if e != nil {
 			return State{}, e
 		}
@@ -39,7 +39,7 @@ func (s *Store) readSQLContext(parent context.Context) (State, error) {
 	}
 	return st, e
 }
-func readStateRow(ctx context.Context, tx *sql.Tx, lock, relational bool) (State, int, error) {
+func readStateRow(ctx context.Context, tx *sql.Tx, lock, relational, includeAudit bool) (State, int, error) {
 	query := `SELECT schema_version,body FROM cognara_fg_state WHERE id=1`
 	if lock {
 		query += " FOR UPDATE"
@@ -64,7 +64,9 @@ func readStateRow(ctx context.Context, tx *sql.Tx, lock, relational bool) (State
 			return st, version, fmt.Errorf("ambiguous audit storage")
 		}
 		var e error
-		st.Audit, e = loadMySQLAudit(ctx, tx)
+		if includeAudit {
+			st.Audit, e = loadMySQLAudit(ctx, tx)
+		}
 		if e != nil {
 			return st, version, e
 		}
@@ -81,7 +83,7 @@ func (s *Store) updateSQLContext(parent context.Context, fn func(*State) error) 
 		return e
 	}
 	defer tx.Rollback()
-	next, version, e := readStateRow(ctx, tx, s.dialect == "postgres" || s.dialect == "mysql", s.dialect == "mysql")
+	next, version, e := readStateRow(ctx, tx, s.dialect == "postgres" || s.dialect == "mysql", s.dialect == "mysql", true)
 	if e != nil {
 		return e
 	}
@@ -114,6 +116,10 @@ func (s *Store) updateSQLContext(parent context.Context, fn func(*State) error) 
 	return nil
 }
 func (s *Store) Check() error {
+	if s.dialect == "mysql" {
+		_, _, _, e := s.QueryMySQLAudit(context.Background(), "", "", 1, func(Event) bool { return false })
+		return e
+	}
 	if s.db == nil {
 		return nil
 	}

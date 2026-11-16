@@ -12,6 +12,11 @@ func (s *Server) governanceList(w http.ResponseWriter, r *http.Request) error {
 	if e := s.requireAdmin(p); e != nil {
 		return e
 	}
+	if r.PathValue("section") == "audit" {
+		if handled, e := s.auditDatabasePage(w, r); handled || e != nil {
+			return e
+		}
+	}
 	st := s.Store.Read()
 	section := r.PathValue("section")
 	var items any = []any{}

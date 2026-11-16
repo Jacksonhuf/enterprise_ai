@@ -57,7 +57,7 @@ func MigrateMySQLAudit(parent context.Context, dsn string) error {
 		return errors.New("MySQL audit table incompatible")
 	}
 	if version == 2 {
-		_, _, e = readStateRow(ctx, tx, false, true)
+		_, _, e = readStateRow(ctx, tx, false, true, true)
 		if e != nil {
 			return errors.New("MySQL audit migration verification failed")
 		}

@@ -453,3 +453,7 @@ profile只接收display_name，general只接收language/timezone/density，publi
 ## 数据库选型补充（2026-11-16）
 
 F/G生产关系数据库确定采用MySQL，与A—E技术选型统一。现有前后端及跨服务HTTP路由、参数、身份/委托、资源权威及事件幂等语义不变。双方独立逻辑库、账号与迁移所有权；不以共享表/跨库直连替代契约。本次不新增MySQL运行接口，现有PostgreSQL验证实现也不等于MySQL已接入。目标与验收见[数据库选型决议](../architecture/fg-database-decision.md)。
+
+## MySQL v2审计查询实现补充（2026-11-16）
+
+GET /api/v1/cognitive/governance/audit的参数、错误信封、游标及返回结构不变。MySQL v2改为租户/sequence_no范围分批读取，管理员权限与历史空租户映射保持；搜索/结果/时间仍使用原Go语义。v1游标可在相同条件下用于迁移后的v2列表。新增事件不改变已定位游标之后的旧页；未知或不可访问锚点400要求刷新。稀疏筛选仍可能扫描多批，超时返回错误而非不完整成功列表。
