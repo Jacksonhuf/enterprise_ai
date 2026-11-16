@@ -1,4 +1,4 @@
-> **数据库选型更新（2026-11-16）**：F/G生产关系数据库确定采用MySQL，与A—E统一。当前代码仍是JSON/SQLite/PostgreSQL验证适配，尚未实现MySQL运行模式。架构边界、实施顺序与验收见[数据库决议](docs/architecture/fg-database-decision.md)。以下PostgreSQL命令及测试记录仅表示现有验证能力。
+> **数据库选型更新（2026-11-16）**：F/G生产关系数据库确定采用MySQL，与A—E统一。当前提供JSON/SQLite/PostgreSQL及MySQL过渡验证适配，MySQL正式关系表仍待实现。架构边界、实施顺序与验收见[数据库决议](docs/architecture/fg-database-decision.md)。以下PostgreSQL命令及测试记录仅表示现有验证能力。
 
 # Cognara · enterprise_ai
 
@@ -136,3 +136,15 @@ make verify-postgres
 数据库集成测试创建并清理独立临时schema；程序启动验证会在专用测试库中保存验证应用与消息。不要将测试变量指向业务数据库。GitHub Actions使用独立PostgreSQL 15服务，并强制要求真实数据库测试，避免未配置时静默跳过。
 
 `make verify-runtime`会编译开发程序，并验证JSON和SQLite模式的启动、业务调用、退出、重启及重放。三个模式均已进行真实进程验证，记录见[第五轮测试报告](docs/development/test-report-v0.5.md)。
+
+
+## MySQL过渡验证模式
+
+F/G生产目标为MySQL。当前新增适配仍把验证状态存于InnoDB的单行JSON列，保持事务语义用于迁移前验证，不是生产表模型。仅用于独立验证库，不导入真实业务数据。设置服务环境变量COGNARA_MYSQL_DSN（Go MySQL驱动DSN格式，由部署环境注入，不提交秘密）后运行：
+
+```bash
+cd backend/platform
+go run ./cmd/cognara-dev --demo --storage mysql
+```
+
+库须预先创建；适配仅初始化cognara_fg_state，不自动搬迁其他存储数据。--mysql-dsn-env可指定其他环境变量名。真实集成测试另用COGNARA_TEST_MYSQL_DSN，测试账户须能创建/删除随机cognara_test_*独立测试库；生产账号不需要此测试权限。CI强制MySQL 8.4测试，并保留PostgreSQL历史回归。

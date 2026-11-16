@@ -24,7 +24,8 @@ import (
 func main() {
 	port := flag.Int("port", 8080, "loopback HTTP port")
 	mockPort := flag.Int("mock-port", 8081, "A-E contract fixture port")
-	storage := flag.String("storage", "json", "json, sqlite or postgres persistence")
+	storage := flag.String("storage", "json", "json, sqlite, postgres or mysql persistence")
+	mysqlDSNEnv := flag.String("mysql-dsn-env", "COGNARA_MYSQL_DSN", "environment variable containing the MySQL DSN")
 	dsnEnv := flag.String("postgres-dsn-env", "COGNARA_POSTGRES_DSN", "environment variable containing the PostgreSQL DSN")
 	data := flag.String("data", ".devdata/state.json", "local F/G persistence path")
 	modelConfig := flag.String("model-config", "", "non-secret model registry JSON; credentials are environment references")
@@ -41,6 +42,8 @@ func main() {
 		store, e = app.Open(*data)
 	case "sqlite":
 		store, e = app.OpenSQLite(*data)
+	case "mysql":
+		store, e = app.OpenMySQL(os.Getenv(*mysqlDSNEnv))
 	case "postgres":
 		store, e = app.OpenPostgres(os.Getenv(*dsnEnv))
 	default:
