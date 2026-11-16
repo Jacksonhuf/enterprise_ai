@@ -31,12 +31,22 @@
     <div class="list-toolbar">
       <t-input
         v-model="query"
-        placeholder="搜索名称、操作或关联对象"
+        placeholder="搜索请求编号、用户标识、应用或资源"
         clearable
       /><span class="meta">{{
         data.sampled_at ? new Date(data.sampled_at).toLocaleString("zh-CN") : ""
       }}</span>
     </div>
+    <div v-if="paged" class="list-toolbar governance-filters">
+      <t-select v-if="section === 'audit'" v-model="outcomeFilter" :options="outcomeOptions" placeholder="审计结果" />
+      <t-select v-if="section === 'exceptions' || section === 'grants'" v-model="statusFilter" :options="statusOptions" placeholder="处理状态" />
+      <t-select v-if="section === 'usage'" v-model="unitFilter" :options="unitOptions" placeholder="用量单位" />
+      <t-date-range-picker v-if="section !== 'grants'" v-model="timeRange" enable-time-picker clearable value-type="time-stamp" />
+      <t-button variant="text" @click="clearFilters">清空筛选</t-button>
+      <span class="meta">已加载 {{ collection.items.length }} 条 · 按接收顺序排列</span>
+    </div>
+    <t-alert v-if="paged && collection.error" theme="error" :message="collection.error" />
+    <t-button v-if="paged && collection.error" variant="text" @click="load">重新加载列表</t-button>
     <t-loading :loading="loading"
       ><div v-if="section === 'status'" class="status-grid">
         <article
@@ -112,7 +122,7 @@
               : '没有匹配记录'
         "
         description="仅展示实际接收到的记录，不用固定统计填充空状态。" /></t-loading
-    ><t-alert
+    ><t-button v-if="paged && collection.nextCursor !== null" class="spaced" :loading="loading" @click="collection.next()">加载更多记录</t-button><t-alert
       v-if="section === 'grants'"
       class="spaced"
       theme="info"
@@ -203,18 +213,22 @@
   </section>
 </template>
 <script setup lang="ts">
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, reactive, watch, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { DialogPlugin, MessagePlugin } from "tdesign-vue-next";
 import { api, post, prefix, formatAPIError } from "../api";
+import { PagedCollection } from "../pagedCollection";
+import { governanceParams, pagedGovernance } from "../governanceFilters";
 import { loadApplicationOptions } from "../applicationOptions";
 import EmptyState from "@/components/EmptyState.vue";
 const route = useRoute(),
   router = useRouter(),
-  loading = ref(true),
+  staticLoading = ref(true),
   error = ref(""),
   data = ref<any>({ items: [] }),
   query = ref(""),
+  statusFilter = ref(""), outcomeFilter = ref(""), unitFilter = ref(""),
+  timeRange = ref<(string|number|Date)[]>([]),
   selected = ref<any>(null),
   grantVisible = ref(false),
   saving = ref(false),
@@ -317,9 +331,23 @@ const columnMap: Record<string, { key: string; label: string }[]> = {
     { key: "value", label: "当前值" },
   ],
 };
+const paged = computed(() => pagedGovernance(section.value));
+const collection = reactive(new PagedCollection<any>(async (encoded, cursor) => {
+  const filters = JSON.parse(encoded);
+  const response = await api(prefix + "/governance/" + section.value + "?" + governanceParams(section.value, filters, cursor));
+  return response;
+}, row => row.event_id || row.grant_id || row.id));
+const loading = computed(() => paged.value ? collection.loading : staticLoading.value);
+const filterKey = computed(() => JSON.stringify({query:query.value,status:statusFilter.value,outcome:outcomeFilter.value,unit:unitFilter.value,range:timeRange.value}));
+const outcomeOptions = [{label:"全部结果",value:""},...Object.entries({success:"成功",accepted:"已接受",denied:"拒绝",failed:"失败",partial:"部分完成",canceled:"已取消"}).map(([value,label])=>({value,label}))];
+const unitOptions = [{label:"全部单位",value:""}, {label:"调用次数",value:"CALL"}, {label:"词元",value:"TOKEN"}, {label:"毫秒",value:"MILLISECOND"}];
+const statusOptions = computed(() => [{label:"全部状态",value:""}, ...Object.entries(section.value === "grants" ? {ACTIVE:"有效",REVOKED:"已撤销"} : {OPEN:"待处理",ACKNOWLEDGED:"已确认",RESOLVED:"已解决"}).map(([value,label])=>({value,label}))]);
+function clearFilters(){query.value="";statusFilter.value="";outcomeFilter.value="";unitFilter.value="";timeRange.value=[];}
+watch(filterKey, () => { if (paged.value) void load(); });
+watch(() => collection.error, value => {if(value)selected.value=null;});
 const columns = computed(() => columnMap[section.value] || []),
   filtered = computed(() =>
-    (data.value.items || []).filter((x: any) =>
+    paged.value ? collection.items : (data.value.items || []).filter((x: any) =>
       JSON.stringify(x).includes(query.value),
     ),
   );
@@ -341,8 +369,14 @@ const labels: Record<string, string> = {
   ACKNOWLEDGED: "已确认",
   RESOLVED: "已解决",
   success: "成功",
+  accepted: "已接受",
   denied: "拒绝",
+  failed: "失败",
+  partial: "部分完成",
+  canceled: "已取消",
   CALL: "次",
+  TOKEN: "词元",
+  MILLISECOND: "毫秒",
 };
 function display(v: any) {
   if (v == null) return "—";
@@ -398,15 +432,13 @@ async function loadApps() {
   finally { appsLoading.value = false; }
 }
 async function load() {
-  loading.value = true;
+  selected.value = null;
   error.value = "";
-  try {
-    data.value = await api(prefix + "/governance/" + section.value);
-  } catch (e) {
-    error.value = formatAPIError(e);
-  } finally {
-    loading.value = false;
-  }
+  if (paged.value) { await collection.reset(filterKey.value); return; }
+  staticLoading.value = true;
+  try { data.value = await api(prefix + "/governance/" + section.value); }
+  catch (e) { error.value = formatAPIError(e); }
+  finally { staticLoading.value = false; }
 }
 const subjectOptions = computed(() =>
   grant.value.subject_type === "APPLICATION"
@@ -531,3 +563,8 @@ function confirmRevoke(row: any) {
   });
 }
 </script>
+
+<style scoped>
+.governance-filters { flex-wrap: wrap; }
+.governance-filters :deep(.t-select__wrap) { width: 180px; }
+</style>

@@ -5,7 +5,6 @@ import (
 	app "github.com/Tencent/WeKnora/internal/platform/applications"
 	"github.com/Tencent/WeKnora/internal/platform/governance"
 	"net/http"
-	"strings"
 	"time"
 )
 
@@ -53,9 +52,6 @@ func (s *Server) governanceList(w http.ResponseWriter, r *http.Request) error {
 					continue
 				}
 			}
-			if q := strings.ToLower(r.URL.Query().Get("query")); q != "" && !strings.Contains(strings.ToLower(e.Action+e.ResourceID+e.ActorID+e.ExecutionID), q) {
-				continue
-			}
 			rows = append(rows, e)
 		}
 		items = rows
@@ -88,6 +84,14 @@ func (s *Server) governanceList(w http.ResponseWriter, r *http.Request) error {
 		items = []map[string]any{{"name": "默认语言", "value": "简体中文"}, {"name": "时区", "value": "Asia/Shanghai"}, {"name": "数据标记", "value": "合成验证数据"}}
 	default:
 		return fail(404, "ASSET_UNAVAILABLE", "管理功能不存在")
+	}
+	if pagedGovernanceSections[section] {
+		result, err := governancePage(items, r, p.TenantID, section)
+		if err != nil {
+			return err
+		}
+		Write(w, result)
+		return nil
 	}
 	if items == nil {
 		items = []any{}
