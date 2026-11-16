@@ -4,6 +4,19 @@ jobs:
   validation:
     runs-on: ubuntu-latest
     services:
+      mysql:
+        image: mysql:8.4
+        env:
+          MYSQL_ROOT_PASSWORD: validation-only-mysql-password
+          MYSQL_ROOT_HOST: '%'
+          MYSQL_DATABASE: cognara_validation
+        ports:
+          - '127.0.0.1:3306:3306'
+        options: >-
+          --health-cmd "mysqladmin ping -h 127.0.0.1 --silent"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 15
       postgres:
         image: postgres:15
         env:
@@ -18,6 +31,9 @@ jobs:
           --health-timeout 5s
           --health-retries 10
     env:
+      COGNARA_TEST_MYSQL_DSN: root:validation-only-mysql-password@tcp(127.0.0.1:3306)/cognara_validation
+      COGNARA_MYSQL_DSN: root:validation-only-mysql-password@tcp(127.0.0.1:3306)/cognara_validation
+      COGNARA_REQUIRE_MYSQL_TESTS: '1'
       COGNARA_TEST_POSTGRES_DSN: postgres://cognara_test:validation-only-password@127.0.0.1:5432/cognara_validation?sslmode=disable
       COGNARA_POSTGRES_DSN: postgres://cognara_test:validation-only-password@127.0.0.1:5432/cognara_validation?sslmode=disable
       COGNARA_REQUIRE_POSTGRES_TESTS: '1'
@@ -43,6 +59,7 @@ jobs:
       - run: python scripts/verify-runtime.py --binary /tmp/cognara-dev --storage json
       - run: python scripts/verify-runtime.py --binary /tmp/cognara-dev --storage sqlite
       - run: python scripts/verify-runtime.py --binary /tmp/cognara-dev --storage postgres
+      - run: python scripts/verify-runtime.py --binary /tmp/cognara-dev --storage mysql
       - run: npm ci && npm run test:cognara && npx vue-tsc --noEmit -p tsconfig.cognara.json && npm run build
         working-directory: frontend
       - run: npm run check:cognara-bundle

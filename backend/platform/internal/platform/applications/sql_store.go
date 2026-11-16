@@ -37,7 +37,7 @@ func (s *Store) updateSQLContext(parent context.Context, fn func(*State) error) 
 	var raw []byte
 	var version int
 	selectSQL := `SELECT schema_version,body FROM cognara_fg_state WHERE id=1`
-	if s.dialect == "postgres" {
+	if s.dialect == "postgres" || s.dialect == "mysql" {
 		selectSQL += " FOR UPDATE"
 	}
 	if e = tx.QueryRowContext(ctx, selectSQL).Scan(&version, &raw); e != nil {

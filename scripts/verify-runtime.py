@@ -26,10 +26,12 @@ def free_port():
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--binary', required=True)
-    parser.add_argument('--storage', choices=['json', 'sqlite', 'postgres'], required=True)
+    parser.add_argument('--storage', choices=['json', 'sqlite', 'postgres', 'mysql'], required=True)
     args = parser.parse_args()
     if args.storage == 'postgres' and not os.environ.get('COGNARA_POSTGRES_DSN'):
         raise SystemExit('Postgres acceptance requires a dedicated COGNARA_POSTGRES_DSN')
+    if args.storage == 'mysql' and not os.environ.get('COGNARA_MYSQL_DSN'):
+        raise SystemExit('MySQL acceptance requires a dedicated COGNARA_MYSQL_DSN')
     binary = str(Path(args.binary).resolve())
     port, mock_port = free_port(), free_port()
     while mock_port == port:
