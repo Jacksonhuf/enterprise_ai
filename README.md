@@ -1,3 +1,5 @@
+> **数据库选型更新（2026-11-16）**：F/G生产关系数据库确定采用MySQL，与A—E统一。当前代码仍是JSON/SQLite/PostgreSQL验证适配，尚未实现MySQL运行模式。架构边界、实施顺序与验收见[数据库决议](docs/architecture/fg-database-decision.md)。以下PostgreSQL命令及测试记录仅表示现有验证能力。
+
 # Cognara · enterprise_ai
 
 企业认知平台 F/G 开发仓库。采用 Vue 3 / TypeScript / TDesign 前端与 Go 后端，通过固定版本脚本导入 WeKnora 源码，在功能目录内扩展应用、治理和业务服务适配。

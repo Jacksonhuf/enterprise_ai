@@ -1,3 +1,5 @@
+> **当前生产目标（2026-11-16）**：F/G关系数据库改为MySQL。以下各轮PostgreSQL实现与测试是历史验证事实，MySQL改造尚未实施。后续生产数据层按[数据库选型决议](../architecture/fg-database-decision.md)推进，不继续以PostgreSQL为生产目标。
+
 # 本轮实现与验收边界
 
 ## 已实现并自动验证
