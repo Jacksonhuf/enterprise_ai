@@ -36,6 +36,9 @@ func OpenMySQLContext(parent context.Context, dsn string) (*Store, error) {
 	if _, e = db.ExecContext(ctx, `CREATE TABLE IF NOT EXISTS cognara_fg_state (id INT PRIMARY KEY CHECK(id=1), schema_version INT NOT NULL, body JSON NOT NULL CHECK(JSON_TYPE(body)='OBJECT')) ENGINE=InnoDB`); e != nil {
 		return bad("MySQL schema initialization failed")
 	}
+	if e = validateMySQLStateSchema(ctx, db, cfg.DBName); e != nil {
+		return bad("MySQL state schema incompatible; explicit migration required")
+	}
 	s := &Store{db: db, dialect: "mysql"}
 	s.init()
 	s.seed()
@@ -51,4 +54,55 @@ func OpenMySQLContext(parent context.Context, dsn string) (*Store, error) {
 		return bad("MySQL stored state or schema version unsupported")
 	}
 	return s, nil
+}
+
+// Do not silently use a pre-existing table whose storage semantics differ.
+func validateMySQLStateSchema(ctx context.Context, db *sql.DB, database string) error {
+	var engine string
+	if e := db.QueryRowContext(ctx, `SELECT ENGINE FROM information_schema.TABLES WHERE TABLE_SCHEMA=? AND TABLE_NAME='cognara_fg_state'`, database).Scan(&engine); e != nil {
+		return e
+	}
+	if engine != "InnoDB" {
+		return errors.New("transactional storage required")
+	}
+	rows, e := db.QueryContext(ctx, `SELECT COLUMN_NAME,DATA_TYPE,IS_NULLABLE,COLUMN_KEY,EXTRA FROM information_schema.COLUMNS WHERE TABLE_SCHEMA=? AND TABLE_NAME='cognara_fg_state'`, database)
+	if e != nil {
+		return e
+	}
+	type column struct{ kind, nullable, key, extra string }
+	columns := map[string]column{}
+	for rows.Next() {
+		var name string
+		var c column
+		if e = rows.Scan(&name, &c.kind, &c.nullable, &c.key, &c.extra); e != nil {
+			rows.Close()
+			return e
+		}
+		columns[name] = c
+	}
+	e = rows.Err()
+	rows.Close()
+	if e != nil {
+		return e
+	}
+	if len(columns) != 3 {
+		return errors.New("unexpected state columns")
+	}
+	for name, kind := range map[string]string{"id": "int", "schema_version": "int", "body": "json"} {
+		c, ok := columns[name]
+		if !ok || c.kind != kind || c.nullable != "NO" || c.extra != "" {
+			return errors.New("incompatible state column")
+		}
+	}
+	if columns["id"].key != "PRI" || columns["schema_version"].key == "PRI" || columns["body"].key == "PRI" {
+		return errors.New("incompatible state primary key")
+	}
+	var unexpected int
+	if e = db.QueryRowContext(ctx, `SELECT COUNT(*) FROM cognara_fg_state WHERE id<>1`).Scan(&unexpected); e != nil {
+		return e
+	}
+	if unexpected != 0 {
+		return errors.New("unexpected state rows")
+	}
+	return nil
 }
