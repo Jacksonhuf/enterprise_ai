@@ -53,13 +53,15 @@ jobs:
           python-version: '3.12'
       - run: python scripts/import-source.py
       - run: python -m pip install 'jsonschema[format-nongpl]==4.26.0'
-      - run: COGNARA_CONTRACT_CAPTURE=/tmp/cognara-contract.jsonl go test -C backend/platform -tags=nomsgpack -p 1 -race -count=1 ./internal/platform/... ./cmd/cognara-dev
+      - run: COGNARA_CONTRACT_CAPTURE=/tmp/cognara-contract.jsonl go test -C backend/platform -tags=nomsgpack -p 1 -race -count=1 ./internal/platform/... ./cmd/cognara-dev ./cmd/cognara-state-export
       - run: python scripts/validate-contract-capture.py /tmp/cognara-contract.jsonl
       - run: go build -C backend/platform -tags=nomsgpack -o /tmp/cognara-dev ./cmd/cognara-dev
       - run: python scripts/verify-runtime.py --binary /tmp/cognara-dev --storage json
       - run: python scripts/verify-runtime.py --binary /tmp/cognara-dev --storage sqlite
       - run: python scripts/verify-runtime.py --binary /tmp/cognara-dev --storage postgres
       - run: python scripts/verify-runtime.py --binary /tmp/cognara-dev --storage mysql
+      - run: go build -C backend/platform -tags=nomsgpack -o /tmp/cognara-state-export ./cmd/cognara-state-export
+      - run: python scripts/verify-mysql-export.py --binary /tmp/cognara-state-export
       - run: npm ci && npm run test:cognara && npx vue-tsc --noEmit -p tsconfig.cognara.json && npm run build
         working-directory: frontend
       - run: npm run check:cognara-bundle
