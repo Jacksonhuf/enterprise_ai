@@ -2,6 +2,7 @@ package applications
 
 import (
 	"context"
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"time"
@@ -11,6 +12,18 @@ func (s *Store) readSQL() (State, error) { return s.readSQLContext(context.Backg
 func (s *Store) readSQLContext(parent context.Context) (State, error) {
 	ctx, cancel := context.WithTimeout(parent, 5*time.Second)
 	defer cancel()
+	if s.dialect == "mysql" {
+		tx, e := s.db.BeginTx(ctx, &sql.TxOptions{ReadOnly: true, Isolation: sql.LevelRepeatableRead})
+		if e != nil {
+			return State{}, e
+		}
+		defer tx.Rollback()
+		st, _, e := readStateRow(ctx, tx, false, true)
+		if e != nil {
+			return State{}, e
+		}
+		return st, tx.Commit()
+	}
 	var raw []byte
 	var version int
 	if e := s.db.QueryRowContext(ctx, `SELECT schema_version,body FROM cognara_fg_state WHERE id=1`).Scan(&version, &raw); e != nil {
@@ -26,6 +39,40 @@ func (s *Store) readSQLContext(parent context.Context) (State, error) {
 	}
 	return st, e
 }
+func readStateRow(ctx context.Context, tx *sql.Tx, lock, relational bool) (State, int, error) {
+	query := `SELECT schema_version,body FROM cognara_fg_state WHERE id=1`
+	if lock {
+		query += " FOR UPDATE"
+	}
+	var raw []byte
+	var version int
+	var st State
+	if e := tx.QueryRowContext(ctx, query).Scan(&version, &raw); e != nil {
+		return st, version, e
+	}
+	if version != 1 && !(relational && version == 2) {
+		return st, version, fmt.Errorf("unsupported state schema")
+	}
+	if e := json.Unmarshal(raw, &st); e != nil {
+		return st, version, e
+	}
+	if version == 2 {
+		if e := validateMySQLAuditSchema(ctx, tx); e != nil {
+			return st, version, e
+		}
+		if len(st.Audit) != 0 {
+			return st, version, fmt.Errorf("ambiguous audit storage")
+		}
+		var e error
+		st.Audit, e = loadMySQLAudit(ctx, tx)
+		if e != nil {
+			return st, version, e
+		}
+	}
+	initializeState(&st)
+	return st, version, nil
+}
+
 func (s *Store) updateSQLContext(parent context.Context, fn func(*State) error) error {
 	ctx, cancel := context.WithTimeout(parent, 5*time.Second)
 	defer cancel()
@@ -34,27 +81,22 @@ func (s *Store) updateSQLContext(parent context.Context, fn func(*State) error) 
 		return e
 	}
 	defer tx.Rollback()
-	var raw []byte
-	var version int
-	selectSQL := `SELECT schema_version,body FROM cognara_fg_state WHERE id=1`
-	if s.dialect == "postgres" || s.dialect == "mysql" {
-		selectSQL += " FOR UPDATE"
-	}
-	if e = tx.QueryRowContext(ctx, selectSQL).Scan(&version, &raw); e != nil {
+	next, version, e := readStateRow(ctx, tx, s.dialect == "postgres" || s.dialect == "mysql", s.dialect == "mysql")
+	if e != nil {
 		return e
 	}
-	if version != 1 {
-		return fmt.Errorf("unsupported state schema")
-	}
-	var next State
-	if e = json.Unmarshal(raw, &next); e != nil {
-		return e
-	}
-	initializeState(&next)
+	previousAudit := append([]Event(nil), next.Audit...)
 	if e = fn(&next); e != nil {
 		return e
 	}
-	b, e := json.Marshal(next)
+	stored := next
+	if version == 2 {
+		if e = appendMySQLAudit(ctx, tx, previousAudit, next.Audit); e != nil {
+			return e
+		}
+		stored.Audit = nil
+	}
+	b, e := json.Marshal(stored)
 	if e != nil {
 		return e
 	}

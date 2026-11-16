@@ -2,6 +2,7 @@ package api_test
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	api "github.com/Tencent/WeKnora/internal/platform/api"
 	app "github.com/Tencent/WeKnora/internal/platform/applications"
@@ -11,7 +12,9 @@ import (
 	"testing"
 )
 
-func TestMySQLConcurrentSessionRenames(t *testing.T) {
+func TestMySQLConcurrentSessionRenames(t *testing.T)      { testMySQLSessionRenames(t, false) }
+func TestMySQLRelationalAuditSessionRenames(t *testing.T) { testMySQLSessionRenames(t, true) }
+func testMySQLSessionRenames(t *testing.T, relational bool) {
 	dsn := testsupport.MySQLDSN(t)
 	f := setup(t)
 	a, e := app.OpenMySQL(dsn)
@@ -30,6 +33,11 @@ func TestMySQLConcurrentSessionRenames(t *testing.T) {
 	host := httptest.NewServer(second.Handler())
 	defer host.Close()
 	id := f.session()
+	if relational {
+		if e := app.MigrateMySQLAudit(context.Background(), dsn); e != nil {
+			t.Fatal(e)
+		}
+	}
 	rev := sessionMeta(t, f, id)["revision"].(string)
 	raw, _ := json.Marshal(map[string]string{"title": "并发新标题", "expected_revision": rev})
 	type result struct {
