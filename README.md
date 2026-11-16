@@ -148,3 +148,14 @@ go run ./cmd/cognara-dev --demo --storage mysql
 ```
 
 库须预先创建；适配仅初始化cognara_fg_state，不自动搬迁其他存储数据。--mysql-dsn-env可指定其他环境变量名。真实集成测试另用COGNARA_TEST_MYSQL_DSN，测试账户须能创建/删除随机cognara_test_*独立测试库；生产账号不需要此测试权限。CI强制MySQL 8.4测试，并保留PostgreSQL历史回归。
+
+### 迁移前只读快照
+
+在已有MySQL验证库上设置COGNARA_MYSQL_DSN后，可执行：
+
+```bash
+cd backend/platform
+go run ./cmd/cognara-state-export --output /secure-backups/fg-state.json
+```
+
+父目录须已存在；目标文件须不存在。命令不初始化、不写源库，输出仅含SHA-256、大小和记录数量。文件保留完整状态及未知字段，权限0600，含业务数据，请勿提交Git。此工具仅导出过渡聚合状态，不是生产物理备份或恢复工具；详细边界见[第十八轮记录](docs/development/test-report-v0.18.md)。
