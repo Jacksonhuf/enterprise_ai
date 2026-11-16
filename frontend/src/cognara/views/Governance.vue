@@ -8,10 +8,12 @@
       <t-button
         v-if="section === 'grants'"
         theme="primary"
-        @click="grantVisible = true"
+        @click="openGrant"
+        :disabled="grantMutation.saving || grantMutation.blocked"
         >新增授权</t-button
       ><t-button v-else @click="load">刷新</t-button>
     </header>
+    <t-alert v-if="grantMutation.error && !grantVisible && !grantMutation.visible" theme="error" :message="grantMutation.error" /><t-button v-if="grantMutation.blocked && !grantVisible && !grantMutation.visible"  :loading="reloadingGrant" @click="reloadGrantState">重新加载授权列表</t-button>
     <t-alert v-if="error" theme="error" :message="error" /><t-tabs
       v-if="isAccess"
       :value="section"
@@ -157,14 +159,16 @@
         theme="info"
         message="关键审计记录与业务执行证据分别管理，不能据此读取完整原始业务结果。" /></t-drawer
     ><t-drawer
-      v-model:visible="grantVisible"
+       :visible="grantVisible"
+      :close-btn="!grantMutation.saving" :close-on-overlay-click="false" :close-on-esc-keydown="!grantMutation.saving" @close="closeGrant" @cancel="closeGrant"
+      :cancel-btn="{content:'取消',disabled:grantMutation.saving}"
       header="新增资源授权"
       size="640px"
-      :confirm-btn="{ content: '保存授权', loading: saving, disabled: appsLoading || !!appsError }"
+      :confirm-btn="{ content: grantMutation.visible ? '确认授权' : '审阅授权', loading: grantMutation.saving, disabled: appsLoading || !!appsError || grantMutation.blocked }"
       @confirm="saveGrant"
       ><t-alert v-if="appsError" theme="error" :message="appsError" />
       <t-button v-if="appsError" variant="text" @click="loadApps">重新加载应用选项</t-button>
-      <t-loading :loading="appsLoading"><t-form label-align="top"
+      <t-loading :loading="appsLoading"><t-form class="grant-form" label-align="top" :disabled="grantMutation.visible || grantMutation.saving || grantMutation.blocked"
         ><t-form-item label="主体类型"
           ><t-select
             v-model="grant.subject_type"
@@ -210,7 +214,24 @@
       ><t-alert
         theme="info"
         message="当前验证集只支持显式列出的主体、资源和操作；不接受任意范围表达式。"
-    /></t-drawer>
+    />
+      <section v-if="grantMutation.visible && grantMutation.kind === 'CREATE'" class="grant-review">
+        <h2>授权内容审阅</h2>
+        <div class="detail-list"><div v-for="row in grantMutation.rows" :key="row.label"><span>{{ row.label }}</span><strong>{{ row.value }}</strong></div></div>
+        <t-button v-if="!grantMutation.blocked" variant="text" :disabled="grantMutation.saving" @click="grantMutation.close()">返回修改</t-button>
+      </section>
+      <t-alert v-if="grantMutation.error" class="spaced" theme="error" :message="grantMutation.error" />
+      <t-button v-if="grantMutation.blocked" class="spaced"  :loading="reloadingGrant" @click="reloadGrantState">重新加载授权列表</t-button>
+    </t-drawer>
+    <t-dialog :visible="grantMutation.visible && grantMutation.kind === 'REVOKE'" header="撤销授权" :footer="false"
+      :close-btn="!grantMutation.saving" :close-on-overlay-click="false" :close-on-esc-keydown="!grantMutation.saving" @close="grantMutation.close()">
+      <div class="detail-list"><div v-for="row in grantMutation.rows" :key="row.label"><span>{{ row.label }}</span><strong>{{ row.value }}</strong></div></div>
+      <p>只撤销本条授权。若仍有其他有效授权，访问可能继续允许。</p>
+      <t-alert v-if="grantMutation.error" class="spaced" theme="error" :message="grantMutation.error" />
+      <t-button v-if="grantMutation.blocked"  :loading="reloadingGrant" @click="reloadGrantState">重新加载授权列表</t-button>
+      <t-button v-else theme="danger" :loading="grantMutation.saving" @click="commitGrantMutation">确认撤销</t-button>
+      <t-button variant="text" :disabled="grantMutation.saving" @click="grantMutation.close()">取消</t-button>
+    </t-dialog>
   </section>
 </template>
 <script setup lang="ts">
@@ -228,11 +249,12 @@ import { Loading as TLoading } from "tdesign-vue-next/es/loading";
 import { Select as TSelect } from "tdesign-vue-next/es/select";
 import { TabPanel as TTabPanel } from "tdesign-vue-next/es/tabs";
 import { Tabs as TTabs } from "tdesign-vue-next/es/tabs";
-import { ref, computed, reactive, watch, onMounted } from "vue";
+import { ref, computed, reactive, watch, onMounted, onBeforeUnmount } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { DialogPlugin } from "tdesign-vue-next/es/dialog";
+import { Dialog as TDialog, DialogPlugin } from "tdesign-vue-next/es/dialog";
 import { MessagePlugin } from "tdesign-vue-next/es/message";
 import { api, post, prefix, formatAPIError } from "../api";
+import {GrantMutation,type GrantInput,type GrantReviewRow} from "../grantMutation";
 import { PagedCollection } from "../pagedCollection";
 import { governanceParams, pagedGovernance } from "../governanceFilters";
 import { loadApplicationOptions } from "../applicationOptions";
@@ -247,7 +269,6 @@ const route = useRoute(),
   timeRange = ref<(string|number|Date)[]>([]),
   selected = ref<any>(null),
   grantVisible = ref(false),
-  saving = ref(false),
   apps = ref<any[]>([]),
   appsLoading = ref(false),
   appsError = ref(""),
@@ -259,6 +280,13 @@ const route = useRoute(),
     action: "application.use",
     scope: "east",
   });
+const grantMutation=reactive(new GrantMutation({
+ create:body=>api(prefix+"/governance/grants",{method:"POST",body:JSON.stringify(body),signal:AbortSignal.timeout(15000)}),
+ revoke:id=>api(prefix+"/governance/grants/"+encodeURIComponent(id),{method:"DELETE",signal:AbortSignal.timeout(15000)})
+}));
+const reloadingGrant=ref(false);
+let pageActive=true,appsGeneration=0;
+onBeforeUnmount(()=>{pageActive=false;appsGeneration++;grantMutation.invalidate()});
 const accessTabs = {
     users: "企业用户",
     groups: "用户组",
@@ -397,7 +425,7 @@ const labels: Record<string, string> = {
 function display(v: any, key = "") {
   if (key === "occurred_at") return formatDateTime(v, preferences.timezone);
   if (v == null) return "—";
-  return labels[String(v)] || String(v);
+  return apps.value.find(a=>a.app_id===String(v))?.draft.basic.name || labels[String(v)] || String(v);
 }
 function actionLabel(v: string) {
   return labels[v] || v;
@@ -438,15 +466,17 @@ onMounted(async () => {
 });
 async function loadApps() {
   if (appsLoading.value) return;
+  const generation=++appsGeneration;
   appsLoading.value = true; appsError.value = ""; apps.value = [];
   try {
-    apps.value = await loadApplicationOptions(cursor => {
+    const loaded = await loadApplicationOptions(cursor => {
       const params = new URLSearchParams({ purpose: "MANAGE", limit: "100" });
       if (cursor !== null) params.set("cursor", cursor);
       return api(prefix + "/apps?" + params);
     });
-  } catch (e) { appsError.value = formatAPIError(e); }
-  finally { appsLoading.value = false; }
+    if(generation===appsGeneration)apps.value=loaded;
+  } catch (e) { if(generation===appsGeneration)appsError.value = formatAPIError(e); }
+  finally { if(generation===appsGeneration)appsLoading.value = false; }
 }
 async function load() {
   selected.value = null;
@@ -545,43 +575,41 @@ function resetAction() {
           ? "execution.invoke"
           : "asset.context.read";
 }
-async function saveGrant() {
-  if (saving.value || appsLoading.value || appsError.value) return;
-  error.value = "";
-  saving.value = true;
-  try {
-    await post(prefix + "/governance/grants", grant.value);
-    grantVisible.value = false;
-    await load();
-    MessagePlugin.success("授权已生效；相同有效授权不会重复创建");
-  } catch (e) {
-    error.value = formatAPIError(e);
-  } finally {
-    saving.value = false;
-  }
+function grantReview(input:GrantInput):GrantReviewRow[]{
+ return [
+  {label:"主体类型",value:({GROUP:"用户组",USER:"用户",APPLICATION:"应用身份"} as Record<string,string>)[input.subject_type] || input.subject_type},
+  {label:"授权主体",value:display(input.subject_id)+" · "+input.subject_id},
+  {label:"目标资源",value:display(input.resource_id)+" · "+input.resource_id},
+  {label:"允许操作",value:display(input.action)},
+  {label:"数据范围",value:display(input.scope)}
+ ];
 }
-function confirmRevoke(row: any) {
-  const dialog = DialogPlugin.confirm({
-    header: "撤销授权",
-    body: `将撤销${display(row.subject_id)}对${display(row.resource_id)}的本条授权。若仍有其他有效授权，访问可能继续允许。`,
-    confirmBtn: "确认撤销",
-    onConfirm: async () => {
-      try {
-        await api(prefix + "/governance/grants/" + row.grant_id, {
-          method: "DELETE",
-        });
-        dialog.hide();
-        load();
-      } catch (e) {
-        error.value = formatAPIError(e);
-        dialog.hide();
-      }
-    },
-  });
+function openGrant(){if(grantMutation.saving||grantMutation.blocked)return;grantMutation.close();grantVisible.value=true}
+function closeGrant(){if(grantMutation.saving)return;grantVisible.value=false;grantMutation.close()}
+async function saveGrant(){
+ if(appsLoading.value||appsError.value||grantMutation.saving||grantMutation.blocked)return;
+ if(grantMutation.visible&&grantMutation.kind==="CREATE"){await commitGrantMutation();return}
+ grantMutation.openCreate(grant.value,grantReview(grant.value));
 }
+async function commitGrantMutation(){
+ const kind=grantMutation.kind,result=await grantMutation.confirm();if(!result||!pageActive)return;
+ if(kind==="CREATE")grantVisible.value=false;
+ await load();if(pageActive)MessagePlugin.success(kind==="CREATE"?"授权已生效；相同有效授权不会重复创建":"本条授权已撤销");
+}
+async function reloadGrantState(){
+ if(grantMutation.saving||reloadingGrant.value)return;
+ reloadingGrant.value=true;
+ try{
+  await load();if(!pageActive||error.value||collection.error||collection.loading||staticLoading.value&& !paged.value)return;
+  grantMutation.blocked=false;grantMutation.close();grantVisible.value=false;
+ }finally{reloadingGrant.value=false}
+}
+function confirmRevoke(row:any){grantMutation.openRevoke(row,grantReview(row))}
 </script>
 
 <style scoped>
+.grant-review { margin-top: 20px; }
+.grant-review strong { overflow-wrap: anywhere; }
 .governance-filters { flex-wrap: wrap; }
 .governance-filters :deep(.t-select__wrap) { width: 180px; }
 </style>
