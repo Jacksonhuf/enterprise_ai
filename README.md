@@ -193,3 +193,5 @@ go run ./cmd/cognara-state-import --input /secure-backups/fg-v2.json --expected-
 ```
 
 新目标不能已有状态或审计记录；两个部分同事务提交，不覆盖、不合并旧数据。先在副本核对、试运行，再手动切换连接；快照不恢复外部A–E证据，也不替代物理备份、binlog或时间点恢复。详见[第二十三轮记录](docs/development/test-report-v0.23.md)。
+
+恢复验收已纳入CI：在独立MySQL源库运行真实编译宿主，通过HTTP产生业务结果，再由导出/导入命令恢复至新库，验证历史回放不重复计费、新Turn可调用、撤权脱敏和审计继续追加。范围与边界见[第二十四轮记录](docs/development/test-report-v0.24.md)。
