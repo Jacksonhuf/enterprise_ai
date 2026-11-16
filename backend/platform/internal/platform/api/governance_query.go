@@ -28,6 +28,74 @@ func governanceRowID(row map[string]any) string {
 	return ""
 }
 func governancePage(items any, r *http.Request, tenant, section string) (map[string]any, error) {
+	cfg, err := parseGovernanceQuery(r, tenant, section)
+	if err != nil {
+		return nil, err
+	}
+	q := r.URL.Query()
+	limit, digest := cfg.limit, cfg.digest
+
+	raw, err := json.Marshal(items)
+	if err != nil {
+		return nil, err
+	}
+	rows := []map[string]any{}
+	if err = json.Unmarshal(raw, &rows); err != nil {
+		return nil, err
+	}
+	if section == "grants" || section == "usage" {
+		for i, j := 0, len(rows)-1; i < j; i, j = i+1, j-1 {
+			rows[i], rows[j] = rows[j], rows[i]
+		}
+	}
+	filtered := []map[string]any{}
+	for _, row := range rows {
+		if cfg.match(row) {
+			filtered = append(filtered, row)
+		}
+	}
+
+	start := 0
+	if cursor := q.Get("cursor"); cursor != "" {
+		if len(cursor) > 2048 {
+			return nil, fail(400, "INVALID_REQUEST", "分页游标无效")
+		}
+		decoded, e := base64.RawURLEncoding.DecodeString(cursor)
+		var c governanceCursor
+		if e != nil || json.Unmarshal(decoded, &c) != nil || c.Version != 1 || c.After == "" || c.Filter != digest {
+			return nil, fail(400, "INVALID_REQUEST", "分页筛选已变化，请刷新列表")
+		}
+		start = -1
+		for i, row := range filtered {
+			if governanceRowID(row) == c.After {
+				start = i + 1
+				break
+			}
+		}
+		if start < 0 {
+			return nil, fail(400, "INVALID_REQUEST", "分页记录已变化，请刷新列表")
+		}
+	}
+	end := min(start+limit, len(filtered))
+	var next any
+	if end < len(filtered) {
+		id := governanceRowID(filtered[end-1])
+		if id == "" {
+			return nil, fail(503, "CAPABILITY_UNAVAILABLE", "记录缺少稳定标识，无法继续分页")
+		}
+		b, _ := json.Marshal(governanceCursor{1, id, digest})
+		next = base64.RawURLEncoding.EncodeToString(b)
+	}
+	return map[string]any{"items": filtered[start:end], "next_cursor": next, "sampled_at": time.Now().UTC().Format(time.RFC3339), "mode": "validation"}, nil
+}
+
+type governanceQuery struct {
+	limit  int
+	digest string
+	match  func(map[string]any) bool
+}
+
+func parseGovernanceQuery(r *http.Request, tenant, section string) (*governanceQuery, error) {
 	q := r.URL.Query()
 	query := strings.ToLower(strings.TrimSpace(q.Get("query")))
 	if len([]rune(query)) > 256 {
@@ -76,22 +144,8 @@ func governancePage(items any, r *http.Request, tenant, section string) (map[str
 	if hasFrom && hasTo && from.After(to) {
 		return nil, fail(400, "INVALID_REQUEST", "开始时间不能晚于结束时间")
 	}
-	raw, err := json.Marshal(items)
-	if err != nil {
-		return nil, err
-	}
-	rows := []map[string]any{}
-	if err = json.Unmarshal(raw, &rows); err != nil {
-		return nil, err
-	}
-	if section == "grants" || section == "usage" {
-		for i, j := 0, len(rows)-1; i < j; i, j = i+1, j-1 {
-			rows[i], rows[j] = rows[j], rows[i]
-		}
-	}
-	filtered := []map[string]any{}
 	searchFields := []string{"event_id", "grant_id", "id", "name", "actor_user_id", "client_id", "application_id", "subject_id", "resource_id", "action", "request_id", "execution_id", "capability", "code", "route", "module"}
-	for _, row := range rows {
+	match := func(row map[string]any) bool {
 		if query != "" {
 			found := false
 			for _, field := range searchFields {
@@ -102,34 +156,35 @@ func governancePage(items any, r *http.Request, tenant, section string) (map[str
 				}
 			}
 			if !found {
-				continue
+				return false
 			}
 		}
 		if status != "" {
 			if section == "grants" {
 				active, _ := row["active"].(bool)
 				if active != (status == "ACTIVE") {
-					continue
+					return false
 				}
 			} else if row["status"] != status {
-				continue
+				return false
 			}
 		}
 		if outcome != "" && row["outcome"] != outcome {
-			continue
+			return false
 		}
 		if unit != "" && row["unit"] != unit {
-			continue
+			return false
 		}
 		if hasFrom || hasTo {
 			value, _ := row["occurred_at"].(string)
 			stamp, e := time.Parse(time.RFC3339Nano, strings.ToUpper(value))
 			if e != nil || (hasFrom && stamp.Before(from)) || (hasTo && stamp.After(to)) {
-				continue
+				return false
 			}
 		}
-		filtered = append(filtered, row)
+		return true
 	}
+
 	// A cursor locates an authorized row. Its fingerprint binds it to tenant/section/filters,
 	// not to a cached authorization decision; all rows are filtered again on every request.
 	stamp := func(t time.Time, present bool) string {
@@ -141,36 +196,5 @@ func governancePage(items any, r *http.Request, tenant, section string) (map[str
 	fingerprint, _ := json.Marshal([]string{tenant, section, query, status, outcome, unit, stamp(from, hasFrom), stamp(to, hasTo)})
 	hash := sha256.Sum256(fingerprint)
 	digest := hex.EncodeToString(hash[:])
-	start := 0
-	if cursor := q.Get("cursor"); cursor != "" {
-		if len(cursor) > 2048 {
-			return nil, fail(400, "INVALID_REQUEST", "分页游标无效")
-		}
-		decoded, e := base64.RawURLEncoding.DecodeString(cursor)
-		var c governanceCursor
-		if e != nil || json.Unmarshal(decoded, &c) != nil || c.Version != 1 || c.After == "" || c.Filter != digest {
-			return nil, fail(400, "INVALID_REQUEST", "分页筛选已变化，请刷新列表")
-		}
-		start = -1
-		for i, row := range filtered {
-			if governanceRowID(row) == c.After {
-				start = i + 1
-				break
-			}
-		}
-		if start < 0 {
-			return nil, fail(400, "INVALID_REQUEST", "分页记录已变化，请刷新列表")
-		}
-	}
-	end := min(start+limit, len(filtered))
-	var next any
-	if end < len(filtered) {
-		id := governanceRowID(filtered[end-1])
-		if id == "" {
-			return nil, fail(503, "CAPABILITY_UNAVAILABLE", "记录缺少稳定标识，无法继续分页")
-		}
-		b, _ := json.Marshal(governanceCursor{1, id, digest})
-		next = base64.RawURLEncoding.EncodeToString(b)
-	}
-	return map[string]any{"items": filtered[start:end], "next_cursor": next, "sampled_at": time.Now().UTC().Format(time.RFC3339), "mode": "validation"}, nil
+	return &governanceQuery{limit, digest, match}, nil
 }
