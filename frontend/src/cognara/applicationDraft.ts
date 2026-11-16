@@ -3,7 +3,7 @@ import type { Application,Config,Release } from "./types";
 export interface ReleaseCheck { status:string; check_id?:string; draft_revision?:string; valid_until?:string; issues?:string[] }
 export const emptyConfig=():Config=>({basic:{name:"",description:""},model_prompt:{model_id:"validation-only",prompt:""},capability_refs:{asset_refs:[],service_refs:[],tool_names:[]},conversation_defaults:{welcome:"",suggested_questions:[]}});
 const copy=<T>(value:T):T=>JSON.parse(JSON.stringify(value));
-const configCopy=(value:Config):Config=>{
+export const configCopy=(value:Config):Config=>{
  if(!value||typeof value!=="object")throw new Error("应用响应缺少完整配置，请重新加载");
  const config=copy(value);
  if(!config?.basic||!config.model_prompt||!config.capability_refs||!config.conversation_defaults)throw new Error("应用响应缺少完整配置，请重新加载");
