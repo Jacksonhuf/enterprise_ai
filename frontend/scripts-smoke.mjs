@@ -21,7 +21,19 @@ try {
  await page.goto('http://127.0.0.1:14173/apps');await page.evaluate(()=>localStorage.setItem('cognara_demo_identity','demo-admin'));
  const routes=['/apps','/build/apps','/build/apps/channel-replenishment','/build/apps/channel-replenishment/edit','/assets','/services','/governance/access','/governance/audit','/governance/operations','/settings/profile','/settings/general','/settings/models','/forbidden'];
  for(const route of routes){await page.goto('http://127.0.0.1:14173'+route);await page.locator('h1, .wk-empty-state__title').first().waitFor();await page.waitForLoadState('networkidle');assert.ok((await page.locator('h1, .wk-empty-state__title').first().innerText()).trim());}
+ // Exercise the saved preference through the actual form and a fresh page load.
+ await page.goto('http://127.0.0.1:14173/settings/general');
+ await page.waitForLoadState('networkidle');
+ const densityField=page.locator('.t-form-item').filter({hasText:'界面密度'});
+ await densityField.locator('.t-select').click();await page.getByText('紧凑',{exact:true}).click();
+ await page.getByRole('button',{name:'保存',exact:true}).click();
+ await page.waitForFunction(()=>document.querySelector('.app-shell')?.getAttribute('data-density')==='compact');
+ await page.reload();await page.waitForFunction(()=>document.querySelector('.app-shell')?.getAttribute('data-density')==='compact');
+ await page.goto('http://127.0.0.1:14173/apps');await page.locator('.application-card').first().waitFor();
+ assert.equal(await page.locator('.application-card').first().evaluate(el=>getComputedStyle(el).paddingTop),'18px');
  await page.getByRole('button',{name:'账户菜单'}).click();await page.getByRole('button',{name:'退出当前账户'}).click();await page.waitForURL('**/login');
  await page.getByRole('button',{name:'进入验证工作台'}).click();await page.waitForURL('**/apps');assert.equal(await page.getByRole('link',{name:'身份与权限',exact:true}).count(),0);
- assert.deepEqual(failures,[]);console.log('PASS Chromium: login, chat Enter/Shift+Enter, business result, 13 routes, no component/runtime errors');
+ assert.equal(await page.locator('.app-shell').getAttribute('data-density'),'comfortable');
+ await page.locator('.application-card').first().waitFor();assert.equal(await page.locator('.application-card').first().evaluate(el=>getComputedStyle(el).paddingTop),'24px');
+ assert.deepEqual(failures,[]);console.log('PASS Chromium: login, chat Enter/Shift+Enter, business result, 13 routes, saved density/reload/account isolation, no component/runtime errors');
 } finally {await browser?.close();if(server)await new Promise(r=>server.httpServer.close(r));backend.kill('SIGTERM');await new Promise(r=>backend.exitCode!==null?r():backend.once('exit',r));await rm(temp,{recursive:true,force:true});}

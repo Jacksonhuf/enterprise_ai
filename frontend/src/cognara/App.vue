@@ -1,6 +1,6 @@
 <template>
   <router-view v-if="route.meta.public" />
-  <div v-else class="app-shell">
+  <div v-else class="app-shell" :data-density="auth.density">
     <aside class="sidebar" :class="{ collapsed }">
       <div class="sidebar-brand">
         <Brand :compact="collapsed" /><button
