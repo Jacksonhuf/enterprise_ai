@@ -149,7 +149,7 @@
     ><t-drawer
       v-model:visible="publishVisible"
       header="发布检查与确认"
-      size="640px"
+      size="760px"
       :confirm-btn="{
         content: '确认发布',
         disabled: !state.canPublishAt(clock),
@@ -183,6 +183,20 @@
         {{ issue }}
       </p>
       <p v-if="check?.valid_until" class="meta">检查有效至 {{ formatDateTime(check.valid_until, preferences.timezone) }}</p>
+      <section v-if="state.review" class="publish-review">
+        <h2>本次发布变更</h2>
+        <div class="detail-list">
+          <div><span>对比基线</span><strong>{{ state.review.firstPublication ? "首次发布 · 尚无线上的发布版本" : state.review.currentReleaseId }}</strong></div>
+          <div><span>检查草稿版本</span><strong>{{ state.review.revision }}</strong></div>
+        </div>
+        <p class="muted">以下是本次检查时的配置快照。草稿或当前发布变化后需重新检查；确认前线上配置保持不变。</p>
+        <div v-if="state.review.rows.length" class="publish-review-scroll">
+          <table class="data-table publish-review-table"><thead><tr><th>配置项</th><th>当前发布</th><th>本次发布</th></tr></thead>
+            <tbody><tr v-for="row in state.review.rows" :key="row.label"><td>{{ row.label }}</td><td>{{ row.before || "（空）" }}</td><td>{{ row.after || "（空）" }}</td></tr></tbody>
+          </table>
+        </div>
+        <t-alert v-else theme="info" message="配置与当前发布一致，确认仍会产生新发布版本。" />
+      </section>
       <label class="field-label">发布说明</label
       ><t-textarea v-model="releaseNote" /><t-alert
         class="spaced"
@@ -325,3 +339,11 @@ function confirmPicker() {
   } catch (e) { error.value=(e as Error).message; }
 }
 </script>
+
+<style scoped>
+.publish-review { margin: 20px 0; }
+.publish-review-scroll { max-height: 360px; overflow: auto; }
+.publish-review-table { table-layout: fixed; }
+.publish-review-table th:first-child { width: 100px; }
+.publish-review-table td { white-space: pre-wrap; overflow-wrap: anywhere; vertical-align: top; }
+</style>

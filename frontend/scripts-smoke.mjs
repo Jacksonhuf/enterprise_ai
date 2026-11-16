@@ -56,6 +56,27 @@ try {
  assert.deepEqual(after.draft,before.releases.find(r=>r.release_id===before.current_release_id).config_snapshot);
  assert.equal(after.current_release_id,before.current_release_id);assert.deepEqual(after.releases,before.releases);
  assert.notEqual(after.draft_revision,before.draft_revision);
+ // Review the unchanged baseline, then publish a visible, version-bound change.
+ await page.getByRole('button',{name:'检查并发布',exact:true}).click();
+ const publicationReview=page.locator('.publish-review');
+ await publicationReview.getByText('配置与当前发布一致，确认仍会产生新发布版本。',{exact:true}).waitFor();
+ await page.getByRole('button',{name:'取消',exact:true}).click();
+ await page.locator('.t-form__item').filter({hasText:'业务描述'}).locator('textarea').fill('发布审阅浏览器回归');
+ await page.getByRole('button',{name:'检查并发布',exact:true}).click();
+ const descriptionReview=publicationReview.getByRole('row').filter({has:page.getByText('业务描述',{exact:true})});
+ await descriptionReview.waitFor();
+ assert.equal(await descriptionReview.locator('td').nth(1).innerText(),after.draft.basic.description || '（空）');
+ assert.equal(await descriptionReview.locator('td').nth(2).innerText(),'发布审阅浏览器回归');
+ const checkedDraft=await page.evaluate(async()=>{const r=await fetch('/api/v1/cognitive/apps/channel-replenishment',{headers:{Authorization:'Bearer '+localStorage.getItem('cognara_demo_identity')}});if(!r.ok)throw Error('read checked draft failed');return r.json()});
+ assert.equal(checkedDraft.current_release_id,after.current_release_id);assert.deepEqual(checkedDraft.releases,after.releases);
+ await publicationReview.getByText(checkedDraft.draft_revision,{exact:true}).waitFor();
+ await page.getByRole('button',{name:'确认发布',exact:true}).click();
+ await page.waitForURL('**/build/apps/channel-replenishment');
+ const publishedDraft=await page.evaluate(async()=>{const r=await fetch('/api/v1/cognitive/apps/channel-replenishment',{headers:{Authorization:'Bearer '+localStorage.getItem('cognara_demo_identity')}});if(!r.ok)throw Error('verify published draft failed');return r.json()});
+ assert.notEqual(publishedDraft.current_release_id,after.current_release_id);
+ assert.equal(publishedDraft.releases.length,after.releases.length+1);
+ assert.deepEqual(publishedDraft.releases.slice(0,after.releases.length),after.releases);
+ assert.equal(publishedDraft.releases.find(r=>r.release_id===publishedDraft.current_release_id).config_snapshot.basic.description,'发布审阅浏览器回归');
  // Exercise the saved preference through the actual form and a fresh page load.
  await page.goto('http://127.0.0.1:14173/settings/general');
  await page.waitForLoadState('networkidle');
@@ -75,5 +96,5 @@ try {
  await page.getByRole('button',{name:'进入验证工作台'}).click();await page.waitForURL('**/apps');assert.equal(await page.getByRole('link',{name:'身份与权限',exact:true}).count(),0);
  assert.equal(await page.locator('.app-shell').getAttribute('data-density'),'comfortable');
  await page.locator('.application-card').first().waitFor();assert.equal(await page.locator('.application-card').first().evaluate(el=>getComputedStyle(el).paddingTop),'24px');
- assert.deepEqual(failures,[]);console.log('PASS Chromium: login, chat Enter/Shift+Enter, business result, 13 routes, service input/output contract and raw definition, historical release restore/reload/live snapshot protection, saved density/timezone/reload/account isolation, no component/runtime errors');
+ assert.deepEqual(failures,[]);console.log('PASS Chromium: login, chat Enter/Shift+Enter, business result, 13 routes, service input/output contract and raw definition, historical release restore/reload/live snapshot protection, checked publication diff/unchanged baseline/real publish, saved density/timezone/reload/account isolation, no component/runtime errors');
 } finally {await browser?.close();if(server)await new Promise(r=>server.httpServer.close(r));backend.kill('SIGTERM');await new Promise(r=>backend.exitCode!==null?r():backend.once('exit',r));await rm(temp,{recursive:true,force:true});}
