@@ -33,7 +33,7 @@ func OpenMySQLContext(parent context.Context, dsn string) (*Store, error) {
 		return bad("MySQL connection unavailable")
 	}
 	// MySQL DDL commits independently. Never imply transactional migration rollback.
-	if _, e = db.ExecContext(ctx, `CREATE TABLE IF NOT EXISTS cognara_fg_state (id INT PRIMARY KEY CHECK(id=1), schema_version INT NOT NULL, body JSON NOT NULL CHECK(JSON_TYPE(body)='OBJECT')) ENGINE=InnoDB`); e != nil {
+	if _, e = db.ExecContext(ctx, mysqlStateDDL); e != nil {
 		return bad("MySQL schema initialization failed")
 	}
 	if e = validateMySQLStateSchema(ctx, db, cfg.DBName); e != nil {
@@ -106,3 +106,5 @@ func validateMySQLStateSchema(ctx context.Context, db *sql.DB, database string) 
 	}
 	return nil
 }
+
+const mysqlStateDDL = `CREATE TABLE IF NOT EXISTS cognara_fg_state (id INT PRIMARY KEY CHECK(id=1), schema_version INT NOT NULL, body JSON NOT NULL CHECK(JSON_TYPE(body)='OBJECT')) ENGINE=InnoDB`
