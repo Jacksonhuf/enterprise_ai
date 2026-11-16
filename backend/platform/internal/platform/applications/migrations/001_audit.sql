@@ -10,4 +10,4 @@ CREATE TABLE IF NOT EXISTS cognara_fg_audit (
  PRIMARY KEY(tenant_id,event_id),
  UNIQUE KEY audit_sequence(sequence_no),
  KEY audit_tenant_sequence(tenant_id,sequence_no)
-) ENGINE=InnoDB
+) ENGINE=InnoDB DEFAULT CHARACTER SET utf8mb4
