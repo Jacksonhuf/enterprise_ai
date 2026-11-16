@@ -58,6 +58,9 @@
   <section v-else><t-alert v-if="error" theme="error" :message="error" /><t-button v-if="error" @click="load">重新加载</t-button><t-loading v-else :loading="true" text="正在读取应用详情" /></section>
 </template>
 <script setup lang="ts">
+import { formatDateTime } from "../dateTime";
+import { useCognaraAuth } from "../stores/auth";
+const preferences = useCognaraAuth();
 import { Alert as TAlert } from "tdesign-vue-next/es/alert";
 import { Button as TButton } from "tdesign-vue-next/es/button";
 import { Drawer as TDrawer } from "tdesign-vue-next/es/drawer";
@@ -83,7 +86,7 @@ const history = reactive(new PagedCollection<Release>(async (_query, cursor) => 
   return api(prefix + `/apps/${route.params.appId}/releases?` + params);
 }, item => item.release_id));
 function retryHistory() { if (history.items.length && history.nextCursor !== null) void history.next(); else void history.reset(); }
-function date(value:string) { return new Date(value).toLocaleString("zh-CN"); }
+function date(value:string) { return formatDateTime(value, preferences.timezone); }
 async function load() {
   error.value = "";
   try { application.value = await api(prefix + `/apps/${route.params.appId}`); await history.reset(); }

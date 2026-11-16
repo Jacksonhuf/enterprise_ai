@@ -44,7 +44,7 @@
                     >{{ item.current_release_id ? "已发布" : "草稿" }}</span
                   >
                 </td>
-                <td>{{ date(item.updated_at) }}</td>
+                <td><time :datetime="item.updated_at">{{ date(item.updated_at) }}</time></td>
                 <td class="table-actions">
                   <router-link :to="`/build/apps/${item.app_id}`"
                     >详情</router-link
@@ -118,6 +118,9 @@
   </section>
 </template>
 <script setup lang="ts">
+import { formatDateTime } from "../dateTime";
+import { useCognaraAuth } from "../stores/auth";
+const preferences = useCognaraAuth();
 import { Alert as TAlert } from "tdesign-vue-next/es/alert";
 import { Button as TButton } from "tdesign-vue-next/es/button";
 import { Drawer as TDrawer } from "tdesign-vue-next/es/drawer";
@@ -163,7 +166,7 @@ function retry() {
   if (collection.items.length && collection.nextCursor !== null) void collection.next();
   else void collection.reset(query.value);
 }
-function date(v: string) { return new Date(v).toLocaleString("zh-CN"); }
+function date(v: string) { return formatDateTime(v, preferences.timezone); }
 async function enter(a: Application) {
   try {
     const s = await post(prefix + `/apps/${a.app_id}/sessions`, {});

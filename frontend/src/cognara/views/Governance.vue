@@ -34,13 +34,14 @@
         placeholder="搜索请求编号、用户标识、应用或资源"
         clearable
       /><span class="meta">{{
-        data.sampled_at ? new Date(data.sampled_at).toLocaleString("zh-CN") : ""
+        data.sampled_at ? formatDateTime(data.sampled_at, preferences.timezone) : ""
       }}</span>
     </div>
     <div v-if="paged" class="list-toolbar governance-filters">
       <t-select v-if="section === 'audit'" v-model="outcomeFilter" :options="outcomeOptions" placeholder="审计结果" />
       <t-select v-if="section === 'exceptions' || section === 'grants'" v-model="statusFilter" :options="statusOptions" placeholder="处理状态" />
       <t-select v-if="section === 'usage'" v-model="unitFilter" :options="unitOptions" placeholder="用量单位" />
+      <span v-if="section !== 'grants'" class="meta">筛选时区：{{ browserTimeZone() }}（浏览器）</span>
       <t-date-range-picker v-if="section !== 'grants'" v-model="timeRange" enable-time-picker clearable value-type="time-stamp" />
       <t-button variant="text" @click="clearFilters">清空筛选</t-button>
       <span class="meta">已加载 {{ collection.items.length }} 条 · 按接收顺序排列</span>
@@ -90,7 +91,7 @@
                   :class="row.active ? 'success' : ''"
                   >{{ row.active ? "有效" : "已撤销" }}</span><template
                   v-else
-                  >{{ display(row[c.key]) }}</template
+                  >{{ display(row[c.key], c.key) }}</template
                 >
               </td>
               <td class="table-actions">
@@ -136,7 +137,7 @@
       ><div v-if="selected" class="detail-list">
         <div v-for="c in columns" :key="c.key">
           <span>{{ c.label }}</span><strong>{{
-            display(selected[c.key])
+            display(selected[c.key], c.key)
           }}</strong>
         </div>
         <div v-if="selected.request_id">
@@ -213,6 +214,9 @@
   </section>
 </template>
 <script setup lang="ts">
+import { formatDateTime, browserTimeZone } from "../dateTime";
+import { useCognaraAuth } from "../stores/auth";
+const preferences = useCognaraAuth();
 import { Alert as TAlert } from "tdesign-vue-next/es/alert";
 import { Button as TButton } from "tdesign-vue-next/es/button";
 import { DateRangePicker as TDateRangePicker } from "tdesign-vue-next/es/date-picker";
@@ -390,7 +394,8 @@ const labels: Record<string, string> = {
   TOKEN: "词元",
   MILLISECOND: "毫秒",
 };
-function display(v: any) {
+function display(v: any, key = "") {
+  if (key === "occurred_at") return formatDateTime(v, preferences.timezone);
   if (v == null) return "—";
   return labels[String(v)] || String(v);
 }

@@ -1,11 +1,13 @@
 import { defineStore } from "pinia";
 import { ref, computed } from "vue";
 import { api, prefix, credential, formatAPIError } from "../api";
+import { supportedTimeZone } from "../dateTime";
 import type { Principal } from "../types";
 export const useCognaraAuth = defineStore("cognara-auth", () => {
   const user = ref<Principal | null>(null);
   const modelsConfigured = ref(false);
   const density = ref<"comfortable" | "compact">("comfortable");
+  const timezone = ref("");
   const preferencesError = ref("");
   let preferenceRequest = 0;
   const canBuild = computed(() =>
@@ -13,7 +15,7 @@ export const useCognaraAuth = defineStore("cognara-auth", () => {
   );
   const isAdmin = computed(() => user.value?.role === "admin");
   let generation = 0;
-  function clearState() { user.value = null; modelsConfigured.value = false; density.value = "comfortable"; preferencesError.value = ""; preferenceRequest++; }
+  function clearState() { user.value = null; modelsConfigured.value = false; density.value = "comfortable"; timezone.value = ""; preferencesError.value = ""; preferenceRequest++; }
   function active(version: number, identity: string) {
     return generation === version && credential() === identity;
   }
@@ -40,6 +42,7 @@ export const useCognaraAuth = defineStore("cognara-auth", () => {
       if (!snapshot.revision || !snapshot.values || typeof snapshot.values !== "object" || Array.isArray(snapshot.values))
         throw new Error("偏好响应无效，请重试");
       density.value = snapshot.values.density === "compact" ? "compact" : "comfortable";
+      timezone.value = supportedTimeZone(snapshot.values.timezone);
       preferencesError.value = "";
     } catch (e) {
       if (isCurrent()) preferencesError.value = formatAPIError(e);
@@ -67,5 +70,5 @@ export const useCognaraAuth = defineStore("cognara-auth", () => {
     localStorage.removeItem("cognara_demo_identity");
     clearState();
   }
-  return { user, modelsConfigured, density, preferencesError, canBuild, isAdmin, load, refreshPreferences, refreshProfile, login, logout };
+  return { user, modelsConfigured, density, timezone, preferencesError, canBuild, isAdmin, load, refreshPreferences, refreshProfile, login, logout };
 });

@@ -80,7 +80,7 @@
           ><t-button variant="text" size="small" @click="copy(m.content)"
             >复制</t-button
           ><span class="meta">{{
-            new Date(m.created_at).toLocaleTimeString("zh-CN")
+            formatDateTime(m.created_at, preferences.timezone, true)
           }}</span>
         </div>
       </article>
@@ -149,6 +149,9 @@
   </section>
 </template>
 <script setup lang="ts">
+import { formatDateTime } from "../dateTime";
+import { useCognaraAuth } from "../stores/auth";
+const preferences = useCognaraAuth();
 import { Alert as TAlert } from "tdesign-vue-next/es/alert";
 import { Button as TButton } from "tdesign-vue-next/es/button";
 import { Drawer as TDrawer } from "tdesign-vue-next/es/drawer";
