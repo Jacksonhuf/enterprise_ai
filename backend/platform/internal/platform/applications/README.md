@@ -14,3 +14,5 @@ cognara-migrate-audit --check
 ```
 
 检查报告为JSON，status为READY（v1可迁移）或ALREADY_APPLIED（v2审计验证通过），附源/目标版本和事件数。失败非零退出。--check不建表/播种/修改，--apply仍重新校验，不因上一次检查成功跳过检查。顶层Audit大小写别名需先显式处理，不会自动丢弃源数据。完整边界见docs/development/test-report-v0.28.md。
+
+MySQL兼容保留：普通业务写入会保留当前锁定状态行中的未知顶层JSON字段及其完整值；已知State字段由新状态替换，旧大小写别名移除。此保留规则不覆盖已知业务对象内部的未知嵌套属性，不等于任意未来schema兼容。见第二十九轮测试报告。

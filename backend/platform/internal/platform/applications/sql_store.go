@@ -43,6 +43,10 @@ func (s *Store) readSQLContextAudit(parent context.Context, includeAudit bool) (
 	return st, e
 }
 func readStateRow(ctx context.Context, tx *sql.Tx, lock, relational, includeAudit bool) (State, int, error) {
+	st, version, _, e := readStateRowSource(ctx, tx, lock, relational, includeAudit)
+	return st, version, e
+}
+func readStateRowSource(ctx context.Context, tx *sql.Tx, lock, relational, includeAudit bool) (State, int, []byte, error) {
 	query := `SELECT schema_version,body FROM cognara_fg_state WHERE id=1`
 	if lock {
 		query += " FOR UPDATE"
@@ -51,31 +55,31 @@ func readStateRow(ctx context.Context, tx *sql.Tx, lock, relational, includeAudi
 	var version int
 	var st State
 	if e := tx.QueryRowContext(ctx, query).Scan(&version, &raw); e != nil {
-		return st, version, e
+		return st, version, raw, e
 	}
 	if version != 1 && !(relational && version == 2) {
-		return st, version, fmt.Errorf("unsupported state schema")
+		return st, version, raw, fmt.Errorf("unsupported state schema")
 	}
 	if e := json.Unmarshal(raw, &st); e != nil {
-		return st, version, e
+		return st, version, raw, e
 	}
 	if version == 2 {
 		if e := validateMySQLAuditSchema(ctx, tx); e != nil {
-			return st, version, e
+			return st, version, raw, e
 		}
 		if len(st.Audit) != 0 {
-			return st, version, fmt.Errorf("ambiguous audit storage")
+			return st, version, raw, fmt.Errorf("ambiguous audit storage")
 		}
 		var e error
 		if includeAudit {
 			st.Audit, e = loadMySQLAudit(ctx, tx)
 		}
 		if e != nil {
-			return st, version, e
+			return st, version, raw, e
 		}
 	}
 	initializeState(&st)
-	return st, version, nil
+	return st, version, raw, nil
 }
 
 func (s *Store) updateSQLContext(parent context.Context, fn func(*State) error, operational bool) error {
@@ -86,7 +90,7 @@ func (s *Store) updateSQLContext(parent context.Context, fn func(*State) error, 
 		return e
 	}
 	defer tx.Rollback()
-	next, version, e := readStateRow(ctx, tx, s.dialect == "postgres" || s.dialect == "mysql", s.dialect == "mysql", !operational)
+	next, version, source, e := readStateRowSource(ctx, tx, s.dialect == "postgres" || s.dialect == "mysql", s.dialect == "mysql", !operational)
 	if e != nil {
 		return e
 	}
@@ -114,6 +118,12 @@ func (s *Store) updateSQLContext(parent context.Context, fn func(*State) error, 
 	b, e := json.Marshal(stored)
 	if e != nil {
 		return e
+	}
+	if s.dialect == "mysql" {
+		b, e = preserveMySQLStateEnvelope(source, b)
+		if e != nil {
+			return e
+		}
 	}
 	updateSQL := `UPDATE cognara_fg_state SET body=? WHERE id=1`
 	if s.dialect == "postgres" {
