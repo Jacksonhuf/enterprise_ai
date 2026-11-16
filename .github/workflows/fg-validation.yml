@@ -34,6 +34,7 @@ jobs:
       COGNARA_TEST_MYSQL_DSN: root:validation-only-mysql-password@tcp(127.0.0.1:3306)/cognara_validation
       COGNARA_MYSQL_DSN: root:validation-only-mysql-password@tcp(127.0.0.1:3306)/cognara_validation
       COGNARA_REQUIRE_MYSQL_TESTS: '1'
+      COGNARA_TEST_MIGRATE_BINARY: /tmp/cognara-migrate-audit
       COGNARA_TEST_IMPORT_BINARY: /tmp/cognara-state-import
       COGNARA_TEST_RUNTIME_BINARY: /tmp/cognara-dev
       COGNARA_TEST_EXPORT_BINARY: /tmp/cognara-state-export
@@ -56,6 +57,7 @@ jobs:
           python-version: '3.12'
       - run: python scripts/import-source.py
       - run: python -m pip install 'jsonschema[format-nongpl]==4.26.0'
+      - run: go build -C backend/platform -tags=nomsgpack -o /tmp/cognara-migrate-audit ./cmd/cognara-migrate-audit
       - run: go build -C backend/platform -tags=nomsgpack -o /tmp/cognara-state-import ./cmd/cognara-state-import
       - run: go build -C backend/platform -tags=nomsgpack -o /tmp/cognara-dev ./cmd/cognara-dev
       - run: go build -C backend/platform -tags=nomsgpack -o /tmp/cognara-state-export ./cmd/cognara-state-export
