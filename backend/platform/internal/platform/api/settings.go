@@ -54,6 +54,30 @@ func settingsRevision(st app.State, p governance.Principal, section string, valu
 	sum := sha256.Sum256(append([]byte(key+":"), value...))
 	return "settings-initial-" + hex.EncodeToString(sum[:])
 }
+func settingsRecordState(key, legacy string, record app.SettingsRecord) app.State {
+	st := app.State{Settings: map[string]json.RawMessage{}, SettingRevisions: map[string]string{key: record.Revision}}
+	if record.Canonical {
+		st.Settings[key] = record.Value
+	} else if legacy != "" {
+		st.Settings[legacy] = record.Value
+	}
+	return st
+}
+func (s *Server) readSettings(r *http.Request, p governance.Principal, section string) (json.RawMessage, string, error) {
+	key, legacy := settingsStorageKey(p, section), settingsLegacyKey(p, section)
+	record, handled, e := s.Store.ReadMySQLSettingsContext(r.Context(), key, legacy)
+	if e != nil {
+		return nil, "", e
+	}
+	var st app.State
+	if handled {
+		st = settingsRecordState(key, legacy, record)
+	} else {
+		st = s.Store.ReadOperational()
+	}
+	value := settingsValue(st, p, section)
+	return value, settingsRevision(st, p, section, value), nil
+}
 func validateSettings(section string, values map[string]string) error {
 	if values == nil {
 		return fail(400, "INVALID_REQUEST", "请提供明确的配置对象")
@@ -110,9 +134,11 @@ func (s *Server) settings(w http.ResponseWriter, r *http.Request) error {
 			return err
 		}
 	}
-	st := s.Store.ReadOperational()
-	value := settingsValue(st, p, section)
-	Write(w, map[string]any{"section": section, "values": value, "revision": settingsRevision(st, p, section, value), "mode": "validation", "connections_verified": false})
+	value, revision, e := s.readSettings(r, p, section)
+	if e != nil {
+		return e
+	}
+	Write(w, map[string]any{"section": section, "values": value, "revision": revision, "mode": "validation", "connections_verified": false})
 	return nil
 }
 func (s *Server) saveSettings(w http.ResponseWriter, r *http.Request) error {
@@ -166,12 +192,7 @@ func (s *Server) saveSettings(w http.ResponseWriter, r *http.Request) error {
 	key := settingsStorageKey(p, section)
 	legacy := settingsLegacyKey(p, section)
 	handled, err := s.Store.UpdateMySQLSettingsContext(r.Context(), key, legacy, func(record app.SettingsRecord) (*app.SettingsPatch, error) {
-		st := app.State{Settings: map[string]json.RawMessage{}, SettingRevisions: map[string]string{key: record.Revision}}
-		if record.Canonical {
-			st.Settings[key] = record.Value
-		} else if legacy != "" {
-			st.Settings[legacy] = record.Value
-		}
+		st := settingsRecordState(key, legacy, record)
 		if e := update(&st); e != nil {
 			return nil, e
 		}
@@ -193,8 +214,12 @@ func (s *Server) saveSettings(w http.ResponseWriter, r *http.Request) error {
 // Display names are presentation only; authorization continues to use Principal(r).
 func (s *Server) me(w http.ResponseWriter, r *http.Request) error {
 	p := Principal(r)
+	value, _, e := s.readSettings(r, p, "profile")
+	if e != nil {
+		return e
+	}
 	var profile map[string]string
-	if json.Unmarshal(settingsValue(s.Store.ReadOperational(), p, "profile"), &profile) == nil {
+	if json.Unmarshal(value, &profile) == nil {
 		if name := strings.TrimSpace(profile["display_name"]); name != "" && len([]rune(name)) <= 80 {
 			p.Name = name
 		}
