@@ -415,3 +415,9 @@ Semantica的Explorer共享API Key、图会话和stdio MCP不直接等同平台�
 GET /api/v1/cognitive/selectors/assets和/selectors/services接受既有query、cursor、limit。代理按v0.3转发到内部发现接口：query至多256字符，cursor至多2048字符，limit为1–100；无效参数400且不请求上游。服务channel由平台固定为INTERNAL_APPLICATION，cursor保持不透明。
 
 应用service_refs仍为原结构，但同一service_id只能出现一次，保存草稿或发布检查发现重复返回400 INVALID_REQUEST。选择不同版本需显式替换原版本，不改变其他服务引用。此约束与受控服务工具按service_id查找发布引用的既有执行方式一致。
+
+### 治理列表检索与分页（第十轮）
+
+GET /api/v1/cognitive/governance/{audit|exceptions|usage|grants}新增query、limit、cursor，默认20条，最大100条，next_cursor为末页null或下一页不透明定位游标。每次读取仍检查管理员与企业归属；游标绑定企业/列表/筛选条件，不作为授权依据。
+
+audit支持outcome，exceptions/grants支持各自status，usage支持unit；除grants外支持RFC3339格式的from_time/to_time（包含边界）。query最长256字符，范围或筛选无效、条件改变后复用游标、定位项不再匹配时400；需刷新重新读取。搜索包含request_id及执行/用户/应用/资源标识，结果按接收顺序由新到旧，不提供跨单位汇总。原全量响应改为分页后，调用方需继续消费next_cursor。
