@@ -182,7 +182,7 @@
       <p v-for="issue in check?.issues" :key="issue" class="warning-text">
         {{ issue }}
       </p>
-      <p v-if="check?.valid_until" class="meta">检查有效至 {{ new Date(check.valid_until).toLocaleString('zh-CN') }}</p>
+      <p v-if="check?.valid_until" class="meta">检查有效至 {{ formatDateTime(check.valid_until, preferences.timezone) }}</p>
       <label class="field-label">发布说明</label
       ><t-textarea v-model="releaseNote" /><t-alert
         class="spaced"
@@ -193,6 +193,9 @@
   <section v-else><t-alert v-if="error" theme="error" :message="error" /><t-button v-if="error" @click="reloadDraft">重新加载草稿</t-button><t-loading v-else :loading="true" text="正在读取应用配置" /></section>
 </template>
 <script setup lang="ts">
+import { formatDateTime } from "../dateTime";
+import { useCognaraAuth } from "../stores/auth";
+const preferences = useCognaraAuth();
 import { Alert as TAlert } from "tdesign-vue-next/es/alert";
 import { Button as TButton } from "tdesign-vue-next/es/button";
 import { Checkbox as TCheckbox } from "tdesign-vue-next/es/checkbox";
