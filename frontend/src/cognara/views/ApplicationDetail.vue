@@ -8,6 +8,7 @@
       </div>
       <router-link :to="`/build/apps/${application.app_id}/edit`"><t-button theme="primary">编辑草稿</t-button></router-link>
     </header>
+    <t-alert v-if="error" theme="error" :message="error" />
     <t-tabs v-model="tab"><t-tab-panel value="overview" label="概览" /><t-tab-panel value="releases" label="发布历史" /></t-tabs>
     <div v-if="tab === 'overview'" class="form-panel">
       <div class="detail-list">
@@ -51,9 +52,22 @@
         <p class="muted">左侧为所选发布，右侧为{{ compareTarget === 'current' ? '当前发布' : '当前草稿' }}。仅显示变化项，不执行回滚或发布。</p>
         <table v-if="differences.length" class="data-table config-review"><thead><tr><th>配置项</th><th>所选发布</th><th>比较目标</th></tr></thead><tbody><tr v-for="row in differences" :key="row.label"><td>{{ row.label }}</td><td class="review-text">{{ row.before || "（空）" }}</td><td class="review-text">{{ row.after || "（空）" }}</td></tr></tbody></table>
         <t-alert v-else theme="success" message="两份配置没有差异。" />
-        <t-alert class="spaced" theme="info" message="历史发布保持只读，草稿变更不会自动改变当前发布。" />
+        <t-alert class="spaced" theme="info" message="历史发布保持只读。可将所选配置恢复为草稿，重新检查并发布后才生效。" />
+        <t-button class="spaced" theme="primary" :disabled="!restoreDifferences.length || restore.saving || restore.blocked" @click="restore.open(application, selected)">恢复为草稿</t-button>
+        <t-alert v-if="restore.error && !restore.visible" class="spaced" theme="error" :message="restore.error" />
+        <t-button v-if="restore.blocked && !restore.visible" class="spaced" @click="reloadRestore">重新加载并核对</t-button>
       </template>
     </t-drawer>
+    <t-dialog :visible="restore.visible" header="确认恢复为草稿" width="760px" :footer="false" :close-btn="!restore.saving" :close-on-overlay-click="false" :close-on-esc-keydown="!restore.saving" @close="restore.close()">
+      <p>将 {{ restore.source }} 的配置覆盖到当前草稿。当前发布保持不变，恢复后需重新检查并发布。</p>
+      <table class="data-table config-review"><thead><tr><th>配置项</th><th>当前草稿</th><th>恢复后</th></tr></thead><tbody><tr v-for="row in restore.changes" :key="row.label"><td>{{ row.label }}</td><td class="review-text">{{ row.before || "（空）" }}</td><td class="review-text">{{ row.after || "（空）" }}</td></tr></tbody></table>
+      <t-alert v-if="restore.error" class="spaced" theme="error" :message="restore.error" />
+      <div class="spaced">
+        <t-button v-if="restore.blocked" @click="reloadRestore">重新加载并核对</t-button>
+        <t-button v-else theme="primary" :loading="restore.saving" @click="confirmRestore">确认恢复</t-button>
+        <t-button class="restore-cancel" variant="outline" :disabled="restore.saving" @click="restore.close()">取消</t-button>
+      </div>
+    </t-dialog>
   </section>
   <section v-else><t-alert v-if="error" theme="error" :message="error" /><t-button v-if="error" @click="load">重新加载</t-button><t-loading v-else :loading="true" text="正在读取应用详情" /></section>
 </template>
@@ -63,22 +77,35 @@ import { useCognaraAuth } from "../stores/auth";
 const preferences = useCognaraAuth();
 import { Alert as TAlert } from "tdesign-vue-next/es/alert";
 import { Button as TButton } from "tdesign-vue-next/es/button";
+import { Dialog as TDialog } from "tdesign-vue-next/es/dialog";
 import { Drawer as TDrawer } from "tdesign-vue-next/es/drawer";
 import { Loading as TLoading } from "tdesign-vue-next/es/loading";
 import { RadioButton as TRadioButton } from "tdesign-vue-next/es/radio";
 import { RadioGroup as TRadioGroup } from "tdesign-vue-next/es/radio";
 import { TabPanel as TTabPanel } from "tdesign-vue-next/es/tabs";
 import { Tabs as TTabs } from "tdesign-vue-next/es/tabs";
-import { ref, reactive, computed, onMounted, watch } from "vue";
-import { useRoute } from "vue-router";
+import { ref, reactive, computed, onMounted, onBeforeUnmount, watch } from "vue";
+import { useRoute, useRouter } from "vue-router";
 import { api, prefix, formatAPIError } from "../api";
+import { ReleaseRestore } from "../releaseRestore";
 import { PagedCollection } from "../pagedCollection";
 import { compareConfig, modelLabel } from "../configReview";
 import type { Application, Release } from "../types";
-const route = useRoute();
+const route = useRoute(), router = useRouter();
+const restore = reactive(new ReleaseRestore((id, payload) => api(prefix + `/apps/${id}`, {method:"PUT",body:JSON.stringify(payload),signal:AbortSignal.timeout(15000)})));
+async function confirmRestore() {
+  const result = await restore.confirm();
+  if(result) await router.push(`/build/apps/${result.app_id}/edit`);
+}
+async function reloadRestore() {
+  restore.close();restore.blocked=false;restore.error="";selected.value=null;
+  application.value=null;await load();
+}
+onBeforeUnmount(()=>restore.invalidate());
 const application = ref<Application | null>(null), selected = ref<Release | null>(null), models = ref<{id:string;name:string}[]>([]);
 const tab = ref(route.query.tab === "releases" ? "releases" : "overview"), error = ref(""), compareTarget = ref("draft");
 const current = computed(() => application.value?.releases?.find(r => r.release_id === application.value?.current_release_id));
+const restoreDifferences = computed(() => selected.value && application.value ? compareConfig(application.value.draft, selected.value.config_snapshot) : []);
 const differences = computed(() => selected.value && application.value ? compareConfig(selected.value.config_snapshot, compareTarget.value === "current" && current.value ? current.value.config_snapshot : application.value.draft) : []);
 watch(selected, () => { compareTarget.value = "draft"; });
 const history = reactive(new PagedCollection<Release>(async (_query, cursor) => {
@@ -95,6 +122,7 @@ async function load() {
 onMounted(() => { void load(); void api<{items:{id:string;name:string}[]}>(prefix + "/models").then(data => { models.value = data.items; }).catch(() => {}); });
 </script>
 <style scoped>
+.restore-cancel { margin-left: 12px; }
 .review-text { white-space: pre-wrap; overflow-wrap: anywhere; }
 .config-review { table-layout: fixed; }
 .config-review th:first-child { width: 100px; }

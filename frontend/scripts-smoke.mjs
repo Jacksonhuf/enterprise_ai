@@ -21,6 +21,24 @@ try {
  await page.goto('http://127.0.0.1:14173/apps');await page.evaluate(()=>localStorage.setItem('cognara_demo_identity','demo-admin'));
  const routes=['/apps','/build/apps','/build/apps/channel-replenishment','/build/apps/channel-replenishment/edit','/assets','/services','/governance/access','/governance/audit','/governance/operations','/settings/profile','/settings/general','/settings/models','/forbidden'];
  for(const route of routes){await page.goto('http://127.0.0.1:14173'+route);await page.locator('h1, .wk-empty-state__title').first().waitFor();await page.waitForLoadState('networkidle');assert.ok((await page.locator('h1, .wk-empty-state__title').first().innerText()).trim());}
+ // Change only the draft, then restore through the actual history drawer and dialog.
+ const before=await page.evaluate(async()=>{
+  const path='/api/v1/cognitive/apps/channel-replenishment',headers={'Content-Type':'application/json',Authorization:'Bearer '+localStorage.getItem('cognara_demo_identity')};
+  const response=await fetch(path,{headers});if(!response.ok)throw Error('read draft failed');const app=await response.json();
+  const changed=JSON.parse(JSON.stringify(app.draft));changed.basic.description='Browser restoration regression';
+  const saved=await fetch(path,{method:'PUT',headers,body:JSON.stringify({...changed,expected_draft_revision:app.draft_revision})});
+  if(!saved.ok)throw Error('prepare draft failed');return app;
+ });
+ await page.goto('http://127.0.0.1:14173/build/apps/channel-replenishment?tab=releases');
+ await page.getByRole('button',{name:'查看配置与差异',exact:true}).first().click();
+ await page.getByRole('button',{name:'恢复为草稿',exact:true}).click();
+ await page.getByRole('button',{name:'确认恢复',exact:true}).click();
+ await page.waitForURL('**/build/apps/channel-replenishment/edit');
+ await page.reload();await page.waitForLoadState('networkidle');
+ const after=await page.evaluate(async()=>{const r=await fetch('/api/v1/cognitive/apps/channel-replenishment',{headers:{Authorization:'Bearer '+localStorage.getItem('cognara_demo_identity')}});if(!r.ok)throw Error('verify restore failed');return r.json()});
+ assert.deepEqual(after.draft,before.releases.find(r=>r.release_id===before.current_release_id).config_snapshot);
+ assert.equal(after.current_release_id,before.current_release_id);assert.deepEqual(after.releases,before.releases);
+ assert.notEqual(after.draft_revision,before.draft_revision);
  // Exercise the saved preference through the actual form and a fresh page load.
  await page.goto('http://127.0.0.1:14173/settings/general');
  await page.waitForLoadState('networkidle');
@@ -40,5 +58,5 @@ try {
  await page.getByRole('button',{name:'进入验证工作台'}).click();await page.waitForURL('**/apps');assert.equal(await page.getByRole('link',{name:'身份与权限',exact:true}).count(),0);
  assert.equal(await page.locator('.app-shell').getAttribute('data-density'),'comfortable');
  await page.locator('.application-card').first().waitFor();assert.equal(await page.locator('.application-card').first().evaluate(el=>getComputedStyle(el).paddingTop),'24px');
- assert.deepEqual(failures,[]);console.log('PASS Chromium: login, chat Enter/Shift+Enter, business result, 13 routes, saved density/timezone/reload/account isolation, no component/runtime errors');
+ assert.deepEqual(failures,[]);console.log('PASS Chromium: login, chat Enter/Shift+Enter, business result, 13 routes, historical release restore/reload/live snapshot protection, saved density/timezone/reload/account isolation, no component/runtime errors');
 } finally {await browser?.close();if(server)await new Promise(r=>server.httpServer.close(r));backend.kill('SIGTERM');await new Promise(r=>backend.exitCode!==null?r():backend.once('exit',r));await rm(temp,{recursive:true,force:true});}
