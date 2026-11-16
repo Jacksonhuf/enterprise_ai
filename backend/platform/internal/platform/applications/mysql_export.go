@@ -14,11 +14,13 @@ import (
 )
 
 type SnapshotReport struct {
-	SHA256       string `json:"sha256"`
-	Bytes        int    `json:"bytes"`
-	Applications int    `json:"applications"`
-	Sessions     int    `json:"sessions"`
-	Messages     int    `json:"messages"`
+	SourceSchemaVersion int    `json:"source_schema_version"`
+	AuditEvents         int    `json:"audit_events"`
+	SHA256              string `json:"sha256"`
+	Bytes               int    `json:"bytes"`
+	Applications        int    `json:"applications"`
+	Sessions            int    `json:"sessions"`
+	Messages            int    `json:"messages"`
 }
 
 // ExportMySQLSnapshot never initializes or seeds a database. The destination must not exist.
@@ -52,13 +54,21 @@ func ExportMySQLSnapshot(parent context.Context, dsn, destination string) (Snaps
 	if e = tx.QueryRowContext(ctx, `SELECT schema_version,body FROM cognara_fg_state WHERE id=1`).Scan(&version, &raw); e != nil {
 		return report, errors.New("MySQL snapshot state unavailable")
 	}
-	if version != 1 || len(raw) == 0 || len(raw) > 64<<20 {
+	if (version != 1 && version != 2) || len(raw) == 0 || len(raw) > 64<<20 {
 		return report, errors.New("MySQL snapshot version or size unsupported")
 	}
 	var object map[string]json.RawMessage
 	var state State
 	if json.Unmarshal(raw, &object) != nil || object == nil || json.Unmarshal(raw, &state) != nil {
 		return report, errors.New("MySQL snapshot state invalid")
+	}
+	report.SourceSchemaVersion = version
+	report.AuditEvents = len(state.Audit)
+	if version == 2 {
+		raw, report.AuditEvents, e = exportMySQLV2(ctx, tx, raw)
+		if e != nil {
+			return SnapshotReport{}, errors.New("MySQL v2 snapshot invalid or unavailable")
+		}
 	}
 	if e = tx.Commit(); e != nil {
 		return report, errors.New("MySQL snapshot transaction failed")

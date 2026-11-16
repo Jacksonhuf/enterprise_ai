@@ -12,6 +12,7 @@ import (
 	"reflect"
 	"strings"
 	"time"
+	"unicode/utf8"
 )
 
 //go:embed migrations/001_audit.sql
@@ -139,27 +140,27 @@ func appendMySQLAudit(ctx context.Context, tx *sql.Tx, previous, next []Event) e
 	return insertMySQLAudit(ctx, tx, next[len(previous):], uint64(len(previous)))
 }
 func insertMySQLAudit(ctx context.Context, tx *sql.Tx, events []Event, last uint64) error {
+	return insertMySQLAuditPayloads(ctx, tx, events, last, nil)
+}
+func insertMySQLAuditPayloads(ctx context.Context, tx *sql.Tx, events []Event, last uint64, payloads []json.RawMessage) error {
+	if payloads != nil && len(payloads) != len(events) {
+		return errors.New("invalid audit payload count")
+	}
 	for i, event := range events {
 		if uint64(i)+1 > ^uint64(0)-last {
 			return errors.New("audit sequence exhausted")
 		}
-		if event.ID == "" || len(event.TenantID) > 64 || len(event.ID) > 512 {
-			return errors.New("invalid audit identity")
+		occurredColumn, e := auditProjection(event)
+		if e != nil {
+			return e
 		}
-		occurred, e := time.Parse(time.RFC3339Nano, strings.ToUpper(event.OccurredAt))
-		if e != nil || occurred.Year() < 1 {
-			return errors.New("audit timestamp invalid")
-		}
-		var occurredColumn any
-		utc := occurred.UTC()
-		// The existing contract permits years outside MySQL DATETIME's range.
-		// Preserve the exact source timestamp in payload; leave this projection NULL.
-		if utc.Year() >= 1000 && utc.Year() <= 9999 {
-			occurredColumn = utc.Format("2006-01-02 15:04:05.000000")
-		}
+
 		raw, e := json.Marshal(event)
 		if e != nil {
 			return e
+		}
+		if payloads != nil {
+			raw = payloads[i]
 		}
 		if _, e = tx.ExecContext(ctx, `INSERT INTO cognara_fg_audit(tenant_id,event_id,sequence_no,occurred_at,actor_id,action,resource_id,payload) VALUES(?,?,?,?,?,?,?,?)`, event.TenantID, event.ID, last+uint64(i)+1, occurredColumn, event.ActorID, event.Action, event.ResourceID, string(raw)); e != nil {
 			return e
@@ -235,4 +236,22 @@ func validateMySQLAuditSchema(ctx context.Context, tx *sql.Tx) error {
 		return errors.New("audit indexes incomplete")
 	}
 	return nil
+}
+
+func auditProjection(event Event) (any, error) {
+	if event.ID == "" || len(event.TenantID) > 64 || len(event.ID) > 512 || utf8.RuneCountInString(event.ActorID) > 255 || utf8.RuneCountInString(event.Action) > 255 || utf8.RuneCountInString(event.ResourceID) > 255 {
+		return nil, errors.New("invalid audit identity")
+	}
+	occurred, e := time.Parse(time.RFC3339Nano, strings.ToUpper(event.OccurredAt))
+	if e != nil || occurred.Year() < 1 {
+		return nil, errors.New("audit timestamp invalid")
+	}
+	var occurredColumn any
+	utc := occurred.UTC()
+	// The existing contract permits years outside MySQL DATETIME's range.
+	// Preserve the exact source timestamp in payload; leave this projection NULL.
+	if utc.Year() >= 1000 && utc.Year() <= 9999 {
+		occurredColumn = utc.Format("2006-01-02 15:04:05.000000")
+	}
+	return occurredColumn, nil
 }

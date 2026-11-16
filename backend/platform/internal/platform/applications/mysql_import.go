@@ -18,7 +18,7 @@ import (
 // No existing record is ever updated. DDL may remain if a later transaction fails.
 func ImportMySQLSnapshot(parent context.Context, dsn, path, expectedSHA string, sourceVersion int) (SnapshotReport, error) {
 	var report SnapshotReport
-	if sourceVersion != 1 {
+	if sourceVersion != 1 && sourceVersion != 2 {
 		return report, errors.New("snapshot schema version unsupported")
 	}
 	expected, e := hex.DecodeString(expectedSHA)
@@ -45,9 +45,18 @@ func ImportMySQLSnapshot(parent context.Context, dsn, path, expectedSHA string, 
 	if e = validateSnapshotJSON(raw); e != nil {
 		return report, errors.New("snapshot JSON invalid or ambiguous")
 	}
+	stateRaw := json.RawMessage(raw)
+	var auditPayloads []json.RawMessage
+	var auditEvents []Event
+	if sourceVersion == 2 {
+		stateRaw, auditPayloads, auditEvents, e = parseMySQLV2(raw)
+		if e != nil {
+			return report, e
+		}
+	}
 	var object map[string]json.RawMessage
 	var state State
-	if json.Unmarshal(raw, &object) != nil || object == nil || json.Unmarshal(raw, &state) != nil || state.Apps == nil || state.Sessions == nil {
+	if json.Unmarshal(stateRaw, &object) != nil || object == nil || json.Unmarshal(stateRaw, &state) != nil || state.Apps == nil || state.Sessions == nil {
 		return report, errors.New("snapshot structure invalid")
 	}
 	for id, a := range state.Apps {
@@ -87,17 +96,39 @@ func ImportMySQLSnapshot(parent context.Context, dsn, path, expectedSHA string, 
 	if e = validateMySQLStateSchema(ctx, db, cfg.DBName); e != nil {
 		return report, errors.New("MySQL import schema incompatible")
 	}
+	if sourceVersion == 2 {
+		if _, e = db.ExecContext(ctx, mysqlAuditDDL); e != nil {
+			return report, errors.New("MySQL audit import schema unavailable")
+		}
+	}
 	tx, e := db.BeginTx(ctx, nil)
 	if e != nil {
 		return report, errors.New("MySQL import transaction unavailable")
 	}
 	defer tx.Rollback()
 	// The singleton primary key arbitrates concurrent importers and startup seeders.
-	if _, e = tx.ExecContext(ctx, `INSERT INTO cognara_fg_state(id,schema_version,body) VALUES(1,1,?)`, string(raw)); e != nil {
+	if _, e = tx.ExecContext(ctx, `INSERT INTO cognara_fg_state(id,schema_version,body) VALUES(1,?,?)`, sourceVersion, string(stateRaw)); e != nil {
 		return report, errors.New("MySQL import refused; target must contain no state record")
+	}
+	if sourceVersion == 2 {
+		if e = validateMySQLAuditSchema(ctx, tx); e != nil {
+			return report, errors.New("MySQL audit import schema incompatible")
+		}
+		var count int
+		if e = tx.QueryRowContext(ctx, `SELECT COUNT(*) FROM cognara_fg_audit`).Scan(&count); e != nil || count != 0 {
+			return report, errors.New("MySQL audit import target must be empty")
+		}
+		if e = insertMySQLAuditPayloads(ctx, tx, auditEvents, 0, auditPayloads); e != nil {
+			return report, errors.New("MySQL audit import rejected")
+		}
 	}
 	if e = tx.Commit(); e != nil {
 		return report, errors.New("MySQL import commit not confirmed; inspect target before retry")
+	}
+	report.SourceSchemaVersion = sourceVersion
+	report.AuditEvents = len(state.Audit)
+	if sourceVersion == 2 {
+		report.AuditEvents = len(auditEvents)
 	}
 	report.SHA256 = hex.EncodeToString(sum[:])
 	report.Bytes = len(raw)

@@ -15,7 +15,7 @@ func main() {
 	env := flag.String("mysql-dsn-env", "COGNARA_MYSQL_DSN", "target MySQL DSN environment variable")
 	input := flag.String("input", "", "verified snapshot file")
 	sha := flag.String("expected-sha256", "", "expected source SHA-256")
-	version := flag.Int("source-schema-version", 0, "explicit source schema version (1)")
+	version := flag.Int("source-schema-version", 0, "explicit source schema version (1 or 2)")
 	flag.Parse()
 	if *input == "" || *sha == "" || *version == 0 || flag.NArg() != 0 {
 		log.Fatal("input, expected-sha256 and source-schema-version are required")
