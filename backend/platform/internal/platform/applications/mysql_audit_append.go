@@ -11,6 +11,12 @@ import (
 // AppendMySQLAuditContext records audit-only changes without rewriting body.
 // The state lock preserves ordering with ordinary aggregate/settings mutations.
 func (s *Store) AppendMySQLAuditContext(parent context.Context, events []Event) (bool, error) {
+	return s.AppendMySQLObservabilityContext(parent, events, nil)
+}
+
+// AppendMySQLObservabilityContext atomically appends audit and an optional OPEN
+// failure exception, without decoding or serializing unrelated business domains.
+func (s *Store) AppendMySQLObservabilityContext(parent context.Context, events []Event, exception map[string]any) (bool, error) {
 	if s.dialect != "mysql" {
 		return false, nil
 	}
@@ -22,8 +28,8 @@ func (s *Store) AppendMySQLAuditContext(parent context.Context, events []Event) 
 	}
 	defer tx.Rollback()
 	var version int
-	var keys, audit []byte
-	if e = tx.QueryRowContext(ctx, `SELECT schema_version,JSON_KEYS(body),JSON_EXTRACT(body,'$.audit') FROM cognara_fg_state WHERE id=1 FOR UPDATE`).Scan(&version, &keys, &audit); e != nil {
+	var keys, audit, exceptionsKind []byte
+	if e = tx.QueryRowContext(ctx, `SELECT schema_version,JSON_KEYS(body),JSON_EXTRACT(body,'$.audit'),JSON_TYPE(JSON_EXTRACT(body,'$.exceptions')) FROM cognara_fg_state WHERE id=1 FOR UPDATE`).Scan(&version, &keys, &audit, &exceptionsKind); e != nil {
 		return true, e
 	}
 	if version == 1 {
@@ -37,7 +43,7 @@ func (s *Store) AppendMySQLAuditContext(parent context.Context, events []Event) 
 		return true, errors.New("invalid state envelope")
 	}
 	for _, name := range names {
-		if name != "audit" && strings.EqualFold(name, "audit") {
+		if (name != "audit" && strings.EqualFold(name, "audit")) || (exception != nil && name != "exceptions" && strings.EqualFold(name, "exceptions")) {
 			return false, nil
 		}
 	}
@@ -48,12 +54,37 @@ func (s *Store) AppendMySQLAuditContext(parent context.Context, events []Event) 
 	if e = validateMySQLAuditSchema(ctx, tx); e != nil {
 		return true, e
 	}
+	var exceptionRaw []byte
+	if exception != nil {
+		id, _ := exception["id"].(string)
+		revision, _ := exception["revision"].(string)
+		tenant, ok := exception["tenant_id"].(string)
+		if len(events) == 0 || id == "" || revision == "" || !ok || tenant != events[0].TenantID || exception["status"] != "OPEN" {
+			return true, errors.New("invalid failure exception")
+		}
+		if len(exceptionsKind) > 0 && string(exceptionsKind) != "ARRAY" && string(exceptionsKind) != "NULL" {
+			return true, errors.New("invalid exception storage")
+		}
+		exceptionRaw, e = json.Marshal(exception)
+		if e != nil {
+			return true, errors.New("invalid failure exception JSON")
+		}
+	}
 	if len(events) > 0 {
 		var last uint64
 		if e = tx.QueryRowContext(ctx, `SELECT COALESCE(MAX(sequence_no),0) FROM cognara_fg_audit`).Scan(&last); e != nil {
 			return true, e
 		}
 		if e = insertMySQLAudit(ctx, tx, events, last); e != nil {
+			return true, e
+		}
+	}
+	if exception != nil {
+		query := `UPDATE cognara_fg_state SET body=JSON_ARRAY_APPEND(body,'$.exceptions',CAST(? AS JSON)) WHERE id=1`
+		if string(exceptionsKind) != "ARRAY" {
+			query = `UPDATE cognara_fg_state SET body=JSON_SET(body,'$.exceptions',JSON_ARRAY(CAST(? AS JSON))) WHERE id=1`
+		}
+		if _, e = tx.ExecContext(ctx, query, string(exceptionRaw)); e != nil {
 			return true, e
 		}
 	}
