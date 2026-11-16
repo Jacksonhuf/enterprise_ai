@@ -459,3 +459,21 @@ F/G生产关系数据库确定采用MySQL，与A—E技术选型统一。现有�
 GET /api/v1/cognitive/governance/audit的参数、错误信封、游标及返回结构不变。MySQL v2改为租户/sequence_no范围分批读取，管理员权限与历史空租户映射保持；搜索/结果/时间仍使用原Go语义。v1游标可在相同条件下用于迁移后的v2列表。新增事件不改变已定位游标之后的旧页；未知或不可访问锚点400要求刷新。稀疏筛选仍可能扫描多批，超时返回错误而非不完整成功列表。
 
 审计SQL筛选补充（2026-11-16）：MySQL v2将outcome和可表示的UTC时间范围作为SQL候选条件，原Go筛选作最终复核；参数、游标、错误和响应结构不变。DATETIME微秒桶与NULL候选不会替代原始事件时间的纳秒/时区判断，历史日期继续可查。不改变事件接收契约，也不新增数据库迁移。
+
+## 应用模板复制的兼容扩展（2026-11-17）
+
+既有 POST /api/v1/cognitive/apps 保持路由与原字段；新增可选 expected_template_revision，绑定用户预览的模板草稿。新界面在 TEMPLATE 模式始终提交此字段。
+
+| 字段 | 类型 | 约束 |
+|---|---|---|
+| creation_mode | string | 既有 BLANK 或 TEMPLATE |
+| name | string | 既有非空，最多80个Unicode字符 |
+| description | string | 既有业务描述 |
+| template_id | string | 既有 TEMPLATE 来源应用标识，同租户且当前有构建权限 |
+| expected_template_revision | string，可省略 | 新增；提供时仅用于 TEMPLATE，且非空；对应 GET 应用详情的 draft_revision |
+
+服务端在创建事务中先检查来源存在/租户，再比较模板草稿版本并复制配置、插入新应用。版本不符返回409 VERSION_INCOMPATIBLE，不创建应用；未知/外租户来源404，非法版本字段或用在BLANK时400，非构建角色403。省略或null保留旧调用语义：复制事务内当前模板草稿，不提供预览版本保证。
+
+成功响应仍为新 Application：独立 app_id/agent_id/draft_revision；name/description使用输入，其余配置复制来源草稿；无当前发布、历史发布、会话或授权继承。该变更不涉及 A–E 内部 HTTP 契约、服务版本或数据库 schema。
+
+模板目录通过已有 GET /apps?purpose=MANAGE&limit=100 按原游标完整读取，独立于管理页搜索和分页；选择后 GET /apps/{id} 获取版本与预览。409要求刷新预览后重新确认；网络/5xx/无效成功响应阻止直接重提，先刷新应用列表核对。接口尚无创建幂等键，不宣称跨重试、跨进程精确一次创建。
