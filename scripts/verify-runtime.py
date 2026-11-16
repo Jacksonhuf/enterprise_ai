@@ -36,9 +36,9 @@ def main():
         mock_port = free_port()
     base = f'http://127.0.0.1:{port}'
 
-    def request(path, body=None, identity='demo-user'):
+    def request(path, body=None, identity='demo-user', method=None):
         data = json.dumps(body).encode() if body is not None else None
-        req = urllib.request.Request(base+path, data=data, headers={
+        req = urllib.request.Request(base+path, data=data, method=method, headers={
             'Content-Type': 'application/json', 'Authorization': 'Bearer '+identity})
         with urllib.request.urlopen(req, timeout=15) as response:
             raw = response.read()
@@ -83,6 +83,8 @@ def main():
         try:
             start()
             session = request('/api/v1/cognitive/apps/channel-replenishment/sessions', {})['session_id']
+            metadata = request('/api/v1/sessions/'+session+'?include_messages=false')['session']
+            renamed = request('/api/v1/sessions/'+session, {'title': '验收分析', 'expected_revision': metadata['revision']}, method='PUT')
             stream = request('/api/v1/agent-chat/'+session, {'query': 'SO1002需求增加到350'})
             if '276.6' not in stream or 'event: done' not in stream:
                 raise RuntimeError('compiled host did not return the verified business result')
@@ -91,12 +93,18 @@ def main():
             before = len(request('/api/v1/cognitive/governance/usage', identity='demo-admin')['items'])
             stop()
             start()
+            restored = request('/api/v1/sessions/'+session+'?include_messages=false')['session']
+            if restored['title'] != '验收分析' or restored['revision'] != renamed['revision']:
+                raise RuntimeError('chat or restart overwrote the renamed title/version')
+            listing = request('/api/v1/sessions?'+urllib.parse.urlencode({'app_id': 'channel-replenishment', 'query': '验收分析'}))
+            if session not in [row['session_id'] for row in listing['items']]:
+                raise RuntimeError('renamed session is not searchable after restart')
             replay = request('/api/v1/sessions/continue-stream/'+session+'?'+urllib.parse.urlencode({'message_id': answer['id']}))
             after = len(request('/api/v1/cognitive/governance/usage', identity='demo-admin')['items'])
             if '276.6' not in replay or 'event: done' not in replay or before != after:
                 raise RuntimeError('restart replay changed the result or repeated usage')
             stop()
-            print(f'PASS {args.storage}: compiled startup, business call, graceful restart, authorized replay, unchanged usage')
+            print(f'PASS {args.storage}: compiled startup, business call, graceful restart, persisted rename/search, authorized replay, unchanged usage')
         finally:
             if process is not None:
                 process.terminate()

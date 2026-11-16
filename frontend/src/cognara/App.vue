@@ -12,22 +12,23 @@
         </button>
       </div>
       <template v-if="!collapsed"
-        ><t-input v-model="navQuery" placeholder="搜索功能" clearable />
+        ><t-input v-if="!isChat" v-model="navQuery" placeholder="搜索功能" clearable />
         <div class="nav-scroll">
           <template v-if="isChat"
             ><router-link class="nav-link" to="/apps">‹ 返回应用</router-link>
             <div class="nav-group-label">当前应用</div>
-            <button class="nav-link" @click="newChat">＋ 新建对话</button>
+            <button class="nav-link" :disabled="creatingSession" @click="newChat">＋ 新建对话</button>
             <div class="nav-group-label">历史对话</div>
-            <p v-if="sessionError" class="meta">{{ sessionError }}</p>
-            <button v-if="sessionError" class="nav-link" @click="loadSessions">重新加载历史</button>
-            <router-link
-              v-for="s in sessions"
-              :key="s.session_id"
-              class="nav-link"
-              :to="`/apps/${s.app_id}/chat/${s.session_id}`"
-              >{{ s.title }}</router-link
-            ></template
+            <t-input v-model="historyQuery" placeholder="搜索对话标题" clearable @enter="loadSessions" />
+            <button class="nav-link" :disabled="sessionPages.loading" @click="loadSessions">搜索 / 刷新历史</button>
+            <p v-if="sessionPages.error || sessionError" class="meta">{{ sessionPages.error || sessionError }}</p>
+            <div v-for="s in sessionPages.items" :key="s.session_id" class="session-history-row">
+              <router-link class="nav-link" :to="`/apps/${s.app_id}/chat/${s.session_id}`">{{ s.title }}</router-link>
+              <button class="icon-button" :aria-label="`重命名：${s.title}`" @click="renameDraft.open(s)">✎</button>
+            </div>
+            <button v-if="sessionPages.nextCursor" class="nav-link" :disabled="sessionPages.loading" @click="sessionPages.next()">加载更多对话</button>
+            <p v-if="!sessionPages.loading && !sessionPages.items.length && !sessionPages.error" class="meta">暂无匹配的对话</p>
+            </template
           ><template v-else
             ><div
               v-for="group in visibleGroups"
@@ -93,31 +94,39 @@
       </div>
       <main class="page-canvas"><router-view :key="route.fullPath" /></main>
     </section>
+    <t-dialog v-model:visible="renameDraft.visible" header="重命名对话" :confirm-btn="{ content: '保存', loading: renameDraft.saving, disabled: renameDraft.conflict }" :close-on-overlay-click="false" @confirm="saveRename">
+      <t-input v-model="renameDraft.title" :disabled="renameDraft.saving" :maxlength="80" placeholder="输入对话标题" />
+      <p v-if="renameDraft.conflict" class="meta">关闭窗口，刷新历史后重新打开以获取最新标题。</p>
+      <p v-if="renameDraft.error" class="meta">{{ renameDraft.error }}</p>
+    </t-dialog>
   </div>
 </template>
 <script setup lang="ts">
-import { computed, ref, watch } from "vue";
+import { computed, ref, watch, reactive } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import Brand from "./components/Brand.vue";
 import { useCognaraAuth } from "./stores/auth";
-import { api, post, prefix, formatAPIError } from "./api";
+import { api, post, put, prefix, formatAPIError } from "./api";
+import { SessionRename } from "./sessionRename";
+import { PagedCollection } from "./pagedCollection";
+import { sessionHistoryVersion } from "./sessionHistory";
 const auth = useCognaraAuth(),
   route = useRoute(),
   router = useRouter();
 const collapsed = ref(localStorage.getItem("cognara_collapsed") === "true"),
   accountOpen = ref(false),
   navQuery = ref(""),
-  sessions = ref<any[]>([]), sessionError = ref("");
-let sessionGeneration = 0;
-async function loadSessions() {
-  const generation = ++sessionGeneration;
-  sessions.value = []; sessionError.value = "";
-  if (!isChat.value) return;
-  try {
-    const res = await api("/api/v1/sessions?app_id=" + encodeURIComponent(String(route.params.appId)));
-    if (generation === sessionGeneration) sessions.value = res.items || [];
-  } catch (e) { if (generation === sessionGeneration) sessionError.value = formatAPIError(e); }
-}
+  sessionError = ref("");
+const historyQuery = ref("");
+const sessionPages = reactive(new PagedCollection<any>((query, cursor) => {
+  const params = new URLSearchParams({ app_id: String(route.params.appId), query, limit: "20" });
+  if (cursor) params.set("cursor", cursor);
+  return isChat.value ? api("/api/v1/sessions?" + params) : Promise.resolve({ items: [] });
+}, item => item.session_id));
+async function loadSessions() { sessionError.value = ""; await sessionPages.reset(historyQuery.value); }
+const renameDraft = reactive(new SessionRename((id, payload) => put(`/api/v1/sessions/${encodeURIComponent(id)}`, payload)));
+async function saveRename() { if (await renameDraft.save()) await loadSessions(); }
+watch(sessionHistoryVersion, () => { if (isChat.value) void loadSessions(); });
 watch(collapsed, (v) => localStorage.setItem("cognara_collapsed", String(v)));
 const isChat = computed(() => route.path.includes("/chat/"));
 const roleLabel = computed(
@@ -163,19 +172,28 @@ const visibleGroups = computed(() => {
 watch(
   () => route.fullPath,
   async () => {
-    accountOpen.value = false;
+    accountOpen.value = false; renameDraft.close(); historyQuery.value = "";
     await loadSessions();
   },
   { immediate: true },
 );
+const creatingSession = ref(false);
 async function newChat() {
+  if (creatingSession.value) return;
+  creatingSession.value = true;
   try {
     const s = await post(prefix + `/apps/${route.params.appId}/sessions`, {});
     router.push(`/apps/${route.params.appId}/chat/${s.session_id}`);
   } catch (e) { sessionError.value = formatAPIError(e); }
+  finally { creatingSession.value = false; }
 }
 function logout() {
   auth.logout();
   router.push("/login");
 }
 </script>
+
+<style scoped>
+.session-history-row { display:flex; align-items:center; gap:4px; }
+.session-history-row .nav-link { flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+</style>

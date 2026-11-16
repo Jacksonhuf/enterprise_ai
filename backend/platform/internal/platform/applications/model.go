@@ -92,12 +92,16 @@ type Message struct {
 	Completed            bool            `json:"is_completed"`
 }
 type Session struct {
-	ID       string    `json:"session_id"`
-	AppID    string    `json:"app_id"`
-	TenantID string    `json:"tenant_id"`
-	OwnerID  string    `json:"owner_id"`
-	Title    string    `json:"title"`
-	Messages []Message `json:"messages"`
+	CreatedAt       string    `json:"created_at,omitempty"`
+	UpdatedAt       string    `json:"updated_at,omitempty"`
+	Revision        string    `json:"revision,omitempty"`
+	TitleCustomized bool      `json:"title_customized,omitempty"`
+	ID              string    `json:"session_id"`
+	AppID           string    `json:"app_id"`
+	TenantID        string    `json:"tenant_id"`
+	OwnerID         string    `json:"owner_id"`
+	Title           string    `json:"title"`
+	Messages        []Message `json:"messages"`
 }
 type Check struct {
 	ID           string    `json:"check_id"`

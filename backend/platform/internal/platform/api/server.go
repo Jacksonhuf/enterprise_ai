@@ -221,6 +221,7 @@ func (s *Server) Handler() http.Handler {
 	add("GET /api/v1/cognitive/evidence/{execution_id}", s.evidence)
 	add("GET /api/v1/sessions", s.sessions)
 	add("GET /api/v1/sessions/{id}", s.session)
+	add("PUT /api/v1/sessions/{id}", s.renameSession)
 	add("GET /api/v1/messages/{session_id}/load", s.messages)
 	add("POST /api/v1/agent-chat/{session_id}", s.chat)
 	add("POST /api/v1/sessions/{session_id}/stop", s.stop)
@@ -539,11 +540,23 @@ func (s *Server) createSession(w http.ResponseWriter, r *http.Request) error {
 	if e = Decode(r, &req); e != nil {
 		return e
 	}
-	if req.Title == "" {
-		req.Title = "新的补货分析"
+	req.Title = strings.TrimSpace(req.Title)
+	customized := req.Title != ""
+	if len([]rune(req.Title)) > 80 {
+		return fail(400, "INVALID_REQUEST", "标题不能超过80个字符")
 	}
-	sess := app.Session{ID: app.ID("session"), AppID: a.ID, TenantID: p.TenantID, OwnerID: p.UserID, Title: req.Title, Messages: []app.Message{}}
-	if e = s.Store.UpdateContext(r.Context(), func(st *app.State) error { st.Sessions[sess.ID] = sess; return nil }); e != nil {
+	if req.Title == "" {
+		req.Title = "新对话"
+	}
+	sess := app.Session{ID: app.ID("session"), AppID: a.ID, TenantID: p.TenantID, OwnerID: p.UserID, Title: req.Title, TitleCustomized: customized, CreatedAt: app.Now(), UpdatedAt: app.Now(), Revision: app.ID("revision"), Messages: []app.Message{}}
+	if e = s.Store.UpdateContext(r.Context(), func(st *app.State) error {
+		current, ok := st.Apps[a.ID]
+		if !ok || !s.canUse(*st, p, current) {
+			return fail(403, "AUTHORIZATION_DENIED", "应用使用授权已撤销")
+		}
+		st.Sessions[sess.ID] = sess
+		return nil
+	}); e != nil {
 		return e
 	}
 	Write(w, sess)
@@ -559,31 +572,12 @@ func (s *Server) owned(p governance.Principal, id string) (app.Session, error) {
 	}
 	return v, nil
 }
-func (s *Server) sessions(w http.ResponseWriter, r *http.Request) error {
-	p := Principal(r)
-	appID := r.URL.Query().Get("app_id")
-	if appID == "" {
-		return fail(400, "INVALID_REQUEST", "请选择应用")
-	}
-	if _, e := s.getApp(p, appID, false); e != nil {
-		return e
-	}
-	items := []app.Session{}
-	for _, v := range s.Store.Read().Sessions {
-		if v.OwnerID == p.UserID && v.TenantID == p.TenantID && v.AppID == r.URL.Query().Get("app_id") {
-			v.Messages = nil
-			items = append(items, v)
-		}
-	}
-	sort.Slice(items, func(i, j int) bool { return items[i].ID > items[j].ID })
-	Write(w, map[string]any{"items": items})
-	return nil
-}
 func (s *Server) session(w http.ResponseWriter, r *http.Request) error {
 	v, e := s.owned(Principal(r), r.PathValue("id"))
 	if e != nil {
 		return e
 	}
+	v = sessionMetadata(v)
 	a := s.Store.Read().Apps[v.AppID]
 	rel, _ := app.Current(a)
 	if r.URL.Query().Get("include_messages") == "false" {
