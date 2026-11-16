@@ -207,7 +207,7 @@ func (s *Server) Handler() http.Handler {
 	add("GET /api/v1/cognitive/models", s.models)
 	add("POST /api/v1/cognitive/models/{id}/test", s.testModel)
 	add("GET /api/v1/cognitive/runtime-status", s.runtimeStatus)
-	add("GET /api/v1/cognitive/me", func(w http.ResponseWriter, r *http.Request) error { Write(w, Principal(r)); return nil })
+	add("GET /api/v1/cognitive/me", s.me)
 	add("GET /api/v1/cognitive/apps", s.listApps)
 	add("POST /api/v1/cognitive/apps", s.createApp)
 	add("GET /api/v1/cognitive/apps/{app_id}", s.detail)

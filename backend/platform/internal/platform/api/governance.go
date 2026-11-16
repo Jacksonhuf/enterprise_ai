@@ -1,7 +1,6 @@
 package api
 
 import (
-	"encoding/json"
 	app "github.com/Tencent/WeKnora/internal/platform/applications"
 	"github.com/Tencent/WeKnora/internal/platform/governance"
 	"net/http"
@@ -191,61 +190,3 @@ func (s *Server) revokeGrant(w http.ResponseWriter, r *http.Request) error {
 }
 
 var settingSections = map[string]bool{"models": true, "model-catalog": true, "mcp": true, "skills": true, "websearch": true, "credentials": true, "storage": true, "vectorstore": true, "queues": true, "system": true, "profile": true, "tenant": true, "api-keys": true, "general": true, "public": true}
-
-func (s *Server) settings(w http.ResponseWriter, r *http.Request) error {
-	p := Principal(r)
-	sec := r.PathValue("section")
-	if !settingSections[sec] {
-		return fail(404, "ASSET_UNAVAILABLE", "配置页面不存在")
-	}
-	if sec != "profile" && sec != "general" {
-		if e := s.requireAdmin(p); e != nil {
-			return e
-		}
-	}
-	key := sec
-	if sec == "profile" || sec == "general" {
-		key = p.UserID + ":" + sec
-	}
-	value := s.Store.Read().Settings[key]
-	if value == nil {
-		value = json.RawMessage(`{}`)
-	}
-	Write(w, map[string]any{"section": sec, "values": value, "mode": "validation", "connections_verified": false})
-	return nil
-}
-func (s *Server) saveSettings(w http.ResponseWriter, r *http.Request) error {
-	p := Principal(r)
-	sec := r.PathValue("section")
-	if sec != "profile" && sec != "general" && sec != "public" {
-		return fail(503, "CAPABILITY_UNAVAILABLE", "基础连接尚未接入真实提供方；当前只读，不保存秘密或伪报连接成功")
-	}
-	if sec == "public" {
-		if e := s.requireAdmin(p); e != nil {
-			return e
-		}
-	}
-	var req struct {
-		Values map[string]string `json:"values"`
-	}
-	if e := Decode(r, &req); e != nil {
-		return e
-	}
-	allowed := map[string]bool{"display_name": true, "language": true, "timezone": true, "density": true, "notice": true}
-	for k, v := range req.Values {
-		if !allowed[k] || len(v) > 512 {
-			return fail(400, "INVALID_REQUEST", "包含不允许的配置项")
-		}
-	}
-	b, _ := json.Marshal(req.Values)
-	key := sec
-	if sec != "public" {
-		key = p.UserID + ":" + sec
-	}
-	if e := s.Store.UpdateContext(r.Context(), func(st *app.State) error { st.Settings[key] = b; return nil }); e != nil {
-		return e
-	}
-	s.event(p, "settings.update", sec, "success", "")
-	Write(w, map[string]any{"values": req.Values})
-	return nil
-}
