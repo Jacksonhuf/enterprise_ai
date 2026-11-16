@@ -15,6 +15,13 @@ export const useCognaraAuth = defineStore("cognara-auth", () => {
       await api(prefix + "/runtime-status")
     ).models_configured;
   }
+  async function refreshProfile() {
+    const current = user.value;
+    if (!current) return;
+    const latest = await api<Principal>(prefix + "/me");
+    if (latest.actor_user_id === current.actor_user_id && latest.tenant_id === current.tenant_id && user.value?.actor_user_id === current.actor_user_id && user.value?.tenant_id === current.tenant_id)
+      user.value = latest;
+  }
   async function login(id: string) {
     localStorage.setItem("cognara_demo_identity", id);
     try {
@@ -28,5 +35,5 @@ export const useCognaraAuth = defineStore("cognara-auth", () => {
     localStorage.removeItem("cognara_demo_identity");
     user.value = null;
   }
-  return { user, modelsConfigured, canBuild, isAdmin, load, login, logout };
+  return { user, modelsConfigured, canBuild, isAdmin, load, refreshProfile, login, logout };
 });

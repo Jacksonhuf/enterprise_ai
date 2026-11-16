@@ -5,9 +5,7 @@
         <h1>{{ title }}</h1>
         <p class="muted">企业级连接、能力与个人偏好</p>
       </div>
-      <t-button v-if="editable" theme="primary" :loading="saving" @click="save"
-        >保存</t-button
-      >
+      <div v-if="editable" class="header-actions"><t-button :disabled="form.loading || form.saving" @click="reload">重新加载</t-button><t-button theme="primary" :loading="form.saving" :disabled="!form.canSave" @click="save">保存</t-button></div>
     </header>
     <div class="settings-layout">
       <nav class="settings-nav">
@@ -19,14 +17,16 @@
         >
       </nav>
       <div class="panel">
-        <t-alert v-if="error" theme="error" :message="error" /><template
+        <t-loading v-if="initialLoading" size="small" text="正在读取配置" />
+        <t-alert v-if="error || form.error" theme="error" :message="error || form.error" /><template
           v-if="editable"
-          ><t-form label-align="top"
+          ><t-loading :loading="form.loading"><t-form label-align="top" :disabled="!form.loaded || form.loading || form.saving"
             ><t-form-item v-for="f in fields" :key="f.key" :label="f.label"
-              ><t-input
-                v-model="values[f.key]"
-                :placeholder="f.placeholder" /></t-form-item></t-form
-          ><t-alert
+              ><t-select v-if="f.key === 'language'" v-model="form.values[f.key]" :options="[{label:'简体中文',value:'zh-CN'},{label:'英语',value:'en-US'}]" clearable />
+              <t-select v-else-if="f.key === 'density'" v-model="form.values[f.key]" :options="[{label:'标准',value:'comfortable'},{label:'紧凑',value:'compact'}]" clearable />
+              <t-textarea v-else-if="f.key === 'notice'" v-model="form.values[f.key]" :maxlength="512" :placeholder="f.placeholder" />
+              <t-input v-else v-model="form.values[f.key]" :maxlength="f.key === 'display_name' ? 80 : 512" :placeholder="f.placeholder" /></t-form-item></t-form></t-loading
+          ><t-alert v-if="form.conflict" class="spaced" theme="warning" message="服务器配置已变更。当前输入已保留，请重新加载后核对再保存。" /><t-alert
             theme="info"
             message="仅保存本地验证环境的非敏感偏好。" /></template
         ><template v-else-if="['models', 'model-catalog'].includes(section)"
@@ -68,18 +68,19 @@
   </section>
 </template>
 <script setup lang="ts">
-import { ref, computed, onMounted } from "vue";
-import { useRoute } from "vue-router";
+import { ref, computed, reactive, onMounted } from "vue";
+import { useRoute, onBeforeRouteLeave, onBeforeRouteUpdate } from "vue-router";
 import { MessagePlugin } from "tdesign-vue-next";
-import { api, put, post, prefix } from "../api";
+import { api, put, post, prefix, formatAPIError } from "../api";
+import { SettingsDraft } from "../settingsDraft";
+
 import { useCognaraAuth } from "../stores/auth";
 const models = ref<any[]>([]),
   testing = ref("");
 const route = useRoute(),
   auth = useCognaraAuth(),
   error = ref(""),
-  saving = ref(false),
-  values = ref<Record<string, string>>({});
+  initialLoading = ref(false);
 const sections: Record<string, string> = {
   models: "模型配置",
   "model-catalog": "模型目录",
@@ -122,24 +123,31 @@ const section = computed(() => String(route.params.section)),
             { key: "density", label: "界面密度", placeholder: "comfortable" },
           ],
   );
-onMounted(async () => {
-  try {
-    if (["models", "model-catalog"].includes(section.value))
-      models.value = (await api(prefix + "/models")).items;
-    values.value = (await api(prefix + "/settings/" + section.value)).values;
-  } catch (e) {
-    error.value = (e as Error).message;
-  }
+const form=reactive(new SettingsDraft(section.value,
+  ()=>api(prefix+"/settings/"+section.value),
+  payload=>put(prefix+"/settings/"+section.value,payload),
+));
+onMounted(async()=>{
+  if(editable.value){await form.load();return;}
+  initialLoading.value=true;
+  try{
+    if(["models","model-catalog"].includes(section.value))models.value=(await api(prefix+"/models")).items;
+    await api(prefix+"/settings/"+section.value);
+  }catch(e){error.value=formatAPIError(e)}
+  finally{initialLoading.value=false}
 });
-async function save() {
-  saving.value = true;
-  try {
-    await put(prefix + "/settings/" + section.value, { values: values.value });
-    MessagePlugin.success("已保存");
-  } catch (e) {
-    error.value = (e as Error).message;
-  } finally {
-    saving.value = false;
+function confirmNavigation(){return !editable.value||!form.dirty||window.confirm("有尚未保存的配置，确定离开吗？");}
+onBeforeRouteLeave(confirmNavigation);
+onBeforeRouteUpdate(confirmNavigation);
+async function reload(){
+  if(form.dirty&&!window.confirm("重新加载会替换当前未保存的输入，是否继续？"))return;
+  error.value=""; await form.load();
+}
+async function save(){
+  error.value="";
+  if(await form.save()){
+    MessagePlugin.success("配置已保存");
+    if(section.value === "profile")try{await auth.refreshProfile();}catch(e){error.value="配置已保存，账户信息刷新失败："+formatAPIError(e);}
   }
 }
 function modelStatus(m: any) {
@@ -163,8 +171,8 @@ async function testModel(id: string) {
     models.value = (await api(prefix + "/models")).items;
     MessagePlugin.success("模型连接测试通过");
   } catch (e) {
-    error.value = (e as Error).message;
-    models.value = (await api(prefix + "/models")).items;
+    error.value = formatAPIError(e);
+    try { models.value = (await api(prefix + "/models")).items; } catch { /* Keep the original connection error visible. */ }
   } finally {
     testing.value = "";
   }

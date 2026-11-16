@@ -131,15 +131,16 @@ type Event struct {
 	ExecutionID string `json:"execution_id,omitempty"`
 }
 type State struct {
-	Apps       map[string]App             `json:"apps"`
-	Sessions   map[string]Session         `json:"sessions"`
-	Checks     map[string]Check           `json:"checks"`
-	Grants     []Grant                    `json:"grants"`
-	Audit      []Event                    `json:"audit"`
-	Usage      []map[string]any           `json:"usage"`
-	Receipts   map[string]string          `json:"receipts"`
-	Settings   map[string]json.RawMessage `json:"settings"`
-	Exceptions []map[string]any           `json:"exceptions"`
+	Apps             map[string]App             `json:"apps"`
+	Sessions         map[string]Session         `json:"sessions"`
+	Checks           map[string]Check           `json:"checks"`
+	Grants           []Grant                    `json:"grants"`
+	Audit            []Event                    `json:"audit"`
+	Usage            []map[string]any           `json:"usage"`
+	Receipts         map[string]string          `json:"receipts"`
+	Settings         map[string]json.RawMessage `json:"settings"`
+	SettingRevisions map[string]string          `json:"setting_revisions"`
+	Exceptions       []map[string]any           `json:"exceptions"`
 }
 type Store struct {
 	dialect string
@@ -177,6 +178,9 @@ func initializeState(state *State) {
 	}
 	if state.Settings == nil {
 		state.Settings = map[string]json.RawMessage{}
+	}
+	if state.SettingRevisions == nil {
+		state.SettingRevisions = map[string]string{}
 	}
 	if state.Receipts == nil {
 		state.Receipts = map[string]string{}

@@ -421,3 +421,9 @@ GET /api/v1/cognitive/selectors/assets和/selectors/services接受既有query、
 GET /api/v1/cognitive/governance/{audit|exceptions|usage|grants}新增query、limit、cursor，默认20条，最大100条，next_cursor为末页null或下一页不透明定位游标。每次读取仍检查管理员与企业归属；游标绑定企业/列表/筛选条件，不作为授权依据。
 
 audit支持outcome，exceptions/grants支持各自status，usage支持unit；除grants外支持RFC3339格式的from_time/to_time（包含边界）。query最长256字符，范围或筛选无效、条件改变后复用游标、定位项不再匹配时400；需刷新重新读取。搜索包含request_id及执行/用户/应用/资源标识，结果按接收顺序由新到旧，不提供跨单位汇总。原全量响应改为分页后，调用方需继续消费next_cursor。
+
+### 配置版本与隔离（第十一轮）
+
+GET /api/v1/cognitive/settings/{section}新增revision。PUT原values结构保留，新增可选expected_revision；产品UI必传，冲突409 VERSION_INCOMPATIBLE并保持原配置。成功返回values/revision；省略版本的旧客户端仍可写但不受并发保护。
+
+profile只接收display_name，general只接收language/timezone/density，public只接收notice；其他分区仍只读。配置按企业/个人范围隔离，旧公共键仅企业42可回读，旧个人键需验证账户企业归属，首次保存写入新键；实际写入及审计同事务，新版本不因值改回而复用。/me.name可使用显示名称，身份ID、企业、角色和范围不变。
