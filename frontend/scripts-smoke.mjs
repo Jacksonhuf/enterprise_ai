@@ -21,6 +21,23 @@ try {
  await page.goto('http://127.0.0.1:14173/apps');await page.evaluate(()=>localStorage.setItem('cognara_demo_identity','demo-admin'));
  const routes=['/apps','/build/apps','/build/apps/channel-replenishment','/build/apps/channel-replenishment/edit','/assets','/services','/governance/access','/governance/audit','/governance/operations','/settings/profile','/settings/general','/settings/models','/forbidden'];
  for(const route of routes){await page.goto('http://127.0.0.1:14173'+route);await page.locator('h1, .wk-empty-state__title').first().waitFor();await page.waitForLoadState('networkidle');assert.ok((await page.locator('h1, .wk-empty-state__title').first().innerText()).trim());}
+ // Inspect the published service contract without executing it or inventing output fields.
+ await page.goto('http://127.0.0.1:14173/services');
+ await page.locator('.resource-card').filter({hasText:'补货缺口分析'}).getByRole('button',{name:'详情',exact:true}).click();
+ await page.getByText('gap-contract-v1',{exact:true}).waitFor();
+ const contract=page.locator('.service-contract');
+ const quantityRow=contract.getByRole('row').filter({has:page.getByText('target_quantity',{exact:true})});
+ assert.match(await quantityRow.innerText(),/integer/);assert.match(await quantityRow.innerText(),/最大值：100000/);
+ assert.match(await quantityRow.innerText(),/最小值：1/);
+ await page.getByText('输出契约',{exact:true}).click();
+ await contract.getByText('目录未提供具名字段明细，请查看原始定义。',{exact:true}).waitFor();
+ assert.equal(await contract.getByRole('row').count(),2);
+ await contract.locator('summary').click();
+ assert.deepEqual(JSON.parse(await contract.locator('pre').innerText()),{type:'object'});
+ await page.getByText('输入契约',{exact:true}).click();await quantityRow.waitFor();
+ await page.goto('http://127.0.0.1:14173/assets');
+ await page.locator('.resource-card').first().getByRole('button',{name:'详情',exact:true}).click();
+ assert.equal(await page.locator('.service-contract').count(),0);
  // Change only the draft, then restore through the actual history drawer and dialog.
  const before=await page.evaluate(async()=>{
   const path='/api/v1/cognitive/apps/channel-replenishment',headers={'Content-Type':'application/json',Authorization:'Bearer '+localStorage.getItem('cognara_demo_identity')};
@@ -58,5 +75,5 @@ try {
  await page.getByRole('button',{name:'进入验证工作台'}).click();await page.waitForURL('**/apps');assert.equal(await page.getByRole('link',{name:'身份与权限',exact:true}).count(),0);
  assert.equal(await page.locator('.app-shell').getAttribute('data-density'),'comfortable');
  await page.locator('.application-card').first().waitFor();assert.equal(await page.locator('.application-card').first().evaluate(el=>getComputedStyle(el).paddingTop),'24px');
- assert.deepEqual(failures,[]);console.log('PASS Chromium: login, chat Enter/Shift+Enter, business result, 13 routes, historical release restore/reload/live snapshot protection, saved density/timezone/reload/account isolation, no component/runtime errors');
+ assert.deepEqual(failures,[]);console.log('PASS Chromium: login, chat Enter/Shift+Enter, business result, 13 routes, service input/output contract and raw definition, historical release restore/reload/live snapshot protection, saved density/timezone/reload/account isolation, no component/runtime errors');
 } finally {await browser?.close();if(server)await new Promise(r=>server.httpServer.close(r));backend.kill('SIGTERM');await new Promise(r=>backend.exitCode!==null?r():backend.once('exit',r));await rm(temp,{recursive:true,force:true});}
