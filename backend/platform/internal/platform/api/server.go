@@ -69,8 +69,12 @@ type Server struct {
 }
 
 func (s *Server) event(p governance.Principal, action, resource, outcome, execution string) {
+	event := app.Event{TenantID: p.TenantID, ID: app.ID("event"), OccurredAt: app.Now(), ActorID: p.UserID, ClientID: p.ApplicationID, Action: action, ResourceID: resource, Outcome: outcome, RequestID: app.ID("request"), ExecutionID: execution}
+	if handled, _ := s.Store.AppendMySQLAuditContext(context.Background(), []app.Event{event}); handled {
+		return
+	}
 	_ = s.Store.UpdateOperational(func(st *app.State) error {
-		st.Audit = append(st.Audit, app.Event{TenantID: p.TenantID, ID: app.ID("event"), OccurredAt: app.Now(), ActorID: p.UserID, ClientID: p.ApplicationID, Action: action, ResourceID: resource, Outcome: outcome, RequestID: app.ID("request"), ExecutionID: execution})
+		st.Audit = append(st.Audit, event)
 		return nil
 	})
 }

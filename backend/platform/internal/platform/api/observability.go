@@ -88,16 +88,17 @@ func (s *Server) recordFailure(r *http.Request, p governance.Principal, err erro
 	}
 	events := app.State{}
 	appendAudit(&events, p, r.Pattern, "", outcome, "", requestID(r))
-	if status < 500 {
-		// Expected request failures only append audit; do not rewrite unrelated domains.
-		if handled, _ := s.Store.AppendMySQLAuditContext(context.Background(), events.Audit); handled {
-			return
-		}
+	var exception map[string]any
+	if status >= 500 && r.Context().Err() == nil {
+		exception = map[string]any{"id": app.ID("exception"), "tenant_id": p.TenantID, "name": "服务请求未完成", "module": "应用运行与配置", "request_id": requestID(r), "code": code, "route": r.Pattern, "http_status": status, "status": "OPEN", "revision": app.ID("exception_revision"), "occurred_at": app.Now(), "updated_at": app.Now()}
+	}
+	if handled, _ := s.Store.AppendMySQLObservabilityContext(context.Background(), events.Audit, exception); handled {
+		return
 	}
 	_ = s.Store.UpdateOperational(func(st *app.State) error {
 		st.Audit = append(st.Audit, events.Audit...)
-		if status >= 500 && r.Context().Err() == nil {
-			st.Exceptions = append(st.Exceptions, map[string]any{"id": app.ID("exception"), "tenant_id": p.TenantID, "name": "服务请求未完成", "module": "应用运行与配置", "request_id": requestID(r), "code": code, "route": r.Pattern, "http_status": status, "status": "OPEN", "revision": app.ID("exception_revision"), "occurred_at": app.Now(), "updated_at": app.Now()})
+		if exception != nil {
+			st.Exceptions = append(st.Exceptions, exception)
 		}
 		return nil
 	})
