@@ -385,13 +385,13 @@ func (s *Server) saveDraft(w http.ResponseWriter, r *http.Request) error {
 		a.Revision = app.ID("draft")
 		a.UpdatedAt = app.Now()
 		st.Apps[a.ID] = a
+		appendAudit(st, p, "application.draft.save", a.ID, "success", "", requestID(r))
 		out = a
 		return nil
 	})
 	if e != nil {
 		return e
 	}
-	s.event(p, "application.draft.save", out.ID, "success", "")
 	Write(w, out)
 	return nil
 }

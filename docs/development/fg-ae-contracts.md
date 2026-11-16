@@ -427,3 +427,9 @@ audit支持outcome，exceptions/grants支持各自status，usage支持unit；除
 GET /api/v1/cognitive/settings/{section}新增revision。PUT原values结构保留，新增可选expected_revision；产品UI必传，冲突409 VERSION_INCOMPATIBLE并保持原配置。成功返回values/revision；省略版本的旧客户端仍可写但不受并发保护。
 
 profile只接收display_name，general只接收language/timezone/density，public只接收notice；其他分区仍只读。配置按企业/个人范围隔离，旧公共键仅企业42可回读，旧个人键需验证账户企业归属，首次保存写入新键；实际写入及审计同事务，新版本不因值改回而复用。/me.name可使用显示名称，身份ID、企业、角色和范围不变。
+
+### 应用编辑与发布确认（第十二轮）
+
+草稿PUT继续提交点击时快照与expected_draft_revision；成功审计application.draft.save与草稿版本同事务提交。客户端保存期间新增的修改保留为未保存状态。
+
+发布检查继续使用check_id、draft_revision、valid_until；客户端绑定本地快照和expected_current_release_id，过期或本地配置变化后要求重新检查。POST发布仍由服务端校验所有者、当前版本、当前发布与期限。客户端不能把网络失败解释为未提交，不自动重复发布，需核对服务端历史。没有新增接口或字段。
