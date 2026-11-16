@@ -118,31 +118,49 @@ func (s *Server) updateException(w http.ResponseWriter, r *http.Request) error {
 	if in.Expected == "" || (in.Status != "ACKNOWLEDGED" && in.Status != "RESOLVED" && in.Status != "OPEN") {
 		return fail(400, "INVALID_REQUEST", "异常状态参数无效")
 	}
-	var out map[string]any
-	e := s.Store.UpdateOperationalContext(r.Context(), func(st *app.State) error {
-		for i, item := range st.Exceptions {
-			if item["id"] != r.PathValue("id") || item["tenant_id"] != p.TenantID {
-				continue
-			}
-			if item["revision"] != in.Expected {
-				return fail(409, "VERSION_INCOMPATIBLE", "异常记录已变更，请刷新")
-			}
-			old, _ := item["status"].(string)
-			valid := old == "OPEN" && (in.Status == "ACKNOWLEDGED" || in.Status == "RESOLVED") || old == "ACKNOWLEDGED" && in.Status == "RESOLVED" || old == "RESOLVED" && in.Status == "OPEN"
-			if !valid {
-				return fail(409, "VERSION_INCOMPATIBLE", "不支持该异常状态迁移")
-			}
-			item["status"] = in.Status
-			item["revision"] = app.ID("exception_revision")
-			item["updated_at"] = app.Now()
-			item["updated_by"] = p.UserID
-			st.Exceptions[i] = item
-			out = item
-			appendAudit(st, p, "exception."+strings.ToLower(in.Status), r.PathValue("id"), "success", "", requestID(r))
-			return nil
+	var out any
+	transition := func(item map[string]any) (*app.ExceptionPatch, error) {
+		if item["revision"] != in.Expected {
+			return nil, fail(409, "VERSION_INCOMPATIBLE", "异常记录已变更，请刷新")
 		}
+		old, _ := item["status"].(string)
+		valid := old == "OPEN" && (in.Status == "ACKNOWLEDGED" || in.Status == "RESOLVED") || old == "ACKNOWLEDGED" && in.Status == "RESOLVED" || old == "RESOLVED" && in.Status == "OPEN"
+		if !valid {
+			return nil, fail(409, "VERSION_INCOMPATIBLE", "不支持该异常状态迁移")
+		}
+		patch := &app.ExceptionPatch{Status: in.Status, Revision: app.ID("exception_revision"), UpdatedAt: app.Now(), UpdatedBy: p.UserID}
+		events := app.State{}
+		appendAudit(&events, p, "exception."+strings.ToLower(in.Status), r.PathValue("id"), "success", "", requestID(r))
+		patch.Audit = events.Audit
+		return patch, nil
+	}
+	selected, handled, e := s.Store.UpdateMySQLExceptionContext(r.Context(), p.TenantID, r.PathValue("id"), transition)
+	if errors.Is(e, app.ErrExceptionUnavailable) {
 		return fail(404, "ASSET_UNAVAILABLE", "异常记录不存在")
-	})
+	}
+	if handled {
+		out = selected
+	} else if e == nil {
+		e = s.Store.UpdateOperationalContext(r.Context(), func(st *app.State) error {
+			for _, item := range st.Exceptions {
+				if item["id"] != r.PathValue("id") || item["tenant_id"] != p.TenantID {
+					continue
+				}
+				patch, err := transition(item)
+				if err != nil {
+					return err
+				}
+				item["status"] = patch.Status
+				item["revision"] = patch.Revision
+				item["updated_at"] = patch.UpdatedAt
+				item["updated_by"] = patch.UpdatedBy
+				st.Audit = append(st.Audit, patch.Audit...)
+				out = item
+				return nil
+			}
+			return fail(404, "ASSET_UNAVAILABLE", "异常记录不存在")
+		})
+	}
 	if e != nil {
 		return e
 	}
