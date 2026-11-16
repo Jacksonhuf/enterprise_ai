@@ -48,6 +48,12 @@ func TestMySQLTargetedSettingsAtomicityAndOpaqueFields(t *testing.T) {
 		return raw
 	}
 	before := read()
+	if handled, e := s.AppendMySQLAuditContext(context.Background(), nil); !handled || e != nil {
+		t.Fatal("empty audit-only append", e)
+	}
+	if read() != before {
+		t.Fatal("audit-only append changed body")
+	}
 	if !strings.Contains(before, `9007199254740993`) || !strings.Contains(before, `"future": {"keep": true}`) {
 		t.Fatal("opaque fields lost", before)
 	}
@@ -72,6 +78,13 @@ func TestMySQLTargetedSettingsAtomicityAndOpaqueFields(t *testing.T) {
 	if read() != before {
 		t.Fatal("conflict rewrote state")
 	}
+	if _, e = s.AppendMySQLAuditContext(context.Background(), []Event{{TenantID: "42", ID: "rolled-back-audit", OccurredAt: Now()}, {TenantID: "42", ID: "settings-first", OccurredAt: Now()}}); e == nil {
+		t.Fatal("audit-only duplicate committed")
+	}
+	if len(s.Read().Audit) != 1 || read() != before {
+		t.Fatal("partial audit-only append")
+	}
+
 	// A duplicate audit insertion rolls back both configuration and revision.
 	if _, e = s.UpdateMySQLSettingsContext(context.Background(), key, "", func(SettingsRecord) (*SettingsPatch, error) {
 		return &SettingsPatch{Value: json.RawMessage(`{"density":"comfortable"}`), Revision: "r2", Audit: []Event{{TenantID: "42", ID: "settings-first", OccurredAt: Now()}}}, nil
