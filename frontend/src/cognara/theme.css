@@ -763,3 +763,20 @@ h3 {
 .t-drawer__body .detail-list {
   margin-top: 10px;
 }
+
+/* Personal density changes spacing, preserving typography, brand and navigation. */
+.app-shell[data-density="compact"] {
+  --td-comp-size-m: 32px;
+}
+.app-shell[data-density="compact"] .nav-link { padding-block: 6px; }
+.app-shell[data-density="compact"] .panel,
+.app-shell[data-density="compact"] .resource-card,
+.app-shell[data-density="compact"] .status-card,
+.app-shell[data-density="compact"] .form-section,
+.app-shell[data-density="compact"] .release-card,
+.app-shell[data-density="compact"] .application-card { padding: 18px; }
+.app-shell[data-density="compact"] .data-table td,
+.app-shell[data-density="compact"] .data-table th { padding-block: 9px; }
+.app-shell[data-density="compact"] .t-form__item { margin-bottom: 16px; }
+.app-shell[data-density="compact"] .reference-row,
+.app-shell[data-density="compact"] .reference-item { padding: 10px 14px; }

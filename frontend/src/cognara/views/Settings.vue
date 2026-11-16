@@ -7,6 +7,7 @@
       </div>
       <div v-if="editable" class="header-actions"><t-button :disabled="form.loading || form.saving" @click="reload">重新加载</t-button><t-button theme="primary" :loading="form.saving" :disabled="!form.canSave" @click="save">保存</t-button></div>
     </header>
+    <t-alert v-if="section === 'general' && auth.preferencesError" theme="warning" :message="'界面偏好应用失败：' + auth.preferencesError"><template #operation><t-button variant="text" @click="auth.refreshPreferences()">重试应用</t-button></template></t-alert>
     <div class="settings-layout">
       <nav class="settings-nav">
         <router-link
@@ -28,7 +29,7 @@
               <t-input v-else v-model="form.values[f.key]" :maxlength="f.key === 'display_name' ? 80 : 512" :placeholder="f.placeholder" /></t-form-item></t-form></t-loading
           ><t-alert v-if="form.conflict" class="spaced" theme="warning" message="服务器配置已变更。当前输入已保留，请重新加载后核对再保存。" /><t-alert
             theme="info"
-            message="仅保存本地验证环境的非敏感偏好。" /></template
+             :message="section === 'general' ? '界面密度保存后立即生效；语言和时区目前仅保存偏好。' : '仅保存本地验证环境的非敏感偏好。'" /></template
         ><template v-else-if="['models', 'model-catalog'].includes(section)"
           ><h2>模型配置</h2>
           <p class="muted">
@@ -155,6 +156,7 @@ async function save(){
   error.value="";
   if(await form.save()){
     MessagePlugin.success("配置已保存");
+    if(section.value === "general")await auth.refreshPreferences();
     if(section.value === "profile")try{await auth.refreshProfile();}catch(e){error.value="配置已保存，账户信息刷新失败："+formatAPIError(e);}
   }
 }
