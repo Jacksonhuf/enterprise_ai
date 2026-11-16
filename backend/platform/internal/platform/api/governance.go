@@ -17,8 +17,8 @@ func (s *Server) governanceList(w http.ResponseWriter, r *http.Request) error {
 			return e
 		}
 	}
-	if r.PathValue("section") == "exceptions" {
-		if handled, e := s.exceptionDatabasePage(w, r); handled || e != nil {
+	if section := r.PathValue("section"); section == "exceptions" || section == "usage" {
+		if handled, e := s.governanceArrayDatabasePage(w, r, section); handled || e != nil {
 			return e
 		}
 	}
