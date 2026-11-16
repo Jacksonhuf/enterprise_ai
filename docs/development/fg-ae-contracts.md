@@ -426,4 +426,4 @@ audit支持outcome，exceptions/grants支持各自status，usage支持unit；除
 
 GET /api/v1/cognitive/settings/{section}新增revision。PUT原values结构保留，新增可选expected_revision；产品UI必传，冲突409 VERSION_INCOMPATIBLE并保持原配置。成功返回values/revision；省略版本的旧客户端仍可写但不受并发保护。
 
-profile只接收display_name，general只接收language/timezone/density，public只接收notice；其他分区仍只读。配置按企业/个人范围隔离，原企业42可回读旧键，首次保存写入新键；实际写入及审计同事务，新版本不因值改回而复用。/me.name可使用显示名称，身份ID、企业、角色和范围不变。
+profile只接收display_name，general只接收language/timezone/density，public只接收notice；其他分区仍只读。配置按企业/个人范围隔离，旧公共键仅企业42可回读，旧个人键需验证账户企业归属，首次保存写入新键；实际写入及审计同事务，新版本不因值改回而复用。/me.name可使用显示名称，身份ID、企业、角色和范围不变。

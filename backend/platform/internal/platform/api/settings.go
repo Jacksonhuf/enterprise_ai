@@ -1,13 +1,13 @@
 package api
 
 import (
-	"bytes"
 	"crypto/sha256"
 	"encoding/base64"
 	"encoding/hex"
 	"encoding/json"
 	app "github.com/Tencent/WeKnora/internal/platform/applications"
 	"github.com/Tencent/WeKnora/internal/platform/governance"
+	"maps"
 	"net/http"
 	"strings"
 	"time"
@@ -25,12 +25,16 @@ func settingsValue(st app.State, p governance.Principal, section string) json.Ra
 	if value, exists := st.Settings[settingsStorageKey(p, section)]; exists {
 		return value
 	}
-	// Only the original validation tenant may read its pre-namespace records.
-	if p.TenantID == "42" {
-		legacy := section
-		if section == "profile" || section == "general" {
-			legacy = p.UserID + ":" + section
-		}
+	// Personal legacy keys have a known owner in the validation identity map.
+	// Shared legacy keys belong only to the original validation tenant.
+	personal := section == "profile" || section == "general"
+	legacy, readLegacy := section, p.TenantID == "42"
+	if personal {
+		owner, err := governance.DemoIdentity(p.UserID)
+		legacy = p.UserID + ":" + section
+		readLegacy = err == nil && owner.TenantID == p.TenantID
+	}
+	if readLegacy {
 		if value := st.Settings[legacy]; value != nil {
 			return value
 		}
@@ -142,8 +146,11 @@ func (s *Server) saveSettings(w http.ResponseWriter, r *http.Request) error {
 			return fail(409, "VERSION_INCOMPATIBLE", "配置已被其他窗口修改，请重新加载后保存")
 		}
 		key := settingsStorageKey(p, section)
-		if stored, exists := st.Settings[key]; exists && bytes.Equal(stored, value) {
-			return nil
+		if stored, exists := st.Settings[key]; exists {
+			var previous map[string]string
+			if json.Unmarshal(stored, &previous) == nil && previous != nil && maps.Equal(previous, req.Values) {
+				return nil
+			}
 		}
 		st.Settings[key] = value
 		revision = app.ID("settings_revision")

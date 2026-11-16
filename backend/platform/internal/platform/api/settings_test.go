@@ -2,6 +2,7 @@ package api_test
 
 import (
 	app "github.com/Tencent/WeKnora/internal/platform/applications"
+	"path/filepath"
 	"strings"
 	"testing"
 )
@@ -25,9 +26,22 @@ func settingsAudit(st app.State) int {
 }
 func TestSettingsCASNoopAndABAPrevention(t *testing.T) {
 	f := setup(t)
+	statePath := filepath.Join(t.TempDir(), "settings-state.json")
+	initialStore, err := app.Open(statePath)
+	if err != nil {
+		t.Fatal(err)
+	}
+	f.store = initialStore
+	f.server.Store = initialStore
 	initial := settingsRead(t, f, "demo-user", "profile")["revision"].(string)
 	first := settingsPut(t, f, "demo-user", "profile", initial, map[string]string{"display_name": " First "}, 200)
 	rev1 := first["revision"].(string)
+	reopened, err := app.Open(statePath)
+	if err != nil {
+		t.Fatal(err)
+	}
+	f.store = reopened
+	f.server.Store = reopened
 	me := decode(t, f.request("demo-user", "GET", "/api/v1/cognitive/me", nil, 200))
 	if me["name"] != "First" || me["actor_user_id"] != "demo-user" || me["role"] != "user" || me["tenant_id"] != "42" {
 		t.Fatal("display update altered identity", me)
@@ -87,7 +101,7 @@ func TestSettingsLegacyReadMigrationAndUserTenantIsolation(t *testing.T) {
 	f := setup(t)
 	if err := f.store.Update(func(st *app.State) error {
 		st.Settings["demo-user:profile"] = []byte(`{"display_name":"Legacy"}`)
-		st.Settings["demo-outsider:profile"] = []byte(`{"display_name":"Must stay in legacy tenant"}`)
+		st.Settings["demo-outsider:profile"] = []byte(`{"display_name":"Isolated account legacy"}`)
 		return nil
 	}); err != nil {
 		t.Fatal(err)
@@ -96,8 +110,8 @@ func TestSettingsLegacyReadMigrationAndUserTenantIsolation(t *testing.T) {
 	if legacy["values"].(map[string]any)["display_name"] != "Legacy" {
 		t.Fatal("legacy lost")
 	}
-	if len(settingsRead(t, f, "demo-outsider", "profile")["values"].(map[string]any)) != 0 {
-		t.Fatal("legacy crossed tenant")
+	if settingsRead(t, f, "demo-outsider", "profile")["values"].(map[string]any)["display_name"] != "Isolated account legacy" {
+		t.Fatal("known isolated-account legacy lost")
 	}
 	if len(settingsRead(t, f, "demo-admin", "profile")["values"].(map[string]any)) != 0 {
 		t.Fatal("profile crossed user")

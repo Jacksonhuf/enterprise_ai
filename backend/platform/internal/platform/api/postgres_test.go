@@ -157,6 +157,10 @@ func TestPostgresSettingsCASAcrossHostsAndReopen(t *testing.T) {
 	if successes != 1 || conflicts != 1 || savedRevision == "" {
 		t.Fatal("concurrent settings CAS failed", successes, conflicts)
 	}
+	noop := settingsPut(t, other, "demo-user", "profile", savedRevision, map[string]string{"display_name": "Persisted"}, 200)
+	if noop["revision"] != savedRevision || settingsAudit(a.Read()) != 1 {
+		t.Fatal("JSONB formatting turned no-op into mutation")
+	}
 	settingsPut(t, other, "demo-user", "profile", initial, map[string]string{"display_name": "Stale host"}, 409)
 	b.Close()
 	reopened, err := app.OpenPostgres(dsn)

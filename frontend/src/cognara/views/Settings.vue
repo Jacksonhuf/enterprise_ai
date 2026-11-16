@@ -69,7 +69,7 @@
 </template>
 <script setup lang="ts">
 import { ref, computed, reactive, onMounted } from "vue";
-import { useRoute, onBeforeRouteLeave } from "vue-router";
+import { useRoute, onBeforeRouteLeave, onBeforeRouteUpdate } from "vue-router";
 import { MessagePlugin } from "tdesign-vue-next";
 import { api, put, post, prefix, formatAPIError } from "../api";
 import { SettingsDraft } from "../settingsDraft";
@@ -136,7 +136,9 @@ onMounted(async()=>{
   }catch(e){error.value=formatAPIError(e)}
   finally{initialLoading.value=false}
 });
-onBeforeRouteLeave(()=>!editable.value||!form.dirty||window.confirm("有尚未保存的配置，确定离开吗？"));
+function confirmNavigation(){return !editable.value||!form.dirty||window.confirm("有尚未保存的配置，确定离开吗？");}
+onBeforeRouteLeave(confirmNavigation);
+onBeforeRouteUpdate(confirmNavigation);
 async function reload(){
   if(form.dirty&&!window.confirm("重新加载会替换当前未保存的输入，是否继续？"))return;
   error.value=""; await form.load();

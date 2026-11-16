@@ -18,6 +18,12 @@ func TestSettingsNamespaceSeparatesEnterprisePublicConfiguration(t *testing.T) {
 	if string(settingsValue(st, a, "public")) == string(settingsValue(st, b, "public")) {
 		t.Fatal("enterprise namespaces collided")
 	}
+	st.Settings["demo-user:profile"] = json.RawMessage(`{"display_name":"Legacy person"}`)
+	owner := governance.Principal{TenantID: "42", UserID: "demo-user"}
+	otherTenant := governance.Principal{TenantID: "43", UserID: "demo-user"}
+	if string(settingsValue(st, owner, "profile")) != `{"display_name":"Legacy person"}` || string(settingsValue(st, otherTenant, "profile")) != `{}` {
+		t.Fatal("personal legacy owner tenant not checked")
+	}
 	if settingsStorageKey(a, "profile") == settingsStorageKey(b, "profile") || settingsRevision(st, a, "profile", json.RawMessage(`{}`)) == settingsRevision(st, b, "profile", json.RawMessage(`{}`)) {
 		t.Fatal("personal versions crossed enterprise")
 	}
