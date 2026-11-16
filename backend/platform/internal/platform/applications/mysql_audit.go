@@ -161,14 +161,15 @@ func validateMySQLAuditSchema(ctx context.Context, tx *sql.Tx) error {
 		return errors.New("audit engine incompatible")
 	}
 	expected := map[string]string{"tenant_id": "varbinary(64)", "event_id": "varbinary(512)", "sequence_no": "bigint unsigned", "occurred_at": "datetime(6)", "actor_id": "varchar(255)", "action": "varchar(255)", "resource_id": "varchar(255)", "payload": "json"}
-	rows, e := tx.QueryContext(ctx, `SELECT COLUMN_NAME,COLUMN_TYPE,IS_NULLABLE,EXTRA FROM information_schema.COLUMNS WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME='cognara_fg_audit'`)
+	rows, e := tx.QueryContext(ctx, `SELECT COLUMN_NAME,COLUMN_TYPE,IS_NULLABLE,EXTRA,CHARACTER_SET_NAME FROM information_schema.COLUMNS WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME='cognara_fg_audit'`)
 	if e != nil {
 		return e
 	}
 	count := 0
 	for rows.Next() {
 		var name, kind, nullable, extra string
-		if e = rows.Scan(&name, &kind, &nullable, &extra); e != nil {
+		var charset sql.NullString
+		if e = rows.Scan(&name, &kind, &nullable, &extra, &charset); e != nil {
 			rows.Close()
 			return e
 		}
@@ -176,7 +177,8 @@ func validateMySQLAuditSchema(ctx context.Context, tx *sql.Tx) error {
 		if name == "occurred_at" {
 			wantNullable = "YES"
 		}
-		if expected[name] != kind || nullable != wantNullable || extra != "" {
+		textColumn := name == "actor_id" || name == "action" || name == "resource_id"
+		if expected[name] != kind || nullable != wantNullable || extra != "" || (textColumn && (!charset.Valid || charset.String != "utf8mb4")) {
 			rows.Close()
 			return errors.New("audit column incompatible")
 		}
@@ -191,20 +193,22 @@ func validateMySQLAuditSchema(ctx context.Context, tx *sql.Tx) error {
 		return errors.New("audit columns incomplete")
 	}
 	indexes := map[string]string{"PRIMARY:1": "tenant_id:0", "PRIMARY:2": "event_id:0", "audit_sequence:1": "sequence_no:0", "audit_tenant_sequence:1": "tenant_id:1", "audit_tenant_sequence:2": "sequence_no:1"}
-	rows, e = tx.QueryContext(ctx, `SELECT INDEX_NAME,SEQ_IN_INDEX,COLUMN_NAME,NON_UNIQUE FROM information_schema.STATISTICS WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME='cognara_fg_audit'`)
+	rows, e = tx.QueryContext(ctx, `SELECT INDEX_NAME,SEQ_IN_INDEX,COLUMN_NAME,NON_UNIQUE,SUB_PART,INDEX_TYPE,IS_VISIBLE,EXPRESSION FROM information_schema.STATISTICS WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME='cognara_fg_audit'`)
 	if e != nil {
 		return e
 	}
 	count = 0
 	for rows.Next() {
-		var name, column string
+		var name, column, indexType, visible string
 		var position, nonunique int
-		if e = rows.Scan(&name, &position, &column, &nonunique); e != nil {
+		var prefix sql.NullInt64
+		var expression sql.NullString
+		if e = rows.Scan(&name, &position, &column, &nonunique, &prefix, &indexType, &visible, &expression); e != nil {
 			rows.Close()
 			return e
 		}
 		key := fmt.Sprintf("%s:%d", name, position)
-		if indexes[key] != fmt.Sprintf("%s:%d", column, nonunique) {
+		if indexes[key] != fmt.Sprintf("%s:%d", column, nonunique) || prefix.Valid || indexType != "BTREE" || visible != "YES" || expression.Valid {
 			rows.Close()
 			return errors.New("audit index incompatible")
 		}
