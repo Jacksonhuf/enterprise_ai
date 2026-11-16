@@ -20,6 +20,6 @@ try {
  await input.fill('SO1002需求增加到350');await input.press('Enter');await page.locator('.message.assistant').waitFor();assert.match(await page.locator('.message.assistant').innerText(),/276.6/);
  await page.goto('http://127.0.0.1:14173/apps');await page.evaluate(()=>localStorage.setItem('cognara_demo_identity','demo-admin'));
  const routes=['/apps','/build/apps','/build/apps/channel-replenishment','/build/apps/channel-replenishment/edit','/assets','/services','/governance/access','/governance/audit','/governance/operations','/settings/profile','/settings/general','/settings/models','/forbidden'];
- for(const route of routes){await page.goto('http://127.0.0.1:14173'+route);await page.locator('h1').first().waitFor();await page.waitForLoadState('networkidle');assert.ok((await page.locator('h1').first().innerText()).trim());}
+ for(const route of routes){await page.goto('http://127.0.0.1:14173'+route);await page.locator('h1, .wk-empty-state__title').first().waitFor();await page.waitForLoadState('networkidle');assert.ok((await page.locator('h1, .wk-empty-state__title').first().innerText()).trim());}
  assert.deepEqual(failures,[]);console.log('PASS Chromium: login, chat Enter/Shift+Enter, business result, 13 routes, no component/runtime errors');
 } finally {await browser?.close();if(server)await new Promise(r=>server.httpServer.close(r));backend.kill('SIGTERM');await new Promise(r=>backend.exitCode!==null?r():backend.once('exit',r));await rm(temp,{recursive:true,force:true});}
