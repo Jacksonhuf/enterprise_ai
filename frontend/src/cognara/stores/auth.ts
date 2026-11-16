@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import { ref, computed } from "vue";
-import { api, prefix } from "../api";
+import { api, prefix, credential } from "../api";
 import type { Principal } from "../types";
 export const useCognaraAuth = defineStore("cognara-auth", () => {
   const user = ref<Principal | null>(null);
@@ -9,31 +9,43 @@ export const useCognaraAuth = defineStore("cognara-auth", () => {
     ["engineer", "admin"].includes(user.value?.role || ""),
   );
   const isAdmin = computed(() => user.value?.role === "admin");
+  let generation = 0;
+  function clearState() { user.value = null; modelsConfigured.value = false; }
+  function active(version: number, identity: string) {
+    return generation === version && credential() === identity;
+  }
   async function load() {
-    user.value = await api<Principal>(prefix + "/me");
-    modelsConfigured.value = (
-      await api(prefix + "/runtime-status")
-    ).models_configured;
+    const version = ++generation, identity = credential();
+    clearState();
+    const latest = await api<Principal>(prefix + "/me");
+    if (!active(version, identity)) throw new Error("账户已变化，请重新登录");
+    const runtime = await api(prefix + "/runtime-status");
+    if (!active(version, identity)) throw new Error("账户已变化，请重新登录");
+    // Publish both results together; partial initialization must not enable navigation.
+    user.value = latest;
+    modelsConfigured.value = runtime.models_configured === true;
   }
   async function refreshProfile() {
-    const current = user.value;
+    const current = user.value, version = generation, identity = credential();
     if (!current) return;
     const latest = await api<Principal>(prefix + "/me");
-    if (latest.actor_user_id === current.actor_user_id && latest.tenant_id === current.tenant_id && user.value?.actor_user_id === current.actor_user_id && user.value?.tenant_id === current.tenant_id)
+    if (active(version, identity) && latest.actor_user_id === current.actor_user_id && latest.tenant_id === current.tenant_id && user.value?.actor_user_id === current.actor_user_id && user.value?.tenant_id === current.tenant_id)
       user.value = latest;
   }
   async function login(id: string) {
     localStorage.setItem("cognara_demo_identity", id);
-    try {
-      await load();
-    } catch (e) {
-      logout();
+    const pending = load(), version = generation;
+    try { await pending; }
+    catch (e) {
+      // A failure from an earlier login must not log out the newer account.
+      if (active(version, id)) logout();
       throw e;
     }
   }
   function logout() {
+    generation++;
     localStorage.removeItem("cognara_demo_identity");
-    user.value = null;
+    clearState();
   }
   return { user, modelsConfigured, canBuild, isAdmin, load, refreshProfile, login, logout };
 });
