@@ -101,7 +101,7 @@ func (s *Store) QueryMySQLAuditFiltered(parent context.Context, tenant, after st
 			args = append(args, before)
 		}
 		if filter.Outcome != "" {
-			query += ` AND CAST(JSON_UNQUOTE(JSON_EXTRACT(payload,'$.outcome')) AS BINARY)=CAST(? AS BINARY)`
+			query += ` AND (CAST(JSON_UNQUOTE(JSON_EXTRACT(payload,'$.outcome')) AS BINARY)=CAST(? AS BINARY) OR ` + auditNonCanonicalKeys + `)`
 			args = append(args, filter.Outcome)
 		}
 		for _, bound := range []struct {
@@ -117,7 +117,7 @@ func (s *Store) QueryMySQLAuditFiltered(parent context.Context, tenant, after st
 			}
 			// DATETIME(6) truncates nanoseconds. Include its entire microsecond bucket;
 			// NULL projections (valid ancient/out-of-range dates) are post-filtered in Go.
-			query += ` AND (occurred_at IS NULL OR occurred_at ` + bound.op + ` ?)`
+			query += ` AND (occurred_at IS NULL OR ` + auditNonCanonicalKeys + ` OR occurred_at ` + bound.op + ` ?)`
 			args = append(args, utc.Format("2006-01-02 15:04:05.000000"))
 		}
 		query += ` ORDER BY sequence_no DESC LIMIT 200`
@@ -167,3 +167,9 @@ func (s *Store) QueryMySQLAuditFiltered(parent context.Context, tenant, after st
 }
 
 var ErrAuditCursor = errors.New("audit cursor unavailable")
+
+// Go decodes JSON field names case-insensitively, while JSON paths are exact.
+// Imported payloads preserve their original keys, including conflicting aliases.
+// Any non-lowercase key conservatively bypasses SQL projection filters so the
+// existing decoder/predicate decides the result without canonicalizing user data.
+const auditNonCanonicalKeys = `CAST(JSON_KEYS(payload) AS BINARY)<>CAST(LOWER(JSON_KEYS(payload)) AS BINARY)`
