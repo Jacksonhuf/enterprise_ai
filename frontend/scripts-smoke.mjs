@@ -77,6 +77,30 @@ try {
  assert.equal(publishedDraft.releases.length,after.releases.length+1);
  assert.deepEqual(publishedDraft.releases.slice(0,after.releases.length),after.releases);
  assert.equal(publishedDraft.releases.find(r=>r.release_id===publishedDraft.current_release_id).config_snapshot.basic.description,'发布审阅浏览器回归');
+ // Template sources must remain selectable when the application table search is empty.
+ await page.goto('http://127.0.0.1:14173/build/apps');
+ await page.locator('.resource-search-toolbar input').fill('不存在的模板筛选条件');
+ await page.getByText('未找到匹配应用',{exact:true}).waitFor();
+ await page.getByRole('button',{name:'新建应用',exact:true}).first().click();
+ const creationForm=page.locator('.creation-form');
+ await creationForm.locator('.t-form__item').filter({hasText:'应用名称'}).locator('input').fill('模板复制浏览器回归');
+ await creationForm.locator('.t-form__item').filter({hasText:'业务描述'}).locator('textarea').fill('独立草稿验证');
+ const templateList=page.waitForResponse(r=>r.url().includes('/api/v1/cognitive/apps?')&&r.url().includes('purpose=MANAGE')&&r.url().includes('limit=100'));
+ await page.getByText('从现有应用复制',{exact:true}).click();assert.equal((await templateList).status(),200);
+ await creationForm.locator('.t-select').click();await page.getByText(publishedDraft.draft.basic.name,{exact:true}).click();
+ await creationForm.locator('.creation-preview').getByText(publishedDraft.draft_revision,{exact:true}).waitFor();
+ const creationRequest=page.waitForRequest(r=>r.method()==='POST'&&r.url().endsWith('/api/v1/cognitive/apps'));
+ await page.getByRole('button',{name:'创建并配置',exact:true}).click();
+ const creationPayload=(await creationRequest).postDataJSON();
+ assert.equal(creationPayload.template_id,'channel-replenishment');assert.equal(creationPayload.expected_template_revision,publishedDraft.draft_revision);
+ await page.waitForURL('**/build/apps/*/edit');await page.waitForLoadState('networkidle');
+ const copiedId=decodeURIComponent(new URL(page.url()).pathname.split('/')[3]);
+ const copiedApp=await page.evaluate(async id=>{const r=await fetch('/api/v1/cognitive/apps/'+encodeURIComponent(id),{headers:{Authorization:'Bearer '+localStorage.getItem('cognara_demo_identity')}});if(!r.ok)throw Error('read copy failed');return r.json()},copiedId);
+ assert.notEqual(copiedApp.app_id,publishedDraft.app_id);assert.notEqual(copiedApp.agent_id,publishedDraft.agent_id);
+ assert.equal(copiedApp.current_release_id,null);assert.deepEqual(copiedApp.releases,[]);
+ assert.deepEqual(copiedApp.draft,{...publishedDraft.draft,basic:{name:'模板复制浏览器回归',description:'独立草稿验证'}});
+ const unchangedSource=await page.evaluate(async()=>{const r=await fetch('/api/v1/cognitive/apps/channel-replenishment',{headers:{Authorization:'Bearer '+localStorage.getItem('cognara_demo_identity')}});if(!r.ok)throw Error('read source failed');return r.json()});
+ assert.deepEqual(unchangedSource,publishedDraft);
  // Exercise the saved preference through the actual form and a fresh page load.
  await page.goto('http://127.0.0.1:14173/settings/general');
  await page.waitForLoadState('networkidle');
@@ -96,5 +120,5 @@ try {
  await page.getByRole('button',{name:'进入验证工作台'}).click();await page.waitForURL('**/apps');assert.equal(await page.getByRole('link',{name:'身份与权限',exact:true}).count(),0);
  assert.equal(await page.locator('.app-shell').getAttribute('data-density'),'comfortable');
  await page.locator('.application-card').first().waitFor();assert.equal(await page.locator('.application-card').first().evaluate(el=>getComputedStyle(el).paddingTop),'24px');
- assert.deepEqual(failures,[]);console.log('PASS Chromium: login, chat Enter/Shift+Enter, business result, 13 routes, service input/output contract and raw definition, historical release restore/reload/live snapshot protection, checked publication diff/unchanged baseline/real publish, saved density/timezone/reload/account isolation, no component/runtime errors');
+ assert.deepEqual(failures,[]);console.log('PASS Chromium: login, chat Enter/Shift+Enter, business result, 13 routes, service input/output contract and raw definition, historical release restore/reload/live snapshot protection, checked publication diff/unchanged baseline/real publish, independent template selector/preview/versioned copy, saved density/timezone/reload/account isolation, no component/runtime errors');
 } finally {await browser?.close();if(server)await new Promise(r=>server.httpServer.close(r));backend.kill('SIGTERM');await new Promise(r=>backend.exitCode!==null?r():backend.once('exit',r));await rm(temp,{recursive:true,force:true});}

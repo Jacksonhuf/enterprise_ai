@@ -303,40 +303,40 @@ func (s *Server) listApps(w http.ResponseWriter, r *http.Request) error {
 	return nil
 }
 func (s *Server) createApp(w http.ResponseWriter, r *http.Request) error {
-	p := Principal(r)
-	if e := s.requireBuild(p); e != nil {
-		return e
-	}
-	var req struct {
-		Mode        string `json:"creation_mode"`
-		Name        string `json:"name"`
-		Description string `json:"description"`
-		TemplateID  string `json:"template_id"`
-	}
-	if e := Decode(r, &req); e != nil {
-		return e
-	}
-	if len([]rune(strings.TrimSpace(req.Name))) < 1 || len([]rune(req.Name)) > 80 {
-		return fail(400, "INVALID_REQUEST", "请输入1到80字的应用名称")
-	}
-	cfg := app.Config{Basic: app.Basic{req.Name, req.Description}, ModelPrompt: app.ModelPrompt{"validation-only", "仅使用已授权能力，明确来源与限制。"}, CapabilityRefs: app.CapabilityRefs{AssetRefs: []app.AssetRef{}, ServiceRefs: []app.ServiceRef{}, ToolNames: []string{}}, ConversationDefaults: app.ConversationDefaults{SuggestedQuestions: []string{}}}
-	if req.Mode == "TEMPLATE" {
-		source, e := s.getApp(p, req.TemplateID, true)
-		if e != nil {
-			return e
-		}
-		cfg = source.Draft
-		cfg.Basic = app.Basic{req.Name, req.Description}
-	} else if req.Mode != "BLANK" {
-		return fail(400, "INVALID_REQUEST", "创建方式无效")
-	}
-	a := app.App{ID: app.ID("app"), AgentID: app.ID("agent"), TenantID: p.TenantID, OwnerID: p.UserID, Draft: cfg, Revision: app.ID("draft"), Releases: []app.Release{}, UpdatedAt: app.Now()}
-	if e := s.Store.UpdateOperationalContext(r.Context(), func(st *app.State) error { st.Apps[a.ID] = a; return nil }); e != nil {
-		return e
-	}
-	s.event(p, "application.create", a.ID, "success", "")
-	Write(w, a)
-	return nil
+ p := Principal(r)
+ if e := s.requireBuild(p); e != nil { return e }
+ var req struct {
+  Mode string `json:"creation_mode"`
+  Name string `json:"name"`
+  Description string `json:"description"`
+  TemplateID string `json:"template_id"`
+  ExpectedTemplateRevision *string `json:"expected_template_revision"`
+ }
+ if e := Decode(r, &req); e != nil { return e }
+ if len([]rune(strings.TrimSpace(req.Name))) < 1 || len([]rune(req.Name)) > 80 { return fail(400, "INVALID_REQUEST", "请输入1到80字的应用名称") }
+ if req.Mode != "BLANK" && req.Mode != "TEMPLATE" { return fail(400, "INVALID_REQUEST", "创建方式无效") }
+ if req.ExpectedTemplateRevision != nil && (req.Mode != "TEMPLATE" || strings.TrimSpace(*req.ExpectedTemplateRevision) == "") {
+  return fail(400, "INVALID_REQUEST", "模板版本仅用于从已有应用复制，且不能为空")
+ }
+ var a app.App
+ if e := s.Store.UpdateOperationalContext(r.Context(), func(st *app.State) error {
+  cfg := app.Config{Basic: app.Basic{req.Name, req.Description}, ModelPrompt: app.ModelPrompt{"validation-only", "仅使用已授权能力，明确来源与限制。"}, CapabilityRefs: app.CapabilityRefs{AssetRefs: []app.AssetRef{}, ServiceRefs: []app.ServiceRef{}, ToolNames: []string{}}, ConversationDefaults: app.ConversationDefaults{SuggestedQuestions: []string{}}}
+  if req.Mode == "TEMPLATE" {
+   source, ok := st.Apps[req.TemplateID]
+   if !ok || source.TenantID != p.TenantID { return fail(404, "ASSET_UNAVAILABLE", "应用不存在或不可访问") }
+   if req.ExpectedTemplateRevision != nil && source.Revision != *req.ExpectedTemplateRevision {
+    return fail(409, "VERSION_INCOMPATIBLE", "模板草稿已更新，请刷新预览后核对")
+   }
+   cfg = source.Draft
+   cfg.Basic = app.Basic{req.Name, req.Description}
+  }
+  a = app.App{ID: app.ID("app"), AgentID: app.ID("agent"), TenantID: p.TenantID, OwnerID: p.UserID, Draft: cfg, Revision: app.ID("draft"), Releases: []app.Release{}, UpdatedAt: app.Now()}
+  st.Apps[a.ID] = a
+  return nil
+ }); e != nil { return e }
+ s.event(p, "application.create", a.ID, "success", "")
+ Write(w, a)
+ return nil
 }
 func (s *Server) detail(w http.ResponseWriter, r *http.Request) error {
 	a, e := s.getApp(Principal(r), r.PathValue("app_id"), true)
