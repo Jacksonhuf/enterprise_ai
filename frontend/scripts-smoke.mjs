@@ -24,7 +24,7 @@ try {
  // Exercise the saved preference through the actual form and a fresh page load.
  await page.goto('http://127.0.0.1:14173/settings/general');
  await page.waitForLoadState('networkidle');
- const densityField=page.locator('.t-form-item').filter({hasText:'界面密度'});
+ const densityField=page.locator('.t-form__item').filter({hasText:'界面密度'});
  await densityField.locator('.t-select').click();await page.getByText('紧凑',{exact:true}).click();
  await page.getByRole('button',{name:'保存',exact:true}).click();
  await page.waitForFunction(()=>document.querySelector('.app-shell')?.getAttribute('data-density')==='compact');

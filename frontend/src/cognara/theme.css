@@ -777,6 +777,6 @@ h3 {
 .app-shell[data-density="compact"] .application-card { padding: 18px; }
 .app-shell[data-density="compact"] .data-table td,
 .app-shell[data-density="compact"] .data-table th { padding-block: 9px; }
-.app-shell[data-density="compact"] .t-form-item { margin-bottom: 16px; }
+.app-shell[data-density="compact"] .t-form__item { margin-bottom: 16px; }
 .app-shell[data-density="compact"] .reference-row,
 .app-shell[data-density="compact"] .reference-item { padding: 10px 14px; }
