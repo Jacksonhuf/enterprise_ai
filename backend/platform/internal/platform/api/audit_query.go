@@ -28,7 +28,7 @@ func (s *Server) auditDatabasePage(w http.ResponseWriter, r *http.Request) (bool
 		}
 		after = c.After
 	}
-	items, more, handled, e := s.Store.QueryMySQLAudit(r.Context(), p.TenantID, after, cfg.limit, func(event app.Event) bool {
+	items, more, handled, e := s.Store.QueryMySQLAuditFiltered(r.Context(), p.TenantID, after, cfg.limit, app.AuditSQLFilter{Outcome: cfg.outcome, From: cfg.from, To: cfg.to}, func(event app.Event) bool {
 		if event.TenantID == "" {
 			actor, err := governance.DemoIdentity(event.ActorID)
 			if err != nil || actor.TenantID != p.TenantID {
