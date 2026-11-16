@@ -159,3 +159,14 @@ go run ./cmd/cognara-state-export --output /secure-backups/fg-state.json
 ```
 
 父目录须已存在；目标文件须不存在。命令不初始化、不写源库，输出仅含SHA-256、大小和记录数量。文件保留完整状态及未知字段，权限0600，含业务数据，请勿提交Git。此工具仅导出过渡聚合状态，不是生产物理备份或恢复工具；详细边界见[第十八轮记录](docs/development/test-report-v0.18.md)。
+
+### 导入到空MySQL目标
+
+停止目标验证应用，预先创建独立空库，通过COGNARA_MYSQL_DSN指向该目标库。将导出报告中的摘要赋给SNAPSHOT_SHA256环境变量，再显式导入：
+
+```bash
+cd backend/platform
+go run ./cmd/cognara-state-import --input /secure-backups/fg-state.json --expected-sha256 "$SNAPSHOT_SHA256" --source-schema-version 1
+```
+
+不要先运行普通开发宿主初始化目标，已有种子状态也会导致导入拒绝。工具不覆盖已有记录，不修改源文件；失败可能留下空表，提交状态不明时先检查目标。导入只覆盖过渡聚合状态，不恢复外部A–E证据；正式生产表迁移仍待完成。详情见[第十九轮记录](docs/development/test-report-v0.19.md)。

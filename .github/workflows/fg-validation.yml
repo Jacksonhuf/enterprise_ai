@@ -34,6 +34,7 @@ jobs:
       COGNARA_TEST_MYSQL_DSN: root:validation-only-mysql-password@tcp(127.0.0.1:3306)/cognara_validation
       COGNARA_MYSQL_DSN: root:validation-only-mysql-password@tcp(127.0.0.1:3306)/cognara_validation
       COGNARA_REQUIRE_MYSQL_TESTS: '1'
+      COGNARA_TEST_IMPORT_BINARY: /tmp/cognara-state-import
       COGNARA_TEST_POSTGRES_DSN: postgres://cognara_test:validation-only-password@127.0.0.1:5432/cognara_validation?sslmode=disable
       COGNARA_POSTGRES_DSN: postgres://cognara_test:validation-only-password@127.0.0.1:5432/cognara_validation?sslmode=disable
       COGNARA_REQUIRE_POSTGRES_TESTS: '1'
@@ -53,7 +54,8 @@ jobs:
           python-version: '3.12'
       - run: python scripts/import-source.py
       - run: python -m pip install 'jsonschema[format-nongpl]==4.26.0'
-      - run: COGNARA_CONTRACT_CAPTURE=/tmp/cognara-contract.jsonl go test -C backend/platform -tags=nomsgpack -p 1 -race -count=1 ./internal/platform/... ./cmd/cognara-dev ./cmd/cognara-state-export
+      - run: go build -C backend/platform -tags=nomsgpack -o /tmp/cognara-state-import ./cmd/cognara-state-import
+      - run: COGNARA_CONTRACT_CAPTURE=/tmp/cognara-contract.jsonl go test -C backend/platform -tags=nomsgpack -p 1 -race -count=1 ./internal/platform/... ./cmd/cognara-dev ./cmd/cognara-state-export ./cmd/cognara-state-import
       - run: python scripts/validate-contract-capture.py /tmp/cognara-contract.jsonl
       - run: go build -C backend/platform -tags=nomsgpack -o /tmp/cognara-dev ./cmd/cognara-dev
       - run: python scripts/verify-runtime.py --binary /tmp/cognara-dev --storage json

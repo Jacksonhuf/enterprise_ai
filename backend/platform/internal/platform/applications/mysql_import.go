@@ -1,0 +1,162 @@
+package applications
+
+import (
+	"bytes"
+	"context"
+	"crypto/sha256"
+	"database/sql"
+	"encoding/hex"
+	"encoding/json"
+	"errors"
+	"github.com/go-sql-driver/mysql"
+	"io"
+	"os"
+	"time"
+)
+
+// ImportMySQLSnapshot inserts a verified snapshot into an empty transitional state table.
+// No existing record is ever updated. DDL may remain if a later transaction fails.
+func ImportMySQLSnapshot(parent context.Context, dsn, path, expectedSHA string, sourceVersion int) (SnapshotReport, error) {
+	var report SnapshotReport
+	if sourceVersion != 1 {
+		return report, errors.New("snapshot schema version unsupported")
+	}
+	expected, e := hex.DecodeString(expectedSHA)
+	if e != nil || len(expected) != sha256.Size {
+		return report, errors.New("expected SHA-256 is required")
+	}
+	file, e := os.Open(path)
+	if e != nil {
+		return report, errors.New("snapshot source unavailable")
+	}
+	defer file.Close()
+	info, e := file.Stat()
+	if e != nil || !info.Mode().IsRegular() {
+		return report, errors.New("snapshot source must be a regular file")
+	}
+	raw, e := io.ReadAll(io.LimitReader(file, (64<<20)+1))
+	if e != nil || len(raw) == 0 || len(raw) > 64<<20 {
+		return report, errors.New("snapshot size unsupported")
+	}
+	sum := sha256.Sum256(raw)
+	if !bytes.Equal(sum[:], expected) {
+		return report, errors.New("snapshot checksum mismatch")
+	}
+	if e = validateSnapshotJSON(raw); e != nil {
+		return report, errors.New("snapshot JSON invalid or ambiguous")
+	}
+	var object map[string]json.RawMessage
+	var state State
+	if json.Unmarshal(raw, &object) != nil || object == nil || json.Unmarshal(raw, &state) != nil || state.Apps == nil || state.Sessions == nil {
+		return report, errors.New("snapshot structure invalid")
+	}
+	for id, a := range state.Apps {
+		if id == "" || a.ID != id || a.TenantID == "" || a.OwnerID == "" {
+			return report, errors.New("snapshot application binding invalid")
+		}
+	}
+	for id, s := range state.Sessions {
+		a, ok := state.Apps[s.AppID]
+		if id == "" || s.ID != id || s.OwnerID == "" || !ok || s.TenantID != a.TenantID {
+			return report, errors.New("snapshot session binding invalid")
+		}
+		for _, m := range s.Messages {
+			if m.SessionID != id || m.ID == "" {
+				return report, errors.New("snapshot message binding invalid")
+			}
+		}
+		report.Messages += len(s.Messages)
+	}
+	cfg, e := mysql.ParseDSN(dsn)
+	if e != nil || cfg.DBName == "" || cfg.MultiStatements {
+		return report, errors.New("invalid MySQL import configuration")
+	}
+	cfg.Timeout = 5 * time.Second
+	cfg.ReadTimeout = 5 * time.Second
+	cfg.WriteTimeout = 5 * time.Second
+	db, e := sql.Open("mysql", cfg.FormatDSN())
+	if e != nil {
+		return report, errors.New("MySQL import connection unavailable")
+	}
+	defer db.Close()
+	ctx, cancel := context.WithTimeout(parent, 10*time.Second)
+	defer cancel()
+	if _, e = db.ExecContext(ctx, mysqlStateDDL); e != nil {
+		return report, errors.New("MySQL import schema initialization failed")
+	}
+	if e = validateMySQLStateSchema(ctx, db, cfg.DBName); e != nil {
+		return report, errors.New("MySQL import schema incompatible")
+	}
+	tx, e := db.BeginTx(ctx, nil)
+	if e != nil {
+		return report, errors.New("MySQL import transaction unavailable")
+	}
+	defer tx.Rollback()
+	// The singleton primary key arbitrates concurrent importers and startup seeders.
+	if _, e = tx.ExecContext(ctx, `INSERT INTO cognara_fg_state(id,schema_version,body) VALUES(1,1,?)`, string(raw)); e != nil {
+		return report, errors.New("MySQL import refused; target must contain no state record")
+	}
+	if e = tx.Commit(); e != nil {
+		return report, errors.New("MySQL import commit not confirmed; inspect target before retry")
+	}
+	report.SHA256 = hex.EncodeToString(sum[:])
+	report.Bytes = len(raw)
+	report.Applications = len(state.Apps)
+	report.Sessions = len(state.Sessions)
+	return report, nil
+}
+
+// Reject duplicate object keys at every level, excessive nesting and trailing values.
+func validateSnapshotJSON(raw []byte) error {
+	d := json.NewDecoder(bytes.NewReader(raw))
+	d.UseNumber()
+	var walk func(int) error
+	walk = func(depth int) error {
+		if depth > 256 {
+			return errors.New("too deep")
+		}
+		t, e := d.Token()
+		if e != nil {
+			return e
+		}
+		delim, ok := t.(json.Delim)
+		if !ok {
+			return nil
+		}
+		switch delim {
+		case '{':
+			seen := map[string]bool{}
+			for d.More() {
+				k, e := d.Token()
+				if e != nil {
+					return e
+				}
+				key, ok := k.(string)
+				if !ok || seen[key] {
+					return errors.New("duplicate key")
+				}
+				seen[key] = true
+				if e = walk(depth + 1); e != nil {
+					return e
+				}
+			}
+		case '[':
+			for d.More() {
+				if e = walk(depth + 1); e != nil {
+					return e
+				}
+			}
+		default:
+			return errors.New("unexpected delimiter")
+		}
+		_, e = d.Token()
+		return e
+	}
+	if e := walk(0); e != nil {
+		return e
+	}
+	if _, e := d.Token(); e != io.EOF {
+		return errors.New("trailing JSON")
+	}
+	return nil
+}
