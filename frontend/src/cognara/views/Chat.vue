@@ -150,6 +150,7 @@
 </template>
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted, nextTick } from "vue";
+import { invalidateSessionHistory } from "../sessionHistory";
 import { MessageHistory } from "../messageHistory";
 import { useRoute, onBeforeRouteLeave } from "vue-router";
 import { MessagePlugin } from "tdesign-vue-next";
@@ -173,7 +174,7 @@ const history = reactive(new MessageHistory(cursor => {
 const messages = computed(() => history.items);
 async function refreshHistory() {
   evidenceVisible.value = false; evidence.value = null;
-  await history.refresh(); await bottom();
+  await history.refresh(); invalidateSessionHistory(); await bottom();
 }
 async function loadOlder() {
   const area = scrollArea.value;

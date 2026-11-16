@@ -164,10 +164,12 @@ func (s *Server) chat(w http.ResponseWriter, r *http.Request) error {
 			}
 		}
 		v := st.Sessions[session.ID]
-		if len(v.Messages) == 0 && !req.DisableTitle {
+		if len(v.Messages) == 0 && !req.DisableTitle && !v.TitleCustomized && (v.Title == "新对话" || v.Title == "新的补货分析") {
 			v.Title = string([]rune(req.Query)[:min(len([]rune(req.Query)), 30)])
+			v.Revision = app.ID("revision")
 		}
 		v.Messages = append(v.Messages, user, answer)
+		v.UpdatedAt = app.Now()
 		st.Sessions[v.ID] = v
 		return nil
 	}); e != nil {

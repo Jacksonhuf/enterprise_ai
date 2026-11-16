@@ -433,3 +433,18 @@ profile只接收display_name，general只接收language/timezone/density，publi
 草稿PUT继续提交点击时快照与expected_draft_revision；成功审计application.draft.save与草稿版本同事务提交。客户端保存期间新增的修改保留为未保存状态。
 
 发布检查继续使用check_id、draft_revision、valid_until；客户端绑定本地快照和expected_current_release_id，过期或本地配置变化后要求重新检查。POST发布仍由服务端校验所有者、当前版本、当前发布与期限。客户端不能把网络失败解释为未提交，不自动重复发布，需核对服务端历史。没有新增接口或字段。
+
+## 对话历史管理补充（2026-11-16）
+
+以下是F/G前后端接口增量，不新增A–E调用。
+
+| 方法与路径 | 参数 | 返回与约束 |
+| --- | --- | --- |
+| `GET /api/v1/sessions` | `app_id`必填；`query`可选，去空格、不区分大小写标题子串，最多256字符；`limit`默认20、1–100整数；`cursor`可选 | `{items,next_cursor}`；只返回当前租户、当前用户、指定可用应用的会话元数据，messages=null。按最近活动降序，同时间按session_id降序。终页next_cursor=null。上述参数不可重复。 |
+| `PUT /api/v1/sessions/{id}` | JSON `{title,expected_revision}`均必填；标题trim后1–80 Unicode字符 | 返回会话元数据；版本冲突409；无权应用403；非本人/跨租户404。标题、随机新版本、自定义标题标记与session.rename审计同事务提交；真正无变化不写新版本/审计。 |
+| `POST /api/v1/cognitive/apps/{app_id}/sessions` | 既有可选title，trim后最多80字符 | 空标题默认“新对话”；自定义标题受保护；新增created_at/updated_at/revision元数据。 |
+| `GET /api/v1/sessions/{id}` | 既有include_messages=false支持保留 | session新增revision与可用的活动时间；旧记录不伪造创建时间，最近活动从有效消息时间回填到响应；旧标题派生确定性初始版本。 |
+
+游标绑定租户、用户、应用、规范化query与过滤后元数据快照，不是授权凭据；每次请求重新检查权限。列表在翻页前发生标题、活动或成员变化时返回400并提示刷新，客户端保留已显示页且不自动拼接新快照。游标不保证历史快照可持续读取。limit可变更。历史标题不包含消息内容搜索。
+
+首次聊天仅在默认标题且非自定义时生成标题并变更revision；后续消息追加只更新updated_at，不引起重命名冲突。用户已改标题不会被首次聊天覆盖。重命名冲突保留输入，关闭窗口并刷新列表、重新打开后才能保存；不会自动覆盖服务端。
