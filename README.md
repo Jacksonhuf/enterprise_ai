@@ -180,4 +180,16 @@ cd backend/platform
 go run ./cmd/cognara-migrate-audit --apply
 ```
 
-连接仍取COGNARA_MYSQL_DSN。工具将审计与状态版本同事务迁至v2；本版本程序支持v1/v2，旧程序不兼容v2。失败可能留下空审计表，不自动删表。**现有快照工具仅支持v1，迁移后须备份状态表与审计表，不能只备份JSON。** 回滚需要停机恢复迁移前数据库和匹配程序。该阶段仍保留聚合状态锁，详见[第二十轮记录](docs/development/test-report-v0.20.md)。
+连接仍取COGNARA_MYSQL_DSN。工具将审计与状态版本同事务迁至v2；本版本程序支持v1/v2，旧程序不兼容v2。失败可能留下空审计表，不自动删表。**新工具已支持v1/v2逻辑快照，旧版v1专用工具仍拒绝v2；生产仍须保留完整数据库备份。** 回滚需要停机恢复迁移前数据库和匹配程序。该阶段仍保留聚合状态锁，详见[第二十轮记录](docs/development/test-report-v0.20.md)。
+
+
+### v2逻辑快照与恢复
+
+审计拆表后，导出命令自动识别v2，在同一只读事务中导出业务状态及审计记录，报告增加source_schema_version和audit_events。v1仍输出原JSON，v2输出带format/schema_version/state/audit的封套。依据导出报告恢复到独立空库：
+
+```bash
+cd backend/platform
+go run ./cmd/cognara-state-import --input /secure-backups/fg-v2.json --expected-sha256 "$SNAPSHOT_SHA256" --source-schema-version 2
+```
+
+新目标不能已有状态或审计记录；两个部分同事务提交，不覆盖、不合并旧数据。先在副本核对、试运行，再手动切换连接；快照不恢复外部A–E证据，也不替代物理备份、binlog或时间点恢复。详见[第二十三轮记录](docs/development/test-report-v0.23.md)。
