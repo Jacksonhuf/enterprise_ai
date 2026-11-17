@@ -40,6 +40,7 @@ __pycache__/
 !/backend/platform/cmd/cognara-migrate-applications/
 !/backend/platform/cmd/cognara-migrate-grants/
 !/backend/platform/cmd/cognara-migrate-sessions/
+!/backend/platform/cmd/cognara-migrate-settings/
 !/backend/platform/internal/
 /backend/platform/internal/*
 !/backend/platform/internal/platform/
