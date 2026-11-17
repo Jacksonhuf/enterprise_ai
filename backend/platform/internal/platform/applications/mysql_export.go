@@ -54,11 +54,31 @@ func ExportMySQLSnapshot(parent context.Context, dsn, destination string) (Snaps
 	if e = tx.QueryRowContext(ctx, `SELECT schema_version,body FROM cognara_fg_state WHERE id=1`).Scan(&version, &raw); e != nil {
 		return report, errors.New("MySQL snapshot state unavailable")
 	}
-	if (version != 1 && version != 2 && version != 3) || len(raw) == 0 || len(raw) > 64<<20 {
+	if (version != 1 && version != 2 && version != 3 && version != 4) || len(raw) == 0 || len(raw) > 64<<20 {
 		return report, errors.New("MySQL snapshot version or size unsupported")
 	}
 	report.SourceSchemaVersion = version
-	if version == 3 {
+	if version == 4 {
+		if e = validateMySQLApplicationSchema(ctx, db); e != nil {
+			return report, errors.New("MySQL v4 snapshot application schema incompatible")
+		}
+		if e = validateMySQLGrantSchema(ctx, db); e != nil {
+			return report, errors.New("MySQL v4 snapshot grant schema incompatible")
+		}
+		st, _, e := readMySQLApplicationV4(ctx, tx, true)
+		if e != nil {
+			return report, errors.New("MySQL v4 snapshot state invalid")
+		}
+		raw, report.AuditEvents, e = exportMySQLV4(ctx, tx)
+		if e != nil {
+			return SnapshotReport{}, errors.New("MySQL v4 snapshot invalid or unavailable")
+		}
+		report.Applications = len(st.Apps)
+		report.Sessions = len(st.Sessions)
+		for _, s := range st.Sessions {
+			report.Messages += len(s.Messages)
+		}
+	} else if version == 3 {
 		if e = validateMySQLApplicationSchema(ctx, db); e != nil {
 			return report, errors.New("MySQL v3 snapshot schema incompatible")
 		}
