@@ -240,7 +240,15 @@ func mutateMySQLGrantsV4(ctx context.Context, db *sql.DB, fn func(*State) error)
 	if version != 4 && version != 5 {
 		return errors.New("relational grant writer requires schema 4 or 5")
 	}
-	before, _, err := readMySQLApplicationV4(ctx, tx, false)
+	var before State
+	switch version {
+	case 4:
+		before, _, err = readMySQLApplicationV4(ctx, tx, false)
+	case 5:
+		before, _, err = readMySQLApplicationV5(ctx, tx, false)
+	default:
+		return errors.New("relational grant writer requires schema 4 or 5")
+	}
 	if err != nil {
 		return err
 	}
@@ -260,7 +268,13 @@ func mutateMySQLGrantsV4(ctx context.Context, db *sql.DB, fn func(*State) error)
 	if err = applyGrantDeltaV4(ctx, tx, delta); err != nil {
 		return err
 	}
-	if _, _, err = readMySQLApplicationV4(ctx, tx, false); err != nil {
+	switch version {
+	case 4:
+		_, _, err = readMySQLApplicationV4(ctx, tx, false)
+	case 5:
+		_, _, err = readMySQLApplicationV5(ctx, tx, false)
+	}
+	if err != nil {
 		return err
 	}
 	return tx.Commit()

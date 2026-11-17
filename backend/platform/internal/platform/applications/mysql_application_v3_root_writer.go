@@ -55,6 +55,7 @@ func updateMySQLV3RootTx(ctx context.Context, tx *sql.Tx, operational bool, fn f
 	if err != nil {
 		return zero, err
 	}
+	beforeSessions := cloneSessionMap(st.Sessions)
 	grantsBefore, err := json.Marshal(st.Grants)
 	if err != nil {
 		return zero, err
@@ -104,7 +105,9 @@ func updateMySQLV3RootTx(ctx context.Context, tx *sql.Tx, operational bool, fn f
 		return zero, err
 	}
 	if version == 5 && !equalApplicationJSON(sessionsBefore, sessionsAfter) {
-		return zero, errRelationalSessionDomain
+		if err = applyMySQLSessionMapDelta(ctx, tx, beforeSessions, st.Sessions); err != nil {
+			return zero, err
+		}
 	}
 	if version == 5 && !equalApplicationJSON(grantsBefore, grantsAfter) {
 		return zero, errRelationalGrantDomain

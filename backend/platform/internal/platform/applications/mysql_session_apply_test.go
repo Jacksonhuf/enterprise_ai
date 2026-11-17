@@ -3,7 +3,6 @@ package applications
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"strings"
 	"testing"
 )
@@ -96,32 +95,5 @@ func TestOpenMySQLRejectsHandTunedSchema5(t *testing.T) {
 	}
 	if _, e := OpenMySQL(dsn); e == nil {
 		t.Fatal("ambiguous schema5 root accepted")
-	}
-}
-
-func TestSchema5RootWriterRejectsSessionMutation(t *testing.T) {
-	ctx := context.Background()
-	dsn, _ := schema4SessionRoot(t)
-	plan, err := PlanMySQLSessions(ctx, dsn)
-	if err != nil {
-		t.Fatal(err)
-	}
-	if _, err = ApplyMySQLSessions(ctx, dsn, plan.SourceSHA256); err != nil {
-		t.Fatal(err)
-	}
-	store, err := OpenMySQL(dsn)
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer store.Close()
-	err = store.UpdateOperationalContext(ctx, func(st *State) error {
-		for id, s := range st.Sessions {
-			s.Title = "mutated"
-			st.Sessions[id] = s
-		}
-		return nil
-	})
-	if err == nil || !errors.Is(err, errRelationalSessionDomain) {
-		t.Fatal("session root mutation accepted", err)
 	}
 }
