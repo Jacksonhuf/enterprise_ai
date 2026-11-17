@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
+	"errors"
 	"testing"
 
 	"github.com/Tencent/WeKnora/internal/platform/testsupport"
@@ -78,9 +79,8 @@ func TestMySQLApplicationV3ReaderPersistsAndKeepsRuntimeClosed(t *testing.T) {
 		opened.Close()
 		t.Fatal("runtime opened incomplete schema3")
 	}
-	invoked := false
-	if err = store.UpdateOperational(func(st *State) error { invoked = true; return nil }); err == nil || invoked {
-		t.Fatal("legacy writer accepted schema3", err)
+	if err = store.UpdateOperational(func(st *State) error { delete(st.Apps, "channel-replenishment"); return nil }); !errors.Is(err, errRelationalApplicationDomain) {
+		t.Fatal("general writer changed schema3 applications", err)
 	}
 	// One snapshot sees the same root even when another connection updates it.
 	tx, err = db.BeginTx(ctx, &sql.TxOptions{ReadOnly: true, Isolation: sql.LevelRepeatableRead})

@@ -80,6 +80,15 @@ func (s *Store) UpdateMySQLSettingsContext(parent context.Context, key, legacy s
 	if _, e = tx.ExecContext(ctx, `UPDATE cognara_fg_state SET body=JSON_SET(`+base+`,?,CAST(? AS JSON),?,?) WHERE id=1`, settingsJSONPath("settings", key), string(patch.Value), settingsJSONPath("setting_revisions", key), patch.Revision); e != nil {
 		return true, e
 	}
+	var version int
+	if e = tx.QueryRowContext(ctx, `SELECT schema_version FROM cognara_fg_state WHERE id=1`).Scan(&version); e != nil {
+		return true, e
+	}
+	if version == 3 {
+		if _, _, e = readMySQLApplicationV3(ctx, tx, false); e != nil {
+			return true, e
+		}
+	}
 	return true, tx.Commit()
 }
 
@@ -102,7 +111,7 @@ func readMySQLSettingsProjection(ctx context.Context, tx *sql.Tx, key, legacy st
 	if version == 1 {
 		return SettingsRecord{}, false, nil
 	}
-	if version != 2 && !(version == 3 && !lock) {
+	if version != 2 && version != 3 {
 		return SettingsRecord{}, true, errors.New("unsupported state schema")
 	}
 	if version == 3 {

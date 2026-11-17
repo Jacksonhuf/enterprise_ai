@@ -10,7 +10,7 @@ import (
 	"testing"
 )
 
-func TestMySQLApplicationV3LegacyReadProjectionsAndWriteRejection(t *testing.T) {
+func TestMySQLApplicationV3LegacyReadProjectionsAndCorruptWriteRejection(t *testing.T) {
 	ctx := context.Background()
 	dsn := testsupport.MySQLDSN(t)
 	s, err := OpenMySQL(dsn)
@@ -122,18 +122,6 @@ func TestMySQLApplicationV3LegacyReadProjectionsAndWriteRejection(t *testing.T) 
 	if _, e = os.Stat(snapshot); !os.IsNotExist(e) {
 		t.Fatal("unsupported snapshot published a file", e)
 	}
-	if h, e = s.AppendMySQLAuditContext(ctx, []Event{{ID: "rejected-write", TenantID: "42", OccurredAt: "2026-11-17T00:00:00Z", Action: "blocked"}}); e == nil || !h {
-		t.Fatal("legacy audit writer enabled")
-	}
-	exceptionInvoked := false
-	if _, h, e = s.UpdateMySQLExceptionContext(ctx, "42", "exception", func(map[string]any) (*ExceptionPatch, error) { exceptionInvoked = true; return nil, nil }); e == nil || !h || exceptionInvoked {
-		t.Fatal("legacy exception writer enabled")
-	}
-	invoked := false
-	h, e = s.UpdateMySQLSettingsContext(ctx, "test", "", func(SettingsRecord) (*SettingsPatch, error) { invoked = true; return nil, nil })
-	if e == nil || !h || invoked {
-		t.Fatal("legacy settings writer enabled")
-	}
 	if opened, e := OpenMySQL(dsn); e == nil {
 		opened.Close()
 		t.Fatal("runtime enabled")
@@ -143,6 +131,25 @@ func TestMySQLApplicationV3LegacyReadProjectionsAndWriteRejection(t *testing.T) 
 	}
 	if _, e = s.readSQLContext(ctx); e == nil {
 		t.Fatal("general read ignored corruption")
+	}
+	if h, e = s.AppendMySQLAuditContext(ctx, []Event{{ID: "rejected-write", TenantID: "42", OccurredAt: "2026-11-17T00:00:00Z", Action: "blocked"}}); e == nil || !h {
+		t.Fatal("audit writer bypassed integrity")
+	}
+	exceptionInvoked := false
+	if _, h, e = s.UpdateMySQLExceptionContext(ctx, "42", "exception", func(map[string]any) (*ExceptionPatch, error) { exceptionInvoked = true; return nil, nil }); e == nil || !h || exceptionInvoked {
+		t.Fatal("exception writer bypassed integrity")
+	}
+	invoked := false
+	h, e = s.UpdateMySQLSettingsContext(ctx, "test", "", func(SettingsRecord) (*SettingsPatch, error) { invoked = true; return nil, nil })
+	if e == nil || !h || invoked {
+		t.Fatal("settings writer bypassed integrity")
+	}
+	if e = s.UpdateOperational(func(*State) error { invoked = true; return nil }); e == nil || invoked {
+		t.Fatal("general writer bypassed integrity")
+	}
+	var count int
+	if err = db.QueryRow(`SELECT COUNT(*) FROM cognara_fg_audit WHERE event_id='rejected-write'`).Scan(&count); err != nil || count != 0 {
+		t.Fatal("rejected audit persisted", err)
 	}
 	if e = s.Check(); e == nil {
 		t.Fatal("readiness ignored corruption")

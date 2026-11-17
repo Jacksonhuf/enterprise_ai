@@ -35,8 +35,13 @@ func (s *Store) AppendMySQLObservabilityContext(parent context.Context, events [
 	if version == 1 {
 		return false, nil
 	}
-	if version != 2 {
+	if version != 2 && version != 3 {
 		return true, errors.New("unsupported state schema")
+	}
+	if version == 3 {
+		if _, _, e = readMySQLApplicationV3(ctx, tx, false); e != nil {
+			return true, e
+		}
 	}
 	var names []string
 	if json.Unmarshal(keys, &names) != nil {
@@ -44,6 +49,9 @@ func (s *Store) AppendMySQLObservabilityContext(parent context.Context, events [
 	}
 	for _, name := range names {
 		if (name != "audit" && strings.EqualFold(name, "audit")) || (exception != nil && name != "exceptions" && strings.EqualFold(name, "exceptions")) {
+			if version == 3 {
+				return true, errors.New("ambiguous schema3 audit aliases")
+			}
 			return false, nil
 		}
 	}
@@ -85,6 +93,11 @@ func (s *Store) AppendMySQLObservabilityContext(parent context.Context, events [
 			query = `UPDATE cognara_fg_state SET body=JSON_SET(body,'$.exceptions',JSON_ARRAY(CAST(? AS JSON))) WHERE id=1`
 		}
 		if _, e = tx.ExecContext(ctx, query, string(exceptionRaw)); e != nil {
+			return true, e
+		}
+	}
+	if version == 3 {
+		if _, _, e = readMySQLApplicationV3(ctx, tx, false); e != nil {
 			return true, e
 		}
 	}
