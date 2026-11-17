@@ -9,7 +9,7 @@ import (
 
 // Internal rehearsal against the actual source database, not a caller snapshot.
 // Source writers serialize on the existing state row. Even success rolls back;
-// runtime/schema3 activation and public apply remain deliberately unavailable.
+// runtime/schema3 activation uses ApplyMySQLApplications; rehearsal always rolls back.
 func rehearseMySQLApplicationMigration(ctx context.Context, db *sql.DB) (err error) {
 	var database string
 	if err = db.QueryRowContext(ctx, `SELECT DATABASE()`).Scan(&database); err != nil {
