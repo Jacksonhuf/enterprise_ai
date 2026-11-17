@@ -95,7 +95,15 @@ func TestApplyMySQLApplicationsRejectsPrerequisiteFailures(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if _, err = ApplyMySQLApplications(ctx, dsn, plan.SourceSHA256[:63]+"f"); err == nil {
+	wrong := plan.SourceSHA256
+	if len(wrong) == 64 && wrong[63] != 'a' {
+		wrong = wrong[:63] + "a"
+	} else if len(wrong) == 64 {
+		wrong = wrong[:63] + "b"
+	} else {
+		wrong = strings.Repeat("0", 64)
+	}
+	if _, err = ApplyMySQLApplications(ctx, dsn, wrong); err == nil {
 		t.Fatal("checksum drift accepted")
 	}
 }
