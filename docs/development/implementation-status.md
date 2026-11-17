@@ -379,3 +379,7 @@ PR61已合并。`cognara-migrate-grants --check`、`cognara_fg_grants` DDL、gra
 ## 第70轮：R07 schema5 快照
 
 公共 export/import 支持 schema5（根域 + 应用表 + grants + sessions/messages + 审计）。代码侧 R07 主链路闭环；分页/脱敏/R20 另验。见 test-report-v0.70.md。
+
+## 第71轮：R08 settings plan 与 DDL
+
+`cognara-migrate-settings --check`、`cognara_fg_settings` DDL、settings 布局 round-trip 与内部彩排复制。要求 schema5；目标 schema6 仅在计划中登记。无 apply/运行时。见 test-report-v0.71.md。
