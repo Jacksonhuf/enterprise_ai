@@ -102,6 +102,7 @@ func planGrantSource(root []byte) (GrantMigrationPlan, error) {
 	if !ok {
 		result.SourceSchemaVersion, result.TargetSchemaVersion = 3, 4
 		result.Status, result.ReadOnly = "PLAN_VALIDATED", true
+		result.ApplySupported = true
 		sum := sha256.Sum256(root)
 		result.SourceSHA256 = hex.EncodeToString(sum[:])
 		result.SampledAt = time.Now().UTC().Format(time.RFC3339Nano)
@@ -151,6 +152,7 @@ func planGrantSource(root []byte) (GrantMigrationPlan, error) {
 	checksum := sha256.Sum256(root)
 	result.SourceSchemaVersion, result.TargetSchemaVersion = 3, 4
 	result.Status, result.ReadOnly = "PLAN_VALIDATED", true
+	result.ApplySupported = true
 	result.SourceSHA256 = hex.EncodeToString(checksum[:])
 	result.Tenants = len(tenants)
 	result.SampledAt = time.Now().UTC().Format(time.RFC3339Nano)

@@ -35,11 +35,11 @@ func (s *Store) AppendMySQLObservabilityContext(parent context.Context, events [
 	if version == 1 {
 		return false, nil
 	}
-	if version != 2 && version != 3 {
+	if version != 2 && !mySQLRelationalRuntimeVersion(version) {
 		return true, errors.New("unsupported state schema")
 	}
-	if version == 3 {
-		if _, _, e = readMySQLApplicationV3(ctx, tx, false); e != nil {
+	if mySQLRelationalRuntimeVersion(version) {
+		if _, _, e = readMySQLApplicationRelational(ctx, tx, false, version); e != nil {
 			return true, e
 		}
 	}
@@ -49,7 +49,7 @@ func (s *Store) AppendMySQLObservabilityContext(parent context.Context, events [
 	}
 	for _, name := range names {
 		if (name != "audit" && strings.EqualFold(name, "audit")) || (exception != nil && name != "exceptions" && strings.EqualFold(name, "exceptions")) {
-			if version == 3 {
+			if mySQLRelationalRuntimeVersion(version) {
 				return true, errors.New("ambiguous schema3 audit aliases")
 			}
 			return false, nil
@@ -96,8 +96,8 @@ func (s *Store) AppendMySQLObservabilityContext(parent context.Context, events [
 			return true, e
 		}
 	}
-	if version == 3 {
-		if _, _, e = readMySQLApplicationV3(ctx, tx, false); e != nil {
+	if mySQLRelationalRuntimeVersion(version) {
+		if _, _, e = readMySQLApplicationRelational(ctx, tx, false, version); e != nil {
 			return true, e
 		}
 	}

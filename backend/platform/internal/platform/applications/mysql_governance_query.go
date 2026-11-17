@@ -39,11 +39,11 @@ func (s *Store) queryMySQLGovernanceArray(parent context.Context, section, tenan
 	if version == 1 {
 		return nil, false, false, nil
 	}
-	if version != 2 && version != 3 {
+	if version != 2 && !mySQLRelationalRuntimeVersion(version) {
 		return nil, false, true, errors.New("unsupported state schema")
 	}
-	if version == 3 {
-		if _, _, e = readMySQLApplicationV3(ctx, tx, false); e != nil {
+	if mySQLRelationalRuntimeVersion(version) {
+		if _, _, e = readMySQLApplicationRelational(ctx, tx, false, version); e != nil {
 			return nil, false, true, e
 		}
 	}
@@ -57,7 +57,7 @@ func (s *Store) queryMySQLGovernanceArray(parent context.Context, section, tenan
 	for _, name := range names {
 		for _, canonical := range []string{"audit", section} {
 			if name != canonical && strings.EqualFold(name, canonical) {
-				if version == 3 {
+				if mySQLRelationalRuntimeVersion(version) {
 					return nil, false, true, errors.New("ambiguous schema3 governance aliases")
 				}
 				return nil, false, false, nil

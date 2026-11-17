@@ -35,7 +35,7 @@ func schema3GrantFixture(t *testing.T) (dsn string, root []byte) {
 func TestGrantMigrationPlanRoundTripOnSchema3(t *testing.T) {
 	dsn, _ := schema3GrantFixture(t)
 	report, err := PlanMySQLGrants(context.Background(), dsn)
-	if err != nil || !report.RoundTripVerified || report.SourceSchemaVersion != 3 || report.TargetSchemaVersion != 4 || report.ApplySupported {
+	if err != nil || !report.RoundTripVerified || report.SourceSchemaVersion != 3 || report.TargetSchemaVersion != 4 || !report.ApplySupported {
 		t.Fatal(report, err)
 	}
 	if report.Grants < 1 || report.ActiveGrants < 1 || report.Tenants < 1 {

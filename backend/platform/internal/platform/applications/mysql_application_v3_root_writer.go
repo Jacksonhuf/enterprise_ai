@@ -37,10 +37,20 @@ func updateMySQLV3RootTx(ctx context.Context, tx *sql.Tx, operational bool, fn f
 	if err := tx.QueryRowContext(ctx, `SELECT schema_version,body FROM cognara_fg_state WHERE id=1 FOR UPDATE`).Scan(&version, &root); err != nil {
 		return zero, err
 	}
-	if version != 3 {
-		return zero, errors.New("relational root writer requires schema 3")
+	if !mySQLRelationalRuntimeVersion(version) {
+		return zero, errors.New("relational root writer requires schema 3 or 4")
 	}
-	st, _, err := readMySQLApplicationV3(ctx, tx, !operational)
+	var st State
+	var err error
+	if version == 3 {
+		st, _, err = readMySQLApplicationV3(ctx, tx, !operational)
+	} else {
+		st, _, err = readMySQLApplicationV4(ctx, tx, !operational)
+	}
+	if err != nil {
+		return zero, err
+	}
+	grantsBefore, err := json.Marshal(st.Grants)
 	if err != nil {
 		return zero, err
 	}
@@ -55,7 +65,7 @@ func updateMySQLV3RootTx(ctx context.Context, tx *sql.Tx, operational bool, fn f
 	previous := append([]Event(nil), st.Audit...)
 	unchanged := st
 	unchanged.Audit = nil
-	baseline, err := rootDomainsJSON(unchanged)
+	baseline, err := rootDomainsJSON(unchanged, version)
 	if err != nil {
 		return zero, err
 	}
@@ -73,6 +83,13 @@ func updateMySQLV3RootTx(ctx context.Context, tx *sql.Tx, operational bool, fn f
 	if !equalApplicationJSON(apps, nextApps) || !equalApplicationJSON(checks, nextChecks) {
 		return zero, errRelationalApplicationDomain
 	}
+	grantsAfter, err := json.Marshal(st.Grants)
+	if err != nil {
+		return zero, err
+	}
+	if version == 4 && !equalApplicationJSON(grantsBefore, grantsAfter) {
+		return zero, errRelationalGrantDomain
+	}
 	if operational {
 		if len(st.Audit) > 0 {
 			var last uint64
@@ -88,7 +105,7 @@ func updateMySQLV3RootTx(ctx context.Context, tx *sql.Tx, operational bool, fn f
 	}
 	stored := st
 	stored.Audit = nil
-	body, err := rootDomainsJSON(stored)
+	body, err := rootDomainsJSON(stored, version)
 	if err != nil {
 		return zero, err
 	}
@@ -101,13 +118,18 @@ func updateMySQLV3RootTx(ctx context.Context, tx *sql.Tx, operational bool, fn f
 	if _, err = tx.ExecContext(ctx, `UPDATE cognara_fg_state SET body=? WHERE id=1`, string(body)); err != nil {
 		return zero, err
 	}
-	if _, _, err = readMySQLApplicationV3(ctx, tx, false); err != nil {
+	if version == 3 {
+		_, _, err = readMySQLApplicationV3(ctx, tx, false)
+	} else {
+		_, _, err = readMySQLApplicationV4(ctx, tx, false)
+	}
+	if err != nil {
 		return zero, err
 	}
 	return st, nil
 }
 
-func rootDomainsJSON(st State) ([]byte, error) {
+func rootDomainsJSON(st State, version int) ([]byte, error) {
 	body, err := json.Marshal(st)
 	if err != nil {
 		return nil, err
@@ -118,6 +140,9 @@ func rootDomainsJSON(st State) ([]byte, error) {
 	}
 	delete(fields, "apps")
 	delete(fields, "checks")
+	if version == 4 {
+		delete(fields, "grants")
+	}
 	return json.Marshal(fields)
 }
 

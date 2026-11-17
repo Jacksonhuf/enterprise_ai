@@ -43,11 +43,11 @@ func (s *Store) UpdateMySQLExceptionContext(parent context.Context, tenant, id s
 	if version == 1 {
 		return nil, false, nil
 	}
-	if version != 2 && version != 3 {
+	if version != 2 && !mySQLRelationalRuntimeVersion(version) {
 		return nil, true, errors.New("unsupported state schema")
 	}
-	if version == 3 {
-		if _, _, e = readMySQLApplicationV3(ctx, tx, false); e != nil {
+	if mySQLRelationalRuntimeVersion(version) {
+		if _, _, e = readMySQLApplicationRelational(ctx, tx, false, version); e != nil {
 			return nil, true, e
 		}
 	}
@@ -58,7 +58,7 @@ func (s *Store) UpdateMySQLExceptionContext(parent context.Context, tenant, id s
 	for _, name := range names {
 		for _, canonical := range []string{"audit", "exceptions"} {
 			if name != canonical && strings.EqualFold(name, canonical) {
-				if version == 3 {
+				if mySQLRelationalRuntimeVersion(version) {
 					return nil, true, errors.New("ambiguous schema3 exception aliases")
 				}
 				return nil, false, nil
@@ -125,8 +125,8 @@ func (s *Store) UpdateMySQLExceptionContext(parent context.Context, tenant, id s
 	if e = tx.QueryRowContext(ctx, `SELECT JSON_EXTRACT(body,?) FROM cognara_fg_state WHERE id=1`, base).Scan(&raw); e != nil {
 		return nil, true, e
 	}
-	if version == 3 {
-		if _, _, e = readMySQLApplicationV3(ctx, tx, false); e != nil {
+	if mySQLRelationalRuntimeVersion(version) {
+		if _, _, e = readMySQLApplicationRelational(ctx, tx, false, version); e != nil {
 			return nil, true, e
 		}
 	}
