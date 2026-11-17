@@ -12,8 +12,15 @@ try {
  for(let i=0;;i++){try{if((await fetch('http://127.0.0.1:18080/ready')).ok)break;}catch{} if(i===100)throw Error('Backend did not become ready');await new Promise(r=>setTimeout(r,100));}
  server=await preview({preview:{port:14173,strictPort:true,proxy:{'/api':{target:'http://127.0.0.1:18080',changeOrigin:true}}}});
  browser=await chromium.launch({executablePath:process.env.CHROMIUM_EXECUTABLE_PATH||'/usr/bin/chromium',args:['--no-sandbox']});
- const page=await browser.newPage({timezoneId:'UTC'});const failures=[];
- page.on('pageerror',e=>failures.push(e.message));page.on('console',m=>{if(m.type()==='error'||/Failed to resolve component|injection.*not found/.test(m.text()))failures.push(m.text());});
+ const page=await browser.newPage({timezoneId:'UTC'});const failures=[],diagnostics=[];
+ page.on('pageerror',e=>{
+  failures.push(e.message);console.error('Browser pageerror at '+page.url()+'\\n'+e.stack);
+  const location=e.stack?.match(/(http:\/\/127\.0\.0\.1:14173\/assets\/[^\s)]+\.js):(\d+):(\d+)/);
+  if(location)diagnostics.push((async()=>{
+   const source=await(await fetch(location[1])).text(),line=source.split('\\n')[Number(location[2])-1]||'',column=Number(location[3])-1;
+   console.error('Browser source context: '+line.slice(Math.max(0,column-350),column+350));
+  })().catch(error=>console.error('Browser source lookup failed: '+error.message)));
+ });page.on('console',m=>{if(m.type()==='error'||/Failed to resolve component|injection.*not found/.test(m.text()))failures.push(m.text());});
  await page.goto('http://127.0.0.1:14173/login');await page.getByRole('button',{name:'进入验证工作台'}).click();await page.waitForURL('**/apps');
  await page.getByRole('button',{name:'进入应用'}).first().click();await page.waitForURL('**/chat/**');
  const input=page.locator('textarea');await input.fill('SO1002需求增加到350');await input.press('Shift+Enter');assert.equal(await page.locator('.message').count(),0);
@@ -187,5 +194,5 @@ try {
  await page.goto('http://127.0.0.1:14173/apps');await page.waitForLoadState('networkidle');
  assert.equal(await page.locator('.application-card').filter({hasText:copiedApp.draft.basic.name}).count(),0);
  assert.equal(await page.locator('.application-card').filter({hasText:publishedDraft.draft.basic.name}).count(),1);
- assert.deepEqual(failures,[]);console.log('PASS Chromium: login, chat Enter/Shift+Enter, business result, 13 routes, service input/output contract and raw definition, historical release restore/reload/live snapshot protection, checked publication diff/unchanged baseline/real publish, independent template selector/preview/versioned copy, reviewed user grant/entry/revocation isolation, real failure/audit trace/exception lifecycle, saved density/timezone/reload/account isolation, no component/runtime errors');
+ await Promise.all(diagnostics);assert.deepEqual(failures,[]);console.log('PASS Chromium: login, chat Enter/Shift+Enter, business result, 13 routes, service input/output contract and raw definition, historical release restore/reload/live snapshot protection, checked publication diff/unchanged baseline/real publish, independent template selector/preview/versioned copy, reviewed user grant/entry/revocation isolation, real failure/audit trace/exception lifecycle, saved density/timezone/reload/account isolation, no component/runtime errors');
 } finally {await browser?.close();if(server)await new Promise(r=>server.httpServer.close(r));backend.kill('SIGTERM');await new Promise(r=>backend.exitCode!==null?r():backend.once('exit',r));await rm(temp,{recursive:true,force:true});}
