@@ -123,6 +123,7 @@ func planSettingsSource(root []byte, tenant string) (SettingsMigrationPlan, erro
 	if result.Settings > 0 {
 		result.Tenants = 1
 	}
+	result.ApplySupported = true
 	result.SampledAt = time.Now().UTC().Format(time.RFC3339Nano)
 	return result, nil
 }

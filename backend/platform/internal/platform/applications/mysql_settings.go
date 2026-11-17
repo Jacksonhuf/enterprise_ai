@@ -77,11 +77,28 @@ func (s *Store) UpdateMySQLSettingsContext(parent context.Context, key, legacy s
 	if record.initializeRevisions {
 		base = "JSON_SET(" + base + ",'$.setting_revisions',JSON_OBJECT())"
 	}
-	if _, e = tx.ExecContext(ctx, `UPDATE cognara_fg_state SET body=JSON_SET(`+base+`,?,CAST(? AS JSON),?,?) WHERE id=1`, settingsJSONPath("settings", key), string(patch.Value), settingsJSONPath("setting_revisions", key), patch.Revision); e != nil {
-		return true, e
-	}
 	var version int
 	if e = tx.QueryRowContext(ctx, `SELECT schema_version FROM cognara_fg_state WHERE id=1`).Scan(&version); e != nil {
+		return true, e
+	}
+	if version == 6 {
+		st, _, e := readMySQLApplicationV6(ctx, tx, false)
+		if e != nil {
+			return true, e
+		}
+		tenant, e := dominantTenantID(st)
+		if e != nil {
+			return true, e
+		}
+		if e = upsertMySQLSettingsRow(ctx, tx, tenant, key, patch.Value, patch.Revision); e != nil {
+			return true, e
+		}
+		if _, _, e = readMySQLApplicationV6(ctx, tx, false); e != nil {
+			return true, e
+		}
+		return true, tx.Commit()
+	}
+	if _, e = tx.ExecContext(ctx, `UPDATE cognara_fg_state SET body=JSON_SET(`+base+`,?,CAST(? AS JSON),?,?) WHERE id=1`, settingsJSONPath("settings", key), string(patch.Value), settingsJSONPath("setting_revisions", key), patch.Revision); e != nil {
 		return true, e
 	}
 	if mySQLRelationalRuntimeVersion(version) {
@@ -118,6 +135,24 @@ func readMySQLSettingsProjection(ctx context.Context, tx *sql.Tx, key, legacy st
 		if _, _, e = readMySQLApplicationRelational(ctx, tx, false, version); e != nil {
 			return SettingsRecord{}, true, e
 		}
+	}
+	if version == 6 {
+		st, _, e := readMySQLApplicationV6(ctx, tx, false)
+		if e != nil {
+			return SettingsRecord{}, true, e
+		}
+		record := SettingsRecord{Value: json.RawMessage(`{}`)}
+		if value, ok := st.Settings[key]; ok {
+			record.Canonical = true
+			record.Value = append(json.RawMessage(nil), value...)
+			record.Revision = st.SettingRevisions[key]
+		} else if legacy != "" {
+			if value, ok := st.Settings[legacy]; ok {
+				record.Value = append(json.RawMessage(nil), value...)
+				record.Revision = st.SettingRevisions[legacy]
+			}
+		}
+		return record, true, nil
 	}
 	var names []string
 	if json.Unmarshal(keys, &names) != nil {

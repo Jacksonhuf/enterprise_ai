@@ -383,3 +383,7 @@ PR61已合并。`cognara-migrate-grants --check`、`cognara_fg_grants` DDL、gra
 ## 第71轮：R08 settings plan 与 DDL
 
 `cognara-migrate-settings --check`、`cognara_fg_settings` DDL、settings 布局 round-trip 与内部彩排复制。要求 schema5；目标 schema6 仅在计划中登记。无 apply/运行时。见 test-report-v0.71.md。
+
+## 第72轮：R08 settings apply 与 schema6 读
+
+`ApplyMySQLSettings`、`cognara-migrate-settings --apply`；`readMySQLApplicationV6` 与 settings 关系读/写投影。根域禁止再写 settings。无 schema6 快照。见 test-report-v0.72.md。

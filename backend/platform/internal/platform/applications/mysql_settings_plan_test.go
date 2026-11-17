@@ -9,7 +9,7 @@ import (
 func TestSettingsMigrationPlanRoundTripOnSchema5(t *testing.T) {
 	dsn, _, _ := schema5SettingsRoot(t)
 	report, err := PlanMySQLSettings(context.Background(), dsn)
-	if err != nil || !report.RoundTripVerified || report.SourceSchemaVersion != 5 || report.TargetSchemaVersion != 6 || report.ApplySupported {
+	if err != nil || !report.RoundTripVerified || report.SourceSchemaVersion != 5 || report.TargetSchemaVersion != 6 || !report.ApplySupported {
 		t.Fatal(report, err)
 	}
 	if report.Settings != 1 {
