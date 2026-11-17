@@ -323,3 +323,7 @@ PR52已合并。内部创建writer支持空白及模板复制，租户/预览版
 ## 第56轮：schema3发布检查与发布事务
 
 PR53已合并。内部检查writer绑定租户、操作人、锁定草稿revision与有效期，不写审计（同旧路径）；发布writer校验检查归属/revision/有效期与当前发布CAS，以草稿原文追加不可变快照并更新指针，同事务消费检查及写审计。并发、过期、旧草稿、故障回滚与重开见test-report-v0.56.md和PR。未接HTTP/启动；其余writer、无损快照与apply待完成。
+
+## 第57轮：schema3根域通用writer
+
+PR54已合并。内部根域writer持State屏障重建完整State，仅写回根域（不含apps/checks），应用/检查改动拒绝并要求专用writer；审计业务模式按序追加、完整模式不可改写；未知根字段保留。并发、拒绝路径、故障回滚与重开见test-report-v0.57.md和PR。未接HTTP/启动；按域切换适配层、无损快照与apply待完成。
