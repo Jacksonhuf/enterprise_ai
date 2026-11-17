@@ -350,4 +350,4 @@ PR60已合并。apply 后 OpenMySQL 重启、双连接草稿 CAS、编译态 GET
 
 ## 第63轮：R06 授权 plan 与 DDL
 
-PR待合入。`cognara-migrate-grants --check`、`cognara_fg_grants` DDL、grant 布局 round-trip 与彩排复制。无 apply/运行时。见 test-report-v0.63.md。
+PR61已合并。`cognara-migrate-grants --check`、`cognara_fg_grants` DDL、grant 布局 round-trip 与彩排复制。无 apply/运行时。见 test-report-v0.63.md。
