@@ -146,3 +146,14 @@ func TestMySQLV3DraftWriterCASAuditRollbackAndReopen(t *testing.T) {
 		t.Fatal("reopen lost saved draft", err)
 	}
 }
+
+func TestRelationalDraftMergeKeepsMissingUnchangedFields(t *testing.T) {
+	source := []byte(`{"future":{"n":9007199254740993}}`)
+	got, err := mergeRelationalDraft(source, Config{})
+	if err != nil || !equalApplicationJSON(source, got) {
+		t.Fatal("unchanged missing fields materialized", err)
+	}
+	if _, err = mergeRelationalDraft([]byte(`{"Basic":{},"basic":{}}`), Config{}); err == nil {
+		t.Fatal("ambiguous known field accepted")
+	}
+}

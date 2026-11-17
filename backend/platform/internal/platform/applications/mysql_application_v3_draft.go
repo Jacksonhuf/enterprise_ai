@@ -43,6 +43,9 @@ func mergeRelationalDraft(raw []byte, next Config) ([]byte, error) {
 			for key, value := range newObj {
 				original, exists := src[key]
 				if !exists {
+					if equalApplicationJSON(oldObj[key], value) {
+						continue
+					}
 					src[key] = value
 					continue
 				}
