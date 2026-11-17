@@ -36,6 +36,7 @@ jobs:
       COGNARA_REQUIRE_MYSQL_TESTS: '1'
       COGNARA_TEST_APPLICATION_PLAN_BINARY: /tmp/cognara-migrate-applications
       COGNARA_TEST_GRANT_PLAN_BINARY: /tmp/cognara-migrate-grants
+      COGNARA_TEST_SESSION_PLAN_BINARY: /tmp/cognara-migrate-sessions
       COGNARA_TEST_MIGRATE_BINARY: /tmp/cognara-migrate-audit
       COGNARA_TEST_IMPORT_BINARY: /tmp/cognara-state-import
       COGNARA_TEST_RUNTIME_BINARY: /tmp/cognara-dev
@@ -61,11 +62,12 @@ jobs:
       - run: python -m pip install 'jsonschema[format-nongpl]==4.26.0'
       - run: go build -C backend/platform -tags=nomsgpack -o /tmp/cognara-migrate-applications ./cmd/cognara-migrate-applications
       - run: go build -C backend/platform -tags=nomsgpack -o /tmp/cognara-migrate-grants ./cmd/cognara-migrate-grants
+      - run: go build -C backend/platform -tags=nomsgpack -o /tmp/cognara-migrate-sessions ./cmd/cognara-migrate-sessions
       - run: go build -C backend/platform -tags=nomsgpack -o /tmp/cognara-migrate-audit ./cmd/cognara-migrate-audit
       - run: go build -C backend/platform -tags=nomsgpack -o /tmp/cognara-state-import ./cmd/cognara-state-import
       - run: go build -C backend/platform -tags=nomsgpack -o /tmp/cognara-dev ./cmd/cognara-dev
       - run: go build -C backend/platform -tags=nomsgpack -o /tmp/cognara-state-export ./cmd/cognara-state-export
-      - run: COGNARA_CONTRACT_CAPTURE=/tmp/cognara-contract.jsonl go test -C backend/platform -tags=nomsgpack -p 1 -race -count=1 ./internal/platform/... ./cmd/cognara-dev ./cmd/cognara-state-export ./cmd/cognara-state-import ./cmd/cognara-migrate-audit ./cmd/cognara-migrate-applications ./cmd/cognara-migrate-grants
+      - run: COGNARA_CONTRACT_CAPTURE=/tmp/cognara-contract.jsonl go test -C backend/platform -tags=nomsgpack -p 1 -race -count=1 ./internal/platform/... ./cmd/cognara-dev ./cmd/cognara-state-export ./cmd/cognara-state-import ./cmd/cognara-migrate-audit ./cmd/cognara-migrate-applications ./cmd/cognara-migrate-grants ./cmd/cognara-migrate-sessions
       - run: python scripts/validate-contract-capture.py /tmp/cognara-contract.jsonl
       - run: python scripts/verify-runtime.py --binary /tmp/cognara-dev --storage json
       - run: python scripts/verify-runtime.py --binary /tmp/cognara-dev --storage sqlite
