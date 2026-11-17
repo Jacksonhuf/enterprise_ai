@@ -17,7 +17,7 @@ try {
   failures.push(e.message);console.error('Browser pageerror at '+page.url()+'\\n'+e.stack);
   const location=e.stack?.match(/(http:\/\/127\.0\.0\.1:14173\/assets\/[^\s)]+\.js):(\d+):(\d+)/);
   if(location)diagnostics.push((async()=>{
-   const source=await(await fetch(location[1])).text(),line=source.split('\\n')[Number(location[2])-1]||'',column=Number(location[3])-1;
+   const source=await(await fetch(location[1])).text(),line=source.split(String.fromCharCode(10))[Number(location[2])-1]||'',column=Number(location[3])-1;
    console.error('Browser source context: '+line.slice(Math.max(0,column-350),column+350));
   })().catch(error=>console.error('Browser source lookup failed: '+error.message)));
  });page.on('console',m=>{if(m.type()==='error'||/Failed to resolve component|injection.*not found/.test(m.text()))failures.push(m.text());});
@@ -150,7 +150,13 @@ try {
  const auditHTTP=await correlatedAudit;assert.equal(auditHTTP.status(),200);const correlated=(await auditHTTP.json()).items;
  assert.ok(correlated.length);assert.ok(correlated.every(event=>event.request_id===traceRequest));
  assert.equal(await page.locator('.list-toolbar input').first().inputValue(),traceRequest);
- await page.goto('http://127.0.0.1:14173/governance/operations?tab=exceptions');await exceptionRow.waitFor();
+ // Exercise SPA back/forward repeatedly so pending component cleanup cannot hide behind full reloads.
+ for(let round=0;round<12;round++){
+  await page.goBack();await exceptionRow.waitFor();
+  await exceptionRow.getByRole('button',{name:'关联审计',exact:true}).click();
+  await page.waitForURL(url=>url.pathname==='/governance/audit'&&url.searchParams.get('request_id')===traceRequest);
+ }
+ await page.goBack();await exceptionRow.waitFor();
  let exceptionRevision=originException.revision;
  for(const [action,status,label] of [['确认','ACKNOWLEDGED','已确认'],['标记解决','RESOLVED','已解决'],['重新打开','OPEN','待处理']]){
   await exceptionRow.getByRole('button',{name:action,exact:true}).click();
