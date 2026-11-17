@@ -57,6 +57,12 @@ func readStateRowSource(ctx context.Context, tx *sql.Tx, lock, relational, inclu
 	if e := tx.QueryRowContext(ctx, query).Scan(&version, &raw); e != nil {
 		return st, version, raw, e
 	}
+	// Read-only schema3 reconstruction is ready independently of writers.
+	// Locking callers are legacy writers and must remain rejected until adapted.
+	if relational && version == 3 && !lock {
+		next, source, err := readMySQLApplicationV3(ctx, tx, includeAudit)
+		return next, version, source, err
+	}
 	if version != 1 && !(relational && version == 2) {
 		return st, version, raw, fmt.Errorf("unsupported state schema")
 	}

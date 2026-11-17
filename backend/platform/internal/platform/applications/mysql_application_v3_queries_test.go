@@ -4,6 +4,8 @@ import (
 	"context"
 	"database/sql"
 	"github.com/Tencent/WeKnora/internal/platform/testsupport"
+	"os"
+	"path/filepath"
 	"reflect"
 	"testing"
 )
@@ -102,6 +104,31 @@ func TestMySQLApplicationV3LegacyReadProjectionsAndWriteRejection(t *testing.T) 
 			t.Fatal(err)
 		}
 	}
+	full, e := s.readSQLContext(ctx)
+	if e != nil || len(full.Apps) != 1 || len(full.Audit) != len(events) {
+		t.Fatal("general read incomplete", e)
+	}
+	operational, e := s.readSQLContextAudit(ctx, false)
+	if e != nil || len(operational.Apps) != 1 || len(operational.Audit) != 0 {
+		t.Fatal("operational read incomplete", e)
+	}
+	if e = s.Check(); e != nil {
+		t.Fatal("valid relational readiness rejected", e)
+	}
+	snapshot := filepath.Join(t.TempDir(), "unsupported-v3.json")
+	if _, e = ExportMySQLSnapshot(ctx, dsn, snapshot); e == nil {
+		t.Fatal("legacy snapshot accepted schema3")
+	}
+	if _, e = os.Stat(snapshot); !os.IsNotExist(e) {
+		t.Fatal("unsupported snapshot published a file", e)
+	}
+	if h, e = s.AppendMySQLAuditContext(ctx, []Event{{ID: "rejected-write", TenantID: "42", OccurredAt: "2026-11-17T00:00:00Z", Action: "blocked"}}); e == nil || !h {
+		t.Fatal("legacy audit writer enabled")
+	}
+	exceptionInvoked := false
+	if _, h, e = s.UpdateMySQLExceptionContext(ctx, "42", "exception", func(map[string]any) (*ExceptionPatch, error) { exceptionInvoked = true; return nil, nil }); e == nil || !h || exceptionInvoked {
+		t.Fatal("legacy exception writer enabled")
+	}
 	invoked := false
 	h, e = s.UpdateMySQLSettingsContext(ctx, "test", "", func(SettingsRecord) (*SettingsPatch, error) { invoked = true; return nil, nil })
 	if e == nil || !h || invoked {
@@ -113,6 +140,12 @@ func TestMySQLApplicationV3LegacyReadProjectionsAndWriteRejection(t *testing.T) 
 	}
 	if _, err = db.Exec(`UPDATE cognara_fg_application_envelope SET root_payload='{"duplicate":true}' WHERE id=1`); err != nil {
 		t.Fatal(err)
+	}
+	if _, e = s.readSQLContext(ctx); e == nil {
+		t.Fatal("general read ignored corruption")
+	}
+	if e = s.Check(); e == nil {
+		t.Fatal("readiness ignored corruption")
 	}
 	if _, _, e = s.ReadMySQLSettingsContext(ctx, "test", ""); e == nil {
 		t.Fatal("settings bypassed schema3 integrity")
