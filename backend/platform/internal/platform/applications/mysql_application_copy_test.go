@@ -22,6 +22,10 @@ func TestMySQLApplicationCopyRehearsalAlwaysRollsBack(t *testing.T){
  if err:=rehearseMySQLApplicationCopy(ctx,db,raw,time.Now());err==nil{t.Fatal("injected failure accepted")}
  empty()
  if _,err:=db.Exec(`DROP TRIGGER reject_copy_check`);err!=nil{t.Fatal(err)}
+ if _,err:=db.Exec(`CREATE TRIGGER corrupt_copy_draft BEFORE INSERT ON cognara_fg_application_drafts FOR EACH ROW SET NEW.revision='corrupted'`);err!=nil{t.Fatal(err)}
+ if err:=rehearseMySQLApplicationCopy(ctx,db,raw,time.Now());err==nil{t.Fatal("corrupted projection accepted")}
+ empty()
+ if _,err:=db.Exec(`DROP TRIGGER corrupt_copy_draft`);err!=nil{t.Fatal(err)}
  if _,err:=db.Exec(`INSERT INTO cognara_fg_applications VALUES('42','existing','agent','owner',NULL,'now','{}',0)`);err!=nil{t.Fatal(err)}
  if err:=rehearseMySQLApplicationCopy(ctx,db,raw,time.Now());err==nil{t.Fatal("nonempty target accepted")}
  var count int
