@@ -446,6 +446,7 @@ const labels: Record<string, string> = {
   MILLISECOND: "毫秒",
 };
 function display(v: any, key = "") {
+  if (section.value === "settings" && key === "value") return v == null ? "—" : String(v);
   if (key === "occurred_at") return formatDateTime(v, preferences.timezone);
   if (v == null) return "—";
   return apps.value.find(a=>a.app_id===String(v))?.draft.basic.name || labels[String(v)] || String(v);
