@@ -57,6 +57,7 @@ func TestMySQLSettingsTargetedHTTPCompatibility(t *testing.T) {
 			settingsPut(t, f, "demo-user", "general", general["revision"].(string), map[string]string{"density": "compact", "timezone": "Asia/Shanghai"}, 200)
 			public := settingsRead(t, f, "demo-admin", "public")
 			settingsPut(t, f, "demo-admin", "public", public["revision"].(string), map[string]string{"notice": "企业公告"}, 200)
+			assertGovernanceNotice(t, f, "企业公告")
 			settingsPut(t, f, "demo-user", "profile", revision, map[string]string{}, 200)
 			me := decode(t, f.request("demo-user", "GET", "/api/v1/cognitive/me", nil, 200))
 			if me["name"] != "张敏" {

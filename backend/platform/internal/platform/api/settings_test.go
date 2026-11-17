@@ -129,3 +129,41 @@ func TestSettingsLegacyReadMigrationAndUserTenantIsolation(t *testing.T) {
 		t.Fatal("legacy write omitted revision")
 	}
 }
+
+func assertGovernanceNotice(t *testing.T, f *fixture, want string) {
+	t.Helper()
+	out := decode(t, f.request("demo-admin", "GET", "/api/v1/cognitive/governance/settings", nil, 200))
+	rows := out["items"].([]any)
+	if len(rows) != 1 || rows[0].(map[string]any)["name"] != "企业公告" || rows[0].(map[string]any)["value"] != want || out["mode"] != "validation" {
+		t.Fatal("public configuration differs from persisted notice", out)
+	}
+}
+func TestGovernancePublicSettingsFollowSavedValueAndRestart(t *testing.T) {
+	f := setup(t)
+	path := filepath.Join(t.TempDir(), "public-settings.json")
+	store, err := app.Open(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	f.store, f.server.Store = store, store
+	assertGovernanceNotice(t, f, "")
+	current := settingsRead(t, f, "demo-admin", "public")
+	saved := settingsPut(t, f, "demo-admin", "public", current["revision"].(string), map[string]string{"notice": "企业公告 <script>literal</script>"}, 200)
+	assertGovernanceNotice(t, f, "企业公告 <script>literal</script>")
+	reopened, err := app.Open(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	f.store, f.server.Store = reopened, reopened
+	assertGovernanceNotice(t, f, "企业公告 <script>literal</script>")
+	settingsPut(t, f, "demo-admin", "public", current["revision"].(string), map[string]string{"notice": "stale"}, 409)
+	assertGovernanceNotice(t, f, "企业公告 <script>literal</script>")
+	for _, actor := range []string{"demo-user", "demo-engineer", "demo-outsider"} {
+		f.request(actor, "GET", "/api/v1/cognitive/governance/settings", nil, 403)
+	}
+	settingsPut(t, f, "demo-admin", "public", saved["revision"].(string), map[string]string{}, 200)
+	assertGovernanceNotice(t, f, "")
+	if settingsAudit(f.store.Read()) != 2 {
+		t.Fatal("read/conflict created settings audit")
+	}
+}

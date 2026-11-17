@@ -43,4 +43,5 @@ func TestMySQLSettingsAndIdentityReadsFailExplicitlyWhenUnavailable(t *testing.T
 			t.Fatal("wrong error envelope", out)
 		}
 	}
+	f.request("demo-admin", "GET", "/api/v1/cognitive/governance/settings", nil, 503)
 }

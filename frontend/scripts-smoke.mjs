@@ -171,6 +171,18 @@ try {
   assert.equal(updated.status,status);assert.equal(updated.request_id,traceRequest);assert.notEqual(updated.revision,exceptionRevision);exceptionRevision=updated.revision;
   await exceptionRow.getByText(label,{exact:true}).waitFor();
  }
+ // Public configuration must show persisted tenant configuration, as plain text.
+ await page.goto('http://127.0.0.1:14173/governance/operations?tab=settings');
+ await page.getByRole('link',{name:'编辑公共配置',exact:true}).click();
+ await page.waitForURL('**/settings/public');await page.waitForLoadState('networkidle');
+ const notice='企业公告 <img src=x onerror=alert(1)>';
+ await page.locator('textarea').fill(notice);
+ const noticeSaved=page.waitForResponse(r=>r.request().method()==='PUT'&&r.url().endsWith('/settings/public'));
+ await page.getByRole('button',{name:'保存',exact:true}).click();assert.equal((await noticeSaved).status(),200);
+ await page.goto('http://127.0.0.1:14173/governance/operations?tab=settings');
+ const noticeRow=page.getByRole('row').filter({hasText:'企业公告'});
+ await noticeRow.getByText(notice,{exact:true}).waitFor();assert.equal(await noticeRow.locator('img').count(),0);
+ await page.reload();await noticeRow.getByText(notice,{exact:true}).waitFor();
  // Exercise the saved preference through the actual form and a fresh page load.
  await page.goto('http://127.0.0.1:14173/settings/general');
  await page.waitForLoadState('networkidle');

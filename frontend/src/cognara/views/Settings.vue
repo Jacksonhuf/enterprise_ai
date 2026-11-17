@@ -29,7 +29,7 @@
               <t-input v-else v-model="form.values[f.key]" :maxlength="f.key === 'display_name' ? 80 : 512" :placeholder="f.placeholder" /></t-form-item></t-form></t-loading
           ><t-alert v-if="form.conflict" class="spaced" theme="warning" message="服务器配置已变更。当前输入已保留，请重新加载后核对再保存。" /><t-alert
             theme="info"
-             :message="section === 'general' ? '界面密度和时区保存后生效；清空时区使用浏览器时区。语言目前仅保存偏好。' : '仅保存本地验证环境的非敏感偏好。'" /></template
+             :message="section === 'general' ? '界面密度和时区保存后生效；清空时区使用浏览器时区。语言目前仅保存偏好。' : section === 'public' ? '企业公告保存后可在平台运行与运营的公共配置中查看；尚未提供面向所有用户的公告分发。' : '仅保存本地验证环境的非敏感偏好。'" /></template
         ><template v-else-if="['models', 'model-catalog'].includes(section)"
           ><h2>模型配置</h2>
           <p class="muted">
