@@ -245,7 +245,7 @@ func normalizeApplicationCheck(value string) string {
 			out.WriteByte(c)
 			continue
 		}
-		if !quoted && (unicode.IsSpace(rune(c)) || c == '`' || c == '(' || c == ')') {
+		if !quoted && (unicode.IsSpace(rune(c)) || c == '`') {
 			continue
 		}
 		if !quoted && c >= 'A' && c <= 'Z' {
@@ -253,5 +253,36 @@ func normalizeApplicationCheck(value string) string {
 		}
 		out.WriteByte(c)
 	}
-	return out.String()
+	result := out.String()
+	// Strip only grouping enclosing the entire expression, never function/IN
+	// parentheses or operand structure.
+	for len(result) > 1 && result[0] == '(' && result[len(result)-1] == ')' {
+		depth := 0
+		literal := false
+		encloses := true
+		for i := 0; i < len(result); i++ {
+			c := result[i]
+			if c == '\'' {
+				literal = !literal
+			}
+			if literal {
+				continue
+			}
+			if c == '(' {
+				depth++
+			}
+			if c == ')' {
+				depth--
+			}
+			if depth == 0 && i < len(result)-1 {
+				encloses = false
+				break
+			}
+		}
+		if !encloses || depth != 0 {
+			break
+		}
+		result = result[1 : len(result)-1]
+	}
+	return result
 }
