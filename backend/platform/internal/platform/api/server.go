@@ -5,6 +5,7 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
+	"errors"
 	agentruntime "github.com/Tencent/WeKnora/internal/platform/adapters/runtime"
 	app "github.com/Tencent/WeKnora/internal/platform/applications"
 	"github.com/Tencent/WeKnora/internal/platform/connectors/cognitive"
@@ -302,41 +303,95 @@ func (s *Server) listApps(w http.ResponseWriter, r *http.Request) error {
 	Write(w, out)
 	return nil
 }
+func blankApplicationConfig(name, description string) app.Config {
+	return app.Config{
+		Basic:                app.Basic{Name: name, Description: description},
+		ModelPrompt:          app.ModelPrompt{ModelID: "validation-only", Prompt: "仅使用已授权能力，明确来源与限制。"},
+		CapabilityRefs:       app.CapabilityRefs{AssetRefs: []app.AssetRef{}, ServiceRefs: []app.ServiceRef{}, ToolNames: []string{}},
+		ConversationDefaults: app.ConversationDefaults{SuggestedQuestions: []string{}},
+	}
+}
+
+func applicationStoreError(err error, draftConflict, unavailable string) error {
+	if err == nil {
+		return nil
+	}
+	if errors.Is(err, app.ErrRelationalAppUnavailable) {
+		return fail(404, "ASSET_UNAVAILABLE", unavailable)
+	}
+	if errors.Is(err, app.ErrRelationalDraftConflict) {
+		return fail(409, "VERSION_INCOMPATIBLE", draftConflict)
+	}
+	if errors.Is(err, app.ErrRelationalReleaseConflict) {
+		return fail(409, "VERSION_INCOMPATIBLE", "当前发布已变化，请刷新")
+	}
+	if errors.Is(err, app.ErrRelationalCheckInvalid) {
+		return fail(409, "VERSION_INCOMPATIBLE", "检查已失效，请重新检查当前草稿")
+	}
+	return err
+}
+
 func (s *Server) createApp(w http.ResponseWriter, r *http.Request) error {
- p := Principal(r)
- if e := s.requireBuild(p); e != nil { return e }
- var req struct {
-  Mode string `json:"creation_mode"`
-  Name string `json:"name"`
-  Description string `json:"description"`
-  TemplateID string `json:"template_id"`
-  ExpectedTemplateRevision *string `json:"expected_template_revision"`
- }
- if e := Decode(r, &req); e != nil { return e }
- if len([]rune(strings.TrimSpace(req.Name))) < 1 || len([]rune(req.Name)) > 80 { return fail(400, "INVALID_REQUEST", "请输入1到80字的应用名称") }
- if req.Mode != "BLANK" && req.Mode != "TEMPLATE" { return fail(400, "INVALID_REQUEST", "创建方式无效") }
- if req.ExpectedTemplateRevision != nil && (req.Mode != "TEMPLATE" || strings.TrimSpace(*req.ExpectedTemplateRevision) == "") {
-  return fail(400, "INVALID_REQUEST", "模板版本仅用于从已有应用复制，且不能为空")
- }
- var a app.App
- if e := s.Store.UpdateOperationalContext(r.Context(), func(st *app.State) error {
-  cfg := app.Config{Basic: app.Basic{req.Name, req.Description}, ModelPrompt: app.ModelPrompt{"validation-only", "仅使用已授权能力，明确来源与限制。"}, CapabilityRefs: app.CapabilityRefs{AssetRefs: []app.AssetRef{}, ServiceRefs: []app.ServiceRef{}, ToolNames: []string{}}, ConversationDefaults: app.ConversationDefaults{SuggestedQuestions: []string{}}}
-  if req.Mode == "TEMPLATE" {
-   source, ok := st.Apps[req.TemplateID]
-   if !ok || source.TenantID != p.TenantID { return fail(404, "ASSET_UNAVAILABLE", "应用不存在或不可访问") }
-   if req.ExpectedTemplateRevision != nil && source.Revision != *req.ExpectedTemplateRevision {
-    return fail(409, "VERSION_INCOMPATIBLE", "模板草稿已更新，请刷新预览后核对")
-   }
-   cfg = source.Draft
-   cfg.Basic = app.Basic{req.Name, req.Description}
-  }
-  a = app.App{ID: app.ID("app"), AgentID: app.ID("agent"), TenantID: p.TenantID, OwnerID: p.UserID, Draft: cfg, Revision: app.ID("draft"), Releases: []app.Release{}, UpdatedAt: app.Now()}
-  st.Apps[a.ID] = a
-  return nil
- }); e != nil { return e }
- s.event(p, "application.create", a.ID, "success", "")
- Write(w, a)
- return nil
+	p := Principal(r)
+	if e := s.requireBuild(p); e != nil {
+		return e
+	}
+	var req struct {
+		Mode                     string  `json:"creation_mode"`
+		Name                     string  `json:"name"`
+		Description              string  `json:"description"`
+		TemplateID               string  `json:"template_id"`
+		ExpectedTemplateRevision *string `json:"expected_template_revision"`
+	}
+	if e := Decode(r, &req); e != nil {
+		return e
+	}
+	if len([]rune(strings.TrimSpace(req.Name))) < 1 || len([]rune(req.Name)) > 80 {
+		return fail(400, "INVALID_REQUEST", "请输入1到80字的应用名称")
+	}
+	if req.Mode != "BLANK" && req.Mode != "TEMPLATE" {
+		return fail(400, "INVALID_REQUEST", "创建方式无效")
+	}
+	if req.ExpectedTemplateRevision != nil && (req.Mode != "TEMPLATE" || strings.TrimSpace(*req.ExpectedTemplateRevision) == "") {
+		return fail(400, "INVALID_REQUEST", "模板版本仅用于从已有应用复制，且不能为空")
+	}
+	cfg := blankApplicationConfig(req.Name, req.Description)
+	template := ""
+	var expected *string
+	if req.Mode == "TEMPLATE" {
+		template = req.TemplateID
+		expected = req.ExpectedTemplateRevision
+	}
+	if a, ok, e := s.Store.TryCreateApplicationV3(r.Context(), p.TenantID, p.UserID, cfg, template, expected); ok {
+		if e = applicationStoreError(e, "模板草稿已更新，请刷新预览后核对", "应用不存在或不可访问"); e != nil {
+			return e
+		}
+		Write(w, a)
+		return nil
+	}
+	var a app.App
+	if e := s.Store.UpdateOperationalContext(r.Context(), func(st *app.State) error {
+		cfg := blankApplicationConfig(req.Name, req.Description)
+		if req.Mode == "TEMPLATE" {
+			source, ok := st.Apps[req.TemplateID]
+			if !ok || source.TenantID != p.TenantID {
+				return fail(404, "ASSET_UNAVAILABLE", "应用不存在或不可访问")
+			}
+			if req.ExpectedTemplateRevision != nil && source.Revision != *req.ExpectedTemplateRevision {
+				return fail(409, "VERSION_INCOMPATIBLE", "模板草稿已更新，请刷新预览后核对")
+			}
+			cfg = source.Draft
+			cfg.Basic = app.Basic{req.Name, req.Description}
+		}
+		a = app.App{ID: app.ID("app"), AgentID: app.ID("agent"), TenantID: p.TenantID, OwnerID: p.UserID, Draft: cfg, Revision: app.ID("draft"), Releases: []app.Release{}, UpdatedAt: app.Now()}
+		st.Apps[a.ID] = a
+		return nil
+	}); e != nil {
+		return e
+	}
+	s.event(p, "application.create", a.ID, "success", "")
+	Write(w, a)
+	return nil
 }
 func (s *Server) detail(w http.ResponseWriter, r *http.Request) error {
 	a, e := s.getApp(Principal(r), r.PathValue("app_id"), true)
@@ -379,6 +434,13 @@ func (s *Server) saveDraft(w http.ResponseWriter, r *http.Request) error {
 	}
 	if e := validateConfig(req.Config); e != nil {
 		return e
+	}
+	if out, ok, e := s.Store.TrySaveApplicationDraftV3(r.Context(), p.TenantID, r.PathValue("app_id"), p.UserID, p.ApplicationID, requestID(r), req.Expected, req.Config); ok {
+		if e = applicationStoreError(e, "草稿已被更新，请刷新后比较", "应用不存在或不可访问"); e != nil {
+			return e
+		}
+		Write(w, out)
+		return nil
 	}
 	var out app.App
 	e := s.Store.UpdateOperationalContext(r.Context(), func(st *app.State) error {
@@ -468,7 +530,15 @@ func (s *Server) checkRelease(w http.ResponseWriter, r *http.Request) error {
 		Write(w, map[string]any{"status": "BLOCKED", "issues": []string{"引用版本或权限检查未通过"}})
 		return nil
 	}
-	check := app.Check{ID: app.ID("check"), AppID: a.ID, Revision: a.Revision, UserID: p.UserID, ExpiresAt: time.Now().Add(5 * time.Minute), ValidationID: v.ID}
+	until := time.Now().Add(5 * time.Minute)
+	if check, ok, e := s.Store.TryRecordReleaseCheckV3(r.Context(), p.TenantID, a.ID, p.UserID, a.Revision, v.ID, until); ok {
+		if e = applicationStoreError(e, "草稿已更新", "应用不存在或不可访问"); e != nil {
+			return e
+		}
+		Write(w, map[string]any{"check_id": check.ID, "draft_revision": check.Revision, "valid_until": check.ExpiresAt, "status": "PASS", "issues": []string{}})
+		return nil
+	}
+	check := app.Check{ID: app.ID("check"), AppID: a.ID, Revision: a.Revision, UserID: p.UserID, ExpiresAt: until, ValidationID: v.ID}
 	if e = s.Store.UpdateOperationalContext(r.Context(), func(st *app.State) error { st.Checks[check.ID] = check; return nil }); e != nil {
 		return e
 	}
@@ -488,6 +558,13 @@ func (s *Server) release(w http.ResponseWriter, r *http.Request) error {
 	}
 	if e := Decode(r, &req); e != nil {
 		return e
+	}
+	if out, ok, e := s.Store.TryPublishReleaseV3(r.Context(), p.TenantID, r.PathValue("app_id"), p.UserID, p.ApplicationID, requestID(r), req.CheckID, req.Revision, req.Current, req.Note); ok {
+		if e = applicationStoreError(e, "草稿已被更新，请刷新后比较", "应用不存在或不可访问"); e != nil {
+			return e
+		}
+		Write(w, out)
+		return nil
 	}
 	var out app.Release
 	e := s.Store.UpdateOperationalContext(r.Context(), func(st *app.State) error {

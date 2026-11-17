@@ -92,7 +92,7 @@ func TestMySQLV3CheckWriterBindsTenantRevisionAndContainer(t *testing.T) {
 	}
 	next := a.Draft
 	next.Basic.Name = "edited"
-	if _, err = saveMySQLV3Draft(ctx, db, a.TenantID, a.ID, "engineer", a.Revision, next); err != nil {
+	if _, err = saveMySQLV3Draft(ctx, db, a.TenantID, a.ID, "engineer", "", "", a.Revision, next); err != nil {
 		t.Fatal(err)
 	}
 	if _, err = recordMySQLV3Check(ctx, db, a.TenantID, a.ID, "engineer", a.Revision, "validation-2", until); !errors.Is(err, errRelationalDraftConflict) {
@@ -233,7 +233,7 @@ func TestMySQLV3PublishConsumesCheckAtomicallyAndKeepsSnapshot(t *testing.T) {
 	}
 	next := a.Draft
 	next.Basic.Name = "after check"
-	revision, err := saveMySQLV3Draft(ctx, db, a.TenantID, a.ID, "engineer", a.Revision, next)
+	revision, err := saveMySQLV3Draft(ctx, db, a.TenantID, a.ID, "engineer", "", "", a.Revision, next)
 	if err != nil {
 		t.Fatal(err)
 	}

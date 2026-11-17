@@ -126,7 +126,7 @@ func TestMySQLV3RootWriterOwnsAggregateDomainsOnly(t *testing.T) {
 		defer wg.Done()
 		next := a.Draft
 		next.Basic.Name = "并发草稿"
-		_, e := saveMySQLV3Draft(ctx, second, a.TenantID, a.ID, "demo-engineer", a.Revision, next)
+		_, e := saveMySQLV3Draft(ctx, second, a.TenantID, a.ID, "demo-engineer", "", "", a.Revision, next)
 		errs <- e
 	}()
 	wg.Wait()

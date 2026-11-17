@@ -163,3 +163,7 @@ PR54已合并。R05-B新增内部schema3根域通用writer：锁定State并经�
 ### 第58轮增量
 
 PR55已合并。R05-B将现有业务写入入口在schema3下接到关系/根路径：通用Store更新走根域事务，设置、异常状态及审计/失败异常追加定向writer允许schema3并在写前写后做关系完整性校验；根写回保留未变子树原文、未知键及大整数精度。通用入口改应用/检查仍拒绝。验证四路并发无丢失、审计故障回滚、损坏拒绝不调用回调及六项变异捕获。启动仍拒绝schema3。下一步应用/检查/发布HTTP入口接专用writer，再进入C/D。见test-report-v0.58.md及PR最终CI。
+
+### 第59轮增量
+
+PR56已合并。R05-B应用链路HTTP入口在schema3下接专用writer：Store层Try*探测，create/saveDraft/checkRelease/release优先走关系事务；v2路径不变；创建避免重复审计；草稿审计带client/request。验证完整创建→发布序列、通用Store仍拒改应用、并发CAS与故障回滚。R05-B写入适配收口。下一步C无损快照、D显式apply。见test-report-v0.59.md及PR最终CI。

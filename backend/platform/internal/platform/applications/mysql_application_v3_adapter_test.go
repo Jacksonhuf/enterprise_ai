@@ -132,7 +132,7 @@ func TestMySQLV3StoreWritersRouteRootDomains(t *testing.T) {
 	run(func() error {
 		next := a.Draft
 		next.Basic.Name = "适配并发草稿"
-		_, e := saveMySQLV3Draft(ctx, second, tenant, a.ID, "demo-engineer", a.Revision, next)
+		_, e := saveMySQLV3Draft(ctx, second, tenant, a.ID, "demo-engineer", "", "", a.Revision, next)
 		return e
 	})
 	wg.Wait()
