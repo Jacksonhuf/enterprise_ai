@@ -12,8 +12,15 @@ try {
  for(let i=0;;i++){try{if((await fetch('http://127.0.0.1:18080/ready')).ok)break;}catch{} if(i===100)throw Error('Backend did not become ready');await new Promise(r=>setTimeout(r,100));}
  server=await preview({preview:{port:14173,strictPort:true,proxy:{'/api':{target:'http://127.0.0.1:18080',changeOrigin:true}}}});
  browser=await chromium.launch({executablePath:process.env.CHROMIUM_EXECUTABLE_PATH||'/usr/bin/chromium',args:['--no-sandbox']});
- const page=await browser.newPage({timezoneId:'UTC'});const failures=[];
- page.on('pageerror',e=>failures.push(e.message));page.on('console',m=>{if(m.type()==='error'||/Failed to resolve component|injection.*not found/.test(m.text()))failures.push(m.text());});
+ const page=await browser.newPage({timezoneId:'UTC'});const failures=[],diagnostics=[];
+ page.on('pageerror',e=>{
+  failures.push(e.message);console.error('Browser pageerror at '+page.url()+'\\n'+e.stack);
+  const location=e.stack?.match(/(http:\/\/127\.0\.0\.1:14173\/assets\/[^\s)]+\.js):(\d+):(\d+)/);
+  if(location)diagnostics.push((async()=>{
+   const source=await(await fetch(location[1])).text(),line=source.split(String.fromCharCode(10))[Number(location[2])-1]||'',column=Number(location[3])-1;
+   console.error('Browser source context: '+line.slice(Math.max(0,column-350),column+350));
+  })().catch(error=>console.error('Browser source lookup failed: '+error.message)));
+ });page.on('console',m=>{if(m.type()==='error'||/Failed to resolve component|injection.*not found/.test(m.text()))failures.push(m.text());});
  await page.goto('http://127.0.0.1:14173/login');await page.getByRole('button',{name:'进入验证工作台'}).click();await page.waitForURL('**/apps');
  await page.getByRole('button',{name:'进入应用'}).first().click();await page.waitForURL('**/chat/**');
  const input=page.locator('textarea');await input.fill('SO1002需求增加到350');await input.press('Shift+Enter');assert.equal(await page.locator('.message').count(),0);
@@ -127,6 +134,43 @@ try {
  assert.equal(grantBody.resource_id,copiedId);assert.equal(grantBody.action,'application.use');
  const grantHTTP=await grantResponse;assert.equal(grantHTTP.status(),200);const createdAccessGrant=await grantHTTP.json();
  await page.getByRole('row').filter({hasText:copiedApp.draft.basic.name}).first().waitFor();
+ // A real missing-model failure creates the exception and correlated request audit.
+ // Use Node fetch for this expected 503, so browser console failures stay unexpected.
+ const failedModel=await fetch('http://127.0.0.1:18080/api/v1/cognitive/models/not-configured/test',{method:'POST',headers:{Authorization:'Bearer demo-admin','Content-Type':'application/json'},body:'{}'});
+ assert.equal(failedModel.status,503);const failedEnvelope=await failedModel.json(),traceRequest=failedEnvelope.request_id;
+ assert.ok(traceRequest);assert.equal(failedModel.headers.get('x-request-id'),traceRequest);
+ const exceptionHTTP=await fetch('http://127.0.0.1:18080/api/v1/cognitive/governance/exceptions?query='+encodeURIComponent(traceRequest),{headers:{Authorization:'Bearer demo-admin'}});
+ assert.equal(exceptionHTTP.status,200);const originException=(await exceptionHTTP.json()).items[0];assert.equal(originException.request_id,traceRequest);
+ await page.goto('http://127.0.0.1:14173/governance/operations?tab=exceptions');
+ const exceptionRow=page.getByRole('row').filter({hasText:traceRequest});await exceptionRow.waitFor();
+ await exceptionRow.getByRole('button',{name:'详情',exact:true}).click();
+ const correlatedAudit=page.waitForResponse(r=>r.url().includes('/api/v1/cognitive/governance/audit?')&&new URL(r.url()).searchParams.get('query')===traceRequest);
+ await page.getByRole('button',{name:'查看关联审计',exact:true}).click();
+ await page.waitForURL(url=>url.pathname==='/governance/audit'&&url.searchParams.get('request_id')===traceRequest);
+ const auditHTTP=await correlatedAudit;assert.equal(auditHTTP.status(),200);const correlated=(await auditHTTP.json()).items;
+ assert.ok(correlated.length);assert.ok(correlated.every(event=>event.request_id===traceRequest));
+ assert.equal(await page.locator('.list-toolbar input').first().inputValue(),traceRequest);
+ // Exercise SPA back/forward repeatedly so pending component cleanup cannot hide behind full reloads.
+ for(let round=0;round<20;round++){
+  await page.goBack();await exceptionRow.waitFor();
+  if(round%2===0){
+   await exceptionRow.getByRole('button',{name:'详情',exact:true}).click();
+   await page.getByRole('button',{name:'查看关联审计',exact:true}).click();
+  }else await exceptionRow.getByRole('button',{name:'关联审计',exact:true}).click();
+  await page.waitForURL(url=>url.pathname==='/governance/audit'&&url.searchParams.get('request_id')===traceRequest);
+ }
+ await page.goBack();await exceptionRow.waitFor();
+ let exceptionRevision=originException.revision;
+ for(const [action,status,label] of [['确认','ACKNOWLEDGED','已确认'],['标记解决','RESOLVED','已解决'],['重新打开','OPEN','待处理']]){
+  await exceptionRow.getByRole('button',{name:action,exact:true}).click();
+  const transitionRequest=page.waitForRequest(r=>r.method()==='POST'&&r.url().endsWith('/exceptions/'+originException.id+'/status'));
+  const transitionResponse=page.waitForResponse(r=>r.request().method()==='POST'&&r.url().endsWith('/exceptions/'+originException.id+'/status'));
+  await page.getByRole('button',{name:'确认更新',exact:true}).click();
+  const mutation=(await transitionRequest).postDataJSON();assert.equal(mutation.expected_revision,exceptionRevision);assert.equal(mutation.status,status);
+  const response=await transitionResponse;assert.equal(response.status(),200);const updated=await response.json();
+  assert.equal(updated.status,status);assert.equal(updated.request_id,traceRequest);assert.notEqual(updated.revision,exceptionRevision);exceptionRevision=updated.revision;
+  await exceptionRow.getByText(label,{exact:true}).waitFor();
+ }
  // Exercise the saved preference through the actual form and a fresh page load.
  await page.goto('http://127.0.0.1:14173/settings/general');
  await page.waitForLoadState('networkidle');
@@ -159,5 +203,5 @@ try {
  await page.goto('http://127.0.0.1:14173/apps');await page.waitForLoadState('networkidle');
  assert.equal(await page.locator('.application-card').filter({hasText:copiedApp.draft.basic.name}).count(),0);
  assert.equal(await page.locator('.application-card').filter({hasText:publishedDraft.draft.basic.name}).count(),1);
- assert.deepEqual(failures,[]);console.log('PASS Chromium: login, chat Enter/Shift+Enter, business result, 13 routes, service input/output contract and raw definition, historical release restore/reload/live snapshot protection, checked publication diff/unchanged baseline/real publish, independent template selector/preview/versioned copy, reviewed user grant/entry/revocation isolation, saved density/timezone/reload/account isolation, no component/runtime errors');
+ await Promise.all(diagnostics);assert.deepEqual(failures,[]);console.log('PASS Chromium: login, chat Enter/Shift+Enter, business result, 13 routes, service input/output contract and raw definition, historical release restore/reload/live snapshot protection, checked publication diff/unchanged baseline/real publish, independent template selector/preview/versioned copy, reviewed user grant/entry/revocation isolation, real failure/audit trace/20 repeated SPA/detail transitions/exception lifecycle, saved density/timezone/reload/account isolation, no component/runtime errors');
 } finally {await browser?.close();if(server)await new Promise(r=>server.httpServer.close(r));backend.kill('SIGTERM');await new Promise(r=>backend.exitCode!==null?r():backend.once('exit',r));await rm(temp,{recursive:true,force:true});}
