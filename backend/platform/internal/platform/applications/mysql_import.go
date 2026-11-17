@@ -18,7 +18,7 @@ import (
 // No existing record is ever updated. DDL may remain if a later transaction fails.
 func ImportMySQLSnapshot(parent context.Context, dsn, path, expectedSHA string, sourceVersion int) (SnapshotReport, error) {
 	var report SnapshotReport
-	if sourceVersion != 1 && sourceVersion != 2 && sourceVersion != 3 && sourceVersion != 4 && sourceVersion != 5 && sourceVersion != 6 {
+	if sourceVersion != 1 && sourceVersion != 2 && sourceVersion != 3 && sourceVersion != 4 && sourceVersion != 5 && sourceVersion != 6 && sourceVersion != 7 {
 		return report, errors.New("snapshot schema version unsupported")
 	}
 	expected, e := hex.DecodeString(expectedSHA)
@@ -82,9 +82,21 @@ func ImportMySQLSnapshot(parent context.Context, dsn, path, expectedSHA string, 
 			return report, e
 		}
 	}
+	var exceptionRows []exceptionLayoutRow
+	if sourceVersion == 7 {
+		stateRaw, layout, grantRows, sessionRows, settingsRows, exceptionRows, auditPayloads, auditEvents, e = parseMySQLV7(raw)
+		if e != nil {
+			return report, e
+		}
+	}
 	var object map[string]json.RawMessage
 	var state State
-	if sourceVersion == 6 {
+	if sourceVersion == 7 {
+		state, e = stateFromV7Snapshot(stateRaw, layout, grantRows, sessionRows, settingsRows, exceptionRows)
+		if e != nil {
+			return report, errors.New("snapshot structure invalid")
+		}
+	} else if sourceVersion == 6 {
 		state, e = stateFromV6Snapshot(stateRaw, layout, grantRows, sessionRows, settingsRows)
 		if e != nil {
 			return report, errors.New("snapshot structure invalid")
@@ -144,29 +156,34 @@ func ImportMySQLSnapshot(parent context.Context, dsn, path, expectedSHA string, 
 	if e = validateMySQLStateSchema(ctx, db, cfg.DBName); e != nil {
 		return report, errors.New("MySQL import schema incompatible")
 	}
-	if sourceVersion == 2 || sourceVersion == 3 || sourceVersion == 4 || sourceVersion == 5 || sourceVersion == 6 {
+	if sourceVersion == 2 || sourceVersion == 3 || sourceVersion == 4 || sourceVersion == 5 || sourceVersion == 6 || sourceVersion == 7 {
 		if _, e = db.ExecContext(ctx, mysqlAuditDDL); e != nil {
 			return report, errors.New("MySQL audit import schema unavailable")
 		}
 	}
-	if sourceVersion == 3 || sourceVersion == 4 || sourceVersion == 5 || sourceVersion == 6 {
+	if sourceVersion == 3 || sourceVersion == 4 || sourceVersion == 5 || sourceVersion == 6 || sourceVersion == 7 {
 		if e = createMySQLApplicationSchema(ctx, db); e != nil {
 			return report, errors.New("MySQL application import schema unavailable")
 		}
 	}
-	if sourceVersion == 4 || sourceVersion == 5 || sourceVersion == 6 {
+	if sourceVersion == 4 || sourceVersion == 5 || sourceVersion == 6 || sourceVersion == 7 {
 		if e = createMySQLGrantSchema(ctx, db); e != nil {
 			return report, errors.New("MySQL grant import schema unavailable")
 		}
 	}
-	if sourceVersion == 5 || sourceVersion == 6 {
+	if sourceVersion == 5 || sourceVersion == 6 || sourceVersion == 7 {
 		if e = createMySQLSessionSchema(ctx, db); e != nil {
 			return report, errors.New("MySQL session import schema unavailable")
 		}
 	}
-	if sourceVersion == 6 {
+	if sourceVersion == 6 || sourceVersion == 7 {
 		if e = createMySQLSettingsSchema(ctx, db); e != nil {
 			return report, errors.New("MySQL settings import schema unavailable")
+		}
+	}
+	if sourceVersion == 7 {
+		if e = createMySQLExceptionSchema(ctx, db); e != nil {
+			return report, errors.New("MySQL exception import schema unavailable")
 		}
 	}
 	tx, e := db.BeginTx(ctx, nil)
@@ -178,27 +195,32 @@ func ImportMySQLSnapshot(parent context.Context, dsn, path, expectedSHA string, 
 	if _, e = tx.ExecContext(ctx, `INSERT INTO cognara_fg_state(id,schema_version,body) VALUES(1,?,?)`, sourceVersion, string(stateRaw)); e != nil {
 		return report, errors.New("MySQL import refused; target must contain no state record")
 	}
-	if sourceVersion == 3 || sourceVersion == 4 || sourceVersion == 5 || sourceVersion == 6 {
+	if sourceVersion == 3 || sourceVersion == 4 || sourceVersion == 5 || sourceVersion == 6 || sourceVersion == 7 {
 		if e = applyMySQLApplicationLayout(ctx, tx, layout); e != nil {
 			return report, errors.New("MySQL relational import rejected")
 		}
 	}
-	if sourceVersion == 4 || sourceVersion == 5 || sourceVersion == 6 {
+	if sourceVersion == 4 || sourceVersion == 5 || sourceVersion == 6 || sourceVersion == 7 {
 		if e = applyMySQLGrantSnapshot(ctx, tx, grantRows); e != nil {
 			return report, errors.New("MySQL grant import rejected")
 		}
 	}
-	if sourceVersion == 5 || sourceVersion == 6 {
+	if sourceVersion == 5 || sourceVersion == 6 || sourceVersion == 7 {
 		if e = applyMySQLSessionSnapshot(ctx, tx, sessionRows); e != nil {
 			return report, errors.New("MySQL session import rejected")
 		}
 	}
-	if sourceVersion == 6 {
+	if sourceVersion == 6 || sourceVersion == 7 {
 		if e = applyMySQLSettingsSnapshot(ctx, tx, settingsRows); e != nil {
-			return report, errors.New("MySQL v6 settings import rejected")
+			return report, errors.New("MySQL settings import rejected")
 		}
 	}
-	if sourceVersion == 2 || sourceVersion == 3 || sourceVersion == 4 || sourceVersion == 5 || sourceVersion == 6 {
+	if sourceVersion == 7 {
+		if e = applyMySQLExceptionSnapshot(ctx, tx, exceptionRows); e != nil {
+			return report, errors.New("MySQL v7 exception import rejected")
+		}
+	}
+	if sourceVersion == 2 || sourceVersion == 3 || sourceVersion == 4 || sourceVersion == 5 || sourceVersion == 6 || sourceVersion == 7 {
 		if e = validateMySQLAuditSchema(ctx, tx); e != nil {
 			return report, errors.New("MySQL audit import schema incompatible")
 		}
@@ -230,12 +252,17 @@ func ImportMySQLSnapshot(parent context.Context, dsn, path, expectedSHA string, 
 			return report, errors.New("MySQL v6 import reconciliation failed")
 		}
 	}
+	if sourceVersion == 7 {
+		if _, _, e = readMySQLApplicationV7(ctx, tx, true); e != nil {
+			return report, errors.New("MySQL v7 import reconciliation failed")
+		}
+	}
 	if e = tx.Commit(); e != nil {
 		return report, errors.New("MySQL import commit not confirmed; inspect target before retry")
 	}
 	report.SourceSchemaVersion = sourceVersion
 	report.AuditEvents = len(state.Audit)
-	if sourceVersion == 2 || sourceVersion == 3 || sourceVersion == 4 || sourceVersion == 5 || sourceVersion == 6 {
+	if sourceVersion == 2 || sourceVersion == 3 || sourceVersion == 4 || sourceVersion == 5 || sourceVersion == 6 || sourceVersion == 7 {
 		report.AuditEvents = len(auditEvents)
 	}
 	report.SHA256 = hex.EncodeToString(sum[:])
