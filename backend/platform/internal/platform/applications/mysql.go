@@ -50,8 +50,19 @@ func OpenMySQLContext(parent context.Context, dsn string) (*Store, error) {
 	if _, e = db.ExecContext(ctx, `INSERT INTO cognara_fg_state(id,schema_version,body) VALUES(1,1,?) ON DUPLICATE KEY UPDATE id=id`, string(raw)); e != nil {
 		return bad("MySQL initial state unavailable")
 	}
-	if _, e = s.readSQLContext(ctx); e != nil {
+	// Do not activate schema3 merely because the read path can reconstruct it.
+	// Writers/snapshots must be complete before startup may accept this version.
+	startup, err := db.BeginTx(ctx, &sql.TxOptions{ReadOnly: true, Isolation: sql.LevelRepeatableRead})
+	if err != nil {
+		return bad("MySQL stored state unavailable")
+	}
+	_, startupVersion, err := readStateRow(ctx, startup, false, true, true)
+	if err != nil || (startupVersion != 1 && startupVersion != 2) {
+		startup.Rollback()
 		return bad("MySQL stored state or schema version unsupported")
+	}
+	if err = startup.Commit(); err != nil {
+		return bad("MySQL stored state validation failed")
 	}
 	return s, nil
 }
