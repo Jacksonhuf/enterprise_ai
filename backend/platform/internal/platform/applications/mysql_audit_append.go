@@ -88,12 +88,21 @@ func (s *Store) AppendMySQLObservabilityContext(parent context.Context, events [
 		}
 	}
 	if exception != nil {
-		query := `UPDATE cognara_fg_state SET body=JSON_ARRAY_APPEND(body,'$.exceptions',CAST(? AS JSON)) WHERE id=1`
-		if string(exceptionsKind) != "ARRAY" {
-			query = `UPDATE cognara_fg_state SET body=JSON_SET(body,'$.exceptions',JSON_ARRAY(CAST(? AS JSON))) WHERE id=1`
-		}
-		if _, e = tx.ExecContext(ctx, query, string(exceptionRaw)); e != nil {
-			return true, e
+		if version == 7 {
+			if e = validateMySQLExceptionSchema(ctx, tx); e != nil {
+				return true, e
+			}
+			if e = insertMySQLExceptionRow(ctx, tx, exception); e != nil {
+				return true, e
+			}
+		} else {
+			query := `UPDATE cognara_fg_state SET body=JSON_ARRAY_APPEND(body,'$.exceptions',CAST(? AS JSON)) WHERE id=1`
+			if string(exceptionsKind) != "ARRAY" {
+				query = `UPDATE cognara_fg_state SET body=JSON_SET(body,'$.exceptions',JSON_ARRAY(CAST(? AS JSON))) WHERE id=1`
+			}
+			if _, e = tx.ExecContext(ctx, query, string(exceptionRaw)); e != nil {
+				return true, e
+			}
 		}
 	}
 	if mySQLRelationalRuntimeVersion(version) {

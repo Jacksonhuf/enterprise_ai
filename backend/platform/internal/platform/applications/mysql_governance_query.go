@@ -71,6 +71,13 @@ func (s *Store) queryMySQLGovernanceArray(parent context.Context, section, tenan
 	if e = validateMySQLAuditSchema(ctx, tx); e != nil {
 		return nil, false, true, e
 	}
+	if version == 7 && section == "exceptions" {
+		items, more, _, err := queryMySQLExceptionsRelational(ctx, tx, tenant, after, limit, match, idOf)
+		if err != nil {
+			return nil, false, true, err
+		}
+		return items, more, true, tx.Commit()
+	}
 	if len(kind) > 0 && string(kind) != "NULL" && string(kind) != "ARRAY" {
 		return nil, false, true, errors.New("invalid governance array storage")
 	}

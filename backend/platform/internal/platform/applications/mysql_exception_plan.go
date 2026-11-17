@@ -120,6 +120,7 @@ func planExceptionSource(root []byte) (ExceptionMigrationPlan, error) {
 	checksum := sha256.Sum256(root)
 	result.SourceSchemaVersion, result.TargetSchemaVersion = 6, 7
 	result.Status, result.ReadOnly = "PLAN_VALIDATED", true
+	result.ApplySupported = true
 	result.SourceSHA256 = hex.EncodeToString(checksum[:])
 	result.SampledAt = time.Now().UTC().Format(time.RFC3339Nano)
 	return result, nil
