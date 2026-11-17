@@ -267,7 +267,7 @@ import { Loading as TLoading } from "tdesign-vue-next/es/loading";
 import { Select as TSelect } from "tdesign-vue-next/es/select";
 import { TabPanel as TTabPanel } from "tdesign-vue-next/es/tabs";
 import { Tabs as TTabs } from "tdesign-vue-next/es/tabs";
-import { ref, computed, reactive, watch, onMounted, onBeforeUnmount } from "vue";
+import { ref, computed, reactive, watch, onMounted, onBeforeUnmount, nextTick } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { Dialog as TDialog } from "tdesign-vue-next/es/dialog";
 import { MessagePlugin } from "tdesign-vue-next/es/message";
@@ -307,8 +307,8 @@ const grantMutation=reactive(new GrantMutation({
 const exceptionChange=reactive(new ExceptionTransition((id,body)=>api(prefix+"/governance/exceptions/"+encodeURIComponent(id)+"/status",{method:"POST",body:JSON.stringify(body),signal:AbortSignal.timeout(15000)})));
 const reloadingException=ref(false);
 const reloadingGrant=ref(false);
-let pageActive=true,appsGeneration=0;
-onBeforeUnmount(()=>{pageActive=false;appsGeneration++;grantMutation.invalidate();exceptionChange.invalidate()});
+let pageActive=true,appsGeneration=0,auditNavigation=0;
+onBeforeUnmount(()=>{pageActive=false;appsGeneration++;auditNavigation++;grantMutation.invalidate();exceptionChange.invalidate()});
 const accessTabs = {
     users: "企业用户",
     groups: "用户组",
@@ -544,8 +544,13 @@ async function reloadExceptionState(){
   exceptionChange.blocked=false;exceptionChange.close();
  }finally{reloadingException.value=false}
 }
-function showRequestAudit(value:unknown){
- const location=auditTraceLocation(value);if(location&&!exceptionChange.saving)void router.push(location);
+async function showRequestAudit(value:unknown){
+ const location=auditTraceLocation(value);if(!location||exceptionChange.saving)return;
+ const generation=++auditNavigation;
+ selected.value=null;
+ await nextTick();
+ await new Promise<void>(resolve=>requestAnimationFrame(()=>resolve()));
+ if(pageActive&&generation===auditNavigation)await router.push(location);
 }
 function resetGrant() {
   grant.value.subject_id = subjectOptions.value[0]?.value || "";

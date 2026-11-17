@@ -151,9 +151,12 @@ try {
  assert.ok(correlated.length);assert.ok(correlated.every(event=>event.request_id===traceRequest));
  assert.equal(await page.locator('.list-toolbar input').first().inputValue(),traceRequest);
  // Exercise SPA back/forward repeatedly so pending component cleanup cannot hide behind full reloads.
- for(let round=0;round<12;round++){
+ for(let round=0;round<20;round++){
   await page.goBack();await exceptionRow.waitFor();
-  await exceptionRow.getByRole('button',{name:'关联审计',exact:true}).click();
+  if(round%2===0){
+   await exceptionRow.getByRole('button',{name:'详情',exact:true}).click();
+   await page.getByRole('button',{name:'查看关联审计',exact:true}).click();
+  }else await exceptionRow.getByRole('button',{name:'关联审计',exact:true}).click();
   await page.waitForURL(url=>url.pathname==='/governance/audit'&&url.searchParams.get('request_id')===traceRequest);
  }
  await page.goBack();await exceptionRow.waitFor();
@@ -200,5 +203,5 @@ try {
  await page.goto('http://127.0.0.1:14173/apps');await page.waitForLoadState('networkidle');
  assert.equal(await page.locator('.application-card').filter({hasText:copiedApp.draft.basic.name}).count(),0);
  assert.equal(await page.locator('.application-card').filter({hasText:publishedDraft.draft.basic.name}).count(),1);
- await Promise.all(diagnostics);assert.deepEqual(failures,[]);console.log('PASS Chromium: login, chat Enter/Shift+Enter, business result, 13 routes, service input/output contract and raw definition, historical release restore/reload/live snapshot protection, checked publication diff/unchanged baseline/real publish, independent template selector/preview/versioned copy, reviewed user grant/entry/revocation isolation, real failure/audit trace/exception lifecycle, saved density/timezone/reload/account isolation, no component/runtime errors');
+ await Promise.all(diagnostics);assert.deepEqual(failures,[]);console.log('PASS Chromium: login, chat Enter/Shift+Enter, business result, 13 routes, service input/output contract and raw definition, historical release restore/reload/live snapshot protection, checked publication diff/unchanged baseline/real publish, independent template selector/preview/versioned copy, reviewed user grant/entry/revocation isolation, real failure/audit trace/20 repeated SPA/detail transitions/exception lifecycle, saved density/timezone/reload/account isolation, no component/runtime errors');
 } finally {await browser?.close();if(server)await new Promise(r=>server.httpServer.close(r));backend.kill('SIGTERM');await new Promise(r=>backend.exitCode!==null?r():backend.once('exit',r));await rm(temp,{recursive:true,force:true});}
