@@ -57,7 +57,22 @@ func OpenMySQLContext(parent context.Context, dsn string) (*Store, error) {
 		return bad("MySQL stored state unavailable")
 	}
 	_, startupVersion, err := readStateRow(ctx, startup, false, true, true)
-	if err != nil || (startupVersion != 1 && startupVersion != 2) {
+	if err != nil {
+		startup.Rollback()
+		return bad("MySQL stored state or schema version unsupported")
+	}
+	switch startupVersion {
+	case 1, 2:
+	case 3:
+		if err = validateMySQLApplicationSchema(ctx, startup); err != nil {
+			startup.Rollback()
+			return bad("MySQL schema3 application schema incompatible")
+		}
+		if _, _, err = readMySQLApplicationV3(ctx, startup, true); err != nil {
+			startup.Rollback()
+			return bad("MySQL schema3 application state incompatible")
+		}
+	default:
 		startup.Rollback()
 		return bad("MySQL stored state or schema version unsupported")
 	}

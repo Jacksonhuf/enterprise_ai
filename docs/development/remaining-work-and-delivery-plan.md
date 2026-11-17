@@ -171,3 +171,7 @@ PR56已合并。R05-B应用链路HTTP入口在schema3下接专用writer：Store�
 ### 第60轮增量
 
 PR57已合并。R05-C实现schema3无损快照：`ExportMySQLSnapshot`/`ImportMySQLSnapshot`支持schema_version=3，封装state_root、关系表原文与审计payload；抽取`applyMySQLApplicationLayout`与`scanMySQLApplicationLayout`。验证导出→空库导入→再导出保真、损坏拒绝、启动仍拒schema3。v2桥接不替代。下一步R05-D显式apply与版本切换门禁。见test-report-v0.60.md及PR最终CI。
+
+### 第61轮增量
+
+PR58已合并基线。R05-D：`ApplyMySQLApplications`+CLI `--apply --expect-sha256`；`OpenMySQL`在合法schema3 handoff后启动。验证 plan/apply/导出、错 checksum、非法 version 拒绝及原 v3 回归。R05 主项待生产切换演练与多实例重启收口。见 test-report-v0.61.md 及 PR 最终 CI。

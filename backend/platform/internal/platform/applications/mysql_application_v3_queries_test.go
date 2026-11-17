@@ -122,9 +122,10 @@ func TestMySQLApplicationV3LegacyReadProjectionsAndCorruptWriteRejection(t *test
 	if _, e = os.Stat(snapshot); e != nil {
 		t.Fatal("schema3 snapshot missing", e)
 	}
-	if opened, e := OpenMySQL(dsn); e == nil {
+	if opened, e := OpenMySQL(dsn); e != nil {
+		t.Fatal("runtime rejected valid schema3", e)
+	} else {
 		opened.Close()
-		t.Fatal("runtime enabled")
 	}
 	if _, err = db.Exec(`UPDATE cognara_fg_application_envelope SET root_payload='{"duplicate":true}' WHERE id=1`); err != nil {
 		t.Fatal(err)

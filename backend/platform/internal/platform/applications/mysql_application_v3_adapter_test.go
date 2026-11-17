@@ -189,9 +189,10 @@ func TestMySQLV3StoreWritersRouteRootDomains(t *testing.T) {
 			t.Fatal(name, "partial write persisted")
 		}
 	}
-	if opened, e := OpenMySQL(dsn); e == nil {
+	if opened, e := OpenMySQL(dsn); e != nil {
+		t.Fatal("runtime rejected valid schema3", e)
+	} else {
 		opened.Close()
-		t.Fatal("runtime opened schema3")
 	}
 }
 

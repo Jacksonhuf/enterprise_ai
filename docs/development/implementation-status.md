@@ -339,3 +339,7 @@ PR56已合并。四条认知应用写入口在schema3下走Store Try*与专用wr
 ## 第60轮：schema3无损快照
 
 PR57已合并。公共导出/导入支持schema3关系布局原文封装；导入同事务写根、关系表与审计并重组校验。见test-report-v0.60.md和PR。显式apply与启动开放仍待D阶段；OpenMySQL继续拒绝schema3。
+
+## 第61轮：schema3 显式 apply
+
+PR待合入。`ApplyMySQLApplications` 与 `cognara-migrate-applications --apply`；校验通过后单事务 root handoff 并切换 schema3；`OpenMySQL` 接受经 apply/import/演练验证的 schema3。见 test-report-v0.61.md 与 PR。

@@ -71,10 +71,11 @@ func TestMySQLV3SnapshotRoundTripPreservesRawLayout(t *testing.T) {
 		t.Fatal("draft raw drifted")
 	}
 	rdb := preflightDB(t, target)
-	if opened, e := OpenMySQL(target); e == nil {
-		opened.Close()
-		t.Fatal("runtime opened schema3 import")
+	opened, e := OpenMySQL(target)
+	if e != nil {
+		t.Fatal("runtime rejected schema3 import", e)
 	}
+	opened.Close()
 	vtx, e := rdb.BeginTx(ctx, &sql.TxOptions{ReadOnly: true, Isolation: sql.LevelRepeatableRead})
 	if e != nil {
 		t.Fatal(e)

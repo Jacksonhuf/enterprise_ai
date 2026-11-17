@@ -13,8 +13,8 @@ import (
 	"github.com/go-sql-driver/mysql"
 )
 
-// ApplicationMigrationPlan is a read-only snapshot report, never an apply token.
-// Version 3 is reserved by the design; no v3 writer/runtime is enabled here.
+// ApplicationMigrationPlan is a read-only snapshot report from --check; apply uses
+// SourceSHA256 with ApplyMySQLApplications or cognara-migrate-applications --apply.
 type ApplicationMigrationPlan struct {
 	SourceSchemaVersion int    `json:"source_schema_version"`
 	TargetSchemaVersion int    `json:"target_schema_version"`
