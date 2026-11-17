@@ -206,7 +206,7 @@ func validateApplicationTable(ctx context.Context, q applicationSchemaQuery, tab
 		expected, ok := spec.checks[name]
 		if !ok || enforced != "YES" || normalizeApplicationCheck(clause) != normalizeApplicationCheck(expected) {
 			rows.Close()
-			return errors.New("check differs")
+			return fmt.Errorf("check differs: %s", name)
 		}
 		count++
 	}
@@ -239,6 +239,9 @@ func normalizeApplicationCheck(value string) string {
 		}
 		if !quoted && (unicode.IsSpace(rune(c)) || c == '`' || c == '(' || c == ')') {
 			continue
+		}
+		if !quoted && c >= 'A' && c <= 'Z' {
+			c += 'a' - 'A'
 		}
 		out.WriteByte(c)
 	}

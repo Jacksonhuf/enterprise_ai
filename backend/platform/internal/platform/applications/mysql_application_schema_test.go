@@ -3,11 +3,12 @@ package applications
 import (
 	"context"
 	"github.com/Tencent/WeKnora/internal/platform/testsupport"
+	"strings"
 	"testing"
 )
 
 func TestApplicationCheckNormalizationPreservesLiteralSemantics(t *testing.T) {
-	if normalizeApplicationCheck("(json_type(`config`) = _utf8mb4'OBJECT')") != normalizeApplicationCheck("json_type(config)='OBJECT'") {
+	if normalizeApplicationCheck("(JSON_TYPE(`config`) = _utf8mb4'OBJECT')") != normalizeApplicationCheck("json_type(config)='OBJECT'") {
 		t.Fatal("MySQL formatting rejected")
 	}
 	for _, clause := range []string{"json_type(config)='OB JECT'", "json_type(config)='OBJ(ECT)'", "json_type(config)='OB_utf8mb4JECT'", "json_type(config)='object'", "json_type(config)='OBJECT' OR 1"} {
@@ -23,6 +24,17 @@ func TestMySQLApplicationSchemaAndTenantForeignKeys(t *testing.T) {
 		t.Fatal(err)
 	}
 	if err := validateMySQLApplicationSchema(ctx, db); err != nil {
+		rows, e := db.Query(`SELECT CONSTRAINT_NAME,CHECK_CLAUSE FROM information_schema.CHECK_CONSTRAINTS WHERE CONSTRAINT_SCHEMA=DATABASE()`)
+		if e == nil {
+			for rows.Next() {
+				var name, clause string
+				if e = rows.Scan(&name, &clause); e != nil {
+					break
+				}
+				t.Logf("DDL CHECK %s: %s [normalized=%s]", name, clause, normalizeApplicationCheck(clause))
+			}
+			rows.Close()
+		}
 		t.Fatal(err)
 	}
 	tx, err := db.BeginTx(ctx, nil)
@@ -68,7 +80,7 @@ func TestMySQLApplicationSchemaRejectsIncompatibleLayouts(t *testing.T) {
 		"missing-table":   "DROP TABLE cognara_fg_application_drafts",
 		"extra-column":    "ALTER TABLE cognara_fg_application_drafts ADD extension INT NULL",
 		"default-column":  "ALTER TABLE cognara_fg_application_drafts ALTER COLUMN revision SET DEFAULT 'fallback'",
-		"cascade-fk":      "ALTER TABLE cognara_fg_application_drafts DROP FOREIGN KEY draft_application_fk, ADD CONSTRAINT draft_application_fk FOREIGN KEY(tenant_id,app_id) REFERENCES cognara_fg_applications(tenant_id,app_id) ON UPDATE RESTRICT ON DELETE CASCADE",
+		"cascade-fk":      "ALTER TABLE cognara_fg_application_drafts DROP FOREIGN KEY draft_application_fk; ALTER TABLE cognara_fg_application_drafts ADD CONSTRAINT draft_application_fk FOREIGN KEY(tenant_id,app_id) REFERENCES cognara_fg_applications(tenant_id,app_id) ON UPDATE RESTRICT ON DELETE CASCADE",
 		"wrong-column":    "ALTER TABLE cognara_fg_application_drafts MODIFY revision VARBINARY(64) NOT NULL",
 		"missing-fk":      "ALTER TABLE cognara_fg_application_drafts DROP FOREIGN KEY draft_application_fk",
 		"disabled-check":  "ALTER TABLE cognara_fg_application_drafts ALTER CHECK draft_config_object NOT ENFORCED",
@@ -83,8 +95,13 @@ func TestMySQLApplicationSchemaRejectsIncompatibleLayouts(t *testing.T) {
 			if err := createMySQLApplicationSchema(ctx, db); err != nil {
 				t.Fatal(err)
 			}
-			if _, err := db.Exec(statement); err != nil {
-				t.Fatal("fixture mutation failed", err)
+			if err := validateMySQLApplicationSchema(ctx, db); err != nil {
+				t.Fatal("valid baseline rejected before mutation", err)
+			}
+			for _, part := range strings.Split(statement, ";") {
+				if _, err := db.Exec(part); err != nil {
+					t.Fatal("fixture mutation failed", err)
+				}
 			}
 			if err := validateMySQLApplicationSchema(ctx, db); err == nil {
 				t.Fatal("incompatible schema accepted")
