@@ -387,3 +387,7 @@ PR61已合并。`cognara-migrate-grants --check`、`cognara_fg_grants` DDL、gra
 ## 第72轮：R08 settings apply 与 schema6 读
 
 `ApplyMySQLSettings`、`cognara-migrate-settings --apply`；`readMySQLApplicationV6` 与 settings 关系读/写投影。根域禁止再写 settings。无 schema6 快照。见 test-report-v0.72.md。
+
+## 第73轮：R08 schema6 快照
+
+`ExportMySQLSnapshot`/`ImportMySQLSnapshot` schema6；settings 行级保真。见 test-report-v0.73.md。

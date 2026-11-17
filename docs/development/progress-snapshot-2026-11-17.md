@@ -25,7 +25,7 @@
 | 实现完成（代码） | R05 | 1 | schema3 A–D与apply后重启/双连接等价已专项；生产运维切换与R20多实例未验收 |
 | 实现完成（代码） | R06 | 1 | schema4 迁移/读/写/快照闭环；生产 apply 与 R20 多实例另验 |
 | 实现完成（代码） | R07 | 1 | schema5 迁移/读/写/快照闭环（v0.67–70）；分页/脱敏/R20 另验 |
-| 部分实现/仍开发中 | R08 | 1 | settings schema6 apply+读（v0.72）；快照/专用 writer、exceptions/usage 待做 |
+| 部分实现/仍开发中 | R08 | 1 | settings schema6 plan→快照（v0.73）；exceptions/usage、专用 writer 待做 |
 | 待开发或联合约定 | R02、R09、R11、R13–R15、R18–R22 | 11 | 既有局部能力不等于满足整项验收 |
 | 待真实外部联调 | R10、R12、R16 | 3 | 身份、A–E、商业模型 |
 | 待首期范围确认 | R17 | 1 | 按实际启用组件逐项验收 |
@@ -67,7 +67,7 @@ R05代码侧A–D已闭环（PR59–60）：新装默认仍为 schema1/2；生�
 
 ## 下一步开发顺序
 
-1. **R08** settings schema6 快照/专用 writer；exceptions/usage 切片；并行 **R20** 与 **R07** 分页/脱敏验收。
+1. **R08** exceptions/usage 切片与 settings 专用 writer；并行 **R20** 与 **R07** 分页/脱敏验收。
 2. 并行 **R02/R03** 页面映射与 UI 回归；**R09/R11** 对齐身份与 A–E 契约。
 3. **R07–R08** 会话与异常/用量/设置拆表；**R20** 正式多实例与容量。
 4. 生产 MySQL 切换走 migrate-audit → migrate-applications check/apply，与快照备份演练配套。
