@@ -99,3 +99,13 @@ go build -C backend/platform -tags=nomsgpack -o /tmp/cognara-migrate-application
 - `--check`已真实调用拆分→重组→对账，成功报告新增`round_trip_verified:true`；`apply_supported:false`不变，仍拒绝已存在的目标表。没有启用schema3 reader/writer、写入影子副本或修改源库。
 
 下一批R05是事务内SQL复制、原文/投影验证与数据库重载对账，再适配schema3读写/投影/快照导入导出，全部通过前不提升schema_version。
+
+## 9. 第47轮：原文持久化与独立数据库重组
+
+四张尚未公开启用的目标表各新增`raw_payload LONGBLOB NOT NULL`：分别保存应用头、草稿配置、发布完整记录、检查完整记录。原有`metadata/config/snapshot JSON`列降为原文的数据库查询投影；不可用MySQL归一化后的JSON列反向生成权威原文。标识、时间、版本、指针、发布顺序等标量投影仍逐字段核对。原始JSON的数值表示、高精度小数和扩展字段由二进制列保留。
+
+新增内部`cognara_fg_application_envelope`：`id TINYINT UNSIGNED PRIMARY KEY CHECK(id=1)`、`root_payload LONGBLOB NOT NULL`、`checks_kind VARBINARY(8) NOT NULL`。它保存本次隔离复制的剩余根对象及checks缺失/null/object形态；应用的releases null/[]沿用父表标记。该表不设租户访问API，根对象本身是原聚合状态的跨租户迁移封套，不能作为普通租户查询入口。公共只读预检将它列为保留目标，已有旧版内部DDL也不自动ALTER接管。
+
+这是隔离迁移验证的持久化布局，尚非运行时schema3的生产写入路径。当前源State仍是唯一运行时权威，内部复制函数仅供回滚演练和隔离测试。后续接schema3时，剩余聚合域必须继续由单一已选定的根存储持有；不得同时让state.body与此envelope根副本接受业务写入。应在迁移屏障事务内决定根封套归属并改造原投影，不能直接把本次隔离副本当作实时影子库。
+
+数据库重载不接受源JSON或内存layout：在调用方同一一致性事务中读取封套、四表原文和发布ordinal，校验连续顺序、父子归属、记录数、原文/SQL投影一致性后重组。复制阶段再与源JSON严格对账，允许键顺序、空白、字符串转义差异，数值字面值不归一化。完整原始字节SHA不保证相同。提交/关闭连接池/重新连接后的隔离测试检验独立持久化；这不是正式运行时重启或生产备份恢复验收。

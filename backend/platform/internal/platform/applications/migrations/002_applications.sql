@@ -6,6 +6,7 @@ CREATE TABLE cognara_fg_applications (
  current_release_id VARBINARY(512) NULL,
  updated_at VARCHAR(64) NOT NULL,
  metadata JSON NOT NULL,
+ raw_payload LONGBLOB NOT NULL,
  releases_is_null BOOLEAN NOT NULL,
  PRIMARY KEY(tenant_id,app_id),
  UNIQUE KEY application_id(app_id),
@@ -19,6 +20,7 @@ CREATE TABLE cognara_fg_application_drafts (
  app_id VARBINARY(512) NOT NULL,
  revision VARBINARY(512) NOT NULL,
  config JSON NOT NULL,
+ raw_payload LONGBLOB NOT NULL,
  PRIMARY KEY(tenant_id,app_id),
  CONSTRAINT draft_application_fk FOREIGN KEY(tenant_id,app_id) REFERENCES cognara_fg_applications(tenant_id,app_id) ON UPDATE RESTRICT ON DELETE RESTRICT,
  CONSTRAINT draft_config_object CHECK(JSON_TYPE(config)='OBJECT')
@@ -32,6 +34,7 @@ CREATE TABLE cognara_fg_application_releases (
  published_at VARCHAR(64) NOT NULL,
  published_by VARBINARY(512) NOT NULL,
  metadata JSON NOT NULL,
+ raw_payload LONGBLOB NOT NULL,
  PRIMARY KEY(tenant_id,app_id,release_id),
  UNIQUE KEY release_ordinal(tenant_id,app_id,ordinal),
  CONSTRAINT release_application_fk FOREIGN KEY(tenant_id,app_id) REFERENCES cognara_fg_applications(tenant_id,app_id) ON UPDATE RESTRICT ON DELETE RESTRICT,
@@ -47,6 +50,7 @@ CREATE TABLE cognara_fg_application_checks (
  expires_at VARCHAR(64) NOT NULL,
  validation_id VARBINARY(512) NOT NULL,
  metadata JSON NOT NULL,
+ raw_payload LONGBLOB NOT NULL,
  PRIMARY KEY(tenant_id,check_id),
  UNIQUE KEY check_id(check_id),
  KEY check_application(tenant_id,app_id,check_id),
@@ -54,3 +58,10 @@ CREATE TABLE cognara_fg_application_checks (
  CONSTRAINT check_metadata_object CHECK(JSON_TYPE(metadata)='OBJECT')
 ) ENGINE=InnoDB DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_bin;
 ALTER TABLE cognara_fg_applications ADD CONSTRAINT application_current_fk FOREIGN KEY(tenant_id,app_id,current_release_id) REFERENCES cognara_fg_application_releases(tenant_id,app_id,release_id) ON UPDATE RESTRICT ON DELETE RESTRICT;
+CREATE TABLE cognara_fg_application_envelope (
+ id TINYINT UNSIGNED NOT NULL,
+ root_payload LONGBLOB NOT NULL,
+ checks_kind VARBINARY(8) NOT NULL,
+ PRIMARY KEY(id),
+ CONSTRAINT application_envelope_singleton CHECK(id=1)
+) ENGINE=InnoDB DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_bin;
