@@ -391,3 +391,7 @@ PR61已合并。`cognara-migrate-grants --check`、`cognara_fg_grants` DDL、gra
 ## 第73轮：R08 schema6 快照
 
 `ExportMySQLSnapshot`/`ImportMySQLSnapshot` schema6；settings 行级保真。见 test-report-v0.73.md。
+
+## 第74轮：R08 exceptions plan 与 DDL
+
+`cognara-migrate-exceptions --check`、`cognara_fg_exceptions` DDL、exceptions 数组拆装与内部彩排复制。要求 schema6；目标 schema7 仅在计划中登记。见 test-report-v0.74.md。

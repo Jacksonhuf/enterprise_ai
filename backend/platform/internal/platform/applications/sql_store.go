@@ -101,7 +101,7 @@ func (s *Store) updateSQLContext(parent context.Context, fn func(*State) error, 
 		if e = tx.QueryRowContext(ctx, `SELECT schema_version FROM cognara_fg_state WHERE id=1 FOR UPDATE`).Scan(&locked); e != nil {
 			return e
 		}
-		if locked == 3 || locked == 4 || locked == 5 {
+		if locked == 3 || locked == 4 || locked == 5 || locked == 6 {
 			next, e := updateMySQLV3RootTx(ctx, tx, operational, fn)
 			if e != nil {
 				return e
