@@ -84,13 +84,20 @@ func TestOpenMySQLRejectsHandTunedSchema4(t *testing.T) {
 	if _, err = ApplyMySQLGrants(ctx, dsn, plan.SourceSHA256); err != nil {
 		t.Fatal(err)
 	}
-	if _, err = db.Exec(`UPDATE cognara_fg_state SET schema_version=4 WHERE id=1`); err != nil {
+	var body []byte
+	if err = db.QueryRow(`SELECT body FROM cognara_fg_state WHERE id=1`).Scan(&body); err != nil {
 		t.Fatal(err)
 	}
-	if _, err = db.Exec(`DELETE FROM cognara_fg_grants LIMIT 1`); err != nil {
+	var object map[string]json.RawMessage
+	if json.Unmarshal(body, &object) != nil {
+		t.Fatal(err)
+	}
+	object["grants"] = json.RawMessage(`[]`)
+	corrupt, _ := json.Marshal(object)
+	if _, err = db.Exec(`UPDATE cognara_fg_state SET body=? WHERE id=1`, string(corrupt)); err != nil {
 		t.Fatal(err)
 	}
 	if _, e := OpenMySQL(dsn); e == nil {
-		t.Fatal("corrupt schema4 accepted")
+		t.Fatal("ambiguous schema4 root accepted")
 	}
 }
