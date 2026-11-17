@@ -16,7 +16,7 @@ func (s *Store) mysqlGrantSchema4(ctx context.Context) (bool, error) {
 	if err := s.db.QueryRowContext(ctx, `SELECT schema_version FROM cognara_fg_state WHERE id=1`).Scan(&version); err != nil {
 		return false, err
 	}
-	return version == 4, nil
+	return version == 4 || version == 5, nil
 }
 
 // TryMutateGrantsV4 applies grant create/revoke mutations on schema 4 relational storage.

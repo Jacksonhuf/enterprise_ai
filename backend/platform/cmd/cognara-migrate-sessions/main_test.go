@@ -6,6 +6,14 @@ import (
 	"testing"
 )
 
+func TestSessionMigrationApplyRequiresExpectSHA(t *testing.T) {
+	var stdout, stderr bytes.Buffer
+	status := run([]string{"--apply"}, &stdout, &stderr, func(string) string { t.Fatal("unexpected database access"); return "" })
+	if status != 2 || stdout.Len() != 0 {
+		t.Fatal(status)
+	}
+}
+
 func TestSessionPlannerCLIRequiresCheck(t *testing.T) {
 	for _, args := range [][]string{nil, {"--apply"}, {"--check", "extra"}} {
 		var stdout, stderr bytes.Buffer
