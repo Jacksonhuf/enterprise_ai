@@ -395,3 +395,7 @@ PR61已合并。`cognara-migrate-grants --check`、`cognara_fg_grants` DDL、gra
 ## 第74轮：R08 exceptions plan 与 DDL
 
 `cognara-migrate-exceptions --check`、`cognara_fg_exceptions` DDL、exceptions 数组拆装与内部彩排复制。要求 schema6；目标 schema7 仅在计划中登记。见 test-report-v0.74.md。
+
+## 第75轮：R08 exceptions apply 与 schema7 读
+
+`ApplyMySQLExceptions`、`cognara-migrate-exceptions --apply`；schema7 关系读/写（状态、列表、观测追加）。无 schema7 快照。见 test-report-v0.75.md。

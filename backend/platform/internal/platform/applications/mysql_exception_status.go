@@ -72,6 +72,61 @@ func (s *Store) UpdateMySQLExceptionContext(parent context.Context, tenant, id s
 	if e = validateMySQLAuditSchema(ctx, tx); e != nil {
 		return nil, true, e
 	}
+	var raw []byte
+	if version == 7 {
+		e = tx.QueryRowContext(ctx, `SELECT raw_payload FROM cognara_fg_exceptions WHERE tenant_id=? AND exception_id=?`, tenant, id).Scan(&raw)
+		if errors.Is(e, sql.ErrNoRows) {
+			return nil, true, ErrExceptionUnavailable
+		}
+		if e != nil {
+			return nil, true, e
+		}
+		var item map[string]any
+		decoder := json.NewDecoder(bytes.NewReader(raw))
+		decoder.UseNumber()
+		if decoder.Decode(&item) != nil || item == nil || item["id"] != id || item["tenant_id"] != tenant {
+			return nil, true, errors.New("invalid selected exception")
+		}
+		patch, e := mutate(item)
+		if e != nil {
+			return nil, true, e
+		}
+		if patch == nil || patch.Revision == "" || len(patch.Audit) == 0 || (patch.Status != "OPEN" && patch.Status != "ACKNOWLEDGED" && patch.Status != "RESOLVED") {
+			return nil, true, errors.New("invalid exception patch")
+		}
+		if _, e = time.Parse(time.RFC3339Nano, patch.UpdatedAt); e != nil {
+			return nil, true, errors.New("invalid exception update time")
+		}
+		for _, event := range patch.Audit {
+			if event.TenantID != tenant {
+				return nil, true, errors.New("exception audit tenant mismatch")
+			}
+		}
+		var last uint64
+		if e = tx.QueryRowContext(ctx, `SELECT COALESCE(MAX(sequence_no),0) FROM cognara_fg_audit`).Scan(&last); e != nil {
+			return nil, true, e
+		}
+		if e = insertMySQLAudit(ctx, tx, patch.Audit, last); e != nil {
+			return nil, true, e
+		}
+		item["status"] = patch.Status
+		item["revision"] = patch.Revision
+		item["updated_at"] = patch.UpdatedAt
+		item["updated_by"] = patch.UpdatedBy
+		if e = updateMySQLExceptionRow(ctx, tx, tenant, id, patch, item); e != nil {
+			return nil, true, e
+		}
+		if e = tx.QueryRowContext(ctx, `SELECT raw_payload FROM cognara_fg_exceptions WHERE tenant_id=? AND exception_id=?`, tenant, id).Scan(&raw); e != nil {
+			return nil, true, e
+		}
+		if _, _, e = readMySQLApplicationV7(ctx, tx, false); e != nil {
+			return nil, true, e
+		}
+		if e = tx.Commit(); e != nil {
+			return nil, true, e
+		}
+		return json.RawMessage(raw), true, nil
+	}
 	if len(kind) == 0 || string(kind) == "NULL" {
 		return nil, true, ErrExceptionUnavailable
 	}
@@ -79,7 +134,6 @@ func (s *Store) UpdateMySQLExceptionContext(parent context.Context, tenant, id s
 		return nil, true, errors.New("invalid exception storage")
 	}
 	var ordinal uint64
-	var raw []byte
 	e = tx.QueryRowContext(ctx, `SELECT j.pos,JSON_EXTRACT(s.body,CONCAT('$.exceptions[',j.pos-1,']')) FROM cognara_fg_state s CROSS JOIN JSON_TABLE(s.body,'$.exceptions[*]' COLUMNS(pos FOR ORDINALITY)) j WHERE s.id=1 AND JSON_TYPE(JSON_EXTRACT(s.body,CONCAT('$.exceptions[',j.pos-1,'].id')))='STRING' AND CAST(JSON_UNQUOTE(JSON_EXTRACT(s.body,CONCAT('$.exceptions[',j.pos-1,'].id'))) AS BINARY)=CAST(? AS BINARY) AND JSON_TYPE(JSON_EXTRACT(s.body,CONCAT('$.exceptions[',j.pos-1,'].tenant_id')))='STRING' AND CAST(JSON_UNQUOTE(JSON_EXTRACT(s.body,CONCAT('$.exceptions[',j.pos-1,'].tenant_id'))) AS BINARY)=CAST(? AS BINARY) ORDER BY j.pos LIMIT 1`, id, tenant).Scan(&ordinal, &raw)
 	if errors.Is(e, sql.ErrNoRows) {
 		return nil, true, ErrExceptionUnavailable

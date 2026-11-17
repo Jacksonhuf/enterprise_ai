@@ -9,7 +9,7 @@ import (
 func TestExceptionMigrationPlanRoundTripOnSchema6(t *testing.T) {
 	dsn, _ := schema6ExceptionRoot(t)
 	report, err := PlanMySQLExceptions(context.Background(), dsn)
-	if err != nil || !report.RoundTripVerified || report.SourceSchemaVersion != 6 || report.TargetSchemaVersion != 7 || report.ApplySupported {
+	if err != nil || !report.RoundTripVerified || report.SourceSchemaVersion != 6 || report.TargetSchemaVersion != 7 || !report.ApplySupported {
 		t.Fatal(report, err)
 	}
 	if report.Exceptions != 2 {

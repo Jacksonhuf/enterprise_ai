@@ -123,6 +123,31 @@ func OpenMySQLContext(parent context.Context, dsn string) (*Store, error) {
 			startup.Rollback()
 			return bad("MySQL schema6 application state incompatible")
 		}
+	case 7:
+		if err = validateMySQLApplicationSchema(ctx, startup); err != nil {
+			startup.Rollback()
+			return bad("MySQL schema7 application schema incompatible")
+		}
+		if err = validateMySQLGrantSchema(ctx, startup); err != nil {
+			startup.Rollback()
+			return bad("MySQL schema7 grant schema incompatible")
+		}
+		if err = validateMySQLSessionSchema(ctx, startup); err != nil {
+			startup.Rollback()
+			return bad("MySQL schema7 session schema incompatible")
+		}
+		if err = validateMySQLSettingsSchema(ctx, startup); err != nil {
+			startup.Rollback()
+			return bad("MySQL schema7 settings schema incompatible")
+		}
+		if err = validateMySQLExceptionSchema(ctx, startup); err != nil {
+			startup.Rollback()
+			return bad("MySQL schema7 exception schema incompatible")
+		}
+		if _, _, err = readMySQLApplicationV7(ctx, startup, true); err != nil {
+			startup.Rollback()
+			return bad("MySQL schema7 application state incompatible")
+		}
 	default:
 		startup.Rollback()
 		return bad("MySQL stored state or schema version unsupported")

@@ -38,7 +38,7 @@ func updateMySQLV3RootTx(ctx context.Context, tx *sql.Tx, operational bool, fn f
 		return zero, err
 	}
 	if !mySQLRelationalRuntimeVersion(version) {
-		return zero, errors.New("relational root writer requires schema 3, 4, 5, or 6")
+		return zero, errors.New("relational root writer requires schema 3, 4, 5, 6, or 7")
 	}
 	var st State
 	var err error
@@ -51,6 +51,8 @@ func updateMySQLV3RootTx(ctx context.Context, tx *sql.Tx, operational bool, fn f
 		st, _, err = readMySQLApplicationV5(ctx, tx, !operational)
 	case 6:
 		st, _, err = readMySQLApplicationV6(ctx, tx, !operational)
+	case 7:
+		st, _, err = readMySQLApplicationV7(ctx, tx, !operational)
 	default:
 		return zero, errors.New("relational root writer schema unsupported")
 	}
@@ -71,6 +73,10 @@ func updateMySQLV3RootTx(ctx context.Context, tx *sql.Tx, operational bool, fn f
 		return zero, err
 	}
 	revisionsBefore, err := json.Marshal(st.SettingRevisions)
+	if err != nil {
+		return zero, err
+	}
+	exceptionsBefore, err := json.Marshal(st.Exceptions)
 	if err != nil {
 		return zero, err
 	}
@@ -133,6 +139,13 @@ func updateMySQLV3RootTx(ctx context.Context, tx *sql.Tx, operational bool, fn f
 	if version == 6 && (!equalApplicationJSON(settingsBefore, settingsAfter) || !equalApplicationJSON(revisionsBefore, revisionsAfter)) {
 		return zero, errRelationalSettingsDomain
 	}
+	exceptionsAfter, err := json.Marshal(st.Exceptions)
+	if err != nil {
+		return zero, err
+	}
+	if version == 7 && !equalApplicationJSON(exceptionsBefore, exceptionsAfter) {
+		return zero, errRelationalExceptionDomain
+	}
 	if operational {
 		if len(st.Audit) > 0 {
 			var last uint64
@@ -170,6 +183,8 @@ func updateMySQLV3RootTx(ctx context.Context, tx *sql.Tx, operational bool, fn f
 		_, _, err = readMySQLApplicationV5(ctx, tx, false)
 	case 6:
 		_, _, err = readMySQLApplicationV6(ctx, tx, false)
+	case 7:
+		_, _, err = readMySQLApplicationV7(ctx, tx, false)
 	}
 	if err != nil {
 		return zero, err
@@ -197,6 +212,9 @@ func rootDomainsJSON(st State, version int) ([]byte, error) {
 	if version >= 6 {
 		delete(fields, "settings")
 		delete(fields, "setting_revisions")
+	}
+	if version >= 7 {
+		delete(fields, "exceptions")
 	}
 	return json.Marshal(fields)
 }
