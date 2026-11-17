@@ -1,6 +1,7 @@
 package api
 
 import (
+	"encoding/json"
 	app "github.com/Tencent/WeKnora/internal/platform/applications"
 	"github.com/Tencent/WeKnora/internal/platform/governance"
 	"net/http"
@@ -11,6 +12,20 @@ func (s *Server) governanceList(w http.ResponseWriter, r *http.Request) error {
 	p := Principal(r)
 	if e := s.requireAdmin(p); e != nil {
 		return e
+	}
+	// Public configuration shares the tenant-scoped persisted source with Settings.
+	// Read it before the aggregate fallback, preserving MySQL projection/error semantics.
+	if r.PathValue("section") == "settings" {
+		value, _, err := s.readSettings(r, p, "public")
+		if err != nil {
+			return err
+		}
+		var values map[string]string
+		if err = json.Unmarshal(value, &values); err != nil {
+			return err
+		}
+		Write(w, map[string]any{"items": []map[string]string{{"name": "企业公告", "value": values["notice"]}}, "sampled_at": app.Now(), "mode": "validation"})
+		return nil
 	}
 	if r.PathValue("section") == "audit" {
 		if handled, e := s.auditDatabasePage(w, r); handled || e != nil {
@@ -89,8 +104,6 @@ func (s *Server) governanceList(w http.ResponseWriter, r *http.Request) error {
 		}
 		Write(w, b)
 		return nil
-	case "settings":
-		items = []map[string]any{{"name": "默认语言", "value": "简体中文"}, {"name": "时区", "value": "Asia/Shanghai"}, {"name": "数据标记", "value": "合成验证数据"}}
 	default:
 		return fail(404, "ASSET_UNAVAILABLE", "管理功能不存在")
 	}

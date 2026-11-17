@@ -28,6 +28,16 @@ try {
  await page.goto('http://127.0.0.1:14173/apps');await page.evaluate(()=>localStorage.setItem('cognara_demo_identity','demo-admin'));
  const routes=['/apps','/build/apps','/build/apps/channel-replenishment','/build/apps/channel-replenishment/edit','/assets','/services','/governance/access','/governance/audit','/governance/operations','/settings/profile','/settings/general','/settings/models','/forbidden'];
  for(const route of routes){await page.goto('http://127.0.0.1:14173'+route);await page.locator('h1, .wk-empty-state__title').first().waitFor();await page.waitForLoadState('networkidle');assert.ok((await page.locator('h1, .wk-empty-state__title').first().innerText()).trim());}
+ // Exercise RadioGroup observer callbacks while a resized open drawer is unmounted by SPA back.
+ await page.goto('http://127.0.0.1:14173/apps');
+ for(let cycle=0;cycle<8;cycle++){
+  await page.locator('.sidebar a.nav-link[href="/build/apps"]').click();await page.waitForURL('**/build/apps');
+  await page.getByRole('button',{name:'新建应用',exact:true}).first().click();
+  await page.getByText('从现有应用复制',{exact:true}).click();
+  await page.setViewportSize({width:1280+cycle*8,height:720});
+  await page.goBack();await page.waitForURL('**/apps');
+ }
+ await page.setViewportSize({width:1280,height:720});
  // Inspect the published service contract without executing it or inventing output fields.
  await page.goto('http://127.0.0.1:14173/services');
  await page.locator('.resource-card').filter({hasText:'补货缺口分析'}).getByRole('button',{name:'详情',exact:true}).click();
@@ -171,6 +181,19 @@ try {
   assert.equal(updated.status,status);assert.equal(updated.request_id,traceRequest);assert.notEqual(updated.revision,exceptionRevision);exceptionRevision=updated.revision;
   await exceptionRow.getByText(label,{exact:true}).waitFor();
  }
+ // Public configuration must show persisted text, without identity-label substitution or HTML.
+ for(const notice of ['demo-user','企业公告 <img src=x onerror=alert(1)>']){
+  await page.goto('http://127.0.0.1:14173/governance/operations?tab=settings');
+  await page.getByRole('link',{name:'编辑公共配置',exact:true}).click();
+  await page.waitForURL('**/settings/public');await page.waitForLoadState('networkidle');
+  await page.locator('textarea').fill(notice);
+  const noticeSaved=page.waitForResponse(r=>r.request().method()==='PUT'&&r.url().endsWith('/settings/public'));
+  await page.getByRole('button',{name:'保存',exact:true}).click();assert.equal((await noticeSaved).status(),200);
+  await page.goto('http://127.0.0.1:14173/governance/operations?tab=settings');
+  const noticeRow=page.getByRole('row').filter({hasText:'企业公告'});
+  await noticeRow.getByText(notice,{exact:true}).waitFor();assert.equal(await noticeRow.locator('img').count(),0);
+  await page.reload();await noticeRow.getByText(notice,{exact:true}).waitFor();
+ }
  // Exercise the saved preference through the actual form and a fresh page load.
  await page.goto('http://127.0.0.1:14173/settings/general');
  await page.waitForLoadState('networkidle');
@@ -203,5 +226,5 @@ try {
  await page.goto('http://127.0.0.1:14173/apps');await page.waitForLoadState('networkidle');
  assert.equal(await page.locator('.application-card').filter({hasText:copiedApp.draft.basic.name}).count(),0);
  assert.equal(await page.locator('.application-card').filter({hasText:publishedDraft.draft.basic.name}).count(),1);
- await Promise.all(diagnostics);assert.deepEqual(failures,[]);console.log('PASS Chromium: login, chat Enter/Shift+Enter, business result, 13 routes, service input/output contract and raw definition, historical release restore/reload/live snapshot protection, checked publication diff/unchanged baseline/real publish, independent template selector/preview/versioned copy, reviewed user grant/entry/revocation isolation, real failure/audit trace/20 repeated SPA/detail transitions/exception lifecycle, saved density/timezone/reload/account isolation, no component/runtime errors');
+ await Promise.all(diagnostics);assert.deepEqual(failures,[]);console.log('PASS Chromium: login, chat Enter/Shift+Enter, business result, 13 routes, 8 RadioGroup resize/drawer/SPA unmount cycles, literal public notice/reload, service input/output contract and raw definition, historical release restore/reload/live snapshot protection, checked publication diff/unchanged baseline/real publish, independent template selector/preview/versioned copy, reviewed user grant/entry/revocation isolation, real failure/audit trace/20 repeated SPA/detail transitions/exception lifecycle, saved density/timezone/reload/account isolation, no component/runtime errors');
 } finally {await browser?.close();if(server)await new Promise(r=>server.httpServer.close(r));backend.kill('SIGTERM');await new Promise(r=>backend.exitCode!==null?r():backend.once('exit',r));await rm(temp,{recursive:true,force:true});}

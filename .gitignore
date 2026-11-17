@@ -16,6 +16,9 @@ __pycache__/
 !/frontend/package.json
 !/frontend/package-lock.json
 !/frontend/vite.config.ts
+!/frontend/scripts-tdesign-lifecycle.mjs
+!/frontend/scripts-tdesign-lifecycle.test.mjs
+!/frontend/scripts-tdesign-lifecycle.d.mts
 !/frontend/tsconfig*.json
 !/frontend/env.d.ts
 !/frontend/src/

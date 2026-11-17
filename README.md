@@ -4,6 +4,8 @@
 
 企业认知平台 F/G 开发仓库。采用 Vue 3 / TypeScript / TDesign 前端与 Go 后端，通过固定版本脚本导入 WeKnora 源码，在功能目录内扩展应用、治理和业务服务适配。
 
+后续任务与验收入口：[F/G剩余任务与开发测试计划](docs/development/remaining-work-and-delivery-plan.md)。按任务ID记录每轮实现、测试证据与外部依赖。
+
 ## 本次可运行范围
 
 - 应用列表、空白/模板创建、四组配置、保存草稿、发布检查、不可变发布历史。

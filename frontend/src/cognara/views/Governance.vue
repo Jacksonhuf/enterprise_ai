@@ -16,6 +16,7 @@
     <t-alert v-if="grantMutation.error && !grantVisible && !grantMutation.visible" theme="error" :message="grantMutation.error" /><t-button v-if="grantMutation.blocked && !grantVisible && !grantMutation.visible"  :loading="reloadingGrant" @click="reloadGrantState">重新加载授权列表</t-button>
     <t-alert v-if="exceptionChange.error && !exceptionChange.visible" theme="error" :message="exceptionChange.error" />
     <t-button v-if="exceptionChange.blocked && !exceptionChange.visible" :loading="reloadingException" @click="reloadExceptionState">重新加载异常列表</t-button>
+    <t-alert v-if="section === 'settings'" theme="info" message="这里展示当前企业已保存的公告；尚未提供面向所有用户的公告分发。"><template #operation><router-link to="/settings/public">编辑公共配置</router-link></template></t-alert>
     <t-alert v-if="error" theme="error" :message="error" /><t-tabs
       v-if="isAccess"
       :value="section"
@@ -445,6 +446,7 @@ const labels: Record<string, string> = {
   MILLISECOND: "毫秒",
 };
 function display(v: any, key = "") {
+  if (section.value === "settings" && key === "value") return v == null ? "—" : String(v);
   if (key === "occurred_at") return formatDateTime(v, preferences.timezone);
   if (v == null) return "—";
   return apps.value.find(a=>a.app_id===String(v))?.draft.basic.name || labels[String(v)] || String(v);
