@@ -33,12 +33,20 @@ func (s *Store) QueryMySQLAuditFiltered(parent context.Context, tenant, after st
 		return nil, false, false, e
 	}
 	defer tx.Rollback()
-	_, version, e := readStateRow(ctx, tx, false, true, false)
+	var version int
+	e = tx.QueryRowContext(ctx, `SELECT schema_version FROM cognara_fg_state WHERE id=1`).Scan(&version)
+	if e == nil {
+		if version == 3 {
+			_, _, e = readMySQLApplicationV3(ctx, tx, false)
+		} else {
+			_, version, e = readStateRow(ctx, tx, false, true, false)
+		}
+	}
 	if e != nil {
 		return nil, false, false, e
 	}
-	if version != 2 || tenant == "" {
-		return nil, false, version == 2, tx.Commit()
+	if (version != 2 && version != 3) || tenant == "" {
+		return nil, false, version == 2 || version == 3, tx.Commit()
 	}
 	if limit < 1 || limit > 100 || match == nil {
 		return nil, false, true, errors.New("invalid audit query")

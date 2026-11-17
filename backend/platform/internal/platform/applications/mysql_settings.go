@@ -102,8 +102,13 @@ func readMySQLSettingsProjection(ctx context.Context, tx *sql.Tx, key, legacy st
 	if version == 1 {
 		return SettingsRecord{}, false, nil
 	}
-	if version != 2 {
+	if version != 2 && !(version == 3 && !lock) {
 		return SettingsRecord{}, true, errors.New("unsupported state schema")
+	}
+	if version == 3 {
+		if _, _, e = readMySQLApplicationV3(ctx, tx, false); e != nil {
+			return SettingsRecord{}, true, e
+		}
 	}
 	var names []string
 	if json.Unmarshal(keys, &names) != nil {
@@ -112,6 +117,9 @@ func readMySQLSettingsProjection(ctx context.Context, tx *sql.Tx, key, legacy st
 	for _, name := range names {
 		for _, canonical := range []string{"settings", "setting_revisions", "audit"} {
 			if name != canonical && strings.EqualFold(name, canonical) {
+				if version == 3 {
+					return SettingsRecord{}, true, errors.New("ambiguous schema3 settings aliases")
+				}
 				return SettingsRecord{}, false, nil
 			}
 		}
