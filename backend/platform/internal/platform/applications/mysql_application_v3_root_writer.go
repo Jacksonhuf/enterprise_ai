@@ -14,84 +14,159 @@ var errRelationalApplicationDomain = errors.New("application and check changes r
 // check rows have dedicated writers; a callback changing them is rejected so the
 // root never becomes a second authority. Audit keeps the schema2 rules: an
 // operational callback sees no history and may only add events; a full callback
-// may append but never alter existing events. Startup and HTTP stay gated.
+// may append but never alter existing events. Store.Update* routes schema3 here;
+// OpenMySQL still refuses to start on schema3.
 func updateMySQLV3Root(ctx context.Context, db *sql.DB, operational bool, fn func(*State) error) error {
 	tx, err := db.BeginTx(ctx, &sql.TxOptions{Isolation: sql.LevelSerializable})
 	if err != nil {
 		return err
 	}
 	defer tx.Rollback()
-	var version int
-	var root []byte
-	if err = tx.QueryRowContext(ctx, `SELECT schema_version,body FROM cognara_fg_state WHERE id=1 FOR UPDATE`).Scan(&version, &root); err != nil {
+	if _, err = updateMySQLV3RootTx(ctx, tx, operational, fn); err != nil {
 		return err
 	}
+	return tx.Commit()
+}
+
+// The caller commits; the returned State is the committed view including any
+// new audit events the callback added.
+func updateMySQLV3RootTx(ctx context.Context, tx *sql.Tx, operational bool, fn func(*State) error) (State, error) {
+	var zero State
+	var version int
+	var root []byte
+	if err := tx.QueryRowContext(ctx, `SELECT schema_version,body FROM cognara_fg_state WHERE id=1 FOR UPDATE`).Scan(&version, &root); err != nil {
+		return zero, err
+	}
 	if version != 3 {
-		return errors.New("relational root writer requires schema 3")
+		return zero, errors.New("relational root writer requires schema 3")
 	}
 	st, _, err := readMySQLApplicationV3(ctx, tx, !operational)
 	if err != nil {
-		return err
+		return zero, err
 	}
 	apps, err := json.Marshal(st.Apps)
 	if err != nil {
-		return err
+		return zero, err
 	}
 	checks, err := json.Marshal(st.Checks)
 	if err != nil {
-		return err
+		return zero, err
 	}
 	previous := append([]Event(nil), st.Audit...)
+	unchanged := st
+	unchanged.Audit = nil
+	baseline, err := rootDomainsJSON(unchanged)
+	if err != nil {
+		return zero, err
+	}
 	if err = fn(&st); err != nil {
-		return err
+		return zero, err
 	}
 	nextApps, err := json.Marshal(st.Apps)
 	if err != nil {
-		return err
+		return zero, err
 	}
 	nextChecks, err := json.Marshal(st.Checks)
 	if err != nil {
-		return err
+		return zero, err
 	}
 	if !equalApplicationJSON(apps, nextApps) || !equalApplicationJSON(checks, nextChecks) {
-		return errRelationalApplicationDomain
+		return zero, errRelationalApplicationDomain
 	}
 	if operational {
 		if len(st.Audit) > 0 {
 			var last uint64
 			if err = tx.QueryRowContext(ctx, `SELECT COALESCE(MAX(sequence_no),0) FROM cognara_fg_audit`).Scan(&last); err != nil {
-				return err
+				return zero, err
 			}
 			if err = insertMySQLAudit(ctx, tx, st.Audit, last); err != nil {
-				return err
+				return zero, err
 			}
 		}
 	} else if err = appendMySQLAudit(ctx, tx, previous, st.Audit); err != nil {
-		return err
+		return zero, err
 	}
 	stored := st
 	stored.Audit = nil
-	body, err := json.Marshal(stored)
+	body, err := rootDomainsJSON(stored)
 	if err != nil {
-		return err
+		return zero, err
+	}
+	if body, err = mergeRootJSON(root, baseline, body); err != nil {
+		return zero, err
+	}
+	if body, err = preserveMySQLStateEnvelope(root, body); err != nil {
+		return zero, err
+	}
+	if _, err = tx.ExecContext(ctx, `UPDATE cognara_fg_state SET body=? WHERE id=1`, string(body)); err != nil {
+		return zero, err
+	}
+	if _, _, err = readMySQLApplicationV3(ctx, tx, false); err != nil {
+		return zero, err
+	}
+	return st, nil
+}
+
+func rootDomainsJSON(st State) ([]byte, error) {
+	body, err := json.Marshal(st)
+	if err != nil {
+		return nil, err
 	}
 	var fields map[string]json.RawMessage
 	if err = json.Unmarshal(body, &fields); err != nil {
-		return err
+		return nil, err
 	}
 	delete(fields, "apps")
 	delete(fields, "checks")
-	if body, err = json.Marshal(fields); err != nil {
-		return err
+	return json.Marshal(fields)
+}
+
+// Typed State decoding rounds large numbers and drops unknown keys. Untouched
+// subtrees therefore keep the stored text, objects merge per key keeping keys
+// the typed view never saw, and array elements reuse the stored element only
+// when they equal a later old element in order, so removals never graft one
+// element's unknown fields onto a neighbour; changed elements take the new value.
+func mergeRootJSON(source, old, next []byte) ([]byte, error) {
+	if len(source) > 0 && equalApplicationJSON(old, next) {
+		return append([]byte(nil), source...), nil
 	}
-	if body, err = preserveMySQLStateEnvelope(root, body); err != nil {
-		return err
+	var src, oldObj, nextObj map[string]json.RawMessage
+	if json.Unmarshal(next, &nextObj) == nil && nextObj != nil && json.Unmarshal(source, &src) == nil && src != nil && json.Unmarshal(old, &oldObj) == nil && oldObj != nil {
+		for key := range oldObj {
+			if _, kept := nextObj[key]; !kept {
+				delete(src, key)
+			}
+		}
+		for key, value := range nextObj {
+			original, stored := src[key]
+			previous, known := oldObj[key]
+			if !stored || !known {
+				src[key] = value
+				continue
+			}
+			merged, err := mergeRootJSON(original, previous, value)
+			if err != nil {
+				return nil, err
+			}
+			src[key] = merged
+		}
+		return json.Marshal(src)
 	}
-	if _, err = tx.ExecContext(ctx, `UPDATE cognara_fg_state SET body=? WHERE id=1`, string(body)); err != nil {
-		return err
+	var srcArr, oldArr, nextArr []json.RawMessage
+	if json.Unmarshal(next, &nextArr) == nil && nextArr != nil && json.Unmarshal(source, &srcArr) == nil && json.Unmarshal(old, &oldArr) == nil && len(srcArr) == len(oldArr) {
+		out := make([]json.RawMessage, len(nextArr))
+		cursor := 0
+		for i, value := range nextArr {
+			out[i] = value
+			for j := cursor; j < len(oldArr); j++ {
+				if equalApplicationJSON(oldArr[j], value) {
+					out[i] = srcArr[j]
+					cursor = j + 1
+					break
+				}
+			}
+		}
+		return json.Marshal(out)
 	}
-	if _, _, err = readMySQLApplicationV3(ctx, tx, false); err != nil {
-		return err
-	}
-	return tx.Commit()
+	return append([]byte(nil), next...), nil
 }

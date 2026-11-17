@@ -57,8 +57,8 @@ func readStateRowSource(ctx context.Context, tx *sql.Tx, lock, relational, inclu
 	if e := tx.QueryRowContext(ctx, query).Scan(&version, &raw); e != nil {
 		return st, version, raw, e
 	}
-	// Read-only schema3 reconstruction is ready independently of writers.
-	// Locking callers are legacy writers and must remain rejected until adapted.
+	// Locking schema3 writes go through updateMySQLV3RootTx; a locking caller
+	// reaching here would bypass the relational application guard.
 	if relational && version == 3 && !lock {
 		next, source, err := readMySQLApplicationV3(ctx, tx, includeAudit)
 		return next, version, source, err
@@ -96,6 +96,26 @@ func (s *Store) updateSQLContext(parent context.Context, fn func(*State) error, 
 		return e
 	}
 	defer tx.Rollback()
+	if s.dialect == "mysql" {
+		var locked int
+		if e = tx.QueryRowContext(ctx, `SELECT schema_version FROM cognara_fg_state WHERE id=1 FOR UPDATE`).Scan(&locked); e != nil {
+			return e
+		}
+		if locked == 3 {
+			next, e := updateMySQLV3RootTx(ctx, tx, operational, fn)
+			if e != nil {
+				return e
+			}
+			if e = tx.Commit(); e != nil {
+				return e
+			}
+			if operational {
+				next.Audit = nil
+			}
+			s.state = next
+			return nil
+		}
+	}
 	next, version, source, e := readStateRowSource(ctx, tx, s.dialect == "postgres" || s.dialect == "mysql", s.dialect == "mysql", !operational)
 	if e != nil {
 		return e
