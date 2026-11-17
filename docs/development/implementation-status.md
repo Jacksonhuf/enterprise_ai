@@ -367,3 +367,7 @@ PR61已合并。`cognara-migrate-grants --check`、`cognara_fg_grants` DDL、gra
 ## 第67轮：R07 会话 plan 与 DDL
 
 `cognara-migrate-sessions --check`、会话/消息目标表 DDL、session 布局 round-trip 与内部彩排复制。要求 schema4；目标 schema5 仅在计划中登记。无 apply/运行时 writer。见 test-report-v0.67.md。
+
+## 第68轮：R07 session apply 与 schema5 读
+
+`ApplyMySQLSessions`、`cognara-migrate-sessions --apply`；`readMySQLApplicationV5` 接入 `OpenMySQL` 与根域更新路径；schema5 下 sessions 变更走关系域错误。无 session writer/快照。见 test-report-v0.68.md。

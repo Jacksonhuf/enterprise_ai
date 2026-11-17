@@ -9,7 +9,7 @@ import (
 func TestSessionMigrationPlanRoundTripOnSchema4(t *testing.T) {
 	dsn, _ := schema4SessionRoot(t)
 	report, err := PlanMySQLSessions(context.Background(), dsn)
-	if err != nil || !report.RoundTripVerified || report.SourceSchemaVersion != 4 || report.TargetSchemaVersion != 5 || report.ApplySupported {
+	if err != nil || !report.RoundTripVerified || report.SourceSchemaVersion != 4 || report.TargetSchemaVersion != 5 || !report.ApplySupported {
 		t.Fatal(report, err)
 	}
 	if report.Sessions != 1 || report.Messages != 1 || report.Tenants < 1 {

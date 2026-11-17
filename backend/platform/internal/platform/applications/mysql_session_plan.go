@@ -104,6 +104,7 @@ func planSessionSource(root []byte) (SessionMigrationPlan, error) {
 	if !ok {
 		result.SourceSchemaVersion, result.TargetSchemaVersion = 4, 5
 		result.Status, result.ReadOnly = "PLAN_VALIDATED", true
+		result.ApplySupported = true
 		sum := sha256.Sum256(root)
 		result.SourceSHA256 = hex.EncodeToString(sum[:])
 		result.SampledAt = time.Now().UTC().Format(time.RFC3339Nano)
@@ -151,6 +152,7 @@ func planSessionSource(root []byte) (SessionMigrationPlan, error) {
 	checksum := sha256.Sum256(root)
 	result.SourceSchemaVersion, result.TargetSchemaVersion = 4, 5
 	result.Status, result.ReadOnly = "PLAN_VALIDATED", true
+	result.ApplySupported = true
 	result.SourceSHA256 = hex.EncodeToString(checksum[:])
 	result.Tenants = len(tenants)
 	result.Applications = len(apps)

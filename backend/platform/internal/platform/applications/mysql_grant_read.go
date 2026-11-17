@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-func mySQLRelationalRuntimeVersion(version int) bool { return version == 3 || version == 4 }
+func mySQLRelationalRuntimeVersion(version int) bool { return version == 3 || version == 4 || version == 5 }
 
 func readMySQLApplicationRelational(ctx context.Context, tx *sql.Tx, includeAudit bool, version int) (State, []byte, error) {
 	switch version {
@@ -16,9 +16,11 @@ func readMySQLApplicationRelational(ctx context.Context, tx *sql.Tx, includeAudi
 		return readMySQLApplicationV3(ctx, tx, includeAudit)
 	case 4:
 		return readMySQLApplicationV4(ctx, tx, includeAudit)
+	case 5:
+		return readMySQLApplicationV5(ctx, tx, includeAudit)
 	default:
 		var empty State
-		return empty, nil, errors.New("relational runtime reader requires schema 3 or 4")
+		return empty, nil, errors.New("relational runtime reader requires schema 3, 4, or 5")
 	}
 }
 

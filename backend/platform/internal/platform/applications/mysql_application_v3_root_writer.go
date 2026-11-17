@@ -38,19 +38,28 @@ func updateMySQLV3RootTx(ctx context.Context, tx *sql.Tx, operational bool, fn f
 		return zero, err
 	}
 	if !mySQLRelationalRuntimeVersion(version) {
-		return zero, errors.New("relational root writer requires schema 3 or 4")
+		return zero, errors.New("relational root writer requires schema 3, 4, or 5")
 	}
 	var st State
 	var err error
-	if version == 3 {
+	switch version {
+	case 3:
 		st, _, err = readMySQLApplicationV3(ctx, tx, !operational)
-	} else {
+	case 4:
 		st, _, err = readMySQLApplicationV4(ctx, tx, !operational)
+	case 5:
+		st, _, err = readMySQLApplicationV5(ctx, tx, !operational)
+	default:
+		return zero, errors.New("relational root writer schema unsupported")
 	}
 	if err != nil {
 		return zero, err
 	}
 	grantsBefore, err := json.Marshal(st.Grants)
+	if err != nil {
+		return zero, err
+	}
+	sessionsBefore, err := json.Marshal(st.Sessions)
 	if err != nil {
 		return zero, err
 	}
@@ -90,6 +99,16 @@ func updateMySQLV3RootTx(ctx context.Context, tx *sql.Tx, operational bool, fn f
 	if version == 4 && !equalApplicationJSON(grantsBefore, grantsAfter) {
 		return zero, errRelationalGrantDomain
 	}
+	sessionsAfter, err := json.Marshal(st.Sessions)
+	if err != nil {
+		return zero, err
+	}
+	if version == 5 && !equalApplicationJSON(sessionsBefore, sessionsAfter) {
+		return zero, errRelationalSessionDomain
+	}
+	if version == 5 && !equalApplicationJSON(grantsBefore, grantsAfter) {
+		return zero, errRelationalGrantDomain
+	}
 	if operational {
 		if len(st.Audit) > 0 {
 			var last uint64
@@ -118,10 +137,13 @@ func updateMySQLV3RootTx(ctx context.Context, tx *sql.Tx, operational bool, fn f
 	if _, err = tx.ExecContext(ctx, `UPDATE cognara_fg_state SET body=? WHERE id=1`, string(body)); err != nil {
 		return zero, err
 	}
-	if version == 3 {
+	switch version {
+	case 3:
 		_, _, err = readMySQLApplicationV3(ctx, tx, false)
-	} else {
+	case 4:
 		_, _, err = readMySQLApplicationV4(ctx, tx, false)
+	case 5:
+		_, _, err = readMySQLApplicationV5(ctx, tx, false)
 	}
 	if err != nil {
 		return zero, err
@@ -140,8 +162,11 @@ func rootDomainsJSON(st State, version int) ([]byte, error) {
 	}
 	delete(fields, "apps")
 	delete(fields, "checks")
-	if version == 4 {
+	if version >= 4 {
 		delete(fields, "grants")
+	}
+	if version >= 5 {
+		delete(fields, "sessions")
 	}
 	return json.Marshal(fields)
 }
