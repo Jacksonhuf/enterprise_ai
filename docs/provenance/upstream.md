@@ -18,3 +18,7 @@ WeKnora fork： https://github.com/Jacksonhuf/WeKnora
 `make bootstrap`调用` scripts/import-source.py`按完整提交SHA获取源码，校验HEAD，再复制缺失文件到上述功能目录。开发扩展、前端入口、主题、依赖锁文件、契约与测试直接纳入当前仓库；上游参考源码不重复提交。该方式需要首次联网，不能当作完全离线源码包。固定版本许可随源码保留，核心许可证也直接提交。
 
 第五轮持久化复用原Go模块已锁定的`github.com/jackc/pgx/v5`驱动，不另引入数据库客户端。新的PostgreSQL适配与原有验证聚合接口兼容；并不表示已经迁移到上游生产Session/用户表。
+
+### TDesign RadioGroup 1.19.2生命周期兼容补丁
+
+2026-11-17：浏览器CI捕获TDesign `es/radio/group.mjs` calcBarStyle在卸载后nextTick/ResizeObserver回调读取空DOM引用。通过frontend/scripts-tdesign-lifecycle.mjs的Vite pre transform局部添加disposed/DOM连接检查及隐藏测量临时节点清理，保持原组件/视觉和MIT声明，不修改依赖目录。版本或源码锚点变化时构建失败并要求重新检查；测试直接验证已安装上游测量代码原始失败与补丁行为。升级TDesign时检查上游修复并移除此临时补丁。
