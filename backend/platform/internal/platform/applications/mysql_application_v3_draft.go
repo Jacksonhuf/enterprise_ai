@@ -75,9 +75,12 @@ func mergeRelationalDraft(raw []byte, next Config) ([]byte, error) {
 // Internal persistence primitive, not an HTTP authorization boundary. All callers
 // must supply a trusted tenant/actor after permission checks. Startup stays gated.
 // Retain the state-row barrier until remaining aggregate domains are migrated.
-func saveMySQLV3Draft(ctx context.Context, db *sql.DB, tenant, id, actor, expected string, next Config) (string, error) {
+func saveMySQLV3Draft(ctx context.Context, db *sql.DB, tenant, id, actor, client, request, expected string, next Config) (string, error) {
 	if tenant == "" || id == "" || actor == "" || expected == "" {
 		return "", errors.New("invalid relational draft request")
+	}
+	if request == "" {
+		request = ID("request")
 	}
 	tx, err := db.BeginTx(ctx, &sql.TxOptions{Isolation: sql.LevelSerializable})
 	if err != nil {
@@ -137,7 +140,7 @@ func saveMySQLV3Draft(ctx context.Context, db *sql.DB, tenant, id, actor, expect
 	if err = tx.QueryRowContext(ctx, `SELECT COALESCE(MAX(sequence_no),0) FROM cognara_fg_audit`).Scan(&last); err != nil {
 		return "", err
 	}
-	if err = insertMySQLAudit(ctx, tx, []Event{{ID: ID("event"), TenantID: tenant, ActorID: actor, OccurredAt: updated, Action: "application.draft.save", ResourceID: id, Outcome: "success"}}, last); err != nil {
+	if err = insertMySQLAudit(ctx, tx, []Event{{ID: ID("event"), TenantID: tenant, ActorID: actor, ClientID: client, OccurredAt: updated, Action: "application.draft.save", ResourceID: id, Outcome: "success", RequestID: request}}, last); err != nil {
 		return "", err
 	}
 	if _, _, err = readMySQLApplicationV3(ctx, tx, false); err != nil {

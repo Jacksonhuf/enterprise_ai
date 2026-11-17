@@ -74,7 +74,7 @@ func TestMySQLV3DraftWriterCASAuditRollbackAndReopen(t *testing.T) {
 	a := before.Apps["channel-replenishment"]
 	next := a.Draft
 	next.Basic.Name = "new draft"
-	if _, err = saveMySQLV3Draft(ctx, db, "foreign", a.ID, "actor", a.Revision, next); !errors.Is(err, errRelationalAppUnavailable) {
+	if _, err = saveMySQLV3Draft(ctx, db, "foreign", a.ID, "actor", "", "", a.Revision, next); !errors.Is(err, errRelationalAppUnavailable) {
 		t.Fatal("tenant bypass", err)
 	}
 	second := preflightDB(t, dsn)
@@ -84,7 +84,7 @@ func TestMySQLV3DraftWriterCASAuditRollbackAndReopen(t *testing.T) {
 		wg.Add(1)
 		go func(c *sql.DB) {
 			defer wg.Done()
-			_, e := saveMySQLV3Draft(ctx, c, a.TenantID, a.ID, "actor", a.Revision, next)
+			_, e := saveMySQLV3Draft(ctx, c, a.TenantID, a.ID, "actor", "", "", a.Revision, next)
 			results <- e
 		}(connection)
 	}
@@ -120,7 +120,7 @@ func TestMySQLV3DraftWriterCASAuditRollbackAndReopen(t *testing.T) {
 		t.Fatal(err)
 	}
 	next.Basic.Name = "must rollback"
-	if _, err = saveMySQLV3Draft(ctx, db, a.TenantID, a.ID, "actor", saved.Revision, next); err == nil {
+	if _, err = saveMySQLV3Draft(ctx, db, a.TenantID, a.ID, "actor", "", "", saved.Revision, next); err == nil {
 		t.Fatal("audit failure accepted")
 	}
 	rolled, err := s.readSQLContext(ctx)

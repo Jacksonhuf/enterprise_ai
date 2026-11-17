@@ -331,3 +331,7 @@ PR54已合并。内部根域writer持State屏障重建完整State，仅写回根
 ## 第58轮：根域业务入口schema3适配
 
 PR55已合并。通用Store更新在schema3下同事务走根域writer；设置、异常状态、审计/失败异常追加三条定向writer开放schema3并加关系完整性校验；根写回按原文合并保留精度与未知字段。应用/检查改动仍需专用writer。并发、回滚、损坏拒绝与变异验证见test-report-v0.58.md和PR。启动仍关闭schema3；应用入口切换、无损快照与apply待完成。
+
+## 第59轮：应用HTTP入口schema3适配
+
+PR56已合并。四条认知应用写入口在schema3下走Store Try*与专用writer；schema2仍走UpdateOperational。通用Store应用域守卫保留。见test-report-v0.59.md和PR。R05-B写入适配完成；C/D待开发；启动仍关闭schema3。
