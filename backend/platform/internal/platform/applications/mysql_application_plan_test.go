@@ -132,7 +132,7 @@ func TestMySQLApplicationPlanReadOnlyPrerequisitesAndTargets(t *testing.T) {
 		t.Fatal(err)
 	}
 	report, err := PlanMySQLApplications(context.Background(), dsn)
-	if err != nil || report.Applications != 1 || report.Releases != 1 || report.SourceSchemaVersion != 2 || report.TargetSchemaVersion != 3 || report.ApplySupported {
+	if err != nil || !report.RoundTripVerified || report.Applications != 1 || report.Releases != 1 || report.SourceSchemaVersion != 2 || report.TargetSchemaVersion != 3 || report.ApplySupported {
 		t.Fatal(report, err)
 	}
 	if err = db.QueryRow(`SELECT body,schema_version FROM cognara_fg_state WHERE id=1`).Scan(&after, &version); err != nil {
@@ -232,7 +232,7 @@ func TestMySQLApplicationPlanCompiledCLI(t *testing.T) {
 	command := exec.Command(binary, "--check", "--mysql-dsn-env", "APPLICATION_PLAN_TEST_DSN")
 	raw, err := command.CombinedOutput()
 	var report ApplicationMigrationPlan
-	if err != nil || json.Unmarshal(raw, &report) != nil || report.Status != "PLAN_VALIDATED" || !report.ReadOnly || report.ApplySupported {
+	if err != nil || json.Unmarshal(raw, &report) != nil || report.Status != "PLAN_VALIDATED" || !report.RoundTripVerified || !report.ReadOnly || report.ApplySupported {
 		t.Fatal("compiled planner failed", err, string(raw))
 	}
 }
