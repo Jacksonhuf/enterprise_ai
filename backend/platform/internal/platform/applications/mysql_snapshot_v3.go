@@ -146,8 +146,11 @@ func stateFromV3Snapshot(stateRoot []byte, layout applicationLayout) (State, err
 		return zero, err
 	}
 	var st State
-	if json.Unmarshal(raw, &st) != nil || st.Apps == nil || st.Sessions == nil {
+	if json.Unmarshal(raw, &st) != nil || st.Apps == nil {
 		return zero, errors.New("snapshot v3 state invalid")
+	}
+	if st.Sessions == nil {
+		st.Sessions = map[string]Session{}
 	}
 	initializeState(&st)
 	return st, nil
