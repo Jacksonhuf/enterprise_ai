@@ -327,3 +327,7 @@ PR53已合并。内部检查writer绑定租户、操作人、锁定草稿revisio
 ## 第57轮：schema3根域通用writer
 
 PR54已合并。内部根域writer持State屏障重建完整State，仅写回根域（不含apps/checks），应用/检查改动拒绝并要求专用writer；审计业务模式按序追加、完整模式不可改写；未知根字段保留。并发、拒绝路径、故障回滚与重开见test-report-v0.57.md和PR。未接HTTP/启动；按域切换适配层、无损快照与apply待完成。
+
+## 第58轮：根域业务入口schema3适配
+
+PR55已合并。通用Store更新在schema3下同事务走根域writer；设置、异常状态、审计/失败异常追加三条定向writer开放schema3并加关系完整性校验；根写回按原文合并保留精度与未知字段。应用/检查改动仍需专用writer。并发、回滚、损坏拒绝与变异验证见test-report-v0.58.md和PR。启动仍关闭schema3；应用入口切换、无损快照与apply待完成。
