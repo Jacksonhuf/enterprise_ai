@@ -343,3 +343,7 @@ PR57已合并。公共导出/导入支持schema3关系布局原文封装；导�
 ## 第61轮：schema3 显式 apply
 
 PR59已合并。`ApplyMySQLApplications` 与 `cognara-migrate-applications --apply`；校验通过后单事务 root handoff 并切换 schema3；`OpenMySQL` 接受经 apply/import/演练验证的 schema3。见 test-report-v0.61.md 与 PR。
+
+## 第62轮：R05 重启与多实例等价
+
+PR待合入。apply 后 OpenMySQL 重启、双连接草稿 CAS、编译态 GET 等价与 schema3 双主机会话 CAS。R05 代码闭环；生产 apply 与 R20 多实例另计。见 test-report-v0.62.md。
