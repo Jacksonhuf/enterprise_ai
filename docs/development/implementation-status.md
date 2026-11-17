@@ -262,3 +262,7 @@ PR #32已合并main（4ff348a）。异常/用量共用只允许固定数组枚�
 ## 第44轮：MySQL关系模型与应用迁移预检
 
 PR40已核对同head完整CI及评审并合并main。本轮完成R04设计，新增应用/草稿/发布/检查只读迁移规划器及CLI，CI强制运行真实MySQL和编译后二进制回归。预检不初始化/seed/写入，不支持apply，不启用schema3。R05保持开发中：目标表DDL、复制对账、reader/writer和导入导出切换仍未实现。详情见[设计](../architecture/fg-mysql-relational-design.md)、[任务台账](remaining-work-and-delivery-plan.md)及[test-report-v0.44.md](test-report-v0.44.md)。
+
+## 第45轮：应用关系表结构与原始记录对账
+
+PR41已合并。本轮R05补齐四表DDL、严格结构校验和原始记录拆装/重组对账，公共只读预检新增round_trip_verified。DDL仅隔离测试调用，未提供公共apply、未复制源数据、未启用schema3。下一步SQL事务复制与数据库重载对账，再接运行时/快照切换。证据见[test-report-v0.45.md](test-report-v0.45.md)与PR最终head CI。

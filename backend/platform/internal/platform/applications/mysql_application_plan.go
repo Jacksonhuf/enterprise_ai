@@ -19,6 +19,7 @@ type ApplicationMigrationPlan struct {
 	SourceSchemaVersion int    `json:"source_schema_version"`
 	TargetSchemaVersion int    `json:"target_schema_version"`
 	Status              string `json:"status"`
+	RoundTripVerified   bool   `json:"round_trip_verified"`
 	ReadOnly            bool   `json:"read_only"`
 	ApplySupported      bool   `json:"apply_supported"`
 	SourceSHA256        string `json:"source_sha256"`
@@ -65,10 +66,15 @@ func PlanMySQLApplications(parent context.Context, dsn string) (ApplicationMigra
 	if version != 2 {
 		return report, errors.New("MySQL application plan requires schema 2; complete audit migration first; other versions unsupported")
 	}
-	report, err = planApplicationSource(raw, time.Now().UTC())
+	sampled := time.Now().UTC()
+	report, err = planApplicationSource(raw, sampled)
 	if err != nil {
 		return ApplicationMigrationPlan{}, err
 	}
+	if err = verifyApplicationLayout(raw, sampled); err != nil {
+		return ApplicationMigrationPlan{}, err
+	}
+	report.RoundTripVerified = true
 	if err = validateMySQLAuditSchema(ctx, tx); err != nil {
 		return ApplicationMigrationPlan{}, errors.New("MySQL application plan audit schema incompatible")
 	}

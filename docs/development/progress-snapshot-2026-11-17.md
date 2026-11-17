@@ -1,6 +1,6 @@
-# F/G 完成度与任务计划（2026-11-17，第四十四轮）
+# F/G 完成度与任务计划（2026-11-17，第四十五轮）
 
-范围仅为enterprise_ai中用户负责的F/G。PR40已合并main。本轮完成R04关系模型与迁移事务设计，R05提供只读应用迁移预检，未启用schema3运行时或复制数据。后续工作以[22项任务计划](remaining-work-and-delivery-plan.md)及逐项证据为准，Mock、真实联调和生产阶段门分别登记。
+范围仅为enterprise_ai中用户负责的F/G。PR41已合并main。R05本轮实现四表DDL/结构校验与原始JSON记录拆装对账，公共只读预检新增round_trip_verified。仍未SQL复制源数据或启用schema3。后续工作以[任务计划](remaining-work-and-delivery-plan.md)和PR最终head验收证据为准。
 
 ## 历史工程估计（保留基线，不作为任务验收率）
 
@@ -44,3 +44,7 @@
 ## 第44轮：按计划进入MySQL生产化
 
 PR40已合并main。本轮R04关系模型和迁移事务设计完成，R05交付schema2应用/发布/检查只读迁移预检及显式--check命令，平台141项顶层测试定义、新命令2项。尚未复制应用数据、建立目标关系表或启用schema3；R05仍开发中，不能据此提升生产完成率。最新证据见[test-report-v0.44.md](test-report-v0.44.md)和对应PR最终head CI。下一步是DDL结构校验与raw-envelope复制对账，再完成运行时/快照切换。
+
+## 第45轮进展
+
+应用关系表DDL、严格结构验证及原始记录拆分/重组对账已实现，平台148个Go顶层测试定义，命令既有2项；真实数据库与完整CI结果见[test-report-v0.45.md](test-report-v0.45.md)及对应PR。公共命令仍不建表或迁移，正式SQL复制/读写切换未完成，不以本轮基础组件推高生产完成度。
