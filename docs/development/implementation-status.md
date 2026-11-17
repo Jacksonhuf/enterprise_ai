@@ -335,3 +335,7 @@ PR55已合并。通用Store更新在schema3下同事务走根域writer；设置�
 ## 第59轮：应用HTTP入口schema3适配
 
 PR56已合并。四条认知应用写入口在schema3下走Store Try*与专用writer；schema2仍走UpdateOperational。通用Store应用域守卫保留。见test-report-v0.59.md和PR。R05-B写入适配完成；C/D待开发；启动仍关闭schema3。
+
+## 第60轮：schema3无损快照
+
+PR57已合并。公共导出/导入支持schema3关系布局原文封装；导入同事务写根、关系表与审计并重组校验。见test-report-v0.60.md和PR。显式apply与启动开放仍待D阶段；OpenMySQL继续拒绝schema3。

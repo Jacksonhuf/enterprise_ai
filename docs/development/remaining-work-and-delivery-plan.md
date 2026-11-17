@@ -167,3 +167,7 @@ PR55已合并。R05-B将现有业务写入入口在schema3下接到关系/根路
 ### 第59轮增量
 
 PR56已合并。R05-B应用链路HTTP入口在schema3下接专用writer：Store层Try*探测，create/saveDraft/checkRelease/release优先走关系事务；v2路径不变；创建避免重复审计；草稿审计带client/request。验证完整创建→发布序列、通用Store仍拒改应用、并发CAS与故障回滚。R05-B写入适配收口。下一步C无损快照、D显式apply。见test-report-v0.59.md及PR最终CI。
+
+### 第60轮增量
+
+PR57已合并。R05-C实现schema3无损快照：`ExportMySQLSnapshot`/`ImportMySQLSnapshot`支持schema_version=3，封装state_root、关系表原文与审计payload；抽取`applyMySQLApplicationLayout`与`scanMySQLApplicationLayout`。验证导出→空库导入→再导出保真、损坏拒绝、启动仍拒schema3。v2桥接不替代。下一步R05-D显式apply与版本切换门禁。见test-report-v0.60.md及PR最终CI。

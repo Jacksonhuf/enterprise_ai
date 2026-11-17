@@ -115,12 +115,12 @@ func TestMySQLApplicationV3LegacyReadProjectionsAndCorruptWriteRejection(t *test
 	if e = s.Check(); e != nil {
 		t.Fatal("valid relational readiness rejected", e)
 	}
-	snapshot := filepath.Join(t.TempDir(), "unsupported-v3.json")
-	if _, e = ExportMySQLSnapshot(ctx, dsn, snapshot); e == nil {
-		t.Fatal("legacy snapshot accepted schema3")
+	snapshot := filepath.Join(t.TempDir(), "schema3.json")
+	if _, e = ExportMySQLSnapshot(ctx, dsn, snapshot); e != nil {
+		t.Fatal("schema3 snapshot export failed", e)
 	}
-	if _, e = os.Stat(snapshot); !os.IsNotExist(e) {
-		t.Fatal("unsupported snapshot published a file", e)
+	if _, e = os.Stat(snapshot); e != nil {
+		t.Fatal("schema3 snapshot missing", e)
 	}
 	if opened, e := OpenMySQL(dsn); e == nil {
 		opened.Close()
