@@ -15,7 +15,7 @@ var errRelationalApplicationDomain = errors.New("application and check changes r
 // root never becomes a second authority. Audit keeps the schema2 rules: an
 // operational callback sees no history and may only add events; a full callback
 // may append but never alter existing events. Store.Update* routes schema3 here;
-// OpenMySQL still refuses to start on schema3.
+// OpenMySQL accepts schema3 only after a validated handoff (apply, import, or tests).
 func updateMySQLV3Root(ctx context.Context, db *sql.DB, operational bool, fn func(*State) error) error {
 	tx, err := db.BeginTx(ctx, &sql.TxOptions{Isolation: sql.LevelSerializable})
 	if err != nil {

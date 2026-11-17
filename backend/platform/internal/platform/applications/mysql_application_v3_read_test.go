@@ -75,9 +75,13 @@ func TestMySQLApplicationV3ReaderPersistsAndKeepsRuntimeClosed(t *testing.T) {
 			t.Fatal(err)
 		}
 	}
-	if opened, e := OpenMySQL(dsn); e == nil {
-		opened.Close()
-		t.Fatal("runtime opened incomplete schema3")
+	opened, e := OpenMySQL(dsn)
+	if e != nil {
+		t.Fatal("runtime rejected valid schema3", e)
+	}
+	defer opened.Close()
+	if st, err := opened.readSQLContext(ctx); err != nil || len(st.Apps) != 1 {
+		t.Fatal("runtime read incomplete schema3", err, len(st.Apps))
 	}
 	if err = store.UpdateOperational(func(st *State) error { delete(st.Apps, "channel-replenishment"); return nil }); !errors.Is(err, errRelationalApplicationDomain) {
 		t.Fatal("general writer changed schema3 applications", err)

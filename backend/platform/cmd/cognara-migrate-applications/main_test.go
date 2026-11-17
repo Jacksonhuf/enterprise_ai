@@ -7,12 +7,17 @@ import (
 )
 
 func TestPlannerCLIRequiresExplicitReadOnlyMode(t *testing.T) {
-	for _, args := range [][]string{nil, {"--apply"}, {"--check", "unexpected"}} {
+	for _, args := range [][]string{nil, {"--apply"}, {"--check", "unexpected"}, {"--check", "--apply"}} {
 		var stdout, stderr bytes.Buffer
 		status := run(args, &stdout, &stderr, func(string) string { t.Fatal("invalid command attempted database access"); return "" })
 		if status != 2 || stdout.Len() != 0 || stderr.Len() == 0 {
 			t.Fatal("unsafe CLI accepted", args, status)
 		}
+	}
+	var stdout, stderr bytes.Buffer
+	status := run([]string{"--apply", "--expect-sha256", strings.Repeat("a", 64)}, &stdout, &stderr, func(string) string { return "" })
+	if status != 1 || stdout.Len() != 0 || !strings.Contains(stderr.String(), "invalid MySQL") {
+		t.Fatal("apply without DSN misreported", status, stderr.String())
 	}
 }
 func TestPlannerCLIRedactsInvalidDSN(t *testing.T) {
