@@ -18,7 +18,7 @@ import (
 // No existing record is ever updated. DDL may remain if a later transaction fails.
 func ImportMySQLSnapshot(parent context.Context, dsn, path, expectedSHA string, sourceVersion int) (SnapshotReport, error) {
 	var report SnapshotReport
-	if sourceVersion != 1 && sourceVersion != 2 && sourceVersion != 3 {
+	if sourceVersion != 1 && sourceVersion != 2 && sourceVersion != 3 && sourceVersion != 4 {
 		return report, errors.New("snapshot schema version unsupported")
 	}
 	expected, e := hex.DecodeString(expectedSHA)
@@ -49,6 +49,7 @@ func ImportMySQLSnapshot(parent context.Context, dsn, path, expectedSHA string, 
 	var auditPayloads []json.RawMessage
 	var auditEvents []Event
 	var layout applicationLayout
+	var grantRows []grantLayoutRow
 	if sourceVersion == 2 {
 		stateRaw, auditPayloads, auditEvents, e = parseMySQLV2(raw)
 		if e != nil {
@@ -61,9 +62,20 @@ func ImportMySQLSnapshot(parent context.Context, dsn, path, expectedSHA string, 
 			return report, e
 		}
 	}
+	if sourceVersion == 4 {
+		stateRaw, layout, grantRows, auditPayloads, auditEvents, e = parseMySQLV4(raw)
+		if e != nil {
+			return report, e
+		}
+	}
 	var object map[string]json.RawMessage
 	var state State
-	if sourceVersion == 3 {
+	if sourceVersion == 4 {
+		state, e = stateFromV4Snapshot(stateRaw, layout, grantRows)
+		if e != nil {
+			return report, errors.New("snapshot structure invalid")
+		}
+	} else if sourceVersion == 3 {
 		state, e = stateFromV3Snapshot(stateRaw, layout)
 		if e != nil {
 			return report, errors.New("snapshot structure invalid")
@@ -108,14 +120,19 @@ func ImportMySQLSnapshot(parent context.Context, dsn, path, expectedSHA string, 
 	if e = validateMySQLStateSchema(ctx, db, cfg.DBName); e != nil {
 		return report, errors.New("MySQL import schema incompatible")
 	}
-	if sourceVersion == 2 || sourceVersion == 3 {
+	if sourceVersion == 2 || sourceVersion == 3 || sourceVersion == 4 {
 		if _, e = db.ExecContext(ctx, mysqlAuditDDL); e != nil {
 			return report, errors.New("MySQL audit import schema unavailable")
 		}
 	}
-	if sourceVersion == 3 {
+	if sourceVersion == 3 || sourceVersion == 4 {
 		if e = createMySQLApplicationSchema(ctx, db); e != nil {
 			return report, errors.New("MySQL application import schema unavailable")
+		}
+	}
+	if sourceVersion == 4 {
+		if e = createMySQLGrantSchema(ctx, db); e != nil {
+			return report, errors.New("MySQL grant import schema unavailable")
 		}
 	}
 	tx, e := db.BeginTx(ctx, nil)
@@ -127,12 +144,17 @@ func ImportMySQLSnapshot(parent context.Context, dsn, path, expectedSHA string, 
 	if _, e = tx.ExecContext(ctx, `INSERT INTO cognara_fg_state(id,schema_version,body) VALUES(1,?,?)`, sourceVersion, string(stateRaw)); e != nil {
 		return report, errors.New("MySQL import refused; target must contain no state record")
 	}
-	if sourceVersion == 3 {
+	if sourceVersion == 3 || sourceVersion == 4 {
 		if e = applyMySQLApplicationLayout(ctx, tx, layout); e != nil {
-			return report, errors.New("MySQL v3 relational import rejected")
+			return report, errors.New("MySQL relational import rejected")
 		}
 	}
-	if sourceVersion == 2 || sourceVersion == 3 {
+	if sourceVersion == 4 {
+		if e = applyMySQLGrantSnapshot(ctx, tx, grantRows); e != nil {
+			return report, errors.New("MySQL v4 grant import rejected")
+		}
+	}
+	if sourceVersion == 2 || sourceVersion == 3 || sourceVersion == 4 {
 		if e = validateMySQLAuditSchema(ctx, tx); e != nil {
 			return report, errors.New("MySQL audit import schema incompatible")
 		}
@@ -149,12 +171,17 @@ func ImportMySQLSnapshot(parent context.Context, dsn, path, expectedSHA string, 
 			return report, errors.New("MySQL v3 import reconciliation failed")
 		}
 	}
+	if sourceVersion == 4 {
+		if _, _, e = readMySQLApplicationV4(ctx, tx, true); e != nil {
+			return report, errors.New("MySQL v4 import reconciliation failed")
+		}
+	}
 	if e = tx.Commit(); e != nil {
 		return report, errors.New("MySQL import commit not confirmed; inspect target before retry")
 	}
 	report.SourceSchemaVersion = sourceVersion
 	report.AuditEvents = len(state.Audit)
-	if sourceVersion == 2 || sourceVersion == 3 {
+	if sourceVersion == 2 || sourceVersion == 3 || sourceVersion == 4 {
 		report.AuditEvents = len(auditEvents)
 	}
 	report.SHA256 = hex.EncodeToString(sum[:])

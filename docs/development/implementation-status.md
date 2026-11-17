@@ -359,3 +359,7 @@ PR61已合并。`cognara-migrate-grants --check`、`cognara_fg_grants` DDL、gra
 ## 第65轮：R06 schema4 授权 writer
 
 `TryMutateGrantsV4` 接入治理 grant HTTP；创建/撤销与审计同事务。无 schema4 快照。见 test-report-v0.65.md。
+
+## 第66轮：R06 schema4 快照
+
+公共 export/import 支持 schema4（根域 + 应用表 + grants 表 + 审计）。见 test-report-v0.66.md。
