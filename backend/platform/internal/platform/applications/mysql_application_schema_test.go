@@ -8,6 +8,12 @@ import (
 )
 
 func TestApplicationCheckNormalizationPreservesLiteralSemantics(t *testing.T) {
+	if normalizeApplicationCheck("(json_type(`config`) = "+`_utf8mb4\'OBJECT\'`+")") != normalizeApplicationCheck("json_type(config)='OBJECT'") {
+		t.Fatal("captured MySQL escaped literal rejected")
+	}
+	if normalizeApplicationCheck("json_type(config)="+`_utf8mb4\'OBJECT\'`+" OR 1") == normalizeApplicationCheck("json_type(config)='OBJECT'") {
+		t.Fatal("weakened captured expression accepted")
+	}
 	if normalizeApplicationCheck("(JSON_TYPE(`config`) = _utf8mb4'OBJECT')") != normalizeApplicationCheck("json_type(config)='OBJECT'") {
 		t.Fatal("MySQL formatting rejected")
 	}

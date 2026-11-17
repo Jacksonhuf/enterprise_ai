@@ -228,6 +228,14 @@ func normalizeApplicationCheck(value string) string {
 	quoted := false
 	for i := 0; i < len(value); i++ {
 		c := value[i]
+		// information_schema escapes the quotes of this exact known literal.
+		// Do not generally unescape SQL or alter arbitrary literal contents.
+		escapedObject := `_utf8mb4\'OBJECT\'`
+		if !quoted && strings.HasPrefix(value[i:], escapedObject) {
+			out.WriteString("'OBJECT'")
+			i += len(escapedObject) - 1
+			continue
+		}
 		if !quoted && strings.HasPrefix(value[i:], "_utf8mb4'") {
 			i += len("_utf8mb4") - 1
 			continue
