@@ -399,3 +399,7 @@ PR61已合并。`cognara-migrate-grants --check`、`cognara_fg_grants` DDL、gra
 ## 第75轮：R08 exceptions apply 与 schema7 读
 
 `ApplyMySQLExceptions`、`cognara-migrate-exceptions --apply`；schema7 关系读/写（状态、列表、观测追加）。无 schema7 快照。见 test-report-v0.75.md。
+
+## 第76轮：R08 schema7 快照
+
+`ExportMySQLSnapshot`/`ImportMySQLSnapshot` schema7；exceptions 行级保真。见 test-report-v0.76.md。
