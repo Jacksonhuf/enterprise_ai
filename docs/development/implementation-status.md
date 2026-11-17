@@ -347,3 +347,7 @@ PR59已合并。`ApplyMySQLApplications` 与 `cognara-migrate-applications --app
 ## 第62轮：R05 重启与多实例等价
 
 PR60已合并。apply 后 OpenMySQL 重启、双连接草稿 CAS、编译态 GET 等价与 schema3 双主机会话 CAS。R05 代码闭环；生产 apply 与 R20 多实例另计。见 test-report-v0.62.md。
+
+## 第63轮：R06 授权 plan 与 DDL
+
+PR待合入。`cognara-migrate-grants --check`、`cognara_fg_grants` DDL、grant 布局 round-trip 与彩排复制。无 apply/运行时。见 test-report-v0.63.md。
