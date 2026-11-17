@@ -311,3 +311,7 @@ PR49已合并。设置只读、异常/用量和审计查询在schema3下先验�
 ## 第53轮：通用schema3读取与启动门禁
 
 PR50已合并。通用只读State/operational读取接入schema3重组；locking旧writer保持拒绝。启动使用同一一致性事务限制版本1/2。补健康检查损坏失败、旧快照拒绝无文件、审计/异常写入拒绝回归。见test-report-v0.53.md及PR；正式writer/无损恢复/apply尚未完成。
+
+## 第54轮：schema3草稿事务写入
+
+PR51已合并。R05-B新增内部草稿CAS writer，租户绑定、原文扩展合并、草稿/应用头/审计同事务提交，发布不变；双连接竞争及审计失败回滚见test-report-v0.54.md和PR。未接HTTP/启动，其他写入/无损快照/apply仍待完成。
