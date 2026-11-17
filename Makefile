@@ -11,13 +11,13 @@ dev-ui: bootstrap
 	cd frontend && npm ci && npm run dev
 
 check: bootstrap
-	cd backend/platform && GOGC=30 GOMAXPROCS=2 $(GO) test -tags=nomsgpack -p 1 -race ./internal/platform/... ./cmd/cognara-dev
+	cd backend/platform && GOGC=30 GOMAXPROCS=2 $(GO) test -tags=nomsgpack -p 1 -race ./internal/platform/... ./cmd/cognara-dev ./cmd/cognara-migrate-applications
 	cd frontend && npm run test:cognara && npx vue-tsc --noEmit -p tsconfig.cognara.json && npm run build
 
 .PHONY: check-postgres build-dev verify-runtime verify-postgres
 check-postgres: bootstrap
 	@test -n "$${COGNARA_TEST_POSTGRES_DSN}" || (echo 'Set a dedicated COGNARA_TEST_POSTGRES_DSN' >&2; exit 1)
-	cd backend/platform && COGNARA_REQUIRE_POSTGRES_TESTS=1 GOGC=30 GOMAXPROCS=2 $(GO) test -tags=nomsgpack -p 1 -race -count=1 ./internal/platform/... ./cmd/cognara-dev
+	cd backend/platform && COGNARA_REQUIRE_POSTGRES_TESTS=1 GOGC=30 GOMAXPROCS=2 $(GO) test -tags=nomsgpack -p 1 -race -count=1 ./internal/platform/... ./cmd/cognara-dev ./cmd/cognara-migrate-applications
 
 build-dev: bootstrap
 	mkdir -p backend/platform/.devdata
