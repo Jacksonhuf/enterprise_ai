@@ -73,7 +73,7 @@ func (s *Store) UpdateMySQLExceptionContext(parent context.Context, tenant, id s
 		return nil, true, e
 	}
 	var raw []byte
-	if version == 7 {
+	if version == 7 || version == 8 {
 		e = tx.QueryRowContext(ctx, `SELECT raw_payload FROM cognara_fg_exceptions WHERE tenant_id=? AND exception_id=?`, tenant, id).Scan(&raw)
 		if errors.Is(e, sql.ErrNoRows) {
 			return nil, true, ErrExceptionUnavailable
@@ -119,7 +119,7 @@ func (s *Store) UpdateMySQLExceptionContext(parent context.Context, tenant, id s
 		if e = tx.QueryRowContext(ctx, `SELECT raw_payload FROM cognara_fg_exceptions WHERE tenant_id=? AND exception_id=?`, tenant, id).Scan(&raw); e != nil {
 			return nil, true, e
 		}
-		if _, _, e = readMySQLApplicationV7(ctx, tx, false); e != nil {
+		if _, _, e = readMySQLApplicationRelational(ctx, tx, false, version); e != nil {
 			return nil, true, e
 		}
 		if e = tx.Commit(); e != nil {

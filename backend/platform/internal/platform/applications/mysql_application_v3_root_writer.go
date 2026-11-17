@@ -38,7 +38,7 @@ func updateMySQLV3RootTx(ctx context.Context, tx *sql.Tx, operational bool, fn f
 		return zero, err
 	}
 	if !mySQLRelationalRuntimeVersion(version) {
-		return zero, errors.New("relational root writer requires schema 3, 4, 5, 6, or 7")
+		return zero, errors.New("relational root writer requires schema 3, 4, 5, 6, 7, or 8")
 	}
 	var st State
 	var err error
@@ -53,6 +53,8 @@ func updateMySQLV3RootTx(ctx context.Context, tx *sql.Tx, operational bool, fn f
 		st, _, err = readMySQLApplicationV6(ctx, tx, !operational)
 	case 7:
 		st, _, err = readMySQLApplicationV7(ctx, tx, !operational)
+	case 8:
+		st, _, err = readMySQLApplicationV8(ctx, tx, !operational)
 	default:
 		return zero, errors.New("relational root writer schema unsupported")
 	}
@@ -77,6 +79,10 @@ func updateMySQLV3RootTx(ctx context.Context, tx *sql.Tx, operational bool, fn f
 		return zero, err
 	}
 	exceptionsBefore, err := json.Marshal(st.Exceptions)
+	if err != nil {
+		return zero, err
+	}
+	usageBefore, err := json.Marshal(st.Usage)
 	if err != nil {
 		return zero, err
 	}
@@ -146,6 +152,19 @@ func updateMySQLV3RootTx(ctx context.Context, tx *sql.Tx, operational bool, fn f
 	if version == 7 && !equalApplicationJSON(exceptionsBefore, exceptionsAfter) {
 		return zero, errRelationalExceptionDomain
 	}
+	usageAfter, err := json.Marshal(st.Usage)
+	if err != nil {
+		return zero, err
+	}
+	if version == 8 && !equalApplicationJSON(usageBefore, usageAfter) {
+		var beforeItems []map[string]any
+		if json.Unmarshal(usageBefore, &beforeItems) != nil {
+			return zero, errRelationalUsageDomain
+		}
+		if err = applyMySQLUsageAppendDelta(ctx, tx, beforeItems, st.Usage); err != nil {
+			return zero, err
+		}
+	}
 	if operational {
 		if len(st.Audit) > 0 {
 			var last uint64
@@ -185,6 +204,8 @@ func updateMySQLV3RootTx(ctx context.Context, tx *sql.Tx, operational bool, fn f
 		_, _, err = readMySQLApplicationV6(ctx, tx, false)
 	case 7:
 		_, _, err = readMySQLApplicationV7(ctx, tx, false)
+	case 8:
+		_, _, err = readMySQLApplicationV8(ctx, tx, false)
 	}
 	if err != nil {
 		return zero, err
@@ -215,6 +236,9 @@ func rootDomainsJSON(st State, version int) ([]byte, error) {
 	}
 	if version >= 7 {
 		delete(fields, "exceptions")
+	}
+	if version >= 8 {
+		delete(fields, "usage")
 	}
 	return json.Marshal(fields)
 }

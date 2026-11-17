@@ -17,7 +17,7 @@ func mutateMySQLSessionsV5(ctx context.Context, db *sql.DB, fn func(*State) erro
 	if err = tx.QueryRowContext(ctx, `SELECT schema_version FROM cognara_fg_state WHERE id=1 FOR UPDATE`).Scan(&version); err != nil {
 		return err
 	}
-	if version != 5 && version != 6 && version != 7 {
+	if version != 5 && version != 6 && version != 7 && version != 8 {
 		return errors.New("relational session writer requires schema 5, 6, or 7")
 	}
 	before, _, err := readMySQLApplicationRelational(ctx, tx, false, version)

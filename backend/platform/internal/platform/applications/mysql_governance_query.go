@@ -78,6 +78,13 @@ func (s *Store) queryMySQLGovernanceArray(parent context.Context, section, tenan
 		}
 		return items, more, true, tx.Commit()
 	}
+	if version == 8 && section == "usage" {
+		items, more, _, err := queryMySQLUsageRelational(ctx, tx, tenant, after, limit, match, idOf)
+		if err != nil {
+			return nil, false, true, err
+		}
+		return items, more, true, tx.Commit()
+	}
 	if len(kind) > 0 && string(kind) != "NULL" && string(kind) != "ARRAY" {
 		return nil, false, true, errors.New("invalid governance array storage")
 	}
