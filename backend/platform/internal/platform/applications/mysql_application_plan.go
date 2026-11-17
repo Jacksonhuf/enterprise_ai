@@ -85,7 +85,7 @@ func PlanMySQLApplications(parent context.Context, dsn string) (ApplicationMigra
 	// Reserved target names must be absent. Do not bless arbitrary partial DDL or
 	// pre-existing data. A future apply command must inspect its own target schema.
 	var targets int
-	if err = tx.QueryRowContext(ctx, `SELECT COUNT(*) FROM information_schema.TABLES WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME IN ('cognara_fg_applications','cognara_fg_application_drafts','cognara_fg_application_releases','cognara_fg_application_checks')`).Scan(&targets); err != nil || targets != 0 {
+	if err = tx.QueryRowContext(ctx, `SELECT COUNT(*) FROM information_schema.TABLES WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME IN ('cognara_fg_applications','cognara_fg_application_drafts','cognara_fg_application_releases','cognara_fg_application_checks','cognara_fg_application_envelope')`).Scan(&targets); err != nil || targets != 0 {
 		return ApplicationMigrationPlan{}, errors.New("MySQL application plan reserved targets present or unavailable; inspect before migration")
 	}
 	if err = tx.Commit(); err != nil {

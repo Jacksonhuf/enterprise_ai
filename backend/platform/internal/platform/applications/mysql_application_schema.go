@@ -50,17 +50,21 @@ func applicationSchemaSpecs() map[string]applicationSchemaSpec {
 	apps := ids("app_id", "agent_id", "owner_id", "current_release_id")
 	apps["updated_at"] = "varchar(64)"
 	apps["metadata"] = "json"
+	apps["raw_payload"] = "longblob"
 	apps["releases_is_null"] = "tinyint(1)"
 	drafts := ids("app_id", "revision")
 	drafts["config"] = "json"
+	drafts["raw_payload"] = "longblob"
 	releases := ids("app_id", "release_id", "published_by")
 	releases["ordinal"] = "bigint unsigned"
 	releases["snapshot"] = "json"
 	releases["published_at"] = "varchar(64)"
 	releases["metadata"] = "json"
+	releases["raw_payload"] = "longblob"
 	checks := ids("check_id", "app_id", "draft_revision", "user_id", "validation_id")
 	checks["expires_at"] = "varchar(64)"
 	checks["metadata"] = "json"
+	checks["raw_payload"] = "longblob"
 	parent := "cognara_fg_applications"
 	fk := func(name string, columns, reference []string, table string) map[string]string {
 		m := map[string]string{}
@@ -70,6 +74,7 @@ func applicationSchemaSpecs() map[string]applicationSchemaSpec {
 		return m
 	}
 	return map[string]applicationSchemaSpec{
+		"cognara_fg_application_envelope": {map[string]string{"id": "tinyint unsigned", "root_payload": "longblob", "checks_kind": "varbinary(8)"}, "", schemaIndexes(map[string][]string{"PRIMARY": {"id"}}, nil), nil, map[string]string{"application_envelope_singleton": "id=1"}},
 		parent:                            {apps, "current_release_id", schemaIndexes(map[string][]string{"PRIMARY": {"tenant_id", "app_id"}, "application_id": {"app_id"}}, map[string][]string{"application_owner": {"tenant_id", "owner_id", "app_id"}, "application_current": {"tenant_id", "app_id", "current_release_id"}}), fk("application_current_fk", []string{"tenant_id", "app_id", "current_release_id"}, []string{"tenant_id", "app_id", "release_id"}, "cognara_fg_application_releases"), map[string]string{"application_metadata_object": "json_type(metadata)='OBJECT'", "application_release_shape": "releases_is_null in (0,1)"}},
 		"cognara_fg_application_drafts":   {drafts, "", schemaIndexes(map[string][]string{"PRIMARY": {"tenant_id", "app_id"}}, nil), fk("draft_application_fk", []string{"tenant_id", "app_id"}, []string{"tenant_id", "app_id"}, parent), map[string]string{"draft_config_object": "json_type(config)='OBJECT'"}},
 		"cognara_fg_application_releases": {releases, "", schemaIndexes(map[string][]string{"PRIMARY": {"tenant_id", "app_id", "release_id"}, "release_ordinal": {"tenant_id", "app_id", "ordinal"}}, nil), fk("release_application_fk", []string{"tenant_id", "app_id"}, []string{"tenant_id", "app_id"}, parent), map[string]string{"release_snapshot_object": "json_type(snapshot)='OBJECT'", "release_metadata_object": "json_type(metadata)='OBJECT'"}},

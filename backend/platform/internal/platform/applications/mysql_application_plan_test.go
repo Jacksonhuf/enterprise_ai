@@ -141,7 +141,7 @@ func TestMySQLApplicationPlanReadOnlyPrerequisitesAndTargets(t *testing.T) {
 	if before != after || version != 2 || auditTableCount(t, db) != 2 {
 		t.Fatal("plan changed source")
 	}
-	for _, table := range []string{"cognara_fg_applications", "cognara_fg_application_drafts", "cognara_fg_application_releases", "cognara_fg_application_checks"} {
+	for _, table := range []string{"cognara_fg_applications", "cognara_fg_application_drafts", "cognara_fg_application_releases", "cognara_fg_application_checks", "cognara_fg_application_envelope"} {
 		if _, err = db.Exec("CREATE TABLE " + table + "(id INT PRIMARY KEY)"); err != nil {
 			t.Fatal(err)
 		}

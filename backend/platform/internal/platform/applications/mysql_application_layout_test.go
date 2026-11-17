@@ -25,6 +25,10 @@ func rawLayoutFixture(t *testing.T) []byte {
 	var releases []map[string]json.RawMessage
 	json.Unmarshal(app["releases"], &releases)
 	releases[0]["future_release"] = extension
+	var snapshot map[string]json.RawMessage
+	json.Unmarshal(releases[0]["config_snapshot"], &snapshot)
+	snapshot["future_snapshot"] = extension
+	releases[0]["config_snapshot"], _ = json.Marshal(snapshot)
 	second := map[string]json.RawMessage{}
 	for key, value := range releases[0] {
 		second[key] = value

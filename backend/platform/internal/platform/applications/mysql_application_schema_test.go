@@ -59,17 +59,17 @@ func TestMySQLApplicationSchemaAndTenantForeignKeys(t *testing.T) {
 		t.Fatal(err)
 	}
 	for _, row := range [][2]string{{"42", "App"}, {"43", "app"}} {
-		if _, err = db.Exec(`INSERT INTO cognara_fg_applications(tenant_id,app_id,agent_id,owner_id,current_release_id,updated_at,metadata,releases_is_null) VALUES(?,?, 'agent','owner',NULL,'2026-11-17T00:00:00.123456789Z','{}',0)`, row[0], row[1]); err != nil {
+		if _, err = db.Exec(`INSERT INTO cognara_fg_applications(tenant_id,app_id,agent_id,owner_id,current_release_id,updated_at,metadata,releases_is_null,raw_payload) VALUES(?,?, 'agent','owner',NULL,'2026-11-17T00:00:00.123456789Z','{}',0,'{}')`, row[0], row[1]); err != nil {
 			t.Fatal("binary identifiers or parent insert", err)
 		}
 	}
-	if _, err = db.Exec(`INSERT INTO cognara_fg_application_drafts VALUES('43','App','revision','{}')`); err == nil {
+	if _, err = db.Exec(`INSERT INTO cognara_fg_application_drafts(tenant_id,app_id,revision,config,raw_payload) VALUES('43','App','revision','{}','{}')`); err == nil {
 		t.Fatal("cross-tenant draft inserted")
 	}
-	if _, err = db.Exec(`INSERT INTO cognara_fg_application_drafts VALUES('42','App','revision','[]')`); err == nil {
+	if _, err = db.Exec(`INSERT INTO cognara_fg_application_drafts(tenant_id,app_id,revision,config,raw_payload) VALUES('42','App','revision','[]','[]')`); err == nil {
 		t.Fatal("non-object config inserted")
 	}
-	if _, err = db.Exec(`INSERT INTO cognara_fg_application_releases VALUES('42','App','release',1,'{}','2026-11-17T00:00:00Z','owner','{}')`); err != nil {
+	if _, err = db.Exec(`INSERT INTO cognara_fg_application_releases(tenant_id,app_id,release_id,ordinal,snapshot,published_at,published_by,metadata,raw_payload) VALUES('42','App','release',1,'{}','2026-11-17T00:00:00Z','owner','{}','{}')`); err != nil {
 		t.Fatal(err)
 	}
 	if _, err = db.Exec(`UPDATE cognara_fg_applications SET current_release_id='release' WHERE app_id='App'`); err != nil {
@@ -87,17 +87,22 @@ func TestMySQLApplicationSchemaAndTenantForeignKeys(t *testing.T) {
 }
 func TestMySQLApplicationSchemaRejectsIncompatibleLayouts(t *testing.T) {
 	for name, statement := range map[string]string{
-		"missing-table":   "DROP TABLE cognara_fg_application_drafts",
-		"extra-column":    "ALTER TABLE cognara_fg_application_drafts ADD extension INT NULL",
-		"default-column":  "ALTER TABLE cognara_fg_application_drafts ALTER COLUMN revision SET DEFAULT 'fallback'",
-		"cascade-fk":      "ALTER TABLE cognara_fg_application_drafts DROP FOREIGN KEY draft_application_fk; ALTER TABLE cognara_fg_application_drafts ADD CONSTRAINT draft_application_fk FOREIGN KEY(tenant_id,app_id) REFERENCES cognara_fg_applications(tenant_id,app_id) ON UPDATE RESTRICT ON DELETE CASCADE",
-		"wrong-column":    "ALTER TABLE cognara_fg_application_drafts MODIFY revision VARBINARY(64) NOT NULL",
-		"missing-fk":      "ALTER TABLE cognara_fg_application_drafts DROP FOREIGN KEY draft_application_fk",
-		"disabled-check":  "ALTER TABLE cognara_fg_application_drafts ALTER CHECK draft_config_object NOT ENFORCED",
-		"weak-check":      "ALTER TABLE cognara_fg_application_drafts DROP CHECK draft_config_object, ADD CONSTRAINT draft_config_object CHECK(JSON_VALID(config))",
-		"invisible-index": "ALTER TABLE cognara_fg_applications ALTER INDEX application_owner INVISIBLE",
-		"prefix-index":    "ALTER TABLE cognara_fg_applications DROP INDEX application_owner, ADD KEY application_owner(tenant_id,owner_id(20),app_id)",
-		"wrong-collation": "ALTER TABLE cognara_fg_application_drafts DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci",
+		"missing-envelope":         "DROP TABLE cognara_fg_application_envelope",
+		"raw-text-instead-of-blob": "ALTER TABLE cognara_fg_application_drafts MODIFY raw_payload LONGTEXT NOT NULL",
+		"missing-raw":              "ALTER TABLE cognara_fg_application_releases DROP COLUMN raw_payload",
+		"nullable-raw":             "ALTER TABLE cognara_fg_application_checks MODIFY raw_payload LONGBLOB NULL",
+		"envelope-id-check":        "ALTER TABLE cognara_fg_application_envelope DROP CHECK application_envelope_singleton",
+		"missing-table":            "DROP TABLE cognara_fg_application_drafts",
+		"extra-column":             "ALTER TABLE cognara_fg_application_drafts ADD extension INT NULL",
+		"default-column":           "ALTER TABLE cognara_fg_application_drafts ALTER COLUMN revision SET DEFAULT 'fallback'",
+		"cascade-fk":               "ALTER TABLE cognara_fg_application_drafts DROP FOREIGN KEY draft_application_fk; ALTER TABLE cognara_fg_application_drafts ADD CONSTRAINT draft_application_fk FOREIGN KEY(tenant_id,app_id) REFERENCES cognara_fg_applications(tenant_id,app_id) ON UPDATE RESTRICT ON DELETE CASCADE",
+		"wrong-column":             "ALTER TABLE cognara_fg_application_drafts MODIFY revision VARBINARY(64) NOT NULL",
+		"missing-fk":               "ALTER TABLE cognara_fg_application_drafts DROP FOREIGN KEY draft_application_fk",
+		"disabled-check":           "ALTER TABLE cognara_fg_application_drafts ALTER CHECK draft_config_object NOT ENFORCED",
+		"weak-check":               "ALTER TABLE cognara_fg_application_drafts DROP CHECK draft_config_object, ADD CONSTRAINT draft_config_object CHECK(JSON_VALID(config))",
+		"invisible-index":          "ALTER TABLE cognara_fg_applications ALTER INDEX application_owner INVISIBLE",
+		"prefix-index":             "ALTER TABLE cognara_fg_applications DROP INDEX application_owner, ADD KEY application_owner(tenant_id,owner_id(20),app_id)",
+		"wrong-collation":          "ALTER TABLE cognara_fg_application_drafts DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci",
 	} {
 		t.Run(name, func(t *testing.T) {
 			db := preflightDB(t, testsupport.MySQLDSN(t))
