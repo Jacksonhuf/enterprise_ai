@@ -363,3 +363,7 @@ PR61已合并。`cognara-migrate-grants --check`、`cognara_fg_grants` DDL、gra
 ## 第66轮：R06 schema4 快照
 
 公共 export/import 支持 schema4（根域 + 应用表 + grants 表 + 审计）。见 test-report-v0.66.md。
+
+## 第67轮：R07 会话 plan 与 DDL
+
+`cognara-migrate-sessions --check`、会话/消息目标表 DDL、session 布局 round-trip 与内部彩排复制。要求 schema4；目标 schema5 仅在计划中登记。无 apply/运行时 writer。见 test-report-v0.67.md。
