@@ -258,3 +258,7 @@ PR #32已合并main（4ff348a）。异常/用量共用只允许固定数组枚�
 ## 第43轮：按任务计划推进
 
 已建立22项剩余任务与六阶段验收计划，见[任务入口](remaining-work-and-delivery-plan.md)。本轮R01将管理页公共配置与同企业保存公告对齐，新增真实表单/刷新和租户、重启、冲突、权限回归；未实现全用户公告投放。PR39已合并main。本轮证据见[test-report-v0.43.md](test-report-v0.43.md)和PR最新CI，下一轮R04/R05进入MySQL关系模型及应用发布表，真实身份和A–E按外部依赖分别验收。
+
+## 第44轮：MySQL关系模型与应用迁移预检
+
+PR40已核对同head完整CI及评审并合并main。本轮完成R04设计，新增应用/草稿/发布/检查只读迁移规划器及CLI，CI强制运行真实MySQL和编译后二进制回归。预检不初始化/seed/写入，不支持apply，不启用schema3。R05保持开发中：目标表DDL、复制对账、reader/writer和导入导出切换仍未实现。详情见[设计](../architecture/fg-mysql-relational-design.md)、[任务台账](remaining-work-and-delivery-plan.md)及[test-report-v0.44.md](test-report-v0.44.md)。

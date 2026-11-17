@@ -4,6 +4,8 @@
 
 企业认知平台 F/G 开发仓库。采用 Vue 3 / TypeScript / TDesign 前端与 Go 后端，通过固定版本脚本导入 WeKnora 源码，在功能目录内扩展应用、治理和业务服务适配。
 
+MySQL关系模型与只读应用迁移预检见[关系模型设计](docs/architecture/fg-mysql-relational-design.md)。本轮尚未切换schema3。
+
 后续任务与验收入口：[F/G剩余任务与开发测试计划](docs/development/remaining-work-and-delivery-plan.md)。按任务ID记录每轮实现、测试证据与外部依赖。
 
 ## 本次可运行范围
