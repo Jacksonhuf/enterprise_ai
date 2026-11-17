@@ -157,3 +157,25 @@ func TestRelationalDraftMergeKeepsMissingUnchangedFields(t *testing.T) {
 		t.Fatal("ambiguous known field accepted")
 	}
 }
+
+func TestRelationalDraftMergeNullableObject(t *testing.T) {
+	source := []byte(`{"basic":null,"future":{"n":9007199254740993}}`)
+	got, err := mergeRelationalDraft(source, Config{})
+	if err != nil || !equalApplicationJSON(source, got) {
+		t.Fatal("unchanged null object rewritten", err)
+	}
+	next := Config{Basic: Basic{Name: "changed"}}
+	got, err = mergeRelationalDraft(source, next)
+	if err != nil {
+		t.Fatal(err)
+	}
+	var fields map[string]json.RawMessage
+	json.Unmarshal(got, &fields)
+	var basic Basic
+	if err = json.Unmarshal(fields["basic"], &basic); err != nil || basic.Name != "changed" {
+		t.Fatal("null cannot become object", err)
+	}
+	if !equalApplicationJSON(fields["future"], []byte(`{"n":9007199254740993}`)) {
+		t.Fatal("extension lost")
+	}
+}

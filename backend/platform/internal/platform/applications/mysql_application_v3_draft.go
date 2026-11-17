@@ -1,6 +1,7 @@
 package applications
 
 import (
+	"bytes"
 	"context"
 	"database/sql"
 	"encoding/json"
@@ -30,6 +31,12 @@ func mergeRelationalDraft(raw []byte, next Config) ([]byte, error) {
 		var src, oldObj, newObj map[string]json.RawMessage
 		object := json.Unmarshal(new, &newObj) == nil && newObj != nil
 		if object {
+			if bytes.Equal(bytes.TrimSpace(source), []byte("null")) {
+				if equalApplicationJSON(old, new) {
+					return append([]byte(nil), source...), nil
+				}
+				return append([]byte(nil), new...), nil
+			}
 			if json.Unmarshal(source, &src) != nil || src == nil || json.Unmarshal(old, &oldObj) != nil {
 				return nil, errors.New("invalid draft object")
 			}
