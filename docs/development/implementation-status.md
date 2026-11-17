@@ -355,3 +355,7 @@ PR61已合并。`cognara-migrate-grants --check`、`cognara_fg_grants` DDL、gra
 ## 第64轮：R06 授权 apply 与 schema4 读
 
 `ApplyMySQLGrants`、`cognara-migrate-grants --apply`；`readMySQLApplicationV4` 接入 `OpenMySQL` 与根域更新路径；schema4 下 grants 变更走关系域错误。无 grants writer。见 test-report-v0.64.md。
+
+## 第65轮：R06 schema4 授权 writer
+
+`TryMutateGrantsV4` 接入治理 grant HTTP；创建/撤销与审计同事务。无 schema4 快照。见 test-report-v0.65.md。
