@@ -14,6 +14,8 @@
       ><t-button v-else @click="load">刷新</t-button>
     </header>
     <t-alert v-if="grantMutation.error && !grantVisible && !grantMutation.visible" theme="error" :message="grantMutation.error" /><t-button v-if="grantMutation.blocked && !grantVisible && !grantMutation.visible"  :loading="reloadingGrant" @click="reloadGrantState">重新加载授权列表</t-button>
+    <t-alert v-if="exceptionChange.error && !exceptionChange.visible" theme="error" :message="exceptionChange.error" />
+    <t-button v-if="exceptionChange.blocked && !exceptionChange.visible" :loading="reloadingException" @click="reloadExceptionState">重新加载异常列表</t-button>
     <t-alert v-if="error" theme="error" :message="error" /><t-tabs
       v-if="isAccess"
       :value="section"
@@ -98,7 +100,7 @@
               </td>
               <td class="table-actions">
                 <t-button variant="text" @click="selected = row">详情</t-button
-                ><t-button
+                ><t-button v-if="section === 'exceptions' && auditTraceLocation(row.request_id)" variant="text" @click="showRequestAudit(row.request_id)">关联审计</t-button><t-button
                   v-if="section === 'grants' && row.active"
                   variant="text"
                   theme="danger"
@@ -108,7 +110,7 @@
                   v-for="action in exceptionActions(row)"
                   :key="action.status"
                   variant="text"
-                  @click="transitionException(row, action)"
+                  :disabled="exceptionChange.saving || exceptionChange.blocked" @click="transitionException(row, action)"
                   >{{ action.label }}</t-button
                 >
               </td>
@@ -144,6 +146,7 @@
         </div>
         <div v-if="selected.request_id">
           <span>请求编号</span><code>{{ selected.request_id }}</code>
+          <t-button v-if="section === 'exceptions' && auditTraceLocation(selected.request_id)" variant="text" @click="showRequestAudit(selected.request_id)">查看关联审计</t-button>
         </div>
         <div v-if="selected.code">
           <span>错误类型</span><strong>{{ selected.code }}</strong>
@@ -232,6 +235,21 @@
       <t-button v-else theme="danger" :loading="grantMutation.saving" @click="commitGrantMutation">确认撤销</t-button>
       <t-button variant="text" :disabled="grantMutation.saving" @click="grantMutation.close()">取消</t-button>
     </t-dialog>
+    <t-dialog :visible="exceptionChange.visible" header="更新异常状态" :footer="false"
+      :close-btn="!exceptionChange.saving" :close-on-overlay-click="false" :close-on-esc-keydown="!exceptionChange.saving" @close="exceptionChange.close()">
+      <div v-if="exceptionChange.record" class="exception-review detail-list">
+        <div><span>异常</span><strong>{{ exceptionChange.record.name }}</strong></div>
+        <div><span>当前状态</span><strong>{{ display(exceptionChange.record.status) }}</strong></div>
+        <div><span>目标状态</span><strong>{{ display(exceptionChange.targetStatus) }}</strong></div>
+        <div><span>记录版本</span><code>{{ exceptionChange.record.revision }}</code></div>
+        <div><span>关联请求</span><code>{{ exceptionChange.record.request_id || "未提供" }}</code></div>
+      </div>
+      <p>状态处理仅更新记录，不会重试业务执行。</p>
+      <t-alert v-if="exceptionChange.error" class="spaced" theme="error" :message="exceptionChange.error" />
+      <t-button v-if="exceptionChange.blocked" :loading="reloadingException" @click="reloadExceptionState">重新加载异常列表</t-button>
+      <t-button v-else theme="primary" :loading="exceptionChange.saving" :disabled="!exceptionChange.canConfirm" @click="commitExceptionTransition">确认更新</t-button>
+      <t-button variant="text" :disabled="exceptionChange.saving" @click="exceptionChange.close()">取消</t-button>
+    </t-dialog>
   </section>
 </template>
 <script setup lang="ts">
@@ -251,9 +269,11 @@ import { TabPanel as TTabPanel } from "tdesign-vue-next/es/tabs";
 import { Tabs as TTabs } from "tdesign-vue-next/es/tabs";
 import { ref, computed, reactive, watch, onMounted, onBeforeUnmount } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { Dialog as TDialog, DialogPlugin } from "tdesign-vue-next/es/dialog";
+import { Dialog as TDialog } from "tdesign-vue-next/es/dialog";
 import { MessagePlugin } from "tdesign-vue-next/es/message";
-import { api, post, prefix, formatAPIError } from "../api";
+import { api, prefix, formatAPIError } from "../api";
+import {ExceptionTransition,exceptionTransitions} from "../exceptionTransition";
+import {auditRequestId,auditTraceLocation} from "../auditTrace";
 import {GrantMutation,type GrantInput,type GrantReviewRow} from "../grantMutation";
 import { PagedCollection } from "../pagedCollection";
 import { governanceParams, pagedGovernance } from "../governanceFilters";
@@ -264,7 +284,7 @@ const route = useRoute(),
   staticLoading = ref(true),
   error = ref(""),
   data = ref<any>({ items: [] }),
-  query = ref(""),
+  query = ref(route.path.endsWith("/audit") ? auditRequestId(route.query.request_id) : ""),
   statusFilter = ref(""), outcomeFilter = ref(""), unitFilter = ref(""),
   timeRange = ref<(string|number|Date)[]>([]),
   selected = ref<any>(null),
@@ -284,9 +304,11 @@ const grantMutation=reactive(new GrantMutation({
  create:body=>api(prefix+"/governance/grants",{method:"POST",body:JSON.stringify(body),signal:AbortSignal.timeout(15000)}),
  revoke:id=>api(prefix+"/governance/grants/"+encodeURIComponent(id),{method:"DELETE",signal:AbortSignal.timeout(15000)})
 }));
+const exceptionChange=reactive(new ExceptionTransition((id,body)=>api(prefix+"/governance/exceptions/"+encodeURIComponent(id)+"/status",{method:"POST",body:JSON.stringify(body),signal:AbortSignal.timeout(15000)})));
+const reloadingException=ref(false);
 const reloadingGrant=ref(false);
 let pageActive=true,appsGeneration=0;
-onBeforeUnmount(()=>{pageActive=false;appsGeneration++;grantMutation.invalidate()});
+onBeforeUnmount(()=>{pageActive=false;appsGeneration++;grantMutation.invalidate();exceptionChange.invalidate()});
 const accessTabs = {
     users: "企业用户",
     groups: "用户组",
@@ -508,43 +530,22 @@ const resourceOptions = computed(() =>
           { label: "渠道库存管理制度", value: "inventory-policy" },
         ],
 );
-function exceptionActions(row: any) {
-  if (section.value !== "exceptions") return [];
-  return row.status === "OPEN"
-    ? [
-        { label: "确认", status: "ACKNOWLEDGED" },
-        { label: "标记解决", status: "RESOLVED" },
-      ]
-    : row.status === "ACKNOWLEDGED"
-      ? [{ label: "标记解决", status: "RESOLVED" }]
-      : row.status === "RESOLVED"
-        ? [{ label: "重新打开", status: "OPEN" }]
-        : [];
+function exceptionActions(row:any){return section.value==="exceptions"?exceptionTransitions(row.status):[]}
+function transitionException(row:any,action:{label:string;status:string}){exceptionChange.open(row,action.status)}
+async function commitExceptionTransition(){
+ const updated=await exceptionChange.confirm();if(!updated||!pageActive)return;
+ await load();if(pageActive)MessagePlugin.success("异常状态已更新，未重试业务执行");
 }
-function transitionException(
-  row: any,
-  action: { label: string; status: string },
-) {
-  const dialog = DialogPlugin.confirm({
-    header: action.label + "异常",
-    body: "更新异常处理状态；业务执行需另行核对，不会自动重试。",
-    confirmBtn: action.label,
-    onConfirm: async () => {
-      try {
-        const updated = await post(
-          prefix + "/governance/exceptions/" + row.id + "/status",
-          { expected_revision: row.revision, status: action.status },
-        );
-        if (selected.value?.id === row.id) selected.value = updated;
-        await load();
-        MessagePlugin.success("异常状态已更新");
-        dialog.hide();
-      } catch (e) {
-        error.value = formatAPIError(e);
-        dialog.hide();
-      }
-    },
-  });
+async function reloadExceptionState(){
+ if(exceptionChange.saving||reloadingException.value)return;
+ reloadingException.value=true;
+ try{
+  await load();if(!pageActive||section.value!=="exceptions"||error.value||collection.error||collection.loading)return;
+  exceptionChange.blocked=false;exceptionChange.close();
+ }finally{reloadingException.value=false}
+}
+function showRequestAudit(value:unknown){
+ const location=auditTraceLocation(value);if(location&&!exceptionChange.saving)void router.push(location);
 }
 function resetGrant() {
   grant.value.subject_id = subjectOptions.value[0]?.value || "";
@@ -609,6 +610,7 @@ function confirmRevoke(row:any){grantMutation.openRevoke(row,grantReview(row))}
 
 <style scoped>
 .grant-review { margin-top: 20px; }
+.exception-review code { overflow-wrap: anywhere; }
 .grant-review strong { overflow-wrap: anywhere; }
 .governance-filters { flex-wrap: wrap; }
 .governance-filters :deep(.t-select__wrap) { width: 180px; }
