@@ -375,3 +375,7 @@ PR61已合并。`cognara-migrate-grants --check`、`cognara_fg_grants` DDL、gra
 ## 第69轮：R07 schema5 session writer
 
 `UpdateOperationalContext` 与 `TryMutateSessionsV5` 写入会话/消息关系表；grant writer 兼容 schema5 读路径。无 schema5 快照。见 test-report-v0.69.md。
+
+## 第70轮：R07 schema5 快照
+
+公共 export/import 支持 schema5（根域 + 应用表 + grants + sessions/messages + 审计）。代码侧 R07 主链路闭环；分页/脱敏/R20 另验。见 test-report-v0.70.md。
