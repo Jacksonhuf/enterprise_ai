@@ -36,7 +36,7 @@ P0：影响生产正确性或安全；P1：首期完整体验及可运营性；P
 | R05 | P0 | 应用/草稿/发布/检查拆表 | 真实MySQL升级和重启；不可变快照、检查版本绑定、并发草稿409、发布原子性与租户隔离；旧快照迁移前后API等价 | R04，F/G | 3–5 | 实现完成（代码）：A–D与apply后重启/双连接CAS/编译态GET等价已专项；整项待生产运维apply与R20多实例门禁登记已验收 |
 | R06 | P0 | 授权与租户范围拆表 | 主体/资源/操作/范围索引；创建去重、撤销幂等；并发授权与撤销正确；事务失败无部分审计/授权 | R04，F/G | 2–4 | 实现完成（代码）：schema4 迁移/读/写/快照；R20 多实例并发另验 |
 | R07 | P0 | 会话/消息/Turn拆表 | 按租户/应用/用户/会话分页；重启完成结果重放；撤权后脱敏；并发写无丢失；迁移对账 | R04，F/G | 3–5 | 实现完成（代码）：schema5 迁移/读/写/快照（v0.67–70）；分页/脱敏/R20 另验 |
-| R08 | P1 | 异常/用量/设置拆表及锁收敛 | 筛选分页、异常CAS、配置CAS、用量去重等价；移除对应聚合整段更新；真实MySQL多进程并发及慢查询证据 | R04–R07，F/G | 3–5 | 开发中：settings schema6 plan+DDL（v0.71）；apply/读/writer 与 exceptions/usage 待做 |
+| R08 | P1 | 异常/用量/设置拆表及锁收敛 | 筛选分页、异常CAS、配置CAS、用量去重等价；移除对应聚合整段更新；真实MySQL多进程并发及慢查询证据 | R04–R07，F/G | 3–5 | 开发中：settings schema6 apply+读（v0.72）；专用 writer/快照、exceptions/usage 待做 |
 | R09 | P0 | 共享生产身份方案与接入点 | 与团队明确SSO/JWT发行方、audience、租户/角色映射、撤销及密钥轮换；验证身份只能显式demo启用；缺失配置默认拒绝 | F/G实现端口；共享身份团队提供约定 | 2–3 | 待开发，提供方待对齐 |
 | R10 | P0 | 真实登录/用户/组/角色接入 | 使用共享身份源；过期/错aud/跨租户/撤销拒绝；组变化影响授权；UI不把演示固定列表当真实身份；退出清理 | R09，身份团队+F/G | 3–5 | 待外部联调；可先适配Mock |
 | R11 | P0 | A–E契约与输出Schema冻结 | 逐操作核对当前契约、错误码、分页、版本、幂等、超时与输出字段；拒绝未知能力；变更需版本化；维护HTTP捕获验证 | F/G+对应A–E负责人 | 2–3 | 待开发；需联合确认 |
@@ -214,4 +214,4 @@ R07 快照：schema5 export/import 与会话/消息表原文保真。代码侧 R
 
 ### 第71轮增量
 
-R08 起步：settings 目标表 DDL、`PlanMySQLSettings`/`cognara-migrate-settings --check`、根域 settings 拆装与内部复制彩排。要求 schema5；目标 schema6 仅在计划中登记。下一步 apply、exceptions/usage 域。见 test-report-v0.71.md 及 PR CI。
+R08：settings schema6 apply+读（`ApplyMySQLSettings`、`readMySQLApplicationV6`、settings 投影）。下一步 schema6 快照、专用 writer、exceptions/usage 域。见 test-report-v0.72.md 及 PR CI。

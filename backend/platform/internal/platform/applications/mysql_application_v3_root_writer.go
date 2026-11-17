@@ -38,7 +38,7 @@ func updateMySQLV3RootTx(ctx context.Context, tx *sql.Tx, operational bool, fn f
 		return zero, err
 	}
 	if !mySQLRelationalRuntimeVersion(version) {
-		return zero, errors.New("relational root writer requires schema 3, 4, or 5")
+		return zero, errors.New("relational root writer requires schema 3, 4, 5, or 6")
 	}
 	var st State
 	var err error
@@ -49,6 +49,8 @@ func updateMySQLV3RootTx(ctx context.Context, tx *sql.Tx, operational bool, fn f
 		st, _, err = readMySQLApplicationV4(ctx, tx, !operational)
 	case 5:
 		st, _, err = readMySQLApplicationV5(ctx, tx, !operational)
+	case 6:
+		st, _, err = readMySQLApplicationV6(ctx, tx, !operational)
 	default:
 		return zero, errors.New("relational root writer schema unsupported")
 	}
@@ -61,6 +63,14 @@ func updateMySQLV3RootTx(ctx context.Context, tx *sql.Tx, operational bool, fn f
 		return zero, err
 	}
 	sessionsBefore, err := json.Marshal(st.Sessions)
+	if err != nil {
+		return zero, err
+	}
+	settingsBefore, err := json.Marshal(st.Settings)
+	if err != nil {
+		return zero, err
+	}
+	revisionsBefore, err := json.Marshal(st.SettingRevisions)
 	if err != nil {
 		return zero, err
 	}
@@ -112,6 +122,17 @@ func updateMySQLV3RootTx(ctx context.Context, tx *sql.Tx, operational bool, fn f
 	if version == 5 && !equalApplicationJSON(grantsBefore, grantsAfter) {
 		return zero, errRelationalGrantDomain
 	}
+	settingsAfter, err := json.Marshal(st.Settings)
+	if err != nil {
+		return zero, err
+	}
+	revisionsAfter, err := json.Marshal(st.SettingRevisions)
+	if err != nil {
+		return zero, err
+	}
+	if version == 6 && (!equalApplicationJSON(settingsBefore, settingsAfter) || !equalApplicationJSON(revisionsBefore, revisionsAfter)) {
+		return zero, errRelationalSettingsDomain
+	}
 	if operational {
 		if len(st.Audit) > 0 {
 			var last uint64
@@ -147,6 +168,8 @@ func updateMySQLV3RootTx(ctx context.Context, tx *sql.Tx, operational bool, fn f
 		_, _, err = readMySQLApplicationV4(ctx, tx, false)
 	case 5:
 		_, _, err = readMySQLApplicationV5(ctx, tx, false)
+	case 6:
+		_, _, err = readMySQLApplicationV6(ctx, tx, false)
 	}
 	if err != nil {
 		return zero, err
@@ -170,6 +193,10 @@ func rootDomainsJSON(st State, version int) ([]byte, error) {
 	}
 	if version >= 5 {
 		delete(fields, "sessions")
+	}
+	if version >= 6 {
+		delete(fields, "settings")
+		delete(fields, "setting_revisions")
 	}
 	return json.Marshal(fields)
 }
