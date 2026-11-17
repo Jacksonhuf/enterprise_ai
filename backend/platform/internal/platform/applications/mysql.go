@@ -72,6 +72,19 @@ func OpenMySQLContext(parent context.Context, dsn string) (*Store, error) {
 			startup.Rollback()
 			return bad("MySQL schema3 application state incompatible")
 		}
+	case 4:
+		if err = validateMySQLApplicationSchema(ctx, startup); err != nil {
+			startup.Rollback()
+			return bad("MySQL schema4 application schema incompatible")
+		}
+		if err = validateMySQLGrantSchema(ctx, startup); err != nil {
+			startup.Rollback()
+			return bad("MySQL schema4 grant schema incompatible")
+		}
+		if _, _, err = readMySQLApplicationV4(ctx, startup, true); err != nil {
+			startup.Rollback()
+			return bad("MySQL schema4 application state incompatible")
+		}
 	default:
 		startup.Rollback()
 		return bad("MySQL stored state or schema version unsupported")

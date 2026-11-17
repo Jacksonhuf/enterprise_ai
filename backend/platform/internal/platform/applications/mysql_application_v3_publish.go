@@ -30,10 +30,10 @@ func publishMySQLV3Release(ctx context.Context, db *sql.DB, tenant, id, actor, c
 	if err = tx.QueryRowContext(ctx, `SELECT schema_version FROM cognara_fg_state WHERE id=1 FOR UPDATE`).Scan(&version); err != nil {
 		return zero, err
 	}
-	if version != 3 {
-		return zero, errors.New("relational publish requires schema 3")
+	if !mySQLRelationalRuntimeVersion(version) {
+		return zero, errors.New("relational publish requires schema 3 or 4")
 	}
-	st, _, err := readMySQLApplicationV3(ctx, tx, false)
+	st, _, err := readMySQLApplicationRelational(ctx, tx, false, version)
 	if err != nil {
 		return zero, err
 	}
@@ -97,7 +97,7 @@ func publishMySQLV3Release(ctx context.Context, db *sql.DB, tenant, id, actor, c
 	if err = insertMySQLAudit(ctx, tx, []Event{{ID: ID("event"), TenantID: tenant, ActorID: actor, ClientID: client, OccurredAt: r.PublishedAt, Action: "application.publish", ResourceID: id, Outcome: "success", RequestID: request}}, last); err != nil {
 		return zero, err
 	}
-	if _, _, err = readMySQLApplicationV3(ctx, tx, false); err != nil {
+	if _, _, err = readMySQLApplicationRelational(ctx, tx, false, version); err != nil {
 		return zero, err
 	}
 	if err = tx.Commit(); err != nil {

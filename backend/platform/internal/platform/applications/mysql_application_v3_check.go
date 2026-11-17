@@ -27,10 +27,10 @@ func recordMySQLV3Check(ctx context.Context, db *sql.DB, tenant, id, actor, expe
 	if err = tx.QueryRowContext(ctx, `SELECT schema_version FROM cognara_fg_state WHERE id=1 FOR UPDATE`).Scan(&version); err != nil {
 		return zero, err
 	}
-	if version != 3 {
-		return zero, errors.New("relational check writer requires schema 3")
+	if !mySQLRelationalRuntimeVersion(version) {
+		return zero, errors.New("relational check writer requires schema 3 or 4")
 	}
-	st, _, err := readMySQLApplicationV3(ctx, tx, false)
+	st, _, err := readMySQLApplicationRelational(ctx, tx, false, version)
 	if err != nil {
 		return zero, err
 	}
@@ -65,7 +65,7 @@ func recordMySQLV3Check(ctx context.Context, db *sql.DB, tenant, id, actor, expe
 	if _, err = tx.ExecContext(ctx, `INSERT INTO cognara_fg_application_checks(tenant_id,check_id,app_id,draft_revision,user_id,expires_at,validation_id,metadata,raw_payload) VALUES(?,?,?,?,?,?,?,?,?)`, tenant, c.ID, id, c.Revision, actor, until, validation, string(payload), payload); err != nil {
 		return zero, err
 	}
-	if _, _, err = readMySQLApplicationV3(ctx, tx, false); err != nil {
+	if _, _, err = readMySQLApplicationRelational(ctx, tx, false, version); err != nil {
 		return zero, err
 	}
 	if err = tx.Commit(); err != nil {

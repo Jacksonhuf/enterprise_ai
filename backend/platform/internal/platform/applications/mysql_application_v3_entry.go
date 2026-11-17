@@ -23,7 +23,7 @@ func (s *Store) mysqlApplicationSchema3(ctx context.Context) (bool, error) {
 	if err := s.db.QueryRowContext(ctx, `SELECT schema_version FROM cognara_fg_state WHERE id=1`).Scan(&version); err != nil {
 		return false, err
 	}
-	return version == 3, nil
+	return mySQLRelationalRuntimeVersion(version), nil
 }
 
 func (s *Store) syncOperationalState(ctx context.Context) error {

@@ -59,8 +59,8 @@ func readStateRowSource(ctx context.Context, tx *sql.Tx, lock, relational, inclu
 	}
 	// Locking schema3 writes go through updateMySQLV3RootTx; a locking caller
 	// reaching here would bypass the relational application guard.
-	if relational && version == 3 && !lock {
-		next, source, err := readMySQLApplicationV3(ctx, tx, includeAudit)
+	if relational && !lock && mySQLRelationalRuntimeVersion(version) {
+		next, source, err := readMySQLApplicationRelational(ctx, tx, includeAudit, version)
 		return next, version, source, err
 	}
 	if version != 1 && !(relational && version == 2) {
@@ -101,7 +101,7 @@ func (s *Store) updateSQLContext(parent context.Context, fn func(*State) error, 
 		if e = tx.QueryRowContext(ctx, `SELECT schema_version FROM cognara_fg_state WHERE id=1 FOR UPDATE`).Scan(&locked); e != nil {
 			return e
 		}
-		if locked == 3 {
+		if locked == 3 || locked == 4 {
 			next, e := updateMySQLV3RootTx(ctx, tx, operational, fn)
 			if e != nil {
 				return e

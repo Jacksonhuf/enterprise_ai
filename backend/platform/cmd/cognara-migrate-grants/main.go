@@ -7,6 +7,7 @@ import (
 	app "github.com/Tencent/WeKnora/internal/platform/applications"
 	"io"
 	"os"
+	"strings"
 )
 
 func run(args []string, stdout, stderr io.Writer, getenv func(string) string) int {
@@ -14,20 +15,39 @@ func run(args []string, stdout, stderr io.Writer, getenv func(string) string) in
 	flags.SetOutput(stderr)
 	env := flags.String("mysql-dsn-env", "COGNARA_MYSQL_DSN", "MySQL DSN environment variable; never pass a DSN on the command line")
 	check := flags.Bool("check", false, "read-only grant migration plan")
+	apply := flags.Bool("apply", false, "apply schema3→schema4 grant split")
+	expectSHA := flags.String("expect-sha256", "", "source body SHA-256 from plan; required with --apply")
 	if err := flags.Parse(args); err != nil {
 		return 2
 	}
-	if !*check || flags.NArg() != 0 {
-		io.WriteString(stderr, "choose --check; grant migration apply is not implemented\n")
+	if flags.NArg() != 0 || (*check == *apply) {
+		io.WriteString(stderr, "choose exactly one of --check or --apply; --apply requires --expect-sha256\n")
 		return 2
 	}
-	report, err := app.PlanMySQLGrants(context.Background(), getenv(*env))
+	if *apply && strings.TrimSpace(*expectSHA) == "" {
+		io.WriteString(stderr, "grant migration apply requires --expect-sha256 from a fresh --check\n")
+		return 2
+	}
+	dsn := getenv(*env)
+	if *check {
+		report, err := app.PlanMySQLGrants(context.Background(), dsn)
+		if err != nil {
+			io.WriteString(stderr, err.Error()+"\n")
+			return 1
+		}
+		if json.NewEncoder(stdout).Encode(report) != nil {
+			io.WriteString(stderr, "grant migration plan output failed\n")
+			return 1
+		}
+		return 0
+	}
+	report, err := app.ApplyMySQLGrants(context.Background(), dsn, *expectSHA)
 	if err != nil {
 		io.WriteString(stderr, err.Error()+"\n")
 		return 1
 	}
 	if json.NewEncoder(stdout).Encode(report) != nil {
-		io.WriteString(stderr, "grant migration plan output failed\n")
+		io.WriteString(stderr, "grant migration apply output failed\n")
 		return 1
 	}
 	return 0

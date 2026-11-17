@@ -84,8 +84,8 @@ func (s *Store) UpdateMySQLSettingsContext(parent context.Context, key, legacy s
 	if e = tx.QueryRowContext(ctx, `SELECT schema_version FROM cognara_fg_state WHERE id=1`).Scan(&version); e != nil {
 		return true, e
 	}
-	if version == 3 {
-		if _, _, e = readMySQLApplicationV3(ctx, tx, false); e != nil {
+	if mySQLRelationalRuntimeVersion(version) {
+		if _, _, e = readMySQLApplicationRelational(ctx, tx, false, version); e != nil {
 			return true, e
 		}
 	}
@@ -111,11 +111,11 @@ func readMySQLSettingsProjection(ctx context.Context, tx *sql.Tx, key, legacy st
 	if version == 1 {
 		return SettingsRecord{}, false, nil
 	}
-	if version != 2 && version != 3 {
+	if version != 2 && !mySQLRelationalRuntimeVersion(version) {
 		return SettingsRecord{}, true, errors.New("unsupported state schema")
 	}
-	if version == 3 {
-		if _, _, e = readMySQLApplicationV3(ctx, tx, false); e != nil {
+	if mySQLRelationalRuntimeVersion(version) {
+		if _, _, e = readMySQLApplicationRelational(ctx, tx, false, version); e != nil {
 			return SettingsRecord{}, true, e
 		}
 	}
@@ -126,7 +126,7 @@ func readMySQLSettingsProjection(ctx context.Context, tx *sql.Tx, key, legacy st
 	for _, name := range names {
 		for _, canonical := range []string{"settings", "setting_revisions", "audit"} {
 			if name != canonical && strings.EqualFold(name, canonical) {
-				if version == 3 {
+				if mySQLRelationalRuntimeVersion(version) {
 					return SettingsRecord{}, true, errors.New("ambiguous schema3 settings aliases")
 				}
 				return SettingsRecord{}, false, nil
