@@ -32,19 +32,35 @@ func copyMySQLApplicationLayout(ctx context.Context, tx *sql.Tx, raw []byte, sam
 	if err != nil {
 		return err
 	}
-	if err = validateMySQLApplicationSchema(ctx, tx); err != nil {
+	if err = applyMySQLApplicationLayout(ctx, tx, layout); err != nil {
+		return err
+	}
+	rebuilt, err := loadMySQLApplicationLayout(ctx, tx, sampled)
+	if err != nil {
+		return err
+	}
+	if !equalApplicationJSON(raw, rebuilt) {
+		return errors.New("application database round-trip reconciliation failed")
+	}
+	return nil
+}
+
+// Caller must start from empty application tables. Writes raw envelopes only.
+func applyMySQLApplicationLayout(ctx context.Context, tx *sql.Tx, layout applicationLayout) error {
+	if err := validateMySQLApplicationSchema(ctx, tx); err != nil {
 		return err
 	}
 	for table := range applicationSchemaSpecs() {
 		var count int
-		if err = tx.QueryRowContext(ctx, "SELECT COUNT(*) FROM "+table).Scan(&count); err != nil {
+		if err := tx.QueryRowContext(ctx, "SELECT COUNT(*) FROM "+table).Scan(&count); err != nil {
 			return err
 		}
 		if count != 0 {
-			return errors.New("application rehearsal requires empty target tables")
+			return errors.New("application layout target tables must be empty")
 		}
 	}
 	exec := func(query string, args ...any) error { _, e := tx.ExecContext(ctx, query, args...); return e }
+	var err error
 	if err = exec(`INSERT INTO cognara_fg_application_envelope(id,root_payload,checks_kind) VALUES(1,?,?)`, []byte(layout.Root), layout.ChecksKind); err != nil {
 		return err
 	}
@@ -95,14 +111,7 @@ func copyMySQLApplicationLayout(ctx context.Context, tx *sql.Tx, raw []byte, sam
 			return err
 		}
 	}
-	rebuilt, err := loadMySQLApplicationLayout(ctx, tx, sampled)
-	if err != nil {
-		return err
-	}
-	if !equalApplicationJSON(raw, rebuilt) {
-		return errors.New("application database round-trip reconciliation failed")
-	}
-	return nil
+	return verifyMySQLApplicationProjections(ctx, tx, layout)
 }
 
 // Validate native SQL projections against the raw envelopes used to reconstruct

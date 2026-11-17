@@ -12,20 +12,24 @@ import (
 // Raw envelopes preserve extensions and JSON numbers; these are not runtime State
 // replacements. SQL projections must be checked against them on a future load.
 type applicationLayoutRow struct {
-	TenantID, AppID string
-	Header, Draft   json.RawMessage
-	Releases        []json.RawMessage
-	ReleasesNull    bool
+	TenantID     string            `json:"tenant_id"`
+	AppID        string            `json:"app_id"`
+	Header       json.RawMessage   `json:"header_raw"`
+	Draft        json.RawMessage   `json:"draft_raw"`
+	Releases     []json.RawMessage `json:"releases_raw"`
+	ReleasesNull bool              `json:"releases_is_null"`
 }
 type applicationCheckLayoutRow struct {
-	TenantID, AppID, CheckID string
-	Payload                  json.RawMessage
+	TenantID string          `json:"tenant_id"`
+	AppID    string          `json:"app_id"`
+	CheckID  string          `json:"check_id"`
+	Payload  json.RawMessage `json:"payload_raw"`
 }
 type applicationLayout struct {
-	Root       json.RawMessage
-	Apps       []applicationLayoutRow
-	Checks     []applicationCheckLayoutRow
-	ChecksKind string // absent, null, object
+	Root       json.RawMessage             `json:"root_payload"`
+	Apps       []applicationLayoutRow      `json:"applications"`
+	Checks     []applicationCheckLayoutRow `json:"checks"`
+	ChecksKind string                      `json:"checks_kind"` // absent, null, object
 }
 
 func splitApplicationLayout(raw []byte, sampled time.Time) (applicationLayout, error) {

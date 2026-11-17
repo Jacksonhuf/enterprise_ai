@@ -54,30 +54,48 @@ func ExportMySQLSnapshot(parent context.Context, dsn, destination string) (Snaps
 	if e = tx.QueryRowContext(ctx, `SELECT schema_version,body FROM cognara_fg_state WHERE id=1`).Scan(&version, &raw); e != nil {
 		return report, errors.New("MySQL snapshot state unavailable")
 	}
-	if (version != 1 && version != 2) || len(raw) == 0 || len(raw) > 64<<20 {
+	if (version != 1 && version != 2 && version != 3) || len(raw) == 0 || len(raw) > 64<<20 {
 		return report, errors.New("MySQL snapshot version or size unsupported")
 	}
-	var object map[string]json.RawMessage
-	var state State
-	if json.Unmarshal(raw, &object) != nil || object == nil || json.Unmarshal(raw, &state) != nil {
-		return report, errors.New("MySQL snapshot state invalid")
-	}
 	report.SourceSchemaVersion = version
-	report.AuditEvents = len(state.Audit)
-	if version == 2 {
-		raw, report.AuditEvents, e = exportMySQLV2(ctx, tx, raw)
+	if version == 3 {
+		if e = validateMySQLApplicationSchema(ctx, db); e != nil {
+			return report, errors.New("MySQL v3 snapshot schema incompatible")
+		}
+		st, _, e := readMySQLApplicationV3(ctx, tx, true)
 		if e != nil {
-			return SnapshotReport{}, errors.New("MySQL v2 snapshot invalid or unavailable")
+			return report, errors.New("MySQL v3 snapshot state invalid")
+		}
+		raw, report.AuditEvents, e = exportMySQLV3(ctx, tx)
+		if e != nil {
+			return SnapshotReport{}, errors.New("MySQL v3 snapshot invalid or unavailable")
+		}
+		report.Applications = len(st.Apps)
+		report.Sessions = len(st.Sessions)
+		for _, s := range st.Sessions {
+			report.Messages += len(s.Messages)
+		}
+	} else {
+		var object map[string]json.RawMessage
+		var state State
+		if json.Unmarshal(raw, &object) != nil || object == nil || json.Unmarshal(raw, &state) != nil {
+			return report, errors.New("MySQL snapshot state invalid")
+		}
+		report.AuditEvents = len(state.Audit)
+		if version == 2 {
+			raw, report.AuditEvents, e = exportMySQLV2(ctx, tx, raw)
+			if e != nil {
+				return SnapshotReport{}, errors.New("MySQL v2 snapshot invalid or unavailable")
+			}
+		}
+		report.Applications = len(state.Apps)
+		report.Sessions = len(state.Sessions)
+		for _, s := range state.Sessions {
+			report.Messages += len(s.Messages)
 		}
 	}
 	if e = tx.Commit(); e != nil {
 		return report, errors.New("MySQL snapshot transaction failed")
-	}
-	// Preserve unknown properties and the exact raw JSON bytes returned by MySQL.
-	report.Applications = len(state.Apps)
-	report.Sessions = len(state.Sessions)
-	for _, s := range state.Sessions {
-		report.Messages += len(s.Messages)
 	}
 	sum := sha256.Sum256(raw)
 	report.SHA256 = hex.EncodeToString(sum[:])
