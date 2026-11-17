@@ -2,6 +2,7 @@ package api
 
 import (
 	"encoding/json"
+	"errors"
 	app "github.com/Tencent/WeKnora/internal/platform/applications"
 	"github.com/Tencent/WeKnora/internal/platform/governance"
 	"net/http"
@@ -141,7 +142,7 @@ func (s *Server) createGrant(w http.ResponseWriter, r *http.Request) error {
 		return fail(400, "INVALID_REQUEST", "验证集当前只支持华东范围")
 	}
 	g := app.Grant{ID: app.ID("grant"), TenantID: p.TenantID, SubjectType: req.SubjectType, SubjectID: req.SubjectID, ResourceType: req.ResourceType, ResourceID: req.ResourceID, Action: req.Action, Scope: req.Scope, Active: true}
-	if e := s.Store.UpdateOperationalContext(r.Context(), func(st *app.State) error {
+	mutate := func(st *app.State) error {
 		valid := false
 		switch req.SubjectType {
 		case "USER":
@@ -181,7 +182,18 @@ func (s *Server) createGrant(w http.ResponseWriter, r *http.Request) error {
 		st.Grants = append(st.Grants, g)
 		appendAudit(st, p, "authorization.grant", g.ResourceID, "success", "", requestID(r))
 		return nil
-	}); e != nil {
+	}
+	if ok, e := s.Store.TryMutateGrantsV4(r.Context(), mutate); ok {
+		if e != nil {
+			if errors.Is(e, app.ErrGrantUnavailable) {
+				return fail(404, "ASSET_UNAVAILABLE", "授权记录不存在")
+			}
+			return e
+		}
+		Write(w, g)
+		return nil
+	}
+	if e := s.Store.UpdateOperationalContext(r.Context(), mutate); e != nil {
 		return e
 	}
 	Write(w, g)
@@ -192,7 +204,7 @@ func (s *Server) revokeGrant(w http.ResponseWriter, r *http.Request) error {
 	if e := s.requireAdmin(p); e != nil {
 		return e
 	}
-	e := s.Store.UpdateOperationalContext(r.Context(), func(st *app.State) error {
+	mutate := func(st *app.State) error {
 		for i, g := range st.Grants {
 			if g.ID == r.PathValue("id") && g.TenantID == p.TenantID {
 				if !g.Active {
@@ -204,8 +216,18 @@ func (s *Server) revokeGrant(w http.ResponseWriter, r *http.Request) error {
 			}
 		}
 		return fail(404, "ASSET_UNAVAILABLE", "授权记录不存在")
-	})
-	if e != nil {
+	}
+	if ok, e := s.Store.TryMutateGrantsV4(r.Context(), mutate); ok {
+		if e != nil {
+			if errors.Is(e, app.ErrGrantUnavailable) {
+				return fail(404, "ASSET_UNAVAILABLE", "授权记录不存在")
+			}
+			return e
+		}
+		Write(w, map[string]bool{"success": true})
+		return nil
+	}
+	if e := s.Store.UpdateOperationalContext(r.Context(), mutate); e != nil {
 		return e
 	}
 	Write(w, map[string]bool{"success": true})
