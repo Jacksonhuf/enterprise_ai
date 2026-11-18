@@ -71,7 +71,7 @@ func (s *Store) queryMySQLGovernanceArray(parent context.Context, section, tenan
 	if e = validateMySQLAuditSchema(ctx, tx); e != nil {
 		return nil, false, true, e
 	}
-	if version == 7 && section == "exceptions" {
+	if version >= 7 && version <= 8 && section == "exceptions" {
 		items, more, _, err := queryMySQLExceptionsRelational(ctx, tx, tenant, after, limit, match, idOf)
 		if err != nil {
 			return nil, false, true, err

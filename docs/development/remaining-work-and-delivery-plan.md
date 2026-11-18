@@ -253,3 +253,7 @@ R20：schema8 治理 usage / 消息 load 只读并发；schema8 生产 apply 运
 ### 第85轮增量
 
 R20：agent-chat 取消/短 deadline、快照 import 彩排；R02：`r02-mysql-api-evidence-v0.85.md`。见 test-report-v0.85.md 及 PR CI。
+
+### 第86轮增量
+
+R20：治理 audit/exceptions 只读并发；schema8 exceptions 列表关系化修复；R02 证据 v0.86。见 test-report-v0.86.md 及 PR CI。
