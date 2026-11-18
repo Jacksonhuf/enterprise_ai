@@ -18,6 +18,11 @@ __pycache__/
 !/frontend/vite.config.ts
 !/frontend/scripts-tdesign-lifecycle.mjs
 !/frontend/scripts-tdesign-lifecycle.test.mjs
+!/frontend/scripts-smoke.mjs
+!/frontend/scripts-check-bundle.mjs
+!/frontend/scripts-verify-r18-baseline.mjs
+!/frontend/r18-baselines/
+!/frontend/r18-baselines/**
 !/frontend/scripts-tdesign-lifecycle.d.mts
 !/frontend/tsconfig*.json
 !/frontend/env.d.ts

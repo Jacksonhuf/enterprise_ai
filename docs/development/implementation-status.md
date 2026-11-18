@@ -515,3 +515,7 @@ public+profile 写后读编排；SLO 试点填表。见 test-report-v0.99.md。
 ## 第104轮（v1.04）：R18 截图 artifact 与彩排 §3 模板
 
 CI `r18-spot-screenshots`；彩排登记模板。见 test-report-v1.04.md。
+
+## 第105轮（v1.05）：R18 像素基线门
+
+`frontend/r18-baselines/`；`verify-r18-capture-baseline.mjs`。见 test-report-v1.05.md。

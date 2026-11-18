@@ -16,7 +16,8 @@
     "regenerate-i18n-locales": "tsx src/i18n/regeneratePrunedLocales.ts",
     "test:cognara": "node --import tsx --test src/cognara/*.test.ts scripts-tdesign-lifecycle.test.mjs",
     "check:cognara-bundle": "node scripts-check-bundle.mjs",
-    "test:cognara-browser": "node scripts-smoke.mjs"
+    "test:cognara-browser": "node scripts-smoke.mjs",
+    "verify:r18-baseline": "node scripts-verify-r18-baseline.mjs"
   },
   "dependencies": {
     "@microsoft/fetch-event-source": "^2.0.1",
