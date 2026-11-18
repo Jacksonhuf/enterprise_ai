@@ -287,3 +287,9 @@ R20：peer 主机会话创建、会话列表并发读、跨主机 chat/load；�
 R20/schema8：会话关系化 writer 挂接 HTTP、连续创建修复、`sessionsRelationalEqual`。见 test-report-v0.91.md 及 PR CI。
 
 **建议下一轮（v0.92+）**：renameSession 等其余会话突变走 V5 writer；正式压力/SLO；runbook 生产登记表实填。
+
+### 第92轮增量
+
+R20：会话 rename/agent-chat 走 V5 writer；双轮 agent-chat 关系化验收。见 test-report-v0.92.md 及 PR CI。
+
+**建议下一轮（v0.93+）**：轻量并发 agent-chat 只读重放（continue-stream）；正式压力/SLO；runbook 生产登记表实填。

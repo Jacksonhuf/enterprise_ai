@@ -2,12 +2,18 @@ package api_test
 
 import (
 	"bytes"
+	"context"
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
+	"net/http/httptest"
 	"sync"
 	"testing"
+
+	api "github.com/Tencent/WeKnora/internal/platform/api"
+	app "github.com/Tencent/WeKnora/internal/platform/applications"
 )
 
 func postSessionHTTP(t *testing.T, base, identity, path, title string) string {
@@ -123,6 +129,59 @@ func TestR20Schema8DualHostConcurrentSessionListReads(t *testing.T) {
 	close(errs)
 	for err := range errs {
 		t.Fatal(err)
+	}
+}
+
+// TestR20Schema8AgentChatPersistsRelationalMessages appends a turn via the session writer.
+func TestR20Schema8AgentChatPersistsRelationalMessages(t *testing.T) {
+	f, dsn, _ := schema8DualHTTPFixture(t)
+	path := "/api/v1/cognitive/apps/channel-replenishment/sessions"
+	sessID := postSessionHTTP(t, f.host.URL, "demo-user", path, "chat-writer")
+	f.request("demo-user", "POST", "/api/v1/agent-chat/"+sessID, map[string]string{"query": "SO1002需求增加到350"}, 200)
+	f.request("demo-user", "POST", "/api/v1/agent-chat/"+sessID, map[string]string{"query": "SO1002需求增加到400"}, 200)
+	st := f.store.Read().Sessions[sessID]
+	if len(st.Messages) != 4 {
+		t.Fatal("messages", len(st.Messages))
+	}
+	db, err := sql.Open("mysql", dsn)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer db.Close()
+	var count int
+	if err = db.QueryRowContext(context.Background(), `SELECT COUNT(*) FROM cognara_fg_session_messages WHERE tenant_id=? AND session_id=?`, "42", sessID).Scan(&count); err != nil || count != 4 {
+		t.Fatal("relational messages", count, err)
+	}
+}
+
+// TestR20Schema8DualHostSessionRenameUsesWriter exercises rename after chat on schema8.
+func TestR20Schema8DualHostSessionRenameUsesWriter(t *testing.T) {
+	f, dsn, _ := mysqlSchema8Fixture(t)
+	b, err := app.OpenMySQL(dsn)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer b.Close()
+	second := &api.Server{Store: b, Client: f.client, ServiceToken: f.server.ServiceToken, SigningKey: f.server.SigningKey}
+	host := httptest.NewServer(second.Handler())
+	defer host.Close()
+	id := postSessionHTTP(t, f.host.URL, "demo-user", "/api/v1/cognitive/apps/channel-replenishment/sessions", "rename-after-chat")
+	f.request("demo-user", "POST", "/api/v1/agent-chat/"+id, map[string]string{"query": "SO1002需求增加到350"}, 200)
+	rev := sessionMeta(t, f, id)["revision"].(string)
+	raw, _ := json.Marshal(map[string]string{"title": "schema8-renamed", "expected_revision": rev})
+	req, _ := http.NewRequest("PUT", host.URL+"/api/v1/sessions/"+id, bytes.NewReader(raw))
+	req.Header.Set("Authorization", "Bearer demo-user")
+	req.Header.Set("Content-Type", "application/json")
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		t.Fatal(err)
+	}
+	resp.Body.Close()
+	if resp.StatusCode != 200 {
+		t.Fatal(resp.StatusCode)
+	}
+	if f.store.Read().Sessions[id].Title != "schema8-renamed" {
+		t.Fatal("title not persisted")
 	}
 }
 

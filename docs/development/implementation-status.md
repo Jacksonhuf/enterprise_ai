@@ -463,3 +463,7 @@ peer 主机会话创建、会话列表只读并发、跨主机 agent-chat；治�
 ## 第91轮：schema8 会话 writer 与连续创建修复
 
 TryMutateSessionsV5 覆盖 5–8；HTTP createSession 挂接；连续会话创建专项。见 test-report-v0.91.md。
+
+## 第92轮：rename 与 agent-chat 关系化写入
+
+`applySessionMutation` 统一 rename/chat/create；双轮对话关系化验收。见 test-report-v0.92.md。
