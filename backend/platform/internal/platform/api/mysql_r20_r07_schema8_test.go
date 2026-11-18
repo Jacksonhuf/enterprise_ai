@@ -173,6 +173,106 @@ func TestR20Schema8DualHostSettingsProfileCAS(t *testing.T) {
 	}
 }
 
+func TestR20Schema8DualHostExceptionStatusCAS(t *testing.T) {
+	f, dsn, _ := mysqlSchema8Fixture(t)
+	b, err := app.OpenMySQL(dsn)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer b.Close()
+	second := &api.Server{Store: b, Client: f.client, ServiceToken: f.server.ServiceToken, SigningKey: f.server.SigningKey}
+	host := httptest.NewServer(second.Handler())
+	defer host.Close()
+	var wg sync.WaitGroup
+	results := make(chan int, 2)
+	for i, address := range []string{f.host.URL, host.URL} {
+		wg.Add(1)
+		go func(i int, address string) {
+			defer wg.Done()
+			status := []string{"ACKNOWLEDGED", "RESOLVED"}[i]
+			raw, _ := json.Marshal(map[string]string{"expected_revision": "r1", "status": status})
+			req, _ := http.NewRequest("POST", address+governanceBase+"exceptions/exc-plan-1/status", bytes.NewReader(raw))
+			req.Header.Set("Authorization", "Bearer demo-admin")
+			req.Header.Set("Content-Type", "application/json")
+			resp, e := http.DefaultClient.Do(req)
+			if e != nil {
+				t.Error(e)
+				results <- 0
+				return
+			}
+			resp.Body.Close()
+			results <- resp.StatusCode
+		}(i, address)
+	}
+	wg.Wait()
+	close(results)
+	counts := map[int]int{}
+	for status := range results {
+		counts[status]++
+	}
+	if counts[200] != 1 || counts[409] != 1 {
+		t.Fatal("schema8 exception status CAS", counts)
+	}
+}
+
+func TestR20Schema8DualHostApplicationDraftCAS(t *testing.T) {
+	f, dsn, _ := mysqlSchema8Fixture(t)
+	b, err := app.OpenMySQL(dsn)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer b.Close()
+	second := &api.Server{Store: b, Client: f.client, ServiceToken: f.server.ServiceToken, SigningKey: f.server.SigningKey}
+	host := httptest.NewServer(second.Handler())
+	defer host.Close()
+	before := f.store.Read().Apps["channel-replenishment"]
+	cfgA, cfgB := before.Draft, before.Draft
+	cfgA.Basic.Name = "schema8-http-draft-A"
+	cfgB.Basic.Name = "schema8-http-draft-B"
+	var wg sync.WaitGroup
+	results := make(chan int, 2)
+	for i, address := range []string{f.host.URL, host.URL} {
+		wg.Add(1)
+		go func(i int, address string) {
+			defer wg.Done()
+			cfg := cfgA
+			if i == 1 {
+				cfg = cfgB
+			}
+			body := struct {
+				Expected string `json:"expected_draft_revision"`
+				app.Config
+			}{before.Revision, cfg}
+			raw, _ := json.Marshal(body)
+			req, _ := http.NewRequest("PUT", address+"/api/v1/cognitive/apps/"+before.ID, bytes.NewReader(raw))
+			req.Header.Set("Authorization", "Bearer demo-engineer")
+			req.Header.Set("Content-Type", "application/json")
+			resp, e := http.DefaultClient.Do(req)
+			if e != nil {
+				t.Error(e)
+				results <- 0
+				return
+			}
+			resp.Body.Close()
+			results <- resp.StatusCode
+		}(i, address)
+	}
+	wg.Wait()
+	close(results)
+	counts := map[int]int{}
+	for status := range results {
+		counts[status]++
+	}
+	if counts[200] != 1 || counts[409] != 1 {
+		t.Fatal("schema8 application draft CAS", counts)
+	}
+	after := f.store.Read().Apps[before.ID]
+	name := after.Draft.Basic.Name
+	if name != "schema8-http-draft-A" && name != "schema8-http-draft-B" {
+		t.Fatal("draft winner missing", name)
+	}
+}
+
 func TestR07Schema8RevokedHistoryRedaction(t *testing.T) {
 	f, _, _ := mysqlSchema8Fixture(t)
 	id := f.session()
