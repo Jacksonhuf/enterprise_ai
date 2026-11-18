@@ -19,7 +19,7 @@ async function assertR18Spot(page,spot){
   await page.goto('http://127.0.0.1:14173/login');await page.waitForLoadState('networkidle');
   await page.getByRole('heading',{name:'登录 Cognara'}).waitFor();
   const loginText=await page.locator('.login-page').innerText();assert.doesNotMatch(loginText,/schema\s*[0-9]|R20\b|架构编号/i);
-  captureTarget=page.locator('.login-card');
+  captureTarget=page.locator('.login-page');
  }else{
   if(spot.identity)await page.evaluate(id=>localStorage.setItem('cognara_demo_identity',id),spot.identity);
   await page.goto('http://127.0.0.1:14173'+spot.path);await page.waitForLoadState('networkidle');

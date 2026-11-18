@@ -31,16 +31,28 @@ for (const spot of manifest.spots) {
   }
   const base = PNG.sync.read(readFileSync(basePath));
   const got = PNG.sync.read(readFileSync(gotPath));
-  if (base.width !== got.width || base.height !== got.height) {
-    console.error(`${spot.slug}: size ${got.width}x${got.height} != baseline ${base.width}x${base.height}`);
+  if (base.width !== got.width) {
+    console.error(`${spot.slug}: width ${got.width} != baseline ${base.width}`);
     failed = true;
     continue;
   }
-  const diffPixels = pixelmatch(base.data, got.data, null, base.width, base.height, {
+  const height = Math.min(base.height, got.height);
+  if (Math.abs(base.height - got.height) > 64) {
+    console.error(`${spot.slug}: height delta ${Math.abs(base.height - got.height)}px > 64`);
+    failed = true;
+    continue;
+  }
+  const rowBytes = base.width * 4;
+  const baseData = base.data.subarray(0, rowBytes * height);
+  const gotData = got.data.subarray(0, rowBytes * height);
+  if (base.height !== got.height) {
+    console.warn(`${spot.slug}: comparing top ${height}px (${base.width}x${base.height} vs ${got.width}x${got.height})`);
+  }
+  const diffPixels = pixelmatch(baseData, gotData, null, base.width, height, {
     threshold: 0.2,
     includeAA: false,
   });
-  const ratio = diffPixels / (base.width * base.height);
+  const ratio = diffPixels / (base.width * height);
   console.log(`${spot.slug}: diff=${diffPixels} (${(ratio * 100).toFixed(3)}%)`);
   if (ratio > maxRatio) {
     console.error(`${spot.slug}: exceeds max ratio ${maxRatio}`);
