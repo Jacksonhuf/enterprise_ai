@@ -1,0 +1,9 @@
+{
+  "ledger_status": "PENDING_TEAM_ENTRY",
+  "apply_runbook_section": "3",
+  "production_cluster_id": "",
+  "applied_at_cst": "",
+  "verified_by_platform": "",
+  "runbook_smoke_summary_artifact": "runbook-smoke-summary-validation",
+  "notes": "非生产台账模板；真 apply 前由平台负责人实填"
+}

@@ -1,0 +1,42 @@
+{
+  "disclaimer": "METRICS_WIRING_DRAFT_ONLY",
+  "alert_rules_source": "docs/development/fixtures/r21-alerting-dry-run.rules.json",
+  "bindings": [
+    {
+      "metric": "fg.runbook.smoke_read_wall_s",
+      "producer": "runbook-smoke-summary.json read_phase_elapsed",
+      "scrape_job_placeholder": "cognara-fg-ci-exporter",
+      "recording_rule_hint": "fg_runbook_smoke_read_wall_seconds"
+    },
+    {
+      "metric": "fg.read.mixed_smoke_wall_s",
+      "producer": "manual_or_future_ci_hook",
+      "scrape_job_placeholder": "cognara-fg-ci-exporter",
+      "recording_rule_hint": "fg_mixed_read_smoke_wall_seconds"
+    },
+    {
+      "metric": "fg.gov.usage_tier64_wall_s",
+      "producer": "TestR20Schema8TieredGovernanceUsageLoad log",
+      "scrape_job_placeholder": "cognara-fg-ci-exporter",
+      "recording_rule_hint": "fg_gov_usage_tier64_wall_seconds"
+    },
+    {
+      "metric": "fg.gov.usage_tier96_wall_s",
+      "producer": "r09-usage-tier-harness.sh",
+      "scrape_job_placeholder": "cognara-fg-ci-exporter",
+      "recording_rule_hint": "fg_gov_usage_tier96_wall_seconds"
+    },
+    {
+      "metric": "fg.msg.load_tier64_wall_s",
+      "producer": "TestR20Schema8TieredMessageLoadLoad log",
+      "scrape_job_placeholder": "cognara-fg-ci-exporter",
+      "recording_rule_hint": "fg_msg_load_tier64_wall_seconds"
+    },
+    {
+      "metric": "fg.msg.load_tier96_wall_s",
+      "producer": "r09-message-load-tier-harness.sh",
+      "scrape_job_placeholder": "cognara-fg-ci-exporter",
+      "recording_rule_hint": "fg_msg_load_tier96_wall_seconds"
+    }
+  ]
+}

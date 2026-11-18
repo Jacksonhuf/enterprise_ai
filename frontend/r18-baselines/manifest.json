@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-18T13:11:48.816Z",
+  "generated_at": "2026-11-18T13:46:56.849Z",
   "spots": [
     {
       "slug": "login-public",
@@ -345,6 +345,36 @@
       "publishReview": false,
       "sessionSidebar": false,
       "file": "assets-narrow.png"
+    },
+    {
+      "slug": "build-apps-narrow",
+      "path": "/build/apps",
+      "viewport": [
+        390,
+        844
+      ],
+      "identity": "demo-engineer",
+      "forbidden": false,
+      "publicLogin": false,
+      "chatEntry": false,
+      "publishReview": false,
+      "sessionSidebar": false,
+      "file": "build-apps-narrow.png"
+    },
+    {
+      "slug": "chat-user-narrow",
+      "path": "/apps",
+      "viewport": [
+        390,
+        844
+      ],
+      "identity": "demo-user",
+      "forbidden": false,
+      "publicLogin": false,
+      "chatEntry": true,
+      "publishReview": false,
+      "sessionSidebar": false,
+      "file": "chat-user-narrow.png"
     }
   ]
 }
