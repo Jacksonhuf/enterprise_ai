@@ -16,7 +16,7 @@ func (s *Store) mysqlSessionSchema5(ctx context.Context) (bool, error) {
 	if err := s.db.QueryRowContext(ctx, `SELECT schema_version FROM cognara_fg_state WHERE id=1`).Scan(&version); err != nil {
 		return false, err
 	}
-	return version == 5, nil
+	return version >= 5 && version <= 8, nil
 }
 
 // TryMutateSessionsV5 applies session mutations on schema 5 relational storage.

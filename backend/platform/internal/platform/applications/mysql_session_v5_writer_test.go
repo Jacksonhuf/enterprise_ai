@@ -55,6 +55,29 @@ func TestSchema5OperationalWriterAppendsMessages(t *testing.T) {
 	}
 }
 
+func TestSchema5BackToBackSessionCreates(t *testing.T) {
+	ctx := context.Background()
+	dsn := schema5SessionFixture(t)
+	store, err := OpenMySQL(dsn)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer store.Close()
+	for i := 0; i < 3; i++ {
+		id := ID("session")
+		ok, err := store.TryMutateSessionsV5(ctx, func(st *State) error {
+			st.Sessions[id] = Session{
+				ID: id, AppID: "channel-replenishment", TenantID: "42", OwnerID: "demo-user",
+				Title: "extra", CreatedAt: Now(), UpdatedAt: Now(), Revision: ID("revision"),
+			}
+			return nil
+		})
+		if !ok || err != nil {
+			t.Fatal(i, ok, err)
+		}
+	}
+}
+
 func TestSchema5DedicatedSessionWriterCreate(t *testing.T) {
 	ctx := context.Background()
 	dsn := schema5SessionFixture(t)

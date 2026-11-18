@@ -630,14 +630,25 @@ func (s *Server) createSession(w http.ResponseWriter, r *http.Request) error {
 		req.Title = "新对话"
 	}
 	sess := app.Session{ID: app.ID("session"), AppID: a.ID, TenantID: p.TenantID, OwnerID: p.UserID, Title: req.Title, TitleCustomized: customized, CreatedAt: app.Now(), UpdatedAt: app.Now(), Revision: app.ID("revision"), Messages: []app.Message{}}
-	if e = s.Store.UpdateOperationalContext(r.Context(), func(st *app.State) error {
+	mutate := func(st *app.State) error {
 		current, ok := st.Apps[a.ID]
 		if !ok || !s.canUse(*st, p, current) {
 			return fail(403, "AUTHORIZATION_DENIED", "应用使用授权已撤销")
 		}
 		st.Sessions[sess.ID] = sess
 		return nil
-	}); e != nil {
+	}
+	if ok, e := s.Store.TryMutateSessionsV5(r.Context(), mutate); ok {
+		if e != nil {
+			if errors.Is(e, app.ErrSessionUnavailable) {
+				return fail(404, "ASSET_UNAVAILABLE", "会话不存在或不可访问")
+			}
+			return e
+		}
+		Write(w, sess)
+		return nil
+	}
+	if e = s.Store.UpdateOperationalContext(r.Context(), mutate); e != nil {
 		return e
 	}
 	Write(w, sess)

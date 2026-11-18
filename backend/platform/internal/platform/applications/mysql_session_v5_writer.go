@@ -118,6 +118,25 @@ func writeMySQLSession(ctx context.Context, tx *sql.Tx, s Session) error {
 	return nil
 }
 
+func sessionsRelationalEqual(a, b Session) bool {
+	if a.ID != b.ID || a.TenantID != b.TenantID || a.AppID != b.AppID || a.OwnerID != b.OwnerID ||
+		a.Title != b.Title || a.TitleCustomized != b.TitleCustomized || a.Revision != b.Revision ||
+		a.CreatedAt != b.CreatedAt || a.UpdatedAt != b.UpdatedAt {
+		return false
+	}
+	if len(a.Messages) != len(b.Messages) {
+		return false
+	}
+	for i := range a.Messages {
+		ar, _ := json.Marshal(a.Messages[i])
+		br, _ := json.Marshal(b.Messages[i])
+		if !equalApplicationJSON(ar, br) {
+			return false
+		}
+	}
+	return true
+}
+
 func applyMySQLSessionMapDelta(ctx context.Context, tx *sql.Tx, before, after map[string]Session) error {
 	if before == nil {
 		before = map[string]Session{}
@@ -140,9 +159,7 @@ func applyMySQLSessionMapDelta(ctx context.Context, tx *sql.Tx, before, after ma
 			}
 			continue
 		}
-		prevRaw, _ := json.Marshal(prev)
-		nextRaw, _ := json.Marshal(next)
-		if !equalApplicationJSON(prevRaw, nextRaw) {
+		if !sessionsRelationalEqual(prev, next) {
 			if err := writeMySQLSession(ctx, tx, next); err != nil {
 				return err
 			}
