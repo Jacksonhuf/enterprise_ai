@@ -1,0 +1,18 @@
+# RECORDING_RULES_DRAFT_ONLY — not loaded by CI runtime
+# source: r21-metrics-wiring-draft.json (v1.15)
+groups:
+  - name: cognara_fg_ci_exporters_draft
+    interval: 30s
+    rules:
+      - record: fg_runbook_smoke_read_wall_seconds
+        expr: cognara_fg_runbook_smoke_read_seconds
+      - record: fg_mixed_read_smoke_wall_seconds
+        expr: cognara_fg_mixed_read_smoke_seconds
+      - record: fg_gov_usage_tier64_wall_seconds
+        expr: cognara_fg_gov_usage_tier64_seconds
+      - record: fg_gov_usage_tier96_wall_seconds
+        expr: cognara_fg_gov_usage_tier96_seconds
+      - record: fg_msg_load_tier64_wall_seconds
+        expr: cognara_fg_msg_load_tier64_seconds
+      - record: fg_msg_load_tier96_wall_seconds
+        expr: cognara_fg_msg_load_tier96_seconds

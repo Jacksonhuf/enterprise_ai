@@ -1,0 +1,9 @@
+{
+  "ledger_status": "ENTERED",
+  "apply_runbook_section": "3",
+  "production_cluster_id": "PLACEHOLDER-NOT-PRODUCTION",
+  "applied_at_cst": "PLACEHOLDER-NOT-PRODUCTION",
+  "verified_by_platform": "PLACEHOLDER-NOT-SIGNED",
+  "runbook_smoke_summary_artifact": "runbook-smoke-summary-validation",
+  "notes": "ENTERED 字段形状示例；非真仓台账"
+}
