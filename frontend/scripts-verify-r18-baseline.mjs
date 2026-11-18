@@ -12,13 +12,16 @@ if (!captureDir) {
   process.exit(2);
 }
 const baselineRoot = join(dirname(fileURLToPath(import.meta.url)), 'r18-baselines');
+const ratioConfigPath = join(baselineRoot, 'max-diff-ratio.json');
+const ratioConfig = existsSync(ratioConfigPath)
+  ? JSON.parse(readFileSync(ratioConfigPath, 'utf8'))
+  : {default: Number(process.env.COGNARA_R18_MAX_DIFF_RATIO || '0.02')};
 const manifestPath = join(captureDir, 'manifest.json');
 if (!existsSync(manifestPath)) {
   console.error('missing manifest.json in', captureDir);
   process.exit(2);
 }
 const manifest = JSON.parse(readFileSync(manifestPath, 'utf8'));
-const maxRatio = Number(process.env.COGNARA_R18_MAX_DIFF_RATIO || '0.02');
 let failed = false;
 
 for (const spot of manifest.spots) {
@@ -53,11 +56,17 @@ for (const spot of manifest.spots) {
     includeAA: false,
   });
   const ratio = diffPixels / (base.width * height);
-  console.log(`${spot.slug}: diff=${diffPixels} (${(ratio * 100).toFixed(3)}%)`);
+  const maxRatio = Number(
+    process.env.COGNARA_R18_MAX_DIFF_RATIO ||
+      ratioConfig[spot.slug] ||
+      ratioConfig.default ||
+      0.02,
+  );
+  console.log(`${spot.slug}: diff=${diffPixels} (${(ratio * 100).toFixed(3)}%) max=${maxRatio}`);
   if (ratio > maxRatio) {
     console.error(`${spot.slug}: exceeds max ratio ${maxRatio}`);
     failed = true;
   }
 }
 if (failed) process.exit(1);
-console.log(`R18 baseline gate OK (max ratio ${maxRatio})`);
+console.log(`R18 baseline gate OK`);
