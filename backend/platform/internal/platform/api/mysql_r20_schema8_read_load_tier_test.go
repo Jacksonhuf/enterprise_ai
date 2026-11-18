@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"sync"
+	"sync/atomic"
 	"testing"
 	"time"
 )
@@ -98,7 +99,7 @@ func TestR20Schema8TieredMessageLoadLoad(t *testing.T) {
 	id := f.session()
 	f.request("demo-user", "POST", "/api/v1/agent-chat/"+id, map[string]string{"query": "SO1002需求增加到350"}, 200)
 	path := "/api/v1/messages/" + id + "/load?limit=10"
-	var wantLen int
+	var wantLen atomic.Int32
 	validate := func(body []byte) error {
 		var page map[string]any
 		if json.Unmarshal(body, &page) != nil {
@@ -108,10 +109,14 @@ func TestR20Schema8TieredMessageLoadLoad(t *testing.T) {
 		if !ok {
 			return fmt.Errorf("missing data")
 		}
-		if wantLen == 0 {
-			wantLen = len(data)
-		} else if len(data) != wantLen {
-			return fmt.Errorf("inconsistent history length want=%d got=%d", wantLen, len(data))
+		n := int32(len(data))
+		prev := wantLen.Load()
+		if prev == 0 {
+			wantLen.CompareAndSwap(0, n)
+			prev = wantLen.Load()
+		}
+		if prev != n {
+			return fmt.Errorf("inconsistent history length want=%d got=%d", prev, n)
 		}
 		return nil
 	}
@@ -128,7 +133,7 @@ func TestR20Schema8TieredMessageLoadLoad(t *testing.T) {
 			t.Fatalf("tier workers=%d exceeded wall limit %s (elapsed %s)", tier.workers, tier.limit, elapsed)
 		}
 	}
-	if wantLen != 2 {
-		t.Fatal("expected user+assistant messages", wantLen)
+	if got := int(wantLen.Load()); got != 2 {
+		t.Fatal("expected user+assistant messages", got)
 	}
 }
