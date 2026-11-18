@@ -435,3 +435,7 @@ schema8 双主机 continue-stream 重放与不重跑业务；未知消息 404；
 ## 第84轮：R20 只读并发与 schema8 apply 模板
 
 治理 usage 与消息 load 双主机并发读；`mysql-schema8-production-apply-runbook.md` 运维登记模板。见 test-report-v0.84.md。
+
+## 第85轮：R20 取消/快照演练与 R02 索引
+
+agent-chat 取消上下文；runbook 快照 import 彩排；R02 MySQL API 证据表。见 test-report-v0.85.md。

@@ -60,8 +60,27 @@ export COGNARA_TEST_MYSQL_DSN='...' COGNARA_REQUIRE_MYSQL_TESTS=1
 go test -p 1 -race -count=1 ./internal/platform/api/ -run R20Schema8
 ```
 
-## 5. 未包含
+## 5. schema8 快照回退演练（变更单模板）
+
+与 `TestR20Schema8RunbookSnapshotImportDrill` / `TestMySQLV8SnapshotRoundTripPreservesUsageRows` 对齐。
+
+| 步 | 动作 | 登记 |
+|----|------|------|
+| 1 | apply 完成且 `schema_version=8` 的库上执行 export（校验 `source_schema_version` 与文件 SHA256） | export 路径、SHA256、操作人 |
+| 2 | 在 **隔离** 目标库（非生产）上做 import，校验报告与版本号 | 目标 DSN（无密码）、import 退出码 |
+| 3 | 双 `OpenMySQL` 连接读同一 usage 行数；`GET /ready` UP | 行数、ready 截图或日志 |
+| 4 | 生产回退决策：仅当团队批准，在同一变更单内用 **备份还原优先**；import 作为演练或灾备副本重建 | 批准人、RPO 说明 |
+
+自动化彩排：
+
+```bash
+cd backend/platform
+export COGNARA_TEST_MYSQL_DSN='...' COGNARA_REQUIRE_MYSQL_TESTS=1
+go test -p 1 -race -count=1 ./internal/platform/applications/ -run R20Schema8RunbookSnapshotImportDrill
+```
+
+## 6. 未包含
 
 - RPO/RTO 实测（待 R21 与团队定标）
 - 全量压力与 SLO 对照
-- 快照 import 生产演练（另开变更单，参考 schema8 export/import 专项）
+- 生产库上的真实 import（须经变更单与备份门禁）
