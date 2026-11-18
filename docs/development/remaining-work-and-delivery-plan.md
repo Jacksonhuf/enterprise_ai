@@ -431,3 +431,9 @@ usage 96w；告警 dry-run 6 规则（含 tier96）；服务/资产窄屏 R18。
 ENTERED 台账形状；recording rule YAML 样例；设置窄屏 R18。见 test-report-v1.15.md 及 PR CI。
 
 **建议下一轮（v1.16+）**：团队真 ENTERED；exporter OpenMetrics 样例 endpoint 文档；R18 登录/禁止页窄屏或 CI 摘要 tier 日志 artifact。
+
+### 第116轮增量（v1.16）
+
+R09 tier JSON artifact；OpenMetrics exporter 样例；登录/禁止窄屏 R18。见 test-report-v1.16.md 及 PR CI。
+
+**建议下一轮（v1.17+）**：真 ENTERED 与 exporter 上线；tier 摘要入账 runbook；R18 编辑器/发布窄屏或 mixed-read 告警绑定。

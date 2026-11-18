@@ -101,14 +101,21 @@ jobs:
       - run: python scripts/validate-staging-import-ticket.py docs/development/fixtures/staging-alert-import-ticket-closed-shape-example.json
       - run: python scripts/validate-r21-slo-signoff-record.py docs/development/fixtures/r21-slo-signoff-record-pending.json
       - run: bash scripts/r09-ready-probe-harness.sh
-      - run: bash scripts/r09-message-load-tier-harness.sh
-      - run: bash scripts/r09-usage-tier-harness.sh
+      - name: R09 tier probes and summary
+        run: bash scripts/r09-tier-probes-and-summary.sh /tmp/r09-tier-probe.log /tmp/r09-tier-probe-summary.json
+      - name: Upload R09 tier probe summary
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: r09-tier-probe-summary
+          path: /tmp/r09-tier-probe-summary.json
       - run: python scripts/validate-r21-slo-signoff-record.py docs/development/fixtures/r21-slo-signoff-record-signed-shape-example.json
       - run: python scripts/validate-r21-metrics-wiring-draft.py docs/development/fixtures/r21-metrics-wiring-draft.json
       - run: python scripts/validate-production-ledger.py docs/development/fixtures/schema8-production-ledger-pending-example.json
       - run: python scripts/validate-production-ledger.py docs/development/fixtures/schema8-production-ledger-entered-shape-example.json
       - run: pip install pyyaml==6.0.2
       - run: python scripts/validate-r21-recording-rules-draft.py docs/development/fixtures/r21-recording-rules-draft.yaml
+      - run: python scripts/validate-openmetrics-exporter-draft.py docs/development/fixtures/openmetrics-exporter-draft.txt
       - run: python scripts/validate-rehearsal-log-record.py docs/development/fixtures/schema8-production-log-shape-example.json
       - run: python scripts/validate-contract-capture.py /tmp/cognara-contract.jsonl
       - run: python scripts/verify-runtime.py --binary /tmp/cognara-dev --storage json

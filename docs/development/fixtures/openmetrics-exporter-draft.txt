@@ -1,0 +1,14 @@
+# OPENMETRICS_EXPORTER_DRAFT_ONLY — not served in CI
+# Scrape path placeholder: /metrics (job cognara-fg-ci-exporter)
+# TYPE cognara_fg_runbook_smoke_read_seconds gauge
+cognara_fg_runbook_smoke_read_seconds 2.2
+# TYPE cognara_fg_mixed_read_smoke_seconds gauge
+cognara_fg_mixed_read_smoke_seconds 1.3
+# TYPE cognara_fg_gov_usage_tier64_seconds gauge
+cognara_fg_gov_usage_tier64_seconds 1.4
+# TYPE cognara_fg_gov_usage_tier96_seconds gauge
+cognara_fg_gov_usage_tier96_seconds 2.1
+# TYPE cognara_fg_msg_load_tier64_seconds gauge
+cognara_fg_msg_load_tier64_seconds 4.6
+# TYPE cognara_fg_msg_load_tier96_seconds gauge
+cognara_fg_msg_load_tier96_seconds 6.0

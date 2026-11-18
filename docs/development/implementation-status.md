@@ -559,3 +559,7 @@ CI `r18-spot-screenshots`；彩排登记模板。见 test-report-v1.04.md。
 ## 第115轮（v1.15）：ENTERED 形状与 recording rule 样例
 
 27 抽页。见 test-report-v1.15.md。
+
+## 第116轮（v1.16）：tier 摘要 artifact 与 OpenMetrics 样例
+
+29 抽页。见 test-report-v1.16.md。
