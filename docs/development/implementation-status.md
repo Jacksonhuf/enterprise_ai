@@ -495,3 +495,7 @@ profile/general 双主机 CAS；public 写后混合读。见 test-report-v0.98.m
 ## 第99轮：混合烟雾写阶段与 R21 试点签核表
 
 public+profile 写后读编排；SLO 试点填表。见 test-report-v0.99.md。
+
+## 第100轮（v1.00）：runbook 默认烟雾与 R21 签核记录
+
+`TestR20Schema8RunbookDefaultSmoke`；签核记录表。见 test-report-v1.00.md。
