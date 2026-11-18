@@ -28,4 +28,4 @@
 | 运维/SRE | | | |
 | 业务代表 | | | |
 
-定标后：更新本文件目标列、同步监控告警阈值，并将 `r21` 台账标为「SLO 已签核（范围：___）」。
+定标后：更新本文件目标列、按 [mysql-schema8-r21-alerting-handoff.md](mysql-schema8-r21-alerting-handoff.md) 同步监控告警阈值，并将 `r21` 台账标为「SLO 已签核（范围：___）」。

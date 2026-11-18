@@ -475,3 +475,7 @@ TryMutateSessionsV5 覆盖 5–8；HTTP createSession 挂接；连续会话创�
 ## 第94轮：治理/消息读阶梯与 R21 SLO 草案
 
 治理 usage、消息 load 32→64 阶梯墙钟；R21 SLO 定标模板。见 test-report-v0.94.md。
+
+## 第95轮：混合只读烟雾与 R21 告警 handoff
+
+单测编排 ready+治理+message load；告警同步与 runbook 首条实填清单。见 test-report-v0.95.md。

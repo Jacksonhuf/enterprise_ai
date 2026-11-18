@@ -305,3 +305,9 @@ R20：`continue-stream` 32 路并发重放；SLO 探针基线表。见 test-repo
 R20：治理 `usage` 与消息 `load` 32→64 读阶梯（墙钟登记）；R21 SLO 定标草案；runbook 生产实填表。见 test-report-v0.94.md 及 PR CI。
 
 **建议下一轮（v0.95+）**：多路径混合只读烟雾（单测编排）；R21 签核后同步告警；生产 runbook 首条实填验收。
+
+### 第95轮增量
+
+R20：混合只读烟雾单测编排；R21 告警 handoff；runbook 首条实填清单。见 test-report-v0.95.md 及 PR CI。
+
+**建议下一轮（v0.96+）**：settings/public 双主机读并发；SSE 断连恢复探测；runbook 首条生产实填（团队）。

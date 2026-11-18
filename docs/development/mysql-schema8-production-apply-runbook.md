@@ -62,6 +62,7 @@ SELECT schema_version FROM cognara_fg_state WHERE id=1;
 | DSN 库名（无密码） | |
 | 变更单号 | |
 | SLO 签核 | 见 `mysql-schema8-r21-slo-draft.md` §3 |
+| 首条实填验收 | 见 `mysql-schema8-runbook-production-fill-checklist.md` |
 
 ## 4. 发布后烟雾（与 R20 测试对齐）
 
@@ -76,6 +77,7 @@ SELECT schema_version FROM cognara_fg_state WHERE id=1;
 - `agent-chat` 双轮与 `PUT /sessions/{id}` 重命名（见 test-report-v0.92）
 - `continue-stream` 双主机与 32 路并发重放（见 test-report-v0.93、`mysql-schema8-r20-slo-probe-baseline.md`）
 - 治理 `usage` / 消息 `load` 32→64 读阶梯（见 test-report-v0.94）
+- 混合只读烟雾 bundle（见 test-report-v0.95）
 - 治理关系化 `EXPLAIN` 烟测（见 `mysql-schema8-slow-query-checklist.md`）
 
 自动化参考：
