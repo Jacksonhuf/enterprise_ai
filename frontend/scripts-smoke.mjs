@@ -290,6 +290,8 @@ try {
   {slug:'publish-review',path:'/build/apps/channel-replenishment/edit',identity:'demo-engineer',publishReview:true},
   {slug:'app-detail-build',path:'/build/apps/channel-replenishment',identity:'demo-engineer'},
   {slug:'session-sidebar',path:'/apps',identity:'demo-user',sessionSidebar:true},
+  {slug:'build-releases',path:'/build/apps/channel-replenishment?tab=releases',identity:'demo-engineer'},
+  {slug:'governance-usage',path:'/governance/operations?tab=usage'},
  ];
  for(const spot of r18Spots)await assertR18Spot(page,spot);
  if(r18CaptureDir)await writeFile(join(r18CaptureDir,'manifest.json'),JSON.stringify({generated_at:new Date().toISOString(),spots:r18Manifest},null,2)+'\n');

@@ -535,3 +535,7 @@ CI `r18-spot-screenshots`；彩排登记模板。见 test-report-v1.04.md。
 ## 第109轮（v1.09）：R18 详情/会话与 staging 导入验收
 
 15 抽页；`validate-r21-staging-alert-render.py`。见 test-report-v1.09.md。
+
+## 第110轮（v1.10）：R18 发布/用量与 staging 工单模板
+
+17 抽页；`validate-staging-import-ticket.py`。见 test-report-v1.10.md。
