@@ -78,6 +78,8 @@ SELECT schema_version FROM cognara_fg_state WHERE id=1;
 - `continue-stream` 双主机与 32 路并发重放（见 test-report-v0.93、`mysql-schema8-r20-slo-probe-baseline.md`）
 - 治理 `usage` / 消息 `load` 32→64 读阶梯（见 test-report-v0.94）
 - 混合只读烟雾 bundle（见 test-report-v0.95）
+- settings/public 与 governance 公共列表双主机并发读（见 test-report-v0.96）
+- `continue-stream` 断连后重放（见 test-report-v0.96）
 - 治理关系化 `EXPLAIN` 烟测（见 `mysql-schema8-slow-query-checklist.md`）
 
 自动化参考：

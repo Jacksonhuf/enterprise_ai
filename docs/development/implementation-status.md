@@ -479,3 +479,7 @@ TryMutateSessionsV5 覆盖 5–8；HTTP createSession 挂接；连续会话创�
 ## 第95轮：混合只读烟雾与 R21 告警 handoff
 
 单测编排 ready+治理+message load；告警同步与 runbook 首条实填清单。见 test-report-v0.95.md。
+
+## 第96轮：settings/public 并发读与 SSE 断连恢复
+
+governance 公告列表与 settings/public 双主机读；continue-stream 提前关闭后重放。见 test-report-v0.96.md。

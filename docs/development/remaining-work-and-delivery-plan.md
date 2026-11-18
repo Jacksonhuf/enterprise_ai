@@ -311,3 +311,9 @@ R20：治理 `usage` 与消息 `load` 32→64 读阶梯（墙钟登记）；R21 
 R20：混合只读烟雾单测编排；R21 告警 handoff；runbook 首条实填清单。见 test-report-v0.95.md 及 PR CI。
 
 **建议下一轮（v0.96+）**：settings/public 双主机读并发；SSE 断连恢复探测；runbook 首条生产实填（团队）。
+
+### 第96轮增量
+
+R20/R01：governance 公共列表与 settings/public 双主机读并发；SSE 断连后重放。见 test-report-v0.96.md 及 PR CI。
+
+**建议下一轮（v0.97+）**：治理 settings 写路径双主机 probe；agent-chat 进行中 turn 断连语义；runbook 首条生产实填（团队）。

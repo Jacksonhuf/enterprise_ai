@@ -10,5 +10,7 @@
 | 治理 `usage` 阶梯 | `TestR20Schema8TieredGovernanceUsageLoad` | 32 → 64 | 记录每档 `t.Log` 墙钟 |
 | 消息 `load` 阶梯 | `TestR20Schema8TieredMessageLoadLoad` | 32 → 64 | 历史长度一致；记录墙钟 |
 | 混合只读烟雾 | `TestR20Schema8MixedReadOnlySmokeOrchestration` | 36 | ready+治理+load 编排 |
+| 公共配置读 | `TestR20Schema8ParallelGovernancePublicSettingsReads` 等 | 32 | governance/settings + settings/public |
+| SSE 断连恢复 | `TestR20Schema8ContinueStreamEarlyDisconnectRecovery` | 1 | 部分读关闭后双主机重放 |
 
 正式 SLO（p95/p99、可持续 RPS）见 `mysql-schema8-r21-slo-draft.md`，团队签核后替换本表；告警映射见 `mysql-schema8-r21-alerting-handoff.md`。
