@@ -389,3 +389,9 @@ R18 聊天/编辑抽页；R21 告警 dry-run JSON 与校验。见 test-report-v1
 R18 发布审阅抽页；R21 staging 告警 Prom 渲染 artifact；生产 §3 形状样例。见 test-report-v1.08.md 及 PR CI。
 
 **建议下一轮（v1.09+）**：生产 §3 真值入账与 SLO 实签；staging 告警人工导入验收；R18 应用详情/会话列表抽页。
+
+### 第109轮增量（v1.09）
+
+R18 应用详情与会话侧栏抽页；staging 告警渲染校验与导入验收清单。见 test-report-v1.09.md 及 PR CI。
+
+**建议下一轮（v1.10+）**：生产 §3/SLO 实签入账；staging 告警 import 工单闭环；R18 发布历史/用量页抽页。
