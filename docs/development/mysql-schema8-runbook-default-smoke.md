@@ -24,4 +24,4 @@ go test -p 1 -race -count=1 ./internal/platform/api/ -run 'R20Schema8|R07Schema8
 
 ## CI 可选 job（v1.01+）
 
-仓库 **Actions → F-G runbook default smoke**（`workflow_dispatch` 或 R20 相关路径合入 main）仅跑默认门，供 runbook 首条实填粘贴 Run URL。全量门禁仍为 **F-G validation**。
+仓库 **Actions → F-G runbook default smoke**（`workflow_dispatch` 或 R20 相关路径合入 main）仅跑默认门，产出 artifact **`runbook-default-smoke`**（log + `runbook-smoke-summary.json`）。全量 **F-G validation** 亦上传 **`runbook-smoke-summary-validation`**（v1.02+）。

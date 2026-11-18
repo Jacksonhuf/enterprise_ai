@@ -49,4 +49,17 @@ jobs:
       - run: go build -C backend/platform -tags=nomsgpack -o /tmp/cognara-migrate-usage ./cmd/cognara-migrate-usage
       - run: go build -C backend/platform -tags=nomsgpack -o /tmp/cognara-migrate-audit ./cmd/cognara-migrate-audit
       - name: Runbook default smoke gate
-        run: go test -C backend/platform -tags=nomsgpack -p 1 -race -count=1 ./internal/platform/api/ -run TestR20Schema8RunbookDefaultSmoke -timeout 15m
+        run: |
+          go test -C backend/platform -tags=nomsgpack -p 1 -race -count=1 ./internal/platform/api/ \
+            -run TestR20Schema8RunbookDefaultSmoke -timeout 15m -v 2>&1 | tee /tmp/runbook-smoke.log
+      - name: Write runbook smoke summary
+        if: always()
+        run: python scripts/collect-runbook-smoke-summary.py /tmp/runbook-smoke.log /tmp/runbook-smoke-summary.json
+      - name: Upload runbook smoke artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: runbook-default-smoke
+          path: |
+            /tmp/runbook-smoke.log
+            /tmp/runbook-smoke-summary.json

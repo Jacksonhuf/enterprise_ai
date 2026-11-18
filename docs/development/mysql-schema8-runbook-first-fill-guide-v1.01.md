@@ -6,8 +6,8 @@
 
 | 来源 | 用途 |
 |------|------|
-| **F-G runbook default smoke**（`fg-runbook-default-smoke.yml`） | `workflow_dispatch` 或相关路径 push main 后单独跑默认门；Run URL 可贴入 checklist §4 |
-| **F-G validation** | 全量门禁；PR 合并前必备 |
+| **F-G runbook default smoke**（`fg-runbook-default-smoke.yml`） | `workflow_dispatch` 或相关路径 push main 后单独跑默认门；artifact **`runbook-default-smoke`**（含 `runbook-smoke-summary.json`） |
+| **F-G validation** | 全量门禁；artifact **`runbook-smoke-summary-validation`**（v1.02+） |
 
 ## 2. 人工勾选
 

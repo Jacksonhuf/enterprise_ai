@@ -347,3 +347,9 @@ R20/R21：runbook 默认烟雾单测门与命令文档；R21 正式签核记录�
 R20/R21：GitHub Actions 默认烟雾 workflow；首条实填与签核指引。见 test-report-v1.01.md 及 PR CI。
 
 **建议下一轮（v1.02+）**：validation 内拆 runbook job 摘要 artifact；团队完成 signoff-record 首条签字；生产 checklist 首条勾选。
+
+### 第102轮增量（v1.02）
+
+R20/R21：validation 与 runbook workflow 上传烟雾摘要 artifact；进度补充 `progress-snapshot-2026-11-18-r20.md`。见 test-report-v1.02.md 及 PR CI。
+
+**建议下一轮（v1.03+）**：签核记录首条工程+运维签字；生产 checklist 首条实填；R02 进度快照与 R18 抽页回归。

@@ -503,3 +503,7 @@ public+profile 写后读编排；SLO 试点填表。见 test-report-v0.99.md。
 ## 第101轮（v1.01）：CI 默认烟雾与实填指引
 
 `fg-runbook-default-smoke.yml`；首条实填指引。见 test-report-v1.01.md。
+
+## 第102轮（v1.02）：validation runbook 摘要 artifact
+
+`collect-runbook-smoke-summary.py`；CI 上传摘要 JSON。见 test-report-v1.02.md。
