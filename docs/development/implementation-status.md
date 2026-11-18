@@ -471,3 +471,7 @@ TryMutateSessionsV5 覆盖 5–8；HTTP createSession 挂接；连续会话创�
 ## 第93轮：continue-stream 并发重放与 SLO 探针基线
 
 32 路双主机 SSE 重放；R20 探针基线文档。见 test-report-v0.93.md。
+
+## 第94轮：治理/消息读阶梯与 R21 SLO 草案
+
+治理 usage、消息 load 32→64 阶梯墙钟；R21 SLO 定标模板。见 test-report-v0.94.md。
