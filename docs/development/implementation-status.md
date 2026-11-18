@@ -427,3 +427,7 @@ schema8 夹具上双 Store 草稿 CAS、用量追加与异常状态并发专项�
 ## 第82轮：R20 grant/settings 双 HTTP
 
 schema8 双主机并发 grant 与 profile settings CAS；schema7–8 settings 关系化读写修复。见 test-report-v0.82.md。
+
+## 第83轮：R20 SSE 重放与就绪探测
+
+schema8 双主机 continue-stream 重放与不重跑业务；未知消息 404；48 路 /ready 轻量探测。见 test-report-v0.83.md。
