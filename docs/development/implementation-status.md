@@ -539,3 +539,7 @@ CI `r18-spot-screenshots`；彩排登记模板。见 test-report-v1.04.md。
 ## 第110轮（v1.10）：R18 发布/用量与 staging 工单模板
 
 17 抽页；`validate-staging-import-ticket.py`。见 test-report-v1.10.md。
+
+## 第111轮（v1.11）：R18 异常/审计 Tab 与 R09 probe
+
+19 抽页；SLO 待签 JSON；`r09-ready-probe-harness.sh`。见 test-report-v1.11.md。

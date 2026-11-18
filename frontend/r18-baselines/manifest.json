@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-18T11:49:49.470Z",
+  "generated_at": "2026-11-18T12:25:02.076Z",
   "spots": [
     {
       "slug": "login-public",
@@ -255,6 +255,36 @@
       "publishReview": false,
       "sessionSidebar": false,
       "file": "governance-usage.png"
+    },
+    {
+      "slug": "governance-ops-exceptions",
+      "path": "/governance/operations?tab=exceptions",
+      "viewport": [
+        1280,
+        720
+      ],
+      "identity": "demo-admin",
+      "forbidden": false,
+      "publicLogin": false,
+      "chatEntry": false,
+      "publishReview": false,
+      "sessionSidebar": false,
+      "file": "governance-ops-exceptions.png"
+    },
+    {
+      "slug": "governance-ops-audit",
+      "path": "/governance/operations?tab=audit",
+      "viewport": [
+        1280,
+        720
+      ],
+      "identity": "demo-admin",
+      "forbidden": false,
+      "publicLogin": false,
+      "chatEntry": false,
+      "publishReview": false,
+      "sessionSidebar": false,
+      "file": "governance-ops-audit.png"
     }
   ]
 }

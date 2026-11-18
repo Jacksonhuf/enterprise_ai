@@ -401,3 +401,9 @@ R18 应用详情与会话侧栏抽页；staging 告警渲染校验与导入验�
 R18 发布历史与治理用量抽页；staging import 工单 JSON 校验。见 test-report-v1.10.md 及 PR CI。
 
 **建议下一轮（v1.11+）**：工单 CLOSED 实填；生产 §3/SLO 实签；R18 异常/审计 Tab 抽页或压测 harness 起步。
+
+### 第111轮增量（v1.11）
+
+R18 运营异常/审计 Tab；staging CLOSED 形状样例；SLO 待签 JSON；R09 ready probe harness。见 test-report-v1.11.md 及 PR CI。
+
+**建议下一轮（v1.12+）**：团队真 CLOSED/SIGNED 入账；message load SLO 阶梯扩面；R18  grants Tab 或治理窄屏第二组。

@@ -1,0 +1,9 @@
+{
+  "ticket_status": "CLOSED",
+  "staging_import_ticket": "STG-ALERT-REHEARSAL-SHAPE-ONLY",
+  "artifact_name": "r21-staging-alert-render",
+  "rules_count": 4,
+  "imported_at_cst": "PLACEHOLDER-NOT-PRODUCTION",
+  "verified_by_sre": "PLACEHOLDER-NOT-SIGNED",
+  "notes": "字段形状示例；非真实 staging 工单闭环"
+}
