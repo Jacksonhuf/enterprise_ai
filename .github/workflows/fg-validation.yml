@@ -102,6 +102,7 @@ jobs:
       - run: python scripts/validate-r21-slo-signoff-record.py docs/development/fixtures/r21-slo-signoff-record-pending.json
       - run: bash scripts/r09-ready-probe-harness.sh
       - run: bash scripts/r09-message-load-tier-harness.sh
+      - run: bash scripts/r09-usage-tier-harness.sh
       - run: python scripts/validate-r21-slo-signoff-record.py docs/development/fixtures/r21-slo-signoff-record-signed-shape-example.json
       - run: python scripts/validate-rehearsal-log-record.py docs/development/fixtures/schema8-production-log-shape-example.json
       - run: python scripts/validate-contract-capture.py /tmp/cognara-contract.jsonl

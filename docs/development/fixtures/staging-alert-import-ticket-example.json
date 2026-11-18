@@ -2,7 +2,7 @@
   "ticket_status": "PENDING_SRE_CLOSE",
   "staging_import_ticket": "STG-ALERT-REHEARSAL-3064",
   "artifact_name": "r21-staging-alert-render",
-  "rules_count": 4,
+  "rules_count": 6,
   "imported_at_cst": "",
   "verified_by_sre": "",
   "notes": "非生产工单模板；签核前勿填入真实人名"

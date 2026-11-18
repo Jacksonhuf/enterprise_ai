@@ -84,6 +84,7 @@ func TestR20Schema8TieredGovernanceUsageLoad(t *testing.T) {
 	}{
 		{32, 12 * time.Second},
 		{64, 25 * time.Second},
+		{96, 38 * time.Second},
 	} {
 		elapsed := schema8ParallelAuthorizedGET(t, f, second, path, "demo-admin", tier.workers, validate)
 		t.Logf("governance usage tier workers=%d elapsed=%s", tier.workers, elapsed)

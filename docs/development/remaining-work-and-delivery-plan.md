@@ -413,3 +413,9 @@ R18 运营异常/审计 Tab；staging CLOSED 形状样例；SLO 待签 JSON；R0
 message load **96w** 阶梯 harness；治理窄屏 R18；SLO SIGNED 形状 JSON。见 test-report-v1.12.md 及 PR CI。
 
 **建议下一轮（v1.13+）**：团队真实 SIGNED/CLOSED；usage 96w 阶梯；R18 服务/资产窄屏或 SLO 门槛写入告警 dry-run。
+
+### 第113轮增量（v1.13）
+
+usage 96w；告警 dry-run 6 规则（含 tier96）；服务/资产窄屏 R18。见 test-report-v1.13.md 及 PR CI。
+
+**建议下一轮（v1.14+）**：团队真实台账入账；Prom 规则与监控指标接线草案；R18 build 窄屏或 chat 窄屏。

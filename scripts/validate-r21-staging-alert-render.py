@@ -11,8 +11,8 @@ def main() -> None:
     if "STAGING IMPORT ONLY" not in text:
         raise SystemExit("missing STAGING IMPORT ONLY banner")
     alerts = re.findall(r"^ALERT (\w+)", text, re.MULTILINE)
-    if len(alerts) != 4:
-        raise SystemExit(f"expected 4 ALERT blocks, got {len(alerts)}")
+    if len(alerts) != 6:
+        raise SystemExit(f"expected 6 ALERT blocks, got {len(alerts)}")
     for name in alerts:
         block = text.split(f"ALERT {name}", 1)[1].split("ALERT ", 1)[0]
         if 'staging="true"' not in block:
