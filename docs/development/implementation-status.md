@@ -447,3 +447,7 @@ agent-chat 取消上下文；runbook 快照 import 彩排；R02 MySQL API 证据
 ## 第87轮：R20 grants 并发读、异常/草稿双主机 CAS
 
 治理 grants 只读并发；异常状态与应用草稿 HTTP 层 CAS；R02 证据 v0.87。见 test-report-v0.87.md。
+
+## 第88轮：R20 发布检查/发布 CAS 与 grant 撤权并发
+
+release-checks 陈旧修订拒绝；双主机单 check 发布 CAS；grant 双主机撤权审计不重复。见 test-report-v0.88.md。
