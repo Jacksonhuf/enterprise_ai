@@ -523,3 +523,7 @@ CI `r18-spot-screenshots`；彩排登记模板。见 test-report-v1.04.md。
 ## 第106轮（v1.06）：R18 抽页扩展与彩排 JSON 校验
 
 10 抽页；`validate-rehearsal-log-record.py`。见 test-report-v1.06.md。
+
+## 第107轮（v1.07）：R18 聊天/编辑与 R21 告警 dry-run
+
+12 抽页；`validate-r21-alerting-dry-run.py`。见 test-report-v1.07.md。
