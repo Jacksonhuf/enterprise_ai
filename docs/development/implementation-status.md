@@ -451,3 +451,7 @@ agent-chat 取消上下文；runbook 快照 import 彩排；R02 MySQL API 证据
 ## 第88轮：R20 发布检查/发布 CAS 与 grant 撤权并发
 
 release-checks 陈旧修订拒绝；双主机单 check 发布 CAS；grant 双主机撤权审计不重复。见 test-report-v0.88.md。
+
+## 第89轮：R20 模板复制 CAS 与 grant 授撤交叉
+
+模板陈旧修订双主机 409；当前修订双主机并发复制；grant POST/DELETE 交叉序列化。见 test-report-v0.89.md。
