@@ -1,4 +1,5 @@
 {
   "default": 0.02,
-  "publish-review": 0.03
+  "publish-review": 0.03,
+  "chat-user": 0.025
 }

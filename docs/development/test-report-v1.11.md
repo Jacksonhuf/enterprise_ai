@@ -6,6 +6,7 @@
 - CLOSED 工单 **形状** 样例（非真实闭环）。
 - `r21-slo-signoff-record-pending.json` + 校验。
 - `r09-ready-probe-harness.sh`（CI）。
+- CI：`chat-user` 像素门上限 **2.5%**（Ubuntu 字体/layout，见 `max-diff-ratio.json`）。
 
 ## 测试
 
