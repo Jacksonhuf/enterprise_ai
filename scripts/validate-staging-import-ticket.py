@@ -24,8 +24,8 @@ def main() -> None:
         raise SystemExit(f"keys must be {sorted(REQUIRED)}")
     if data["artifact_name"] != "r21-staging-alert-render":
         raise SystemExit("artifact_name must be r21-staging-alert-render")
-    if data["rules_count"] != 4:
-        raise SystemExit("rules_count must be 4")
+    if data["rules_count"] != 6:
+        raise SystemExit("rules_count must be 6")
     if data["ticket_status"] == "CLOSED":
         if not data["imported_at_cst"] or not data["verified_by_sre"]:
             raise SystemExit("CLOSED ticket requires imported_at_cst and verified_by_sre")

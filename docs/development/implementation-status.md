@@ -547,3 +547,7 @@ CI `r18-spot-screenshots`；彩排登记模板。见 test-report-v1.04.md。
 ## 第112轮（v1.12）：message load 96w 与治理窄屏 R18
 
 21 抽页；`r09-message-load-tier-harness.sh`。见 test-report-v1.12.md。
+
+## 第113轮（v1.13）：usage 96w 与告警 6 规则
+
+23 抽页；dry-run tier96。见 test-report-v1.13.md。

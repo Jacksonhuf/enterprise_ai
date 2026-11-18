@@ -28,6 +28,20 @@
       "threshold_seconds": 7.0,
       "pilot_observed_seconds": 4.6,
       "source_test": "TestR20Schema8TieredMessageLoadLoad"
+    },
+    {
+      "name": "fg_usage_tier96_high",
+      "metric": "fg.gov.usage_tier96_wall_s",
+      "threshold_seconds": 4.5,
+      "pilot_observed_seconds": 2.1,
+      "source_test": "TestR20Schema8TieredGovernanceUsageLoad"
+    },
+    {
+      "name": "fg_message_load_tier96_high",
+      "metric": "fg.msg.load_tier96_wall_s",
+      "threshold_seconds": 10.0,
+      "pilot_observed_seconds": 6.0,
+      "source_test": "TestR20Schema8TieredMessageLoadLoad"
     }
   ]
 }
