@@ -304,6 +304,8 @@ try {
   {slug:'settings-models-narrow',path:'/settings/models',viewport:[390,844]},
   {slug:'login-public-narrow',path:'/login',publicLogin:true,viewport:[390,844]},
   {slug:'forbidden-user-narrow',path:'/governance/access',identity:'demo-user',forbidden:true,viewport:[390,844]},
+  {slug:'editor-channel-narrow',path:'/build/apps/channel-replenishment/edit',viewport:[390,844],identity:'demo-engineer'},
+  {slug:'publish-review-narrow',path:'/build/apps/channel-replenishment/edit',viewport:[390,844],identity:'demo-engineer',publishReview:true},
  ];
  for(const spot of r18Spots)await assertR18Spot(page,spot);
  if(r18CaptureDir)await writeFile(join(r18CaptureDir,'manifest.json'),JSON.stringify({generated_at:new Date().toISOString(),spots:r18Manifest},null,2)+'\n');

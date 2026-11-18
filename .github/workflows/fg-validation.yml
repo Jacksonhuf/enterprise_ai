@@ -109,6 +109,9 @@ jobs:
         with:
           name: r09-tier-probe-summary
           path: /tmp/r09-tier-probe-summary.json
+      - run: python scripts/validate-tier-probe-summary.py /tmp/r09-tier-probe-summary.json
+      - run: python scripts/validate-tier-probe-summary.py docs/development/fixtures/r09-tier-probe-summary-shape-example.json
+      - run: python scripts/validate-engineering-pilot-bundle.py docs/development/fixtures/engineering-pilot-bundle-pending-example.json
       - run: python scripts/validate-r21-slo-signoff-record.py docs/development/fixtures/r21-slo-signoff-record-signed-shape-example.json
       - run: python scripts/validate-r21-metrics-wiring-draft.py docs/development/fixtures/r21-metrics-wiring-draft.json
       - run: python scripts/validate-production-ledger.py docs/development/fixtures/schema8-production-ledger-pending-example.json

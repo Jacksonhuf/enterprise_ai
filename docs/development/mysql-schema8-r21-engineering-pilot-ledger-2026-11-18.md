@@ -12,6 +12,8 @@
 | §3 彩排登记模板 | `mysql-schema8-production-apply-rehearsal-log-template.md` |
 | 团队提请单 | `mysql-schema8-r21-team-signoff-request.md` |
 | R18 像素门 | `scripts-verify-r18-baseline.mjs`（v1.05） |
+| R09 tier 摘要 | `r09-tier-probe-summary`（v1.16+）；见 `mysql-schema8-r21-tier-summary-runbook-link.md` |
+| 彩排打包 JSON | `engineering-pilot-bundle-pending-example.json`（v1.17） |
 
 ## 待团队填入（正式签核前移）
 

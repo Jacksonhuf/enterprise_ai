@@ -437,3 +437,9 @@ ENTERED 台账形状；recording rule YAML 样例；设置窄屏 R18。见 test-
 R09 tier JSON artifact；OpenMetrics exporter 样例；登录/禁止窄屏 R18。见 test-report-v1.16.md 及 PR CI。
 
 **建议下一轮（v1.17+）**：真 ENTERED 与 exporter 上线；tier 摘要入账 runbook；R18 编辑器/发布窄屏或 mixed-read 告警绑定。
+
+### 第117轮增量（v1.17）
+
+tier 摘要校验与彩排打包 JSON；编辑器/发布窄屏 R18。见 test-report-v1.17.md 及 PR CI。
+
+**建议下一轮（v1.18+）**：bundle CONFIRMED 实填；最小 exporter 只读端点 mock；R18 app-detail / session 窄屏。
