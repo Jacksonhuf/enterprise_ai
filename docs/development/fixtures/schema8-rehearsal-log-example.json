@@ -1,0 +1,19 @@
+{
+  "disclaimer": "REHEARSAL_ONLY — 非生产库，勿写入生产台账",
+  "executed_at_cst": "2026-11-18T16:00:00+08:00",
+  "dsn_database_host": "cognara_rehearsal_fg @ mysql-rehearsal.internal:3306",
+  "change_ticket": "REHEARSAL-3064",
+  "migrate_plan_sha256": {
+    "audit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "applications": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "grants": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+    "sessions": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+    "settings": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+    "exceptions": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+    "usage": "8888888888888888888888888888888888888888888888888888888888888888"
+  },
+  "apply_exit_codes": [0, 0, 0, 0, 0, 0, 0],
+  "dual_instance_ready": true,
+  "runbook_smoke_artifact": "runbook-smoke-summary-validation",
+  "r18_artifact": "r18-spot-screenshots"
+}

@@ -11,25 +11,33 @@ let server,browser;
 const r18CaptureDir=process.env.COGNARA_R18_CAPTURE;
 const r18Manifest=[];
 async function assertR18Spot(page,spot){
- if(spot.identity)await page.evaluate(id=>localStorage.setItem('cognara_demo_identity',id),spot.identity);
  const [w,h]=spot.viewport||[1280,720];
  await page.setViewportSize({width:w,height:h});
- await page.goto('http://127.0.0.1:14173'+spot.path);await page.waitForLoadState('networkidle');
  let captureTarget;
- if(spot.forbidden){
+ if(spot.publicLogin){
+  await page.evaluate(()=>localStorage.removeItem('cognara_demo_identity'));
+  await page.goto('http://127.0.0.1:14173/login');await page.waitForLoadState('networkidle');
+  await page.getByRole('heading',{name:'登录 Cognara'}).waitFor();
+  const loginText=await page.locator('.login-page').innerText();assert.doesNotMatch(loginText,/schema\s*[0-9]|R20\b|架构编号/i);
+  captureTarget=page.locator('.login-card');
+ }else{
+  if(spot.identity)await page.evaluate(id=>localStorage.setItem('cognara_demo_identity',id),spot.identity);
+  await page.goto('http://127.0.0.1:14173'+spot.path);await page.waitForLoadState('networkidle');
+  if(spot.forbidden){
   await page.waitForURL('**/forbidden');await page.getByText('当前无法访问此功能',{exact:true}).waitFor();
   captureTarget=page.locator('.center-state');
- }else{
+  }else{
   await page.locator('h1, .wk-empty-state__title').first().waitFor();
   assert.ok(await page.locator('.app-shell').isVisible());await page.getByRole('button',{name:'账户菜单'}).waitFor();
   const shellText=await page.locator('.app-shell').innerText();assert.doesNotMatch(shellText,/schema\s*[0-9]|R20\b|架构编号/i);
   captureTarget=page.locator('.app-shell');
+  }
  }
  if(r18CaptureDir){
   await mkdir(r18CaptureDir,{recursive:true});
   const file=join(r18CaptureDir,spot.slug+'.png');
   await captureTarget.screenshot({path:file});
-  r18Manifest.push({slug:spot.slug,path:spot.path,viewport:[w,h],identity:spot.identity||'demo-admin',forbidden:!!spot.forbidden,file:spot.slug+'.png'});
+  r18Manifest.push({slug:spot.slug,path:spot.path,viewport:[w,h],identity:spot.identity||'demo-admin',forbidden:!!spot.forbidden,publicLogin:!!spot.publicLogin,file:spot.slug+'.png'});
  }
 }
 try {
@@ -252,6 +260,9 @@ try {
  assert.equal(await page.locator('.application-card').filter({hasText:publishedDraft.draft.basic.name}).count(),1);
  // R18 spot-page regression (v1.04): expanded surfaces + optional screenshot baseline.
  const r18Spots=[
+  {slug:'login-public',path:'/login',publicLogin:true},
+  {slug:'build-apps-engineer',path:'/build/apps',identity:'demo-engineer'},
+  {slug:'assets-engineer',path:'/assets',identity:'demo-engineer'},
   {slug:'settings-tenant',path:'/settings/tenant'},
   {slug:'governance-ops-settings',path:'/governance/operations?tab=settings'},
   {slug:'settings-models',path:'/settings/models'},

@@ -1,6 +1,6 @@
 # R18 抽页 PNG 基线（v1.05）
 
-与 `scripts-smoke.mjs` 中 R18 spot 列表一致。更新基线：
+与 `scripts-smoke.mjs` 中 R18 spot 列表一致（v1.06：10 面）。更新基线：
 
 ```bash
 go build -C backend/platform -tags=nomsgpack -o /tmp/cognara-dev ./cmd/cognara-dev
