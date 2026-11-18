@@ -257,3 +257,9 @@ R20：agent-chat 取消/短 deadline、快照 import 彩排；R02：`r02-mysql-a
 ### 第86轮增量
 
 R20：治理 audit/exceptions 只读并发；schema8 exceptions 列表关系化修复；R02 证据 v0.86。见 test-report-v0.86.md 及 PR CI。
+
+### 第87轮增量
+
+R20：治理 grants 只读并发；双 HTTP 异常状态 CAS、应用草稿 CAS（PAGE-F2）；R02 证据 v0.87。见 test-report-v0.87.md 及 PR CI。
+
+**建议下一轮（v0.88+）**：发布检查/发布 CAS 双 HTTP；治理 grants 变更并发（POST/DELETE）；正式压力/SLO 与运维登记表实填。

@@ -443,3 +443,7 @@ agent-chat 取消上下文；runbook 快照 import 彩排；R02 MySQL API 证据
 ## 第86轮：R20 治理只读并发与 schema8 异常列表
 
 审计/异常双主机并发读；schema8 治理 exceptions 关系化查询修复。见 test-report-v0.86.md。
+
+## 第87轮：R20 grants 并发读、异常/草稿双主机 CAS
+
+治理 grants 只读并发；异常状态与应用草稿 HTTP 层 CAS；R02 证据 v0.87。见 test-report-v0.87.md。
