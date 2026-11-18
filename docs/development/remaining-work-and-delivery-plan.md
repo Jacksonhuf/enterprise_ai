@@ -245,3 +245,7 @@ R20：schema8 双 HTTP 并发 grant 与 settings profile CAS；settings v7–8 �
 ### 第83轮增量
 
 R20：schema8 双 HTTP continue-stream 完成重放（不重跑业务）与 /ready 并发探测。下一步正式压力、SSE 中断与 SLO。见 test-report-v0.83.md 及 PR CI。
+
+### 第84轮增量
+
+R20：schema8 治理 usage / 消息 load 只读并发；schema8 生产 apply 运维登记模板。下一步运维实填与正式压力/SLO。见 test-report-v0.84.md 及 PR CI。
