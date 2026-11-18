@@ -431,3 +431,7 @@ schema8 双主机并发 grant 与 profile settings CAS；schema7–8 settings �
 ## 第83轮：R20 SSE 重放与就绪探测
 
 schema8 双主机 continue-stream 重放与不重跑业务；未知消息 404；48 路 /ready 轻量探测。见 test-report-v0.83.md。
+
+## 第84轮：R20 只读并发与 schema8 apply 模板
+
+治理 usage 与消息 load 双主机并发读；`mysql-schema8-production-apply-runbook.md` 运维登记模板。见 test-report-v0.84.md。
