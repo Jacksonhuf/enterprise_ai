@@ -60,7 +60,10 @@ SELECT schema_version FROM cognara_fg_state WHERE id=1;
 
 - `GET /ready`（并发探测已登记，见 test-report-v0.83）
 - 双主机会话标题 CAS、grant 并发、settings CAS（见 test-report-v0.81–v0.82）
-- 治理 `usage` 只读分页、消息 `load` 并发读（见 test-report-v0.84）
+- 治理 `usage` / `grants` / `exceptions` / `audit` 只读并发（见 test-report-v0.84–v0.87）
+- 发布检查/发布 CAS、模板复制、grant 授撤交叉（见 test-report-v0.88–v0.89）
+- 会话创建并发与跨主机续聊探测（见 test-report-v0.90）
+- 治理关系化 `EXPLAIN` 烟测（见 `mysql-schema8-slow-query-checklist.md`）
 
 自动化参考：
 
