@@ -237,8 +237,8 @@ func mutateMySQLGrantsV4(ctx context.Context, db *sql.DB, fn func(*State) error)
 	if err = tx.QueryRowContext(ctx, `SELECT schema_version FROM cognara_fg_state WHERE id=1 FOR UPDATE`).Scan(&version); err != nil {
 		return err
 	}
-	if version != 4 && version != 5 && version != 6 && version != 7 && version != 8 {
-		return errors.New("relational grant writer requires schema 4, 5, 6, or 7")
+	if version < 4 || version > 8 {
+		return errors.New("relational grant writer requires schema 4 through 8")
 	}
 	var before State
 	switch version {
@@ -250,8 +250,10 @@ func mutateMySQLGrantsV4(ctx context.Context, db *sql.DB, fn func(*State) error)
 		before, _, err = readMySQLApplicationV6(ctx, tx, false)
 	case 7:
 		before, _, err = readMySQLApplicationV7(ctx, tx, false)
+	case 8:
+		before, _, err = readMySQLApplicationV8(ctx, tx, false)
 	default:
-		return errors.New("relational grant writer requires schema 4, 5, 6, or 7")
+		return errors.New("relational grant writer schema unsupported")
 	}
 	if err != nil {
 		return err
@@ -281,6 +283,8 @@ func mutateMySQLGrantsV4(ctx context.Context, db *sql.DB, fn func(*State) error)
 		_, _, err = readMySQLApplicationV6(ctx, tx, false)
 	case 7:
 		_, _, err = readMySQLApplicationV7(ctx, tx, false)
+	case 8:
+		_, _, err = readMySQLApplicationV8(ctx, tx, false)
 	}
 	if err != nil {
 		return err

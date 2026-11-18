@@ -126,7 +126,7 @@ func updateMySQLV3RootTx(ctx context.Context, tx *sql.Tx, operational bool, fn f
 	if err != nil {
 		return zero, err
 	}
-	if version == 5 && !equalApplicationJSON(sessionsBefore, sessionsAfter) {
+	if version >= 5 && !equalApplicationJSON(sessionsBefore, sessionsAfter) {
 		if err = applyMySQLSessionMapDelta(ctx, tx, beforeSessions, st.Sessions); err != nil {
 			return zero, err
 		}

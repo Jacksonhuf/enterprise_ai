@@ -15,13 +15,8 @@ import (
 
 func schema8UsageSnapshotFixture(t *testing.T) string {
 	t.Helper()
-	ctx := context.Background()
-	dsn, _ := schema7UsageRoot(t)
-	plan, err := PlanMySQLUsage(ctx, dsn)
-	if err != nil {
-		t.Fatal(err)
-	}
-	if _, err = ApplyMySQLUsage(ctx, dsn, plan.SourceSHA256); err != nil {
+	dsn := testsupport.MySQLDSN(t)
+	if err := PrepareSchema8IntegrationDB(context.Background(), dsn); err != nil {
 		t.Fatal(err)
 	}
 	return dsn
