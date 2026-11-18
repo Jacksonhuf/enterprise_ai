@@ -329,3 +329,9 @@ R20/R01/R14探针：settings/public 双主机写 CAS；进行中 turn 不可重�
 R20/R01：profile/general 双主机写 CAS；public 写后混合烟雾。见 test-report-v0.98.md 及 PR CI。
 
 **建议下一轮（v0.99+）**：settings 写矩阵纳入混合烟雾写阶段；R21 签核试点填表；runbook 首条生产实填（团队）。
+
+### 第99轮增量
+
+R20/R01/R21：混合烟雾写+读编排；SLO 签核试点表。见 test-report-v0.99.md 及 PR CI。
+
+**建议下一轮（v1.00+）**：完整写读烟雾纳入 runbook 默认命令；R21 正式签核；生产 runbook 首条实填（团队）。

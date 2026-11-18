@@ -11,4 +11,4 @@
 | 5 | 回退决策（备份路径或快照 SHA256）与批准人 | ☐ |
 | 6 | `mysql-schema8-r21-slo-draft.md` 签核或明确「待签核」 | ☐ |
 
-**彩排对照（非生产）：**验证环境可使用 `TestR20Schema8MixedReadOnlySmokeOrchestration`（v0.95）与 `TestR20Schema8MixedSmokeAfterPublicWrite`（v0.98）作为 §4 第 4 项的自动化替身。
+**彩排对照（非生产）：**验证环境可使用 `TestR20Schema8MixedReadOnlySmokeOrchestration`（v0.95）、`TestR20Schema8MixedSmokeAfterPublicWrite`（v0.98）、`TestR20Schema8MixedSmokeWriteThenReadOrchestration`（v0.99）作为 §4 第 4 项的自动化替身。SLO 试点见 `mysql-schema8-r21-slo-pilot-signoff.md`。
