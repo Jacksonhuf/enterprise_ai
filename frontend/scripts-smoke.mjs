@@ -1,13 +1,37 @@
 import { chromium } from 'playwright-core';
 import { preview } from 'vite';
 import { spawn } from 'node:child_process';
-import { mkdtemp, rm } from 'node:fs/promises';
+import { mkdtemp, mkdir, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import assert from 'node:assert/strict';
 const temp=await mkdtemp(join(tmpdir(),'cognara-browser-'));
 const backend=spawn(process.env.COGNARA_SMOKE_BINARY||'/tmp/cognara-dev',['--demo','--port','18080','--mock-port','18081','--data',join(temp,'state.json')],{stdio:'ignore'});
 let server,browser;
+const r18CaptureDir=process.env.COGNARA_R18_CAPTURE;
+const r18Manifest=[];
+async function assertR18Spot(page,spot){
+ if(spot.identity)await page.evaluate(id=>localStorage.setItem('cognara_demo_identity',id),spot.identity);
+ const [w,h]=spot.viewport||[1280,720];
+ await page.setViewportSize({width:w,height:h});
+ await page.goto('http://127.0.0.1:14173'+spot.path);await page.waitForLoadState('networkidle');
+ let captureTarget;
+ if(spot.forbidden){
+  await page.waitForURL('**/forbidden');await page.getByText('当前无法访问此功能',{exact:true}).waitFor();
+  captureTarget=page.locator('.center-state');
+ }else{
+  await page.locator('h1, .wk-empty-state__title').first().waitFor();
+  assert.ok(await page.locator('.app-shell').isVisible());await page.getByRole('button',{name:'账户菜单'}).waitFor();
+  const shellText=await page.locator('.app-shell').innerText();assert.doesNotMatch(shellText,/schema\s*[0-9]|R20\b|架构编号/i);
+  captureTarget=page.locator('.app-shell');
+ }
+ if(r18CaptureDir){
+  await mkdir(r18CaptureDir,{recursive:true});
+  const file=join(r18CaptureDir,spot.slug+'.png');
+  await captureTarget.screenshot({path:file});
+  r18Manifest.push({slug:spot.slug,path:spot.path,viewport:[w,h],identity:spot.identity||'demo-admin',forbidden:!!spot.forbidden,file:spot.slug+'.png'});
+ }
+}
 try {
  for(let i=0;;i++){try{if((await fetch('http://127.0.0.1:18080/ready')).ok)break;}catch{} if(i===100)throw Error('Backend did not become ready');await new Promise(r=>setTimeout(r,100));}
  server=await preview({preview:{port:14173,strictPort:true,proxy:{'/api':{target:'http://127.0.0.1:18080',changeOrigin:true}}}});
@@ -226,15 +250,17 @@ try {
  await page.goto('http://127.0.0.1:14173/apps');await page.waitForLoadState('networkidle');
  assert.equal(await page.locator('.application-card').filter({hasText:copiedApp.draft.basic.name}).count(),0);
  assert.equal(await page.locator('.application-card').filter({hasText:publishedDraft.draft.basic.name}).count(),1);
- // R18 spot-page regression (v1.03): admin governance/settings surfaces, shell chrome, narrow viewport.
- await page.evaluate(()=>localStorage.setItem('cognara_demo_identity','demo-admin'));
- for(const spot of ['/settings/tenant','/governance/operations?tab=settings','/settings/models']){
-  await page.setViewportSize({width:1280,height:720});
-  await page.goto('http://127.0.0.1:14173'+spot);await page.locator('h1, .wk-empty-state__title').first().waitFor();await page.waitForLoadState('networkidle');
-  assert.ok(await page.locator('.app-shell').isVisible());await page.getByRole('button',{name:'账户菜单'}).waitFor();
-  const shellText=await page.locator('.app-shell').innerText();assert.doesNotMatch(shellText,/schema\s*[0-9]|R20\b|架构编号/i);
- }
- await page.setViewportSize({width:390,height:844});await page.goto('http://127.0.0.1:14173/apps');
- await page.locator('.application-card, .wk-empty-state__title').first().waitFor();await page.getByRole('button',{name:'账户菜单'}).waitFor();
- await Promise.all(diagnostics);assert.deepEqual(failures,[]);console.log('PASS Chromium: login, chat Enter/Shift+Enter, business result, 13 routes, R18 spot pages (tenant/ops-settings/models + narrow), 8 RadioGroup resize/drawer/SPA unmount cycles, literal public notice/reload, service input/output contract and raw definition, historical release restore/reload/live snapshot protection, checked publication diff/unchanged baseline/real publish, independent template selector/preview/versioned copy, reviewed user grant/entry/revocation isolation, real failure/audit trace/20 repeated SPA/detail transitions/exception lifecycle, saved density/timezone/reload/account isolation, no component/runtime errors');
+ // R18 spot-page regression (v1.04): expanded surfaces + optional screenshot baseline.
+ const r18Spots=[
+  {slug:'settings-tenant',path:'/settings/tenant'},
+  {slug:'governance-ops-settings',path:'/governance/operations?tab=settings'},
+  {slug:'settings-models',path:'/settings/models'},
+  {slug:'governance-access',path:'/governance/access?tab=grants'},
+  {slug:'governance-audit',path:'/governance/audit'},
+  {slug:'forbidden-user',path:'/governance/access',identity:'demo-user',forbidden:true},
+  {slug:'apps-narrow',path:'/apps',viewport:[390,844],identity:'demo-user'},
+ ];
+ for(const spot of r18Spots)await assertR18Spot(page,spot);
+ if(r18CaptureDir)await writeFile(join(r18CaptureDir,'manifest.json'),JSON.stringify({generated_at:new Date().toISOString(),spots:r18Manifest},null,2)+'\n');
+ await Promise.all(diagnostics);assert.deepEqual(failures,[]);console.log('PASS Chromium: login, chat Enter/Shift+Enter, business result, 13 routes, R18 spot pages ('+r18Spots.map(s=>s.slug).join(', ')+'), 8 RadioGroup resize/drawer/SPA unmount cycles, literal public notice/reload, service input/output contract and raw definition, historical release restore/reload/live snapshot protection, checked publication diff/unchanged baseline/real publish, independent template selector/preview/versioned copy, reviewed user grant/entry/revocation isolation, real failure/audit trace/20 repeated SPA/detail transitions/exception lifecycle, saved density/timezone/reload/account isolation, no component/runtime errors');
 } finally {await browser?.close();if(server)await new Promise(r=>server.httpServer.close(r));backend.kill('SIGTERM');await new Promise(r=>backend.exitCode!==null?r():backend.once('exit',r));await rm(temp,{recursive:true,force:true});}

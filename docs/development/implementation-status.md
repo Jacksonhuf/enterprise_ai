@@ -511,3 +511,7 @@ public+profile 写后读编排；SLO 试点填表。见 test-report-v0.99.md。
 ## 第103轮（v1.03）：R18 抽页与 R02 进度快照
 
 浏览器抽页；工程彩排台账。见 test-report-v1.03.md。
+
+## 第104轮（v1.04）：R18 截图 artifact 与彩排 §3 模板
+
+CI `r18-spot-screenshots`；彩排登记模板。见 test-report-v1.04.md。

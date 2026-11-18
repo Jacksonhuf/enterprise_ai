@@ -359,3 +359,9 @@ R20/R21：validation 与 runbook workflow 上传烟雾摘要 artifact；进度�
 R18/R02/R21：浏览器抽页回归；R02 进度快照；工程彩排台账与 checklist 彩排子表。见 test-report-v1.03.md 及 PR CI。
 
 **建议下一轮（v1.04+）**：台账两方彩排签字；生产 §3 首条实填；R18 截图基线或扩大抽页集合。
+
+### 第104轮增量（v1.04）
+
+R18/R02/R21：抽页扩展 + CI 截图 artifact；彩排 §3 模板与台账确认最小集。见 test-report-v1.04.md 及 PR CI。
+
+**建议下一轮（v1.05+）**：台账实签；生产 §3 首条实填；R18 像素 diff 或 Playwright 快照门。
