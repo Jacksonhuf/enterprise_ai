@@ -1,12 +1,14 @@
 #!/usr/bin/env python3
 """Read-only OpenMetrics mock on loopback (v1.18); not for production scrape."""
+import os
 import sys
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-BODY_PATH = ROOT / "docs/development/fixtures/openmetrics-exporter-draft.txt"
+DEFAULT = ROOT / "docs/development/fixtures/openmetrics-exporter-draft.txt"
 PORT = int(sys.argv[1]) if len(sys.argv) > 1 else 19090
+BODY_PATH = Path(os.environ.get("COGNARA_OPENMETRICS_PATH", DEFAULT))
 BODY = BODY_PATH.read_text()
 
 

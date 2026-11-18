@@ -110,6 +110,8 @@ jobs:
           name: r09-tier-probe-summary
           path: /tmp/r09-tier-probe-summary.json
       - run: python scripts/validate-tier-probe-summary.py /tmp/r09-tier-probe-summary.json
+      - run: python scripts/render-openmetrics-from-tier-summary.py /tmp/r09-tier-probe-summary.json /tmp/openmetrics-from-tier.txt
+      - run: python scripts/validate-openmetrics-tier-linkage.py /tmp/r09-tier-probe-summary.json /tmp/openmetrics-from-tier.txt
       - run: python scripts/validate-tier-probe-summary.py docs/development/fixtures/r09-tier-probe-summary-shape-example.json
       - run: python scripts/validate-engineering-pilot-bundle.py docs/development/fixtures/engineering-pilot-bundle-pending-example.json
       - run: python scripts/validate-engineering-pilot-bundle.py docs/development/fixtures/engineering-pilot-bundle-confirmed-shape-example.json
@@ -120,7 +122,7 @@ jobs:
       - run: pip install pyyaml==6.0.2
       - run: python scripts/validate-r21-recording-rules-draft.py docs/development/fixtures/r21-recording-rules-draft.yaml
       - run: python scripts/validate-openmetrics-exporter-draft.py docs/development/fixtures/openmetrics-exporter-draft.txt
-      - run: bash scripts/smoke-openmetrics-exporter-mock.sh
+      - run: COGNARA_OPENMETRICS_PATH=/tmp/openmetrics-from-tier.txt bash scripts/smoke-openmetrics-exporter-mock.sh
       - run: python scripts/validate-rehearsal-log-record.py docs/development/fixtures/schema8-production-log-shape-example.json
       - run: python scripts/validate-contract-capture.py /tmp/cognara-contract.jsonl
       - run: python scripts/verify-runtime.py --binary /tmp/cognara-dev --storage json
