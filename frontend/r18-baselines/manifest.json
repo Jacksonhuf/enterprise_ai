@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-18T13:46:56.849Z",
+  "generated_at": "2026-11-18T15:50:30.712Z",
   "spots": [
     {
       "slug": "login-public",
@@ -375,6 +375,36 @@
       "publishReview": false,
       "sessionSidebar": false,
       "file": "chat-user-narrow.png"
+    },
+    {
+      "slug": "settings-tenant-narrow",
+      "path": "/settings/tenant",
+      "viewport": [
+        390,
+        844
+      ],
+      "identity": "demo-admin",
+      "forbidden": false,
+      "publicLogin": false,
+      "chatEntry": false,
+      "publishReview": false,
+      "sessionSidebar": false,
+      "file": "settings-tenant-narrow.png"
+    },
+    {
+      "slug": "settings-models-narrow",
+      "path": "/settings/models",
+      "viewport": [
+        390,
+        844
+      ],
+      "identity": "demo-admin",
+      "forbidden": false,
+      "publicLogin": false,
+      "chatEntry": false,
+      "publishReview": false,
+      "sessionSidebar": false,
+      "file": "settings-models-narrow.png"
     }
   ]
 }
