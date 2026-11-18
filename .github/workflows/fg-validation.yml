@@ -96,6 +96,7 @@ jobs:
       - run: python scripts/validate-rehearsal-log-record.py docs/development/fixtures/schema8-rehearsal-log-example.json
       - run: python scripts/validate-r21-alerting-dry-run.py docs/development/fixtures/r21-alerting-dry-run.rules.json
       - run: python scripts/render-r21-alerting-staging-prometheus.py docs/development/fixtures/r21-alerting-dry-run.rules.json /tmp/r21-staging-alerts.prom.txt
+      - run: python scripts/validate-r21-staging-alert-render.py /tmp/r21-staging-alerts.prom.txt
       - run: python scripts/validate-rehearsal-log-record.py docs/development/fixtures/schema8-production-log-shape-example.json
       - run: python scripts/validate-contract-capture.py /tmp/cognara-contract.jsonl
       - run: python scripts/verify-runtime.py --binary /tmp/cognara-dev --storage json

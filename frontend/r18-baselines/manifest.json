@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-18T10:05:12.379Z",
+  "generated_at": "2026-11-18T11:39:11.618Z",
   "spots": [
     {
       "slug": "login-public",
@@ -13,6 +13,7 @@
       "publicLogin": true,
       "chatEntry": false,
       "publishReview": false,
+      "sessionSidebar": false,
       "file": "login-public.png"
     },
     {
@@ -27,6 +28,7 @@
       "publicLogin": false,
       "chatEntry": false,
       "publishReview": false,
+      "sessionSidebar": false,
       "file": "build-apps-engineer.png"
     },
     {
@@ -41,6 +43,7 @@
       "publicLogin": false,
       "chatEntry": false,
       "publishReview": false,
+      "sessionSidebar": false,
       "file": "assets-engineer.png"
     },
     {
@@ -55,6 +58,7 @@
       "publicLogin": false,
       "chatEntry": false,
       "publishReview": false,
+      "sessionSidebar": false,
       "file": "settings-tenant.png"
     },
     {
@@ -69,6 +73,7 @@
       "publicLogin": false,
       "chatEntry": false,
       "publishReview": false,
+      "sessionSidebar": false,
       "file": "governance-ops-settings.png"
     },
     {
@@ -83,6 +88,7 @@
       "publicLogin": false,
       "chatEntry": false,
       "publishReview": false,
+      "sessionSidebar": false,
       "file": "settings-models.png"
     },
     {
@@ -97,6 +103,7 @@
       "publicLogin": false,
       "chatEntry": false,
       "publishReview": false,
+      "sessionSidebar": false,
       "file": "governance-access.png"
     },
     {
@@ -111,6 +118,7 @@
       "publicLogin": false,
       "chatEntry": false,
       "publishReview": false,
+      "sessionSidebar": false,
       "file": "governance-audit.png"
     },
     {
@@ -125,6 +133,7 @@
       "publicLogin": false,
       "chatEntry": false,
       "publishReview": false,
+      "sessionSidebar": false,
       "file": "forbidden-user.png"
     },
     {
@@ -139,6 +148,7 @@
       "publicLogin": false,
       "chatEntry": false,
       "publishReview": false,
+      "sessionSidebar": false,
       "file": "apps-narrow.png"
     },
     {
@@ -153,6 +163,7 @@
       "publicLogin": false,
       "chatEntry": true,
       "publishReview": false,
+      "sessionSidebar": false,
       "file": "chat-user.png"
     },
     {
@@ -167,6 +178,7 @@
       "publicLogin": false,
       "chatEntry": false,
       "publishReview": false,
+      "sessionSidebar": false,
       "file": "editor-channel.png"
     },
     {
@@ -181,7 +193,38 @@
       "publicLogin": false,
       "chatEntry": false,
       "publishReview": true,
+      "sessionSidebar": false,
       "file": "publish-review.png"
+    },
+    {
+      "slug": "app-detail-build",
+      "path": "/build/apps/channel-replenishment",
+      "viewport": [
+        1280,
+        720
+      ],
+      "identity": "demo-engineer",
+      "forbidden": false,
+      "publicLogin": false,
+      "chatEntry": false,
+      "publishReview": false,
+      "sessionSidebar": false,
+      "file": "app-detail-build.png"
+    },
+    {
+      "slug": "session-sidebar",
+      "path": "/apps",
+      "viewport": [
+        1280,
+        720
+      ],
+      "identity": "demo-user",
+      "forbidden": false,
+      "publicLogin": false,
+      "chatEntry": false,
+      "publishReview": false,
+      "sessionSidebar": true,
+      "file": "session-sidebar.png"
     }
   ]
 }

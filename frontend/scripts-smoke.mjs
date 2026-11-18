@@ -29,6 +29,11 @@ async function assertR18Spot(page,spot){
   await page.getByRole('button',{name:'检查并发布',exact:true}).click();
   await page.locator('.publish-review').waitFor();
   captureTarget=page.locator('.publish-review');
+  }else if(spot.sessionSidebar){
+  await page.locator('.application-card').first().getByRole('button',{name:'进入应用',exact:true}).click();
+  await page.waitForURL('**/chat/**');await page.locator('textarea').waitFor();
+  await page.getByRole('button',{name:'搜索 / 刷新历史',exact:true}).click();await page.waitForLoadState('networkidle');
+  captureTarget=page.locator('.app-shell');
   }else if(spot.chatEntry){
   await page.locator('.application-card').first().getByRole('button',{name:'进入应用',exact:true}).click();
   await page.waitForURL('**/chat/**');await page.locator('textarea').waitFor();
@@ -36,7 +41,7 @@ async function assertR18Spot(page,spot){
   }else if(spot.forbidden){
   await page.waitForURL('**/forbidden');await page.getByText('当前无法访问此功能',{exact:true}).waitFor();
   captureTarget=page.locator('.center-state');
-  }else if(!spot.chatEntry && !spot.publishReview){
+  }else if(!spot.chatEntry && !spot.publishReview && !spot.sessionSidebar){
   await page.locator('h1, .wk-empty-state__title').first().waitFor();
   assert.ok(await page.locator('.app-shell').isVisible());await page.getByRole('button',{name:'账户菜单'}).waitFor();
   const shellText=await page.locator('.app-shell').innerText();assert.doesNotMatch(shellText,/schema\s*[0-9]|R20\b|架构编号/i);
@@ -47,7 +52,7 @@ async function assertR18Spot(page,spot){
   await mkdir(r18CaptureDir,{recursive:true});
   const file=join(r18CaptureDir,spot.slug+'.png');
   await captureTarget.screenshot({path:file});
-  r18Manifest.push({slug:spot.slug,path:spot.path,viewport:[w,h],identity:spot.identity||'demo-admin',forbidden:!!spot.forbidden,publicLogin:!!spot.publicLogin,chatEntry:!!spot.chatEntry,publishReview:!!spot.publishReview,file:spot.slug+'.png'});
+  r18Manifest.push({slug:spot.slug,path:spot.path,viewport:[w,h],identity:spot.identity||'demo-admin',forbidden:!!spot.forbidden,publicLogin:!!spot.publicLogin,chatEntry:!!spot.chatEntry,publishReview:!!spot.publishReview,sessionSidebar:!!spot.sessionSidebar,file:spot.slug+'.png'});
  }
 }
 try {
@@ -283,6 +288,8 @@ try {
   {slug:'chat-user',path:'/apps',identity:'demo-user',chatEntry:true},
   {slug:'editor-channel',path:'/build/apps/channel-replenishment/edit',identity:'demo-engineer'},
   {slug:'publish-review',path:'/build/apps/channel-replenishment/edit',identity:'demo-engineer',publishReview:true},
+  {slug:'app-detail-build',path:'/build/apps/channel-replenishment',identity:'demo-engineer'},
+  {slug:'session-sidebar',path:'/apps',identity:'demo-user',sessionSidebar:true},
  ];
  for(const spot of r18Spots)await assertR18Spot(page,spot);
  if(r18CaptureDir)await writeFile(join(r18CaptureDir,'manifest.json'),JSON.stringify({generated_at:new Date().toISOString(),spots:r18Manifest},null,2)+'\n');
