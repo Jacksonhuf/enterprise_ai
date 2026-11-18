@@ -638,17 +638,7 @@ func (s *Server) createSession(w http.ResponseWriter, r *http.Request) error {
 		st.Sessions[sess.ID] = sess
 		return nil
 	}
-	if ok, e := s.Store.TryMutateSessionsV5(r.Context(), mutate); ok {
-		if e != nil {
-			if errors.Is(e, app.ErrSessionUnavailable) {
-				return fail(404, "ASSET_UNAVAILABLE", "会话不存在或不可访问")
-			}
-			return e
-		}
-		Write(w, sess)
-		return nil
-	}
-	if e = s.Store.UpdateOperationalContext(r.Context(), mutate); e != nil {
+	if e = s.applySessionMutation(r.Context(), mutate); e != nil {
 		return e
 	}
 	Write(w, sess)

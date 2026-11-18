@@ -1,10 +1,12 @@
 package api
 
 import (
+	"context"
 	"crypto/sha256"
 	"encoding/base64"
 	"encoding/hex"
 	"encoding/json"
+	"errors"
 	app "github.com/Tencent/WeKnora/internal/platform/applications"
 	"net/http"
 	"sort"
@@ -12,6 +14,19 @@ import (
 	"strings"
 	"time"
 )
+
+func (s *Server) applySessionMutation(ctx context.Context, fn func(*app.State) error) error {
+	if ok, e := s.Store.TryMutateSessionsV5(ctx, fn); ok {
+		if e != nil {
+			if errors.Is(e, app.ErrSessionUnavailable) {
+				return fail(404, "ASSET_UNAVAILABLE", "会话不存在或不可访问")
+			}
+			return e
+		}
+		return nil
+	}
+	return s.Store.UpdateOperationalContext(ctx, fn)
+}
 
 // Legacy records retain unknown creation dates. Only valid saved timestamps are used.
 func sessionMetadata(v app.Session) app.Session {
@@ -51,7 +66,7 @@ func (s *Server) renameSession(w http.ResponseWriter, r *http.Request) error {
 		return fail(400, "INVALID_REQUEST", "请提供1到80个字符的标题和当前版本")
 	}
 	var result app.Session
-	if e := s.Store.UpdateOperationalContext(r.Context(), func(st *app.State) error {
+	if e := s.applySessionMutation(r.Context(), func(st *app.State) error {
 		v, ok := st.Sessions[r.PathValue("id")]
 		if !ok || v.TenantID != p.TenantID || v.OwnerID != p.UserID {
 			return fail(404, "ASSET_UNAVAILABLE", "会话不存在或不可访问")

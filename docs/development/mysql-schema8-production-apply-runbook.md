@@ -64,6 +64,7 @@ SELECT schema_version FROM cognara_fg_state WHERE id=1;
 - 发布检查/发布 CAS、模板复制、grant 授撤交叉（见 test-report-v0.88–v0.89）
 - 会话创建并发与跨主机续聊探测（见 test-report-v0.90–v0.91）
 - 连续 `POST …/sessions`（关系化 writer，见 test-report-v0.91）
+- `agent-chat` 双轮与 `PUT /sessions/{id}` 重命名（见 test-report-v0.92）
 - 治理关系化 `EXPLAIN` 烟测（见 `mysql-schema8-slow-query-checklist.md`）
 
 自动化参考：
