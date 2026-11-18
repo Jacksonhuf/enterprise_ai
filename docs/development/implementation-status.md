@@ -415,3 +415,7 @@ PR61已合并。`cognara-migrate-grants --check`、`cognara_fg_grants` DDL、gra
 ## 第79轮：R08 schema8 快照
 
 `ExportMySQLSnapshot`/`ImportMySQLSnapshot` schema8；usage 行级保真。R08 三域关系化代码闭环完成。见 test-report-v0.79.md。
+
+## 第80轮：R20 schema8 双连接并发（首轮）
+
+schema8 夹具上双 Store 草稿 CAS、用量追加与异常状态并发专项。见 test-report-v0.80.md。
