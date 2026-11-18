@@ -335,3 +335,9 @@ R20/R01：profile/general 双主机写 CAS；public 写后混合烟雾。见 tes
 R20/R01/R21：混合烟雾写+读编排；SLO 签核试点表。见 test-report-v0.99.md 及 PR CI。
 
 **建议下一轮（v1.00+）**：完整写读烟雾纳入 runbook 默认命令；R21 正式签核；生产 runbook 首条实填（团队）。
+
+### 第100轮增量（v1.00）
+
+R20/R21：runbook 默认烟雾单测门与命令文档；R21 正式签核记录表。见 test-report-v1.00.md 及 PR CI。
+
+**建议下一轮（v1.01+）**：默认门纳入 CI 可选 job；签核记录团队实签；生产 runbook 首条实填验收。

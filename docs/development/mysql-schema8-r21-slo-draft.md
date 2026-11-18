@@ -28,6 +28,6 @@
 | 运维/SRE | | | |
 | 业务代表 | | | |
 
-签核前试点：可先填 [mysql-schema8-r21-slo-pilot-signoff.md](mysql-schema8-r21-slo-pilot-signoff.md)（非承诺）。
+签核前试点：可先填 [mysql-schema8-r21-slo-pilot-signoff.md](mysql-schema8-r21-slo-pilot-signoff.md)（非承诺）。正式流程用 [mysql-schema8-r21-slo-signoff-record.md](mysql-schema8-r21-slo-signoff-record.md)。
 
 定标后：更新本文件目标列、按 [mysql-schema8-r21-alerting-handoff.md](mysql-schema8-r21-alerting-handoff.md) 同步监控告警阈值，并将 `r21` 台账标为「SLO 已签核（范围：___）」。

@@ -85,12 +85,15 @@ SELECT schema_version FROM cognara_fg_state WHERE id=1;
 - public+profile 写后读编排烟雾（见 test-report-v0.99）
 - 治理关系化 `EXPLAIN` 烟测（见 `mysql-schema8-slow-query-checklist.md`）
 
-自动化参考：
+自动化参考（v1.00 默认门优先，详见 `mysql-schema8-runbook-default-smoke.md`）：
 
 ```bash
 cd backend/platform
 export COGNARA_TEST_MYSQL_DSN='...' COGNARA_REQUIRE_MYSQL_TESTS=1
-go test -p 1 -race -count=1 ./internal/platform/api/ -run R20Schema8
+go test -p 1 -race -count=1 ./internal/platform/api/ \
+  -run TestR20Schema8RunbookDefaultSmoke -timeout 10m
+go test -p 1 -race -count=1 ./internal/platform/applications/
+go test -p 1 -race -count=1 ./internal/platform/api/ -run 'R20Schema8|R07Schema8' -timeout 30m
 ```
 
 ## 5. schema8 快照回退演练（变更单模板）

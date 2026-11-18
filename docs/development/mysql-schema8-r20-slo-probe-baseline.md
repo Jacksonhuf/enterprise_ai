@@ -16,6 +16,7 @@
 | settings profile/general 写 | `TestR20Schema8DualHostSettingsProfileAndGeneralCAS` | 4 | 两节双主机 CAS |
 | public 写后混合烟雾 | `TestR20Schema8MixedSmokeAfterPublicWrite` | 30 | 写后读公告一致 |
 | 写+读编排烟雾 | `TestR20Schema8MixedSmokeWriteThenReadOrchestration` | 36 | public+profile 写阶段 |
+| runbook 默认门 | `TestR20Schema8RunbookDefaultSmoke` | 36 | 同上（runbook 入口） |
 | 进行中 turn | `TestR20Schema8DualHostContinueStreamInProgressTurn` | 2 | 409 双主机 |
 
 正式 SLO（p95/p99、可持续 RPS）见 `mysql-schema8-r21-slo-draft.md`，团队签核后替换本表；告警映射见 `mysql-schema8-r21-alerting-handoff.md`。
