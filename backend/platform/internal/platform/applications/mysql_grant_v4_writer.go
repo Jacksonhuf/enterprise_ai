@@ -237,7 +237,7 @@ func mutateMySQLGrantsV4(ctx context.Context, db *sql.DB, fn func(*State) error)
 	if err = tx.QueryRowContext(ctx, `SELECT schema_version FROM cognara_fg_state WHERE id=1 FOR UPDATE`).Scan(&version); err != nil {
 		return err
 	}
-	if version != 4 && version != 5 && version != 6 && version != 7 {
+	if version != 4 && version != 5 && version != 6 && version != 7 && version != 8 {
 		return errors.New("relational grant writer requires schema 4, 5, 6, or 7")
 	}
 	var before State
