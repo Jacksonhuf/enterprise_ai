@@ -551,3 +551,7 @@ CI `r18-spot-screenshots`；彩排登记模板。见 test-report-v1.04.md。
 ## 第113轮（v1.13）：usage 96w 与告警 6 规则
 
 23 抽页；dry-run tier96。见 test-report-v1.13.md。
+
+## 第114轮（v1.14）：指标接线草案与 build/chat 窄屏
+
+25 抽页；metrics wiring draft。见 test-report-v1.14.md。

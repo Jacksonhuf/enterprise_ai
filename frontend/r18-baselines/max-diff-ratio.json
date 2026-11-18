@@ -3,5 +3,7 @@
   "publish-review": 0.03,
   "chat-user": 0.025,
   "services-narrow": 0.03,
-  "assets-narrow": 0.045
+  "assets-narrow": 0.045,
+  "build-apps-narrow": 0.03,
+  "chat-user-narrow": 0.03
 }
