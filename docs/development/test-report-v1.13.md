@@ -4,7 +4,7 @@
 
 - usage read **96w** 阶梯 + `r09-usage-tier-harness.sh`。
 - dry-run 告警 **+tier96**（共 **6** 条），staging 工单 `rules_count=6`。
-- R18：**23** 抽页（`services-narrow`、`assets-narrow`）。
+- R18：**23** 抽页（`services-narrow`、`assets-narrow`）；CI 窄屏单页容差见 `max-diff-ratio.json`。
 
 ## 测试
 
