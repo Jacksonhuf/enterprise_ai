@@ -483,3 +483,7 @@ TryMutateSessionsV5 覆盖 5–8；HTTP createSession 挂接；连续会话创�
 ## 第96轮：settings/public 并发读与 SSE 断连恢复
 
 governance 公告列表与 settings/public 双主机读；continue-stream 提前关闭后重放。见 test-report-v0.96.md。
+
+## 第97轮：settings/public 写 CAS 与进行中 turn 语义
+
+双主机 public 写 CAS；进行中 continue-stream 409；断连语义说明。见 test-report-v0.97.md。
