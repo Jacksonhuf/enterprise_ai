@@ -10,6 +10,6 @@
   "settings-models-narrow": 0.03,
   "login-public-narrow": 0.035,
   "forbidden-user-narrow": 0.04,
-  "editor-channel-narrow": 0.035,
+  "editor-channel-narrow": 0.06,
   "publish-review-narrow": 0.045
 }
