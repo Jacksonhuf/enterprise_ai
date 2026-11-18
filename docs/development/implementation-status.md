@@ -499,3 +499,7 @@ public+profile 写后读编排；SLO 试点填表。见 test-report-v0.99.md。
 ## 第100轮（v1.00）：runbook 默认烟雾与 R21 签核记录
 
 `TestR20Schema8RunbookDefaultSmoke`；签核记录表。见 test-report-v1.00.md。
+
+## 第101轮（v1.01）：CI 默认烟雾与实填指引
+
+`fg-runbook-default-smoke.yml`；首条实填指引。见 test-report-v1.01.md。

@@ -28,3 +28,4 @@
 | 监控规则版本 | |
 | runbook §3 SLO 签核行 | |
 | 首条生产实填 checklist | 见 `mysql-schema8-runbook-production-fill-checklist.md` |
+| CI 默认门 Run URL（可选） | Actions：**F-G runbook default smoke** |

@@ -11,4 +11,4 @@
 | 5 | 回退决策（备份路径或快照 SHA256）与批准人 | ☐ |
 | 6 | `mysql-schema8-r21-slo-draft.md` 签核或明确「待签核」 | ☐ |
 
-**彩排对照（非生产）：**§4 默认门为 `TestR20Schema8RunbookDefaultSmoke`（v1.00，见 `mysql-schema8-runbook-default-smoke.md`）。SLO：试点 `mysql-schema8-r21-slo-pilot-signoff.md`；正式签字 `mysql-schema8-r21-slo-signoff-record.md`。
+**彩排对照（非生产）：**§4 默认门为 `TestR20Schema8RunbookDefaultSmoke`（v1.00）或 CI **F-G runbook default smoke**（v1.01）。步骤见 `mysql-schema8-runbook-first-fill-guide-v1.01.md`。SLO：试点 `mysql-schema8-r21-slo-pilot-signoff.md`；正式签字 `mysql-schema8-r21-slo-signoff-record.md`。
