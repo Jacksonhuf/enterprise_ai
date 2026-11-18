@@ -1,0 +1,52 @@
+name: F-G runbook default smoke
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'backend/platform/internal/platform/api/mysql_r20_*'
+      - 'docs/development/mysql-schema8-runbook-default-smoke.md'
+      - '.github/workflows/fg-runbook-default-smoke.yml'
+jobs:
+  runbook-default-smoke:
+    runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8.4
+        env:
+          MYSQL_ROOT_PASSWORD: validation-only-mysql-password
+          MYSQL_ROOT_HOST: '%'
+          MYSQL_DATABASE: cognara_validation
+        ports:
+          - '127.0.0.1:3306:3306'
+        options: >-
+          --health-cmd "mysqladmin ping -h 127.0.0.1 --silent"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 15
+    env:
+      COGNARA_TEST_MYSQL_DSN: root:validation-only-mysql-password@tcp(127.0.0.1:3306)/cognara_validation
+      COGNARA_MYSQL_DSN: root:validation-only-mysql-password@tcp(127.0.0.1:3306)/cognara_validation
+      COGNARA_REQUIRE_MYSQL_TESTS: '1'
+      COGNARA_TEST_APPLICATION_PLAN_BINARY: /tmp/cognara-migrate-applications
+      COGNARA_TEST_GRANT_PLAN_BINARY: /tmp/cognara-migrate-grants
+      COGNARA_TEST_SESSION_PLAN_BINARY: /tmp/cognara-migrate-sessions
+      COGNARA_TEST_SETTINGS_PLAN_BINARY: /tmp/cognara-migrate-settings
+      COGNARA_TEST_EXCEPTION_PLAN_BINARY: /tmp/cognara-migrate-exceptions
+      COGNARA_TEST_USAGE_PLAN_BINARY: /tmp/cognara-migrate-usage
+      COGNARA_TEST_MIGRATE_BINARY: /tmp/cognara-migrate-audit
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.26.0'
+          cache-dependency-path: backend/platform/go.sum
+      - run: go build -C backend/platform -tags=nomsgpack -o /tmp/cognara-migrate-applications ./cmd/cognara-migrate-applications
+      - run: go build -C backend/platform -tags=nomsgpack -o /tmp/cognara-migrate-grants ./cmd/cognara-migrate-grants
+      - run: go build -C backend/platform -tags=nomsgpack -o /tmp/cognara-migrate-sessions ./cmd/cognara-migrate-sessions
+      - run: go build -C backend/platform -tags=nomsgpack -o /tmp/cognara-migrate-settings ./cmd/cognara-migrate-settings
+      - run: go build -C backend/platform -tags=nomsgpack -o /tmp/cognara-migrate-exceptions ./cmd/cognara-migrate-exceptions
+      - run: go build -C backend/platform -tags=nomsgpack -o /tmp/cognara-migrate-usage ./cmd/cognara-migrate-usage
+      - run: go build -C backend/platform -tags=nomsgpack -o /tmp/cognara-migrate-audit ./cmd/cognara-migrate-audit
+      - name: Runbook default smoke gate
+        run: go test -C backend/platform -tags=nomsgpack -p 1 -race -count=1 ./internal/platform/api/ -run TestR20Schema8RunbookDefaultSmoke -timeout 15m

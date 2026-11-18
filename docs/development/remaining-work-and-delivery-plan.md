@@ -341,3 +341,9 @@ R20/R01/R21：混合烟雾写+读编排；SLO 签核试点表。见 test-report-
 R20/R21：runbook 默认烟雾单测门与命令文档；R21 正式签核记录表。见 test-report-v1.00.md 及 PR CI。
 
 **建议下一轮（v1.01+）**：默认门纳入 CI 可选 job；签核记录团队实签；生产 runbook 首条实填验收。
+
+### 第101轮增量（v1.01）
+
+R20/R21：GitHub Actions 默认烟雾 workflow；首条实填与签核指引。见 test-report-v1.01.md 及 PR CI。
+
+**建议下一轮（v1.02+）**：validation 内拆 runbook job 摘要 artifact；团队完成 signoff-record 首条签字；生产 checklist 首条勾选。
