@@ -281,3 +281,9 @@ R20：模板复制陈旧修订 CAS、双主机并发合法复制、grant 授撤�
 R20：peer 主机会话创建、会话列表并发读、跨主机 chat/load；治理 EXPLAIN 烟测与慢查询清单。见 test-report-v0.90.md 及 PR CI。
 
 **建议下一轮（v0.91+）**：多会话连续写入专项（或 session writer 入口）；正式压力/SLO；runbook 登记表生产实填。
+
+### 第91轮增量
+
+R20/schema8：会话关系化 writer 挂接 HTTP、连续创建修复、`sessionsRelationalEqual`。见 test-report-v0.91.md 及 PR CI。
+
+**建议下一轮（v0.92+）**：renameSession 等其余会话突变走 V5 writer；正式压力/SLO；runbook 生产登记表实填。

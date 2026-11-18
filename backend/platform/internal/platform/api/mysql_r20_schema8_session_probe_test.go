@@ -36,6 +36,27 @@ func postSessionHTTP(t *testing.T, base, identity, path, title string) string {
 	return id
 }
 
+// TestR20Schema8BackToBackSessionCreates exercises serial creates via the relational session writer.
+func TestR20Schema8BackToBackSessionCreates(t *testing.T) {
+	f, _, _ := schema8DualHTTPFixture(t)
+	path := "/api/v1/cognitive/apps/channel-replenishment/sessions"
+	before := len(f.store.Read().Sessions)
+	ids := []string{}
+	for i := 0; i < 4; i++ {
+		ids = append(ids, postSessionHTTP(t, f.host.URL, "demo-user", path, fmt.Sprintf("schema8-serial-%d", i)))
+	}
+	if len(f.store.Read().Sessions) != before+4 {
+		t.Fatal("store", before, len(f.store.Read().Sessions))
+	}
+	seen := map[string]bool{}
+	for _, id := range ids {
+		if seen[id] {
+			t.Fatal("duplicate", id)
+		}
+		seen[id] = true
+	}
+}
+
 // TestR20Schema8DualHostSessionCreateOnSecondHost ensures session create succeeds on the peer API host.
 func TestR20Schema8DualHostSessionCreateOnSecondHost(t *testing.T) {
 	f, _, second := schema8DualHTTPFixture(t)

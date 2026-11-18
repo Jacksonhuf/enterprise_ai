@@ -459,3 +459,7 @@ release-checks 陈旧修订拒绝；双主机单 check 发布 CAS；grant 双主
 ## 第90轮：R20 会话跨主机探测与 EXPLAIN 烟测
 
 peer 主机会话创建、会话列表只读并发、跨主机 agent-chat；治理 EXPLAIN 清单。见 test-report-v0.90.md。
+
+## 第91轮：schema8 会话 writer 与连续创建修复
+
+TryMutateSessionsV5 覆盖 5–8；HTTP createSession 挂接；连续会话创建专项。见 test-report-v0.91.md。
