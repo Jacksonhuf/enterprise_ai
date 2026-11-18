@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-18T16:15:46.614Z",
+  "generated_at": "2026-11-18T22:41:06.859Z",
   "spots": [
     {
       "slug": "login-public",
@@ -435,6 +435,36 @@
       "publishReview": false,
       "sessionSidebar": false,
       "file": "forbidden-user-narrow.png"
+    },
+    {
+      "slug": "editor-channel-narrow",
+      "path": "/build/apps/channel-replenishment/edit",
+      "viewport": [
+        390,
+        844
+      ],
+      "identity": "demo-engineer",
+      "forbidden": false,
+      "publicLogin": false,
+      "chatEntry": false,
+      "publishReview": false,
+      "sessionSidebar": false,
+      "file": "editor-channel-narrow.png"
+    },
+    {
+      "slug": "publish-review-narrow",
+      "path": "/build/apps/channel-replenishment/edit",
+      "viewport": [
+        390,
+        844
+      ],
+      "identity": "demo-engineer",
+      "forbidden": false,
+      "publicLogin": false,
+      "chatEntry": false,
+      "publishReview": true,
+      "sessionSidebar": false,
+      "file": "publish-review-narrow.png"
     }
   ]
 }

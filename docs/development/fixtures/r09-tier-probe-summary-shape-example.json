@@ -1,0 +1,13 @@
+{
+  "disclaimer": "TIER_PROBE_SUMMARY_NOT_SLO",
+  "generated_at_utc": "PLACEHOLDER",
+  "tiers": [
+    {"probe": "message_load", "workers": 32, "elapsed": "0s"},
+    {"probe": "message_load", "workers": 64, "elapsed": "0s"},
+    {"probe": "message_load", "workers": 96, "elapsed": "0s"},
+    {"probe": "governance_usage", "workers": 32, "elapsed": "0s"},
+    {"probe": "governance_usage", "workers": 64, "elapsed": "0s"},
+    {"probe": "governance_usage", "workers": 96, "elapsed": "0s"}
+  ],
+  "notes": "形状样例；CI 真值见 artifact r09-tier-probe-summary"
+}

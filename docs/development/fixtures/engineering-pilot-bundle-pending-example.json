@@ -1,0 +1,11 @@
+{
+  "bundle_status": "PENDING_TEAM_CONFIRM",
+  "runbook_smoke_artifact": "runbook-smoke-summary-validation",
+  "tier_probe_artifact": "r09-tier-probe-summary",
+  "r18_screenshot_artifact": "r18-spot-screenshots",
+  "staging_alert_artifact": "r21-staging-alert-render",
+  "linked_runbook_checklist": "mysql-schema8-runbook-production-fill-checklist.md",
+  "confirmed_by_platform": "",
+  "confirmed_by_sre": "",
+  "notes": "Agent 不代填确认；粘贴 CI Run URL 与 artifact 下载"
+}

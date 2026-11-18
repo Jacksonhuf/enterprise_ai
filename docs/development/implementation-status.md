@@ -563,3 +563,7 @@ CI `r18-spot-screenshots`；彩排登记模板。见 test-report-v1.04.md。
 ## 第116轮（v1.16）：tier 摘要 artifact 与 OpenMetrics 样例
 
 29 抽页。见 test-report-v1.16.md。
+
+## 第117轮（v1.17）：tier 入账打包与编辑器窄屏
+
+31 抽页。见 test-report-v1.17.md。
