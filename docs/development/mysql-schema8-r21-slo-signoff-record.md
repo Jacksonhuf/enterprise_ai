@@ -30,3 +30,4 @@
 | 首条生产实填 checklist | 见 `mysql-schema8-runbook-production-fill-checklist.md` |
 | CI 默认门 Run URL（可选） | Actions：**F-G runbook default smoke** |
 | CI 摘要 artifact | `runbook-smoke-summary-validation` 或 `runbook-default-smoke` |
+| 工程彩排台账（非正式） | `mysql-schema8-r21-engineering-pilot-ledger-2026-11-18.md` |

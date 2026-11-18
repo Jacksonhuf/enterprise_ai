@@ -12,3 +12,14 @@
 | 6 | `mysql-schema8-r21-slo-draft.md` 签核或明确「待签核」 | ☐ |
 
 **彩排对照（非生产）：**§4 默认门为 `TestR20Schema8RunbookDefaultSmoke`（v1.00）或 CI **F-G runbook default smoke**（v1.01）。步骤见 `mysql-schema8-runbook-first-fill-guide-v1.01.md`。SLO：试点 `mysql-schema8-r21-slo-pilot-signoff.md`；正式签字 `mysql-schema8-r21-slo-signoff-record.md`。
+
+### 彩排首条勾选（验证环境 / CI，**不等同**生产台账）
+
+| # | 项 | 彩排 |
+|---|-----|------|
+| A | 本地或 CI 跑通 `TestR20Schema8RunbookDefaultSmoke` | ☐ |
+| B | 下载 `runbook-smoke-summary.json` 且 `status` 为 `pass` | ☐ |
+| C | F-G validation 绿 + 浏览器 smoke 含 R18 抽页（v1.03） | ☐ |
+| D | 工程彩排台账两方确认（见 `mysql-schema8-r21-engineering-pilot-ledger-2026-11-18.md`） | ☐ |
+
+生产 §3 实填后，方勾选上文主表 #1–#6。
