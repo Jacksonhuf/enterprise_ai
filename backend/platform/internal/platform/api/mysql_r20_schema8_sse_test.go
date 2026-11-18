@@ -180,3 +180,39 @@ func TestR20Schema8ParallelReadyAcrossDualHosts(t *testing.T) {
 		t.Fatal("ready probe too slow", d)
 	}
 }
+
+// TestR20Schema8ContinueStreamEarlyDisconnectRecovery closes the client after a
+// partial read, then replays from both hosts without re-running the business turn.
+func TestR20Schema8ContinueStreamEarlyDisconnectRecovery(t *testing.T) {
+	f, _, second := schema8DualHTTPFixture(t)
+	id := f.session()
+	f.request("demo-user", "POST", "/api/v1/agent-chat/"+id, map[string]string{"query": "SO1002需求增加到350"}, 200)
+	answer := f.store.Read().Sessions[id].Messages[1]
+	usageBefore := len(f.store.Read().Usage)
+	msgsBefore := len(f.store.Read().Sessions[id].Messages)
+	path := "/api/v1/sessions/continue-stream/" + id + "?message_id=" + answer.ID
+	req, err := http.NewRequest("GET", f.host.URL+path, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	req.Header.Set("Authorization", "Bearer demo-user")
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		t.Fatal(err)
+	}
+	partial := make([]byte, 32)
+	n, _ := resp.Body.Read(partial)
+	resp.Body.Close()
+	if n == 0 {
+		t.Fatal("expected partial SSE body")
+	}
+	for _, base := range []string{f.host.URL, second.URL} {
+		out := getBytes(t, "demo-user", base+path)
+		if !bytes.Contains(out, []byte("276.6")) || !bytes.Contains(out, []byte("event: done")) {
+			t.Fatal("recovery replay missing payload", base, out)
+		}
+	}
+	if len(f.store.Read().Usage) != usageBefore || len(f.store.Read().Sessions[id].Messages) != msgsBefore {
+		t.Fatal("disconnect recovery re-ran business turn")
+	}
+}

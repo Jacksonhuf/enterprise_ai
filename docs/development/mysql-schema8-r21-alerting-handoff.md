@@ -6,6 +6,7 @@
 |-------------|------------|-------------------|------------|
 | 双主机 `/ready` 48 workers | `fg.ready.smoke_wall_s` | < ___ s | `TestR20Schema8ParallelReadyAcrossDualHosts` |
 | 混合只读烟雾 36 workers | `fg.read.smoke_wall_s` | < ___ s | `TestR20Schema8MixedReadOnlySmokeOrchestration` |
+| SSE 断连恢复重放 | `fg.sse.disconnect_recovery_ok` | 布尔（手工/CI） | `TestR20Schema8ContinueStreamEarlyDisconnectRecovery` |
 | `continue-stream` 32 路 | `fg.sse.replay_wall_s` | < ___ s | v0.93 |
 | governance usage 64 阶梯 | `fg.gov.usage_tier64_wall_s` | < ___ s | v0.94 |
 | message load 64 阶梯 | `fg.msg.load_tier64_wall_s` | < ___ s | v0.94 |
