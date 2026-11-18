@@ -293,3 +293,9 @@ R20/schema8：会话关系化 writer 挂接 HTTP、连续创建修复、`session
 R20：会话 rename/agent-chat 走 V5 writer；双轮 agent-chat 关系化验收。见 test-report-v0.92.md 及 PR CI。
 
 **建议下一轮（v0.93+）**：轻量并发 agent-chat 只读重放（continue-stream）；正式压力/SLO；runbook 生产登记表实填。
+
+### 第93轮增量
+
+R20：`continue-stream` 32 路并发重放；SLO 探针基线表。见 test-report-v0.93.md 及 PR CI。
+
+**建议下一轮（v0.94+）**：治理/消息 load 更高并发阶梯（记录耗时）；R21 正式 SLO 定标；runbook 生产登记表团队实填。

@@ -467,3 +467,7 @@ TryMutateSessionsV5 覆盖 5–8；HTTP createSession 挂接；连续会话创�
 ## 第92轮：rename 与 agent-chat 关系化写入
 
 `applySessionMutation` 统一 rename/chat/create；双轮对话关系化验收。见 test-report-v0.92.md。
+
+## 第93轮：continue-stream 并发重放与 SLO 探针基线
+
+32 路双主机 SSE 重放；R20 探针基线文档。见 test-report-v0.93.md。
