@@ -4,7 +4,7 @@
 
 - `r21-metrics-wiring-draft.json` + 校验（6 告警 metric + tier96 扩展）。
 - 生产 §3 **PENDING_TEAM_ENTRY** 台账 JSON。
-- R18：**25** 抽页（`build-apps-narrow`、`chat-user-narrow`）。
+- R18：**25** 抽页（`build-apps-narrow`、`chat-user-narrow`）；窄屏 CI 容差见 `max-diff-ratio.json`。
 
 ## 测试
 
