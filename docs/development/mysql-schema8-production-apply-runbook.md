@@ -65,6 +65,7 @@ SELECT schema_version FROM cognara_fg_state WHERE id=1;
 - 会话创建并发与跨主机续聊探测（见 test-report-v0.90–v0.91）
 - 连续 `POST …/sessions`（关系化 writer，见 test-report-v0.91）
 - `agent-chat` 双轮与 `PUT /sessions/{id}` 重命名（见 test-report-v0.92）
+- `continue-stream` 双主机与 32 路并发重放（见 test-report-v0.93、`mysql-schema8-r20-slo-probe-baseline.md`）
 - 治理关系化 `EXPLAIN` 烟测（见 `mysql-schema8-slow-query-checklist.md`）
 
 自动化参考：
