@@ -6,12 +6,17 @@ import (
 	"fmt"
 	"sync"
 	"testing"
+
+	"github.com/Tencent/WeKnora/internal/platform/testsupport"
 )
 
 func openSchema8DualStore(t *testing.T) (context.Context, string, *Store, *Store) {
 	t.Helper()
 	ctx := context.Background()
-	dsn := schema8UsageSnapshotFixture(t)
+	dsn := testsupport.MySQLDSN(t)
+	if err := PrepareSchema8IntegrationDB(ctx, dsn); err != nil {
+		t.Fatal(err)
+	}
 	a, err := OpenMySQL(dsn)
 	if err != nil {
 		t.Fatal("store a", err)
