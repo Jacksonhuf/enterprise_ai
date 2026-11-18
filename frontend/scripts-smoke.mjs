@@ -292,6 +292,8 @@ try {
   {slug:'session-sidebar',path:'/apps',identity:'demo-user',sessionSidebar:true},
   {slug:'build-releases',path:'/build/apps/channel-replenishment?tab=releases',identity:'demo-engineer'},
   {slug:'governance-usage',path:'/governance/operations?tab=usage'},
+  {slug:'governance-ops-exceptions',path:'/governance/operations?tab=exceptions'},
+  {slug:'governance-ops-audit',path:'/governance/operations?tab=audit'},
  ];
  for(const spot of r18Spots)await assertR18Spot(page,spot);
  if(r18CaptureDir)await writeFile(join(r18CaptureDir,'manifest.json'),JSON.stringify({generated_at:new Date().toISOString(),spots:r18Manifest},null,2)+'\n');

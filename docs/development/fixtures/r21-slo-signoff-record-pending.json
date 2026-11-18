@@ -1,0 +1,10 @@
+{
+  "record_status": "PENDING_TEAM_SIGN",
+  "pilot_reference": "mysql-schema8-r21-slo-pilot-signoff.md",
+  "adopted_targets_version": "v1.11-draft",
+  "platform_engineering_owner": "",
+  "sre_owner": "",
+  "business_owner": "",
+  "signed_at_cst": "",
+  "notes": "Agent 不代签；空 owner 表示待填"
+}
