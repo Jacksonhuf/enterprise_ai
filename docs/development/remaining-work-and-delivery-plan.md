@@ -263,3 +263,9 @@ R20：治理 audit/exceptions 只读并发；schema8 exceptions 列表关系化�
 R20：治理 grants 只读并发；双 HTTP 异常状态 CAS、应用草稿 CAS（PAGE-F2）；R02 证据 v0.87。见 test-report-v0.87.md 及 PR CI。
 
 **建议下一轮（v0.88+）**：发布检查/发布 CAS 双 HTTP；治理 grants 变更并发（POST/DELETE）；正式压力/SLO 与运维登记表实填。
+
+### 第88轮增量
+
+R20：release-checks 陈旧修订、双主机发布 CAS、grant 并发撤权；R02 证据 v0.88。见 test-report-v0.88.md 及 PR CI。
+
+**建议下一轮（v0.89+）**：模板创建应用双主机 CAS；治理 POST grant 与撤权交叉并发；正式压力/SLO 与运维登记表实填。
