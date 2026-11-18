@@ -8,3 +8,5 @@
 | `scripts/validate-r21-alerting-dry-run.py` | CI 结构校验 |
 
 签核后：将规则抄入监控系统，并在 `mysql-schema8-r21-alerting-handoff.md` 登记规则 ID。
+
+**Staging 渲染（v1.08）：** `scripts/render-r21-alerting-staging-prometheus.py`；CI artifact `r21-staging-alert-render`（**不自动 apply**）。

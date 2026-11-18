@@ -6,6 +6,7 @@
 |----|-----|
 | 脚本 | `frontend/scripts-verify-r18-baseline.mjs` |
 | 环境变量 | `COGNARA_R18_MAX_DIFF_RATIO`（默认 **0.02** = 2%） |
+| 按面覆盖 | `frontend/r18-baselines/max-diff-ratio.json`（v1.08：`publish-review` 3%） |
 | pixelmatch | `threshold: 0.2`, `includeAA: false` |
 
 ## 何时调高/调低

@@ -82,6 +82,11 @@ jobs:
       - name: Runbook smoke summary artifact
         if: always()
         run: python scripts/collect-runbook-smoke-summary.py /tmp/platform-go-test.log /tmp/runbook-smoke-summary.json
+      - name: Upload R21 staging alert render
+        uses: actions/upload-artifact@v4
+        with:
+          name: r21-staging-alert-render
+          path: /tmp/r21-staging-alerts.prom.txt
       - name: Upload runbook smoke summary from validation
         if: always()
         uses: actions/upload-artifact@v4
@@ -90,6 +95,8 @@ jobs:
           path: /tmp/runbook-smoke-summary.json
       - run: python scripts/validate-rehearsal-log-record.py docs/development/fixtures/schema8-rehearsal-log-example.json
       - run: python scripts/validate-r21-alerting-dry-run.py docs/development/fixtures/r21-alerting-dry-run.rules.json
+      - run: python scripts/render-r21-alerting-staging-prometheus.py docs/development/fixtures/r21-alerting-dry-run.rules.json /tmp/r21-staging-alerts.prom.txt
+      - run: python scripts/validate-rehearsal-log-record.py docs/development/fixtures/schema8-production-log-shape-example.json
       - run: python scripts/validate-contract-capture.py /tmp/cognara-contract.jsonl
       - run: python scripts/verify-runtime.py --binary /tmp/cognara-dev --storage json
       - run: python scripts/verify-runtime.py --binary /tmp/cognara-dev --storage sqlite

@@ -383,3 +383,9 @@ R18 扩至 10 抽页；彩排 JSON 校验与签核就绪门。见 test-report-v1
 R18 聊天/编辑抽页；R21 告警 dry-run JSON 与校验。见 test-report-v1.07.md 及 PR CI。
 
 **建议下一轮（v1.08+）**：团队实签与生产 §3 真仓入账；R18 发布审阅抽页；压测 harness 或告警规则首次导入 staging。
+
+### 第108轮增量（v1.08）
+
+R18 发布审阅抽页；R21 staging 告警 Prom 渲染 artifact；生产 §3 形状样例。见 test-report-v1.08.md 及 PR CI。
+
+**建议下一轮（v1.09+）**：生产 §3 真值入账与 SLO 实签；staging 告警人工导入验收；R18 应用详情/会话列表抽页。

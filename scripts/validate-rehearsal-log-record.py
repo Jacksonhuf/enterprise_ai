@@ -18,6 +18,11 @@ SHA = re.compile(r"^[0-9a-f]{64}$")
 
 
 def validate(record: dict) -> None:
+    if record.get("shape_example_only"):
+        if not record.get("production_signoff_ticket"):
+            raise SystemExit("shape example requires production_signoff_ticket placeholder")
+        print("OK: production log shape template (unfilled)")
+        return
     if record.get("disclaimer") != "REHEARSAL_ONLY — 非生产库，勿写入生产台账":
         if not record.get("production_signoff_ticket"):
             raise SystemExit("production record requires production_signoff_ticket or REHEARSAL_ONLY disclaimer")
