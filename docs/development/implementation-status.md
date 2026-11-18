@@ -455,3 +455,7 @@ release-checks 陈旧修订拒绝；双主机单 check 发布 CAS；grant 双主
 ## 第89轮：R20 模板复制 CAS 与 grant 授撤交叉
 
 模板陈旧修订双主机 409；当前修订双主机并发复制；grant POST/DELETE 交叉序列化。见 test-report-v0.89.md。
+
+## 第90轮：R20 会话跨主机探测与 EXPLAIN 烟测
+
+peer 主机会话创建、会话列表只读并发、跨主机 agent-chat；治理 EXPLAIN 清单。见 test-report-v0.90.md。

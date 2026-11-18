@@ -275,3 +275,9 @@ R20：release-checks 陈旧修订、双主机发布 CAS、grant 并发撤权；R
 R20：模板复制陈旧修订 CAS、双主机并发合法复制、grant 授撤交叉；R02 证据 v0.89。见 test-report-v0.89.md 及 PR CI。
 
 **建议下一轮（v0.90+）**：会话创建/续聊双主机探测；正式压力/SLO；运维 runbook 登记表实填与慢查询证据。
+
+### 第90轮增量
+
+R20：peer 主机会话创建、会话列表并发读、跨主机 chat/load；治理 EXPLAIN 烟测与慢查询清单。见 test-report-v0.90.md 及 PR CI。
+
+**建议下一轮（v0.91+）**：多会话连续写入专项（或 session writer 入口）；正式压力/SLO；runbook 登记表生产实填。
