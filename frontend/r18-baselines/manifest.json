@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-18T11:39:11.618Z",
+  "generated_at": "2026-11-18T11:49:49.470Z",
   "spots": [
     {
       "slug": "login-public",
@@ -225,6 +225,36 @@
       "publishReview": false,
       "sessionSidebar": true,
       "file": "session-sidebar.png"
+    },
+    {
+      "slug": "build-releases",
+      "path": "/build/apps/channel-replenishment?tab=releases",
+      "viewport": [
+        1280,
+        720
+      ],
+      "identity": "demo-engineer",
+      "forbidden": false,
+      "publicLogin": false,
+      "chatEntry": false,
+      "publishReview": false,
+      "sessionSidebar": false,
+      "file": "build-releases.png"
+    },
+    {
+      "slug": "governance-usage",
+      "path": "/governance/operations?tab=usage",
+      "viewport": [
+        1280,
+        720
+      ],
+      "identity": "demo-admin",
+      "forbidden": false,
+      "publicLogin": false,
+      "chatEntry": false,
+      "publishReview": false,
+      "sessionSidebar": false,
+      "file": "governance-usage.png"
     }
   ]
 }
