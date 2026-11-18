@@ -487,3 +487,7 @@ governance 公告列表与 settings/public 双主机读；continue-stream 提前
 ## 第97轮：settings/public 写 CAS 与进行中 turn 语义
 
 双主机 public 写 CAS；进行中 continue-stream 409；断连语义说明。见 test-report-v0.97.md。
+
+## 第98轮：settings 写矩阵与 public 写后烟雾
+
+profile/general 双主机 CAS；public 写后混合读。见 test-report-v0.98.md。
