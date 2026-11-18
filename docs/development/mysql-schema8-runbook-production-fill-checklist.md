@@ -19,7 +19,9 @@
 |---|-----|------|
 | A | 本地或 CI 跑通 `TestR20Schema8RunbookDefaultSmoke` | ☐ |
 | B | 下载 `runbook-smoke-summary.json` 且 `status` 为 `pass` | ☐ |
-| C | F-G validation 绿 + 浏览器 smoke 含 R18 抽页（v1.03） | ☐ |
+| C | F-G validation 绿 + 浏览器 smoke 含 R18 抽页（v1.03+） | ☐ |
+| C2 | CI artifact `r18-spot-screenshots` 已与 manifest 核对（v1.04） | ☐ |
 | D | 工程彩排台账两方确认（见 `mysql-schema8-r21-engineering-pilot-ledger-2026-11-18.md`） | ☐ |
+| E | 彩排登记模板已填（非生产）见 `mysql-schema8-production-apply-rehearsal-log-template.md` | ☐ |
 
 生产 §3 实填后，方勾选上文主表 #1–#6。

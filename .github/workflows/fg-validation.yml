@@ -99,5 +99,14 @@ jobs:
       - run: npm run check:cognara-bundle
         working-directory: frontend
       - name: Browser smoke on production build
-        run: npm install --no-save playwright-core@1.62.1 && CHROMIUM_EXECUTABLE_PATH="$(command -v google-chrome || command -v chromium)" COGNARA_SMOKE_BINARY=/tmp/cognara-dev npm run test:cognara-browser
+        run: |
+          npm install --no-save playwright-core@1.62.1
+          mkdir -p /tmp/r18-spots
+          CHROMIUM_EXECUTABLE_PATH="$(command -v google-chrome || command -v chromium)" COGNARA_SMOKE_BINARY=/tmp/cognara-dev COGNARA_R18_CAPTURE=/tmp/r18-spots npm run test:cognara-browser
         working-directory: frontend
+      - name: Upload R18 spot screenshot baseline
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: r18-spot-screenshots
+          path: /tmp/r18-spots/
