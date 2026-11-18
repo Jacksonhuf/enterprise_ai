@@ -443,3 +443,9 @@ R09 tier JSON artifact；OpenMetrics exporter 样例；登录/禁止窄屏 R18�
 tier 摘要校验与彩排打包 JSON；编辑器/发布窄屏 R18。见 test-report-v1.17.md 及 PR CI。
 
 **建议下一轮（v1.18+）**：bundle CONFIRMED 实填；最小 exporter 只读端点 mock；R18 app-detail / session 窄屏。
+
+### 第118轮增量（v1.18）
+
+CONFIRMED 彩排形状；OpenMetrics loopback mock；detail/session 窄屏 R18。见 test-report-v1.18.md 及 PR CI。
+
+**建议下一轮（v1.19+）**：团队真 CONFIRMED/ENTERED；mock 与 tier 摘要数值联动；R18 build-releases 窄屏或 governance-usage 窄屏。

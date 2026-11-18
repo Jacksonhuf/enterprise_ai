@@ -32,7 +32,9 @@ async function assertR18Spot(page,spot){
   }else if(spot.sessionSidebar){
   await page.locator('.application-card').first().getByRole('button',{name:'进入应用',exact:true}).click();
   await page.waitForURL('**/chat/**');await page.locator('textarea').waitFor();
-  await page.getByRole('button',{name:'搜索 / 刷新历史',exact:true}).click();await page.waitForLoadState('networkidle');
+  if(w>=500){
+   await page.getByRole('button',{name:'搜索 / 刷新历史',exact:true}).click();await page.waitForLoadState('networkidle');
+  }
   captureTarget=page.locator('.app-shell');
   }else if(spot.chatEntry){
   await page.locator('.application-card').first().getByRole('button',{name:'进入应用',exact:true}).click();
@@ -306,6 +308,8 @@ try {
   {slug:'forbidden-user-narrow',path:'/governance/access',identity:'demo-user',forbidden:true,viewport:[390,844]},
   {slug:'editor-channel-narrow',path:'/build/apps/channel-replenishment/edit',viewport:[390,844],identity:'demo-engineer'},
   {slug:'publish-review-narrow',path:'/build/apps/channel-replenishment/edit',viewport:[390,844],identity:'demo-engineer',publishReview:true},
+  {slug:'app-detail-build-narrow',path:'/build/apps/channel-replenishment',viewport:[390,844],identity:'demo-engineer'},
+  {slug:'session-sidebar-narrow',path:'/apps',viewport:[390,844],identity:'demo-user',sessionSidebar:true},
  ];
  for(const spot of r18Spots)await assertR18Spot(page,spot);
  if(r18CaptureDir)await writeFile(join(r18CaptureDir,'manifest.json'),JSON.stringify({generated_at:new Date().toISOString(),spots:r18Manifest},null,2)+'\n');

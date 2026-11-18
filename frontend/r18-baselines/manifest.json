@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-18T22:41:06.859Z",
+  "generated_at": "2026-11-18T23:29:51.563Z",
   "spots": [
     {
       "slug": "login-public",
@@ -465,6 +465,36 @@
       "publishReview": true,
       "sessionSidebar": false,
       "file": "publish-review-narrow.png"
+    },
+    {
+      "slug": "app-detail-build-narrow",
+      "path": "/build/apps/channel-replenishment",
+      "viewport": [
+        390,
+        844
+      ],
+      "identity": "demo-engineer",
+      "forbidden": false,
+      "publicLogin": false,
+      "chatEntry": false,
+      "publishReview": false,
+      "sessionSidebar": false,
+      "file": "app-detail-build-narrow.png"
+    },
+    {
+      "slug": "session-sidebar-narrow",
+      "path": "/apps",
+      "viewport": [
+        390,
+        844
+      ],
+      "identity": "demo-user",
+      "forbidden": false,
+      "publicLogin": false,
+      "chatEntry": false,
+      "publishReview": false,
+      "sessionSidebar": true,
+      "file": "session-sidebar-narrow.png"
     }
   ]
 }
