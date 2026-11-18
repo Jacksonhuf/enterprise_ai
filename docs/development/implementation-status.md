@@ -411,3 +411,7 @@ PR61已合并。`cognara-migrate-grants --check`、`cognara_fg_grants` DDL、gra
 ## 第78轮：R08 usage apply 与 schema8 读
 
 `ApplyMySQLUsage`、`cognara-migrate-usage --apply`；schema8 关系读/写（治理列表、用量追加）。无 schema8 快照。见 test-report-v0.78.md。
+
+## 第79轮：R08 schema8 快照
+
+`ExportMySQLSnapshot`/`ImportMySQLSnapshot` schema8；usage 行级保真。R08 三域关系化代码闭环完成。见 test-report-v0.79.md。
