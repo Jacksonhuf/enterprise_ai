@@ -226,5 +226,15 @@ try {
  await page.goto('http://127.0.0.1:14173/apps');await page.waitForLoadState('networkidle');
  assert.equal(await page.locator('.application-card').filter({hasText:copiedApp.draft.basic.name}).count(),0);
  assert.equal(await page.locator('.application-card').filter({hasText:publishedDraft.draft.basic.name}).count(),1);
- await Promise.all(diagnostics);assert.deepEqual(failures,[]);console.log('PASS Chromium: login, chat Enter/Shift+Enter, business result, 13 routes, 8 RadioGroup resize/drawer/SPA unmount cycles, literal public notice/reload, service input/output contract and raw definition, historical release restore/reload/live snapshot protection, checked publication diff/unchanged baseline/real publish, independent template selector/preview/versioned copy, reviewed user grant/entry/revocation isolation, real failure/audit trace/20 repeated SPA/detail transitions/exception lifecycle, saved density/timezone/reload/account isolation, no component/runtime errors');
+ // R18 spot-page regression (v1.03): admin governance/settings surfaces, shell chrome, narrow viewport.
+ await page.evaluate(()=>localStorage.setItem('cognara_demo_identity','demo-admin'));
+ for(const spot of ['/settings/tenant','/governance/operations?tab=settings','/settings/models']){
+  await page.setViewportSize({width:1280,height:720});
+  await page.goto('http://127.0.0.1:14173'+spot);await page.locator('h1, .wk-empty-state__title').first().waitFor();await page.waitForLoadState('networkidle');
+  assert.ok(await page.locator('.app-shell').isVisible());await page.getByRole('button',{name:'账户菜单'}).waitFor();
+  const shellText=await page.locator('.app-shell').innerText();assert.doesNotMatch(shellText,/schema\s*[0-9]|R20\b|架构编号/i);
+ }
+ await page.setViewportSize({width:390,height:844});await page.goto('http://127.0.0.1:14173/apps');
+ await page.locator('.application-card, .wk-empty-state__title').first().waitFor();await page.getByRole('button',{name:'账户菜单'}).waitFor();
+ await Promise.all(diagnostics);assert.deepEqual(failures,[]);console.log('PASS Chromium: login, chat Enter/Shift+Enter, business result, 13 routes, R18 spot pages (tenant/ops-settings/models + narrow), 8 RadioGroup resize/drawer/SPA unmount cycles, literal public notice/reload, service input/output contract and raw definition, historical release restore/reload/live snapshot protection, checked publication diff/unchanged baseline/real publish, independent template selector/preview/versioned copy, reviewed user grant/entry/revocation isolation, real failure/audit trace/20 repeated SPA/detail transitions/exception lifecycle, saved density/timezone/reload/account isolation, no component/runtime errors');
 } finally {await browser?.close();if(server)await new Promise(r=>server.httpServer.close(r));backend.kill('SIGTERM');await new Promise(r=>backend.exitCode!==null?r():backend.once('exit',r));await rm(temp,{recursive:true,force:true});}

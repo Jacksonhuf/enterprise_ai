@@ -507,3 +507,7 @@ public+profile 写后读编排；SLO 试点填表。见 test-report-v0.99.md。
 ## 第102轮（v1.02）：validation runbook 摘要 artifact
 
 `collect-runbook-smoke-summary.py`；CI 上传摘要 JSON。见 test-report-v1.02.md。
+
+## 第103轮（v1.03）：R18 抽页与 R02 进度快照
+
+浏览器抽页；工程彩排台账。见 test-report-v1.03.md。
