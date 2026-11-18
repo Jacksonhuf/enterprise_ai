@@ -323,3 +323,9 @@ R20/R01：governance 公共列表与 settings/public 双主机读并发；SSE �
 R20/R01/R14探针：settings/public 双主机写 CAS；进行中 turn 不可重放与断连语义文档。见 test-report-v0.97.md 及 PR CI。
 
 **建议下一轮（v0.98+）**：general/profile settings 双主机写矩阵补全；混合烟雾纳入 public 写后读；runbook 首条生产实填（团队）。
+
+### 第98轮增量
+
+R20/R01：profile/general 双主机写 CAS；public 写后混合烟雾。见 test-report-v0.98.md 及 PR CI。
+
+**建议下一轮（v0.99+）**：settings 写矩阵纳入混合烟雾写阶段；R21 签核试点填表；runbook 首条生产实填（团队）。
