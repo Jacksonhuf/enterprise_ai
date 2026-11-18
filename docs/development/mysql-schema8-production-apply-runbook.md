@@ -44,6 +44,16 @@ SELECT schema_version FROM cognara_fg_state WHERE id=1;
 | apply 退出码 | |
 | 回退决策 | 无 / 快照路径 / 备份还原 |
 
+**填写样例（验证环境彩排，非真实生产库名）：**
+
+| 字段 | 样例值 |
+|------|--------|
+| 执行时间（北京时间） | 2026-11-18 14:30 CST |
+| DSN 库名（无密码） | `cognara_prod_fg` @ `mysql.internal:3306` |
+| 每步 plan SHA256 | audit:`a1…` ; apps:`b2…` ; … ; usage:`h8…` |
+| apply 退出码 | 全部 `0` |
+| 回退决策 | 快照 `/backup/cognara-fg-v8-20261118.json` + SHA256 留存 |
+
 ## 4. 发布后烟雾（与 R20 测试对齐）
 
 在 **两台** Go 实例共享同一 DSN 时至少执行：

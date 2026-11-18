@@ -439,3 +439,7 @@ schema8 双主机 continue-stream 重放与不重跑业务；未知消息 404；
 ## 第85轮：R20 取消/快照演练与 R02 索引
 
 agent-chat 取消上下文；runbook 快照 import 彩排；R02 MySQL API 证据表。见 test-report-v0.85.md。
+
+## 第86轮：R20 治理只读并发与 schema8 异常列表
+
+审计/异常双主机并发读；schema8 治理 exceptions 关系化查询修复。见 test-report-v0.86.md。
