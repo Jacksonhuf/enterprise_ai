@@ -1,0 +1,33 @@
+{
+  "disclaimer": "ALERTING_DRY_RUN_ONLY",
+  "rules": [
+    {
+      "name": "fg_runbook_smoke_read_phase_high",
+      "metric": "fg.runbook.smoke_read_wall_s",
+      "threshold_seconds": 4.0,
+      "pilot_observed_seconds": 2.2,
+      "source_test": "TestR20Schema8RunbookDefaultSmoke"
+    },
+    {
+      "name": "fg_mixed_read_smoke_high",
+      "metric": "fg.read.mixed_smoke_wall_s",
+      "threshold_seconds": 3.0,
+      "pilot_observed_seconds": 1.3,
+      "source_test": "TestR20Schema8MixedReadOnlySmokeOrchestration"
+    },
+    {
+      "name": "fg_usage_tier64_high",
+      "metric": "fg.gov.usage_tier64_wall_s",
+      "threshold_seconds": 3.0,
+      "pilot_observed_seconds": 1.4,
+      "source_test": "TestR20Schema8TieredGovernanceUsageRead"
+    },
+    {
+      "name": "fg_message_load_tier64_high",
+      "metric": "fg.msg.load_tier64_wall_s",
+      "threshold_seconds": 7.0,
+      "pilot_observed_seconds": 4.6,
+      "source_test": "TestR20Schema8TieredMessageLoadLoad"
+    }
+  ]
+}
