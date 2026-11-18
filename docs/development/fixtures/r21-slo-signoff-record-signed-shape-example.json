@@ -1,0 +1,10 @@
+{
+  "record_status": "SIGNED",
+  "pilot_reference": "mysql-schema8-r21-slo-pilot-signoff.md",
+  "adopted_targets_version": "v1.12-shape-only",
+  "platform_engineering_owner": "PLACEHOLDER-NOT-SIGNED",
+  "sre_owner": "PLACEHOLDER-NOT-SIGNED",
+  "business_owner": "PLACEHOLDER-NOT-SIGNED",
+  "signed_at_cst": "PLACEHOLDER-NOT-PRODUCTION",
+  "notes": "SIGNED 字段形状示例；非正式对外 SLO"
+}

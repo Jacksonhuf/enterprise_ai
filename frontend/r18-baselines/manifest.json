@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-18T12:25:02.076Z",
+  "generated_at": "2026-11-18T12:57:06.165Z",
   "spots": [
     {
       "slug": "login-public",
@@ -285,6 +285,36 @@
       "publishReview": false,
       "sessionSidebar": false,
       "file": "governance-ops-audit.png"
+    },
+    {
+      "slug": "governance-grants-narrow",
+      "path": "/governance/access?tab=grants",
+      "viewport": [
+        390,
+        844
+      ],
+      "identity": "demo-admin",
+      "forbidden": false,
+      "publicLogin": false,
+      "chatEntry": false,
+      "publishReview": false,
+      "sessionSidebar": false,
+      "file": "governance-grants-narrow.png"
+    },
+    {
+      "slug": "governance-ops-exceptions-narrow",
+      "path": "/governance/operations?tab=exceptions",
+      "viewport": [
+        390,
+        844
+      ],
+      "identity": "demo-admin",
+      "forbidden": false,
+      "publicLogin": false,
+      "chatEntry": false,
+      "publishReview": false,
+      "sessionSidebar": false,
+      "file": "governance-ops-exceptions-narrow.png"
     }
   ]
 }
