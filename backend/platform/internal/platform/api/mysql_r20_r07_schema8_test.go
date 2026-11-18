@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"net/url"
+	"sync"
 	"testing"
 
 	api "github.com/Tencent/WeKnora/internal/platform/api"
@@ -108,6 +109,67 @@ func TestR07Schema8GovernanceUsageRelationalPaging(t *testing.T) {
 			}
 			ids[id] = true
 		}
+	}
+}
+
+func TestR20Schema8DualHostConcurrentGrants(t *testing.T) {
+	f, dsn, _ := mysqlSchema8Fixture(t)
+	b, err := app.OpenMySQL(dsn)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer b.Close()
+	second := &api.Server{Store: b, Client: f.client, ServiceToken: f.server.ServiceToken, SigningKey: f.server.SigningKey}
+	host := httptest.NewServer(second.Handler())
+	defer host.Close()
+	assertConcurrentGrant(t, f, []string{f.host.URL, host.URL})
+	if len(b.Read().Grants) != len(f.store.Read().Grants) {
+		t.Fatal("second connection did not observe regrant")
+	}
+}
+
+func TestR20Schema8DualHostSettingsProfileCAS(t *testing.T) {
+	f, dsn, _ := mysqlSchema8Fixture(t)
+	b, err := app.OpenMySQL(dsn)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer b.Close()
+	second := &api.Server{Store: b, Client: f.client, ServiceToken: f.server.ServiceToken, SigningKey: f.server.SigningKey}
+	host := httptest.NewServer(second.Handler())
+	defer host.Close()
+	revision := settingsRead(t, f, "demo-user", "profile")["revision"].(string)
+	var wg sync.WaitGroup
+	results := make(chan int, 2)
+	for i, address := range []string{f.host.URL, host.URL} {
+		wg.Add(1)
+		go func(i int, address string) {
+			defer wg.Done()
+			raw, _ := json.Marshal(map[string]any{
+				"expected_revision": revision,
+				"values":            map[string]string{"display_name": []string{"schema8-profile-A", "schema8-profile-B"}[i]},
+			})
+			req, _ := http.NewRequest("PUT", address+settingsBase+"profile", bytes.NewReader(raw))
+			req.Header.Set("Authorization", "Bearer demo-user")
+			req.Header.Set("Content-Type", "application/json")
+			resp, e := http.DefaultClient.Do(req)
+			if e != nil {
+				t.Error(e)
+				results <- 0
+				return
+			}
+			resp.Body.Close()
+			results <- resp.StatusCode
+		}(i, address)
+	}
+	wg.Wait()
+	close(results)
+	counts := map[int]int{}
+	for status := range results {
+		counts[status]++
+	}
+	if counts[200] != 1 || counts[409] != 1 || settingsAudit(f.store.Read()) != 1 {
+		t.Fatal("schema8 settings CAS", counts)
 	}
 }
 
