@@ -104,6 +104,11 @@ jobs:
           mkdir -p /tmp/r18-spots
           CHROMIUM_EXECUTABLE_PATH="$(command -v google-chrome || command -v chromium)" COGNARA_SMOKE_BINARY=/tmp/cognara-dev COGNARA_R18_CAPTURE=/tmp/r18-spots npm run test:cognara-browser
         working-directory: frontend
+      - name: R18 pixel baseline gate
+        run: |
+          npm install --no-save pixelmatch pngjs
+          node scripts-verify-r18-baseline.mjs /tmp/r18-spots
+        working-directory: frontend
       - name: Upload R18 spot screenshot baseline
         if: always()
         uses: actions/upload-artifact@v4

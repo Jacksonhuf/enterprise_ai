@@ -1,0 +1,82 @@
+{
+  "generated_at": "2026-11-18T08:35:35.664Z",
+  "spots": [
+    {
+      "slug": "settings-tenant",
+      "path": "/settings/tenant",
+      "viewport": [
+        1280,
+        720
+      ],
+      "identity": "demo-admin",
+      "forbidden": false,
+      "file": "settings-tenant.png"
+    },
+    {
+      "slug": "governance-ops-settings",
+      "path": "/governance/operations?tab=settings",
+      "viewport": [
+        1280,
+        720
+      ],
+      "identity": "demo-admin",
+      "forbidden": false,
+      "file": "governance-ops-settings.png"
+    },
+    {
+      "slug": "settings-models",
+      "path": "/settings/models",
+      "viewport": [
+        1280,
+        720
+      ],
+      "identity": "demo-admin",
+      "forbidden": false,
+      "file": "settings-models.png"
+    },
+    {
+      "slug": "governance-access",
+      "path": "/governance/access?tab=grants",
+      "viewport": [
+        1280,
+        720
+      ],
+      "identity": "demo-admin",
+      "forbidden": false,
+      "file": "governance-access.png"
+    },
+    {
+      "slug": "governance-audit",
+      "path": "/governance/audit",
+      "viewport": [
+        1280,
+        720
+      ],
+      "identity": "demo-admin",
+      "forbidden": false,
+      "file": "governance-audit.png"
+    },
+    {
+      "slug": "forbidden-user",
+      "path": "/governance/access",
+      "viewport": [
+        1280,
+        720
+      ],
+      "identity": "demo-user",
+      "forbidden": true,
+      "file": "forbidden-user.png"
+    },
+    {
+      "slug": "apps-narrow",
+      "path": "/apps",
+      "viewport": [
+        390,
+        844
+      ],
+      "identity": "demo-user",
+      "forbidden": false,
+      "file": "apps-narrow.png"
+    }
+  ]
+}

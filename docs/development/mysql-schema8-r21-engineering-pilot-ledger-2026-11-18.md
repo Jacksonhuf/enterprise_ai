@@ -10,6 +10,8 @@
 | R18 截图 artifact | `r18-spot-screenshots`（v1.04+，validation） |
 | 摘要 artifact 名 | `runbook-default-smoke` / `runbook-smoke-summary-validation` |
 | §3 彩排登记模板 | `mysql-schema8-production-apply-rehearsal-log-template.md` |
+| 团队提请单 | `mysql-schema8-r21-team-signoff-request.md` |
+| R18 像素门 | `scripts-verify-r18-baseline.mjs`（v1.05） |
 
 ## 待团队填入（正式签核前移）
 
