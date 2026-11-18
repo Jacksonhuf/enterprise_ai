@@ -423,3 +423,7 @@ schema8 夹具上双 Store 草稿 CAS、用量追加与异常状态并发专项�
 ## 第81轮：R20 双 HTTP + R07 schema8 分页/脱敏
 
 `PrepareSchema8IntegrationDB`；双 httptest 主机会话 CAS；治理 usage 分页；撤权后历史脱敏；schema8 会话根写入与 grant writer v8 修复。见 test-report-v0.81.md。
+
+## 第82轮：R20 grant/settings 双 HTTP
+
+schema8 双主机并发 grant 与 profile settings CAS；schema7–8 settings 关系化读写修复。见 test-report-v0.82.md。

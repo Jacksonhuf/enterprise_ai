@@ -81,8 +81,8 @@ func (s *Store) UpdateMySQLSettingsContext(parent context.Context, key, legacy s
 	if e = tx.QueryRowContext(ctx, `SELECT schema_version FROM cognara_fg_state WHERE id=1`).Scan(&version); e != nil {
 		return true, e
 	}
-	if version == 6 {
-		st, _, e := readMySQLApplicationV6(ctx, tx, false)
+	if version >= 6 && version <= 8 {
+		st, _, e := readMySQLApplicationRelational(ctx, tx, false, version)
 		if e != nil {
 			return true, e
 		}
@@ -93,7 +93,7 @@ func (s *Store) UpdateMySQLSettingsContext(parent context.Context, key, legacy s
 		if e = upsertMySQLSettingsRow(ctx, tx, tenant, key, patch.Value, patch.Revision); e != nil {
 			return true, e
 		}
-		if _, _, e = readMySQLApplicationV6(ctx, tx, false); e != nil {
+		if _, _, e = readMySQLApplicationRelational(ctx, tx, false, version); e != nil {
 			return true, e
 		}
 		return true, tx.Commit()
@@ -136,8 +136,8 @@ func readMySQLSettingsProjection(ctx context.Context, tx *sql.Tx, key, legacy st
 			return SettingsRecord{}, true, e
 		}
 	}
-	if version == 6 {
-		st, _, e := readMySQLApplicationV6(ctx, tx, false)
+	if version >= 6 && version <= 8 {
+		st, _, e := readMySQLApplicationRelational(ctx, tx, false, version)
 		if e != nil {
 			return SettingsRecord{}, true, e
 		}
