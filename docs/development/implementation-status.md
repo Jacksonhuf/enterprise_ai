@@ -567,3 +567,7 @@ CI `r18-spot-screenshots`；彩排登记模板。见 test-report-v1.04.md。
 ## 第117轮（v1.17）：tier 入账打包与编辑器窄屏
 
 31 抽页。见 test-report-v1.17.md。
+
+## 第118轮（v1.18）：exporter mock 与 detail/session 窄屏
+
+33 抽页。见 test-report-v1.18.md。
