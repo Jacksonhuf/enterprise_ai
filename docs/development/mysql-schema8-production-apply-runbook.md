@@ -82,6 +82,7 @@ SELECT schema_version FROM cognara_fg_state WHERE id=1;
 - `continue-stream` 断连后重放（见 test-report-v0.96）
 - settings/public 双主机写 CAS 与进行中 turn 409（见 test-report-v0.97、`mysql-schema8-inprogress-turn-semantics.md`）
 - profile/general 写 CAS 与 public 写后混合烟雾（见 test-report-v0.98）
+- public+profile 写后读编排烟雾（见 test-report-v0.99）
 - 治理关系化 `EXPLAIN` 烟测（见 `mysql-schema8-slow-query-checklist.md`）
 
 自动化参考：
