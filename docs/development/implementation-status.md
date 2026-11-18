@@ -519,3 +519,7 @@ CI `r18-spot-screenshots`；彩排登记模板。见 test-report-v1.04.md。
 ## 第105轮（v1.05）：R18 像素基线门
 
 `frontend/r18-baselines/`；`verify-r18-capture-baseline.mjs`。见 test-report-v1.05.md。
+
+## 第106轮（v1.06）：R18 抽页扩展与彩排 JSON 校验
+
+10 抽页；`validate-rehearsal-log-record.py`。见 test-report-v1.06.md。

@@ -1,6 +1,42 @@
 {
-  "generated_at": "2026-11-18T08:35:35.664Z",
+  "generated_at": "2026-11-18T09:10:17.544Z",
   "spots": [
+    {
+      "slug": "login-public",
+      "path": "/login",
+      "viewport": [
+        1280,
+        720
+      ],
+      "identity": "demo-admin",
+      "forbidden": false,
+      "publicLogin": true,
+      "file": "login-public.png"
+    },
+    {
+      "slug": "build-apps-engineer",
+      "path": "/build/apps",
+      "viewport": [
+        1280,
+        720
+      ],
+      "identity": "demo-engineer",
+      "forbidden": false,
+      "publicLogin": false,
+      "file": "build-apps-engineer.png"
+    },
+    {
+      "slug": "assets-engineer",
+      "path": "/assets",
+      "viewport": [
+        1280,
+        720
+      ],
+      "identity": "demo-engineer",
+      "forbidden": false,
+      "publicLogin": false,
+      "file": "assets-engineer.png"
+    },
     {
       "slug": "settings-tenant",
       "path": "/settings/tenant",
@@ -10,6 +46,7 @@
       ],
       "identity": "demo-admin",
       "forbidden": false,
+      "publicLogin": false,
       "file": "settings-tenant.png"
     },
     {
@@ -21,6 +58,7 @@
       ],
       "identity": "demo-admin",
       "forbidden": false,
+      "publicLogin": false,
       "file": "governance-ops-settings.png"
     },
     {
@@ -32,6 +70,7 @@
       ],
       "identity": "demo-admin",
       "forbidden": false,
+      "publicLogin": false,
       "file": "settings-models.png"
     },
     {
@@ -43,6 +82,7 @@
       ],
       "identity": "demo-admin",
       "forbidden": false,
+      "publicLogin": false,
       "file": "governance-access.png"
     },
     {
@@ -54,6 +94,7 @@
       ],
       "identity": "demo-admin",
       "forbidden": false,
+      "publicLogin": false,
       "file": "governance-audit.png"
     },
     {
@@ -65,6 +106,7 @@
       ],
       "identity": "demo-user",
       "forbidden": true,
+      "publicLogin": false,
       "file": "forbidden-user.png"
     },
     {
@@ -76,6 +118,7 @@
       ],
       "identity": "demo-user",
       "forbidden": false,
+      "publicLogin": false,
       "file": "apps-narrow.png"
     }
   ]
