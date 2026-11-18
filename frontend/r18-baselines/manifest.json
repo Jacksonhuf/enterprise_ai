@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-18T09:34:06.248Z",
+  "generated_at": "2026-11-18T10:05:12.379Z",
   "spots": [
     {
       "slug": "login-public",
@@ -12,6 +12,7 @@
       "forbidden": false,
       "publicLogin": true,
       "chatEntry": false,
+      "publishReview": false,
       "file": "login-public.png"
     },
     {
@@ -25,6 +26,7 @@
       "forbidden": false,
       "publicLogin": false,
       "chatEntry": false,
+      "publishReview": false,
       "file": "build-apps-engineer.png"
     },
     {
@@ -38,6 +40,7 @@
       "forbidden": false,
       "publicLogin": false,
       "chatEntry": false,
+      "publishReview": false,
       "file": "assets-engineer.png"
     },
     {
@@ -51,6 +54,7 @@
       "forbidden": false,
       "publicLogin": false,
       "chatEntry": false,
+      "publishReview": false,
       "file": "settings-tenant.png"
     },
     {
@@ -64,6 +68,7 @@
       "forbidden": false,
       "publicLogin": false,
       "chatEntry": false,
+      "publishReview": false,
       "file": "governance-ops-settings.png"
     },
     {
@@ -77,6 +82,7 @@
       "forbidden": false,
       "publicLogin": false,
       "chatEntry": false,
+      "publishReview": false,
       "file": "settings-models.png"
     },
     {
@@ -90,6 +96,7 @@
       "forbidden": false,
       "publicLogin": false,
       "chatEntry": false,
+      "publishReview": false,
       "file": "governance-access.png"
     },
     {
@@ -103,6 +110,7 @@
       "forbidden": false,
       "publicLogin": false,
       "chatEntry": false,
+      "publishReview": false,
       "file": "governance-audit.png"
     },
     {
@@ -116,6 +124,7 @@
       "forbidden": true,
       "publicLogin": false,
       "chatEntry": false,
+      "publishReview": false,
       "file": "forbidden-user.png"
     },
     {
@@ -129,6 +138,7 @@
       "forbidden": false,
       "publicLogin": false,
       "chatEntry": false,
+      "publishReview": false,
       "file": "apps-narrow.png"
     },
     {
@@ -142,6 +152,7 @@
       "forbidden": false,
       "publicLogin": false,
       "chatEntry": true,
+      "publishReview": false,
       "file": "chat-user.png"
     },
     {
@@ -155,7 +166,22 @@
       "forbidden": false,
       "publicLogin": false,
       "chatEntry": false,
+      "publishReview": false,
       "file": "editor-channel.png"
+    },
+    {
+      "slug": "publish-review",
+      "path": "/build/apps/channel-replenishment/edit",
+      "viewport": [
+        1280,
+        720
+      ],
+      "identity": "demo-engineer",
+      "forbidden": false,
+      "publicLogin": false,
+      "chatEntry": false,
+      "publishReview": true,
+      "file": "publish-review.png"
     }
   ]
 }

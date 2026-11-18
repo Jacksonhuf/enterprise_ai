@@ -527,3 +527,7 @@ CI `r18-spot-screenshots`；彩排登记模板。见 test-report-v1.04.md。
 ## 第107轮（v1.07）：R18 聊天/编辑与 R21 告警 dry-run
 
 12 抽页；`validate-r21-alerting-dry-run.py`。见 test-report-v1.07.md。
+
+## 第108轮（v1.08）：R18 发布审阅与 staging 告警渲染
+
+13 抽页；`render-r21-alerting-staging-prometheus.py`。见 test-report-v1.08.md。
