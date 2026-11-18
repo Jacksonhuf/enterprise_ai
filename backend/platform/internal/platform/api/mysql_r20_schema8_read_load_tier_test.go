@@ -126,6 +126,7 @@ func TestR20Schema8TieredMessageLoadLoad(t *testing.T) {
 	}{
 		{32, 15 * time.Second},
 		{64, 30 * time.Second},
+		{96, 45 * time.Second},
 	} {
 		elapsed := schema8ParallelAuthorizedGET(t, f, second, path, "demo-user", tier.workers, validate)
 		t.Logf("message load tier workers=%d elapsed=%s", tier.workers, elapsed)

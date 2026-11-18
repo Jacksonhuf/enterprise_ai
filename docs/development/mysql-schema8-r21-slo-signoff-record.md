@@ -10,6 +10,7 @@
 | 混合只读烟雾 | 总轮 < **3 s** | ~1.3 s / 36w |
 | usage 阶梯 64w | 总轮 < **3 s** | ~1.4 s |
 | message load 64w | 总轮 < **7 s** | ~4.6 s |
+| message load 96w（阶梯扩面 v1.12） | 总轮 < **10 s**（建议，待签） | CI harness 记录 |
 
 团队可改写上表后再签核；签核后同步 [mysql-schema8-r21-slo-draft.md](mysql-schema8-r21-slo-draft.md) §2 与 [mysql-schema8-r21-alerting-handoff.md](mysql-schema8-r21-alerting-handoff.md)。
 

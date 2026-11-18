@@ -543,3 +543,7 @@ CI `r18-spot-screenshots`；彩排登记模板。见 test-report-v1.04.md。
 ## 第111轮（v1.11）：R18 异常/审计 Tab 与 R09 probe
 
 19 抽页；SLO 待签 JSON；`r09-ready-probe-harness.sh`。见 test-report-v1.11.md。
+
+## 第112轮（v1.12）：message load 96w 与治理窄屏 R18
+
+21 抽页；`r09-message-load-tier-harness.sh`。见 test-report-v1.12.md。

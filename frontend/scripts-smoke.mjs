@@ -294,6 +294,8 @@ try {
   {slug:'governance-usage',path:'/governance/operations?tab=usage'},
   {slug:'governance-ops-exceptions',path:'/governance/operations?tab=exceptions'},
   {slug:'governance-ops-audit',path:'/governance/operations?tab=audit'},
+  {slug:'governance-grants-narrow',path:'/governance/access?tab=grants',viewport:[390,844]},
+  {slug:'governance-ops-exceptions-narrow',path:'/governance/operations?tab=exceptions',viewport:[390,844]},
  ];
  for(const spot of r18Spots)await assertR18Spot(page,spot);
  if(r18CaptureDir)await writeFile(join(r18CaptureDir,'manifest.json'),JSON.stringify({generated_at:new Date().toISOString(),spots:r18Manifest},null,2)+'\n');

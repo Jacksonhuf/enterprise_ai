@@ -7,3 +7,5 @@
 ```
 
 对应对 Go 探针 `TestR20Schema8ParallelReadyAcrossDualHosts`（48 路双实例 `/ready`）。正式 p95/p99 与签核见 `mysql-schema8-r21-slo-signoff-record.md`。
+
+message load 阶梯（v1.12）：`./scripts/r09-message-load-tier-harness.sh`
