@@ -54,6 +54,15 @@ SELECT schema_version FROM cognara_fg_state WHERE id=1;
 | apply 退出码 | 全部 `0` |
 | 回退决策 | 快照 `/backup/cognara-fg-v8-20261118.json` + SHA256 留存 |
 
+**生产实填（团队签核前留空）：**
+
+| 字段 | 生产值 |
+|------|--------|
+| 执行时间（北京时间） | |
+| DSN 库名（无密码） | |
+| 变更单号 | |
+| SLO 签核 | 见 `mysql-schema8-r21-slo-draft.md` §3 |
+
 ## 4. 发布后烟雾（与 R20 测试对齐）
 
 在 **两台** Go 实例共享同一 DSN 时至少执行：
@@ -66,6 +75,7 @@ SELECT schema_version FROM cognara_fg_state WHERE id=1;
 - 连续 `POST …/sessions`（关系化 writer，见 test-report-v0.91）
 - `agent-chat` 双轮与 `PUT /sessions/{id}` 重命名（见 test-report-v0.92）
 - `continue-stream` 双主机与 32 路并发重放（见 test-report-v0.93、`mysql-schema8-r20-slo-probe-baseline.md`）
+- 治理 `usage` / 消息 `load` 32→64 读阶梯（见 test-report-v0.94）
 - 治理关系化 `EXPLAIN` 烟测（见 `mysql-schema8-slow-query-checklist.md`）
 
 自动化参考：

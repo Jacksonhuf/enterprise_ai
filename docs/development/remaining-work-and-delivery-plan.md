@@ -299,3 +299,9 @@ R20：会话 rename/agent-chat 走 V5 writer；双轮 agent-chat 关系化验收
 R20：`continue-stream` 32 路并发重放；SLO 探针基线表。见 test-report-v0.93.md 及 PR CI。
 
 **建议下一轮（v0.94+）**：治理/消息 load 更高并发阶梯（记录耗时）；R21 正式 SLO 定标；runbook 生产登记表团队实填。
+
+### 第94轮增量
+
+R20：治理 `usage` 与消息 `load` 32→64 读阶梯（墙钟登记）；R21 SLO 定标草案；runbook 生产实填表。见 test-report-v0.94.md 及 PR CI。
+
+**建议下一轮（v0.95+）**：多路径混合只读烟雾（单测编排）；R21 签核后同步告警；生产 runbook 首条实填验收。
