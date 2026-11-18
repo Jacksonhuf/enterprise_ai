@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-18T15:50:30.712Z",
+  "generated_at": "2026-11-18T16:15:46.614Z",
   "spots": [
     {
       "slug": "login-public",
@@ -405,6 +405,36 @@
       "publishReview": false,
       "sessionSidebar": false,
       "file": "settings-models-narrow.png"
+    },
+    {
+      "slug": "login-public-narrow",
+      "path": "/login",
+      "viewport": [
+        390,
+        844
+      ],
+      "identity": "demo-admin",
+      "forbidden": false,
+      "publicLogin": true,
+      "chatEntry": false,
+      "publishReview": false,
+      "sessionSidebar": false,
+      "file": "login-public-narrow.png"
+    },
+    {
+      "slug": "forbidden-user-narrow",
+      "path": "/governance/access",
+      "viewport": [
+        390,
+        844
+      ],
+      "identity": "demo-user",
+      "forbidden": true,
+      "publicLogin": false,
+      "chatEntry": false,
+      "publishReview": false,
+      "sessionSidebar": false,
+      "file": "forbidden-user-narrow.png"
     }
   ]
 }
