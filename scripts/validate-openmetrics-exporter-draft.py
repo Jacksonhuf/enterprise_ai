@@ -16,8 +16,8 @@ REC = ROOT / "docs/development/fixtures/r21-recording-rules-draft.yaml"
 def main() -> None:
     path = Path(sys.argv[1])
     text = path.read_text()
-    if "OPENMETRICS_EXPORTER_DRAFT_ONLY" not in text:
-        raise SystemExit("missing OPENMETRICS_EXPORTER_DRAFT_ONLY banner")
+    if "OPENMETRICS_EXPORTER_DRAFT_ONLY" not in text and "OPENMETRICS_TIER_LINKED" not in text:
+        raise SystemExit("missing OPENMETRICS_EXPORTER_DRAFT_ONLY or OPENMETRICS_TIER_LINKED banner")
     if yaml is None:
         raise SystemExit("PyYAML required")
     doc = yaml.safe_load(REC.read_text())
