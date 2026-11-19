@@ -2,7 +2,7 @@
 
 ## 变更摘要
 
-- `r18-tolerance-tightening-v1.26.json`（`chat-user-narrow`、`editor-channel-narrow`）。
+- `r18-tolerance-tightening-v1.26.json`（`editor-channel-narrow`；`chat-user-narrow` 保持 0.05）。
 - `mysql-schema8-production-apply-runbook.md` §4 **G1–G4** 勾选表。
 - `mysql-schema8-runbook-production-fill-checklist.md` 彩排 **C4**。
 - release 门禁文档容差跨度更新为 v1.23–v1.26。

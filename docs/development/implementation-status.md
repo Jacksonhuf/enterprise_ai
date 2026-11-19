@@ -586,7 +586,7 @@ APPROVED 形状；`mysql-schema8-r20-release-gate-r18-manifest.md`。见 test-re
 
 ## 第126轮（v1.26）：第四轮容差与 runbook §4 勾选
 
-chat/editor 窄屏；§4 G1–G4。见 test-report-v1.26.md。
+editor 窄屏（chat 保持）；§4 G1–G4。见 test-report-v1.26.md。
 
 ## 第119轮（v1.19）：tier 联动 OpenMetrics
 

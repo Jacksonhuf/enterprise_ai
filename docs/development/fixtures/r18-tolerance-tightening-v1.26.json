@@ -1,8 +1,7 @@
 {
   "disclaimer": "TOLERANCE_TIGHTENING_V126",
-  "rationale": "Fourth pass after v1.25 green CI; nudge chat/editor narrow shells only",
+  "rationale": "Fourth pass after v1.25 green CI; tighten editor narrow only (chat-user-narrow held at 5% — CI ~4.895%)",
   "tightened": [
-    {"slug": "chat-user-narrow", "from": 0.05, "to": 0.048},
     {"slug": "editor-channel-narrow", "from": 0.06, "to": 0.058}
   ]
 }
