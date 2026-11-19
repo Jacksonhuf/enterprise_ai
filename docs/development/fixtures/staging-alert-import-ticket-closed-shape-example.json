@@ -1,5 +1,5 @@
 {
-  "ticket_status": "CLOSED",
+  "ticket_status": "CLOSED_SHAPE_ONLY",
   "staging_import_ticket": "STG-ALERT-REHEARSAL-SHAPE-ONLY",
   "artifact_name": "r21-staging-alert-render",
   "rules_count": 6,

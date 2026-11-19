@@ -509,3 +509,9 @@ OpenMetrics CI snapshot 全 6 指标联动验收；R18 像素容差审计 artifa
 第六轮 app-detail/forbidden 窄屏；ENTERED 台账 G4 SHA256 字段；exporter 附录 A。见 test-report-v1.28.md 及 PR CI。
 
 **建议下一轮（v1.29+）**：第七轮容差（build-apps/services 窄屏）；团队真 ENTERED/exporter APPROVED；staging 告警工单形状 CLOSED 样例（非真关闭）。
+
+### 第129轮增量（v1.29）
+
+第七轮 build-apps 窄屏（services 保持）；staging **`CLOSED_SHAPE_ONLY`**；真 CLOSED 拒 PLACEHOLDER。见 test-report-v1.29.md 及 PR CI。
+
+**建议下一轮（v1.30+）**：第八轮容差（assets/settings 窄屏）；工单真 CLOSED 与 ENTERED/APPROVED 真签；bundle 挂工单号形状字段。
