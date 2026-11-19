@@ -1,0 +1,10 @@
+{
+  "linkage_status": "HEADROOM_SLO_REHEARSAL_V137",
+  "min_headroom_ratio": 0.002,
+  "slo_documents": [
+    "mysql-schema8-r21-slo-draft.md",
+    "mysql-schema8-r21-r18-headroom-slo-linkage.md"
+  ],
+  "headroom_gate_fixture": "r18-headroom-threshold-gate-v1.36.json",
+  "notes": "Pixel headroom alerts inform SLO review; enforce_in_ci remains false until signoff"
+}

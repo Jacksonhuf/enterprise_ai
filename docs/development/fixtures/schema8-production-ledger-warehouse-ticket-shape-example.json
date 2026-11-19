@@ -1,0 +1,10 @@
+{
+  "ledger_status": "ENTERED_SHAPE_ONLY",
+  "production_cluster_id": "PLACEHOLDER-NOT-PRODUCTION",
+  "applied_at_cst": "PLACEHOLDER-NOT-PRODUCTION",
+  "verified_by_platform": "PLACEHOLDER-NOT-SIGNED",
+  "verified_by_sre": "PLACEHOLDER-NOT-SIGNED",
+  "runbook_smoke_summary_sha256": "PLACEHOLDER-NOT-PRODUCTION",
+  "apply_change_ticket_ref": "CHG-ENG-WAREHOUSE-SHAPE-0001",
+  "notes": "台账工单号格式彩排；非 REHEARSAL"
+}

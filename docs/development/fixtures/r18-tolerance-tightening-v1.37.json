@@ -1,0 +1,14 @@
+{
+  "disclaimer": "IMPLICIT_DEFAULT_CATALOG_V137",
+  "rationale": "Batch-2 implicit-default spots cataloged at explicit 2% hold (no tightening)",
+  "tightened": [
+    {"slug": "forbidden-user", "from": 0.02, "to": 0.02},
+    {"slug": "editor-channel", "from": 0.02, "to": 0.02},
+    {"slug": "app-detail-build", "from": 0.02, "to": 0.02},
+    {"slug": "session-sidebar", "from": 0.02, "to": 0.02},
+    {"slug": "build-releases", "from": 0.02, "to": 0.02},
+    {"slug": "governance-usage", "from": 0.02, "to": 0.02},
+    {"slug": "governance-ops-exceptions", "from": 0.02, "to": 0.02},
+    {"slug": "governance-ops-audit", "from": 0.02, "to": 0.02}
+  ]
+}

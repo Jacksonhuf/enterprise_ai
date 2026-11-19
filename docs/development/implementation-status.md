@@ -628,6 +628,10 @@ rollup 分段；`validate-production-gate-ticket-crossref.py`。见 test-report-
 
 batch-1 显式 2%；阈值门与 FILLED 交叉表。见 test-report-v1.36.md。
 
+## 第137轮（v1.37）：batch-2 编目与工单入库格式
+
+implicit 清零；SLO 联动；WAREHOUSE 交叉表。见 test-report-v1.37.md。
+
 ## 第119轮（v1.19）：tier 联动 OpenMetrics
 
 35 抽页。见 test-report-v1.19.md。

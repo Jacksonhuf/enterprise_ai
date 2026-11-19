@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Report implicit-default R18 spots vs batch catalog policy (v1.36)."""
+"""Report implicit-default R18 spots vs batch catalog policy (v1.37)."""
 import json
 import sys
 from pathlib import Path
@@ -7,7 +7,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 RATIOS = ROOT / "frontend/r18-baselines/max-diff-ratio.json"
 MANIFEST = ROOT / "frontend/r18-baselines/manifest.json"
-POLICY = ROOT / "docs/development/fixtures/r18-implicit-default-spot-catalog-v1.36.json"
+POLICY = ROOT / "docs/development/fixtures/r18-implicit-default-spot-catalog-v1.37.json"
 
 
 def main() -> None:
@@ -35,14 +35,14 @@ def main() -> None:
             }
         )
     payload = {
-        "catalog_report_status": "IMPLICIT_DEFAULT_CATALOG_V136",
+        "catalog_report_status": "IMPLICIT_DEFAULT_CATALOG_V137",
         "default_max_diff_ratio": default,
         "spot_count": len(slugs),
         "implicit_default_count": len(implicit),
         "explicit_at_default_count": len(explicit_default),
         "implicit_default_slugs": implicit,
         "batches": batches,
-        "notes": "batch-1 cataloged in v1.36; batch-2 remains implicit until next manifest",
+        "notes": "batch-1 v1.36 and batch-2 v1.37 cataloged; no implicit-default wide spots remain",
     }
     out.write_text(json.dumps(payload, indent=2) + "\n")
     print(

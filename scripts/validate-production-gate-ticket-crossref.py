@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate production gate ticket cross-reference table shape (v1.36)."""
+"""Validate production gate ticket cross-reference table shape (v1.37)."""
 import json
 import sys
 from pathlib import Path
@@ -18,14 +18,20 @@ def main() -> None:
         print("OK: gate ticket crossref (PENDING_TEAM_FILL template)")
         print(f"Validated {path}")
         return
-    if status not in ("CROSSREF_SHAPE_ONLY", "FILLED_SHAPE_ONLY"):
+    if status not in ("CROSSREF_SHAPE_ONLY", "FILLED_SHAPE_ONLY", "WAREHOUSE_TICKET_SHAPE_ONLY"):
         raise SystemExit(
-            "crossref_status must be CROSSREF_SHAPE_ONLY, FILLED_SHAPE_ONLY, or PENDING_TEAM_FILL"
+            "crossref_status must be CROSSREF_SHAPE_ONLY, FILLED_SHAPE_ONLY, "
+            "WAREHOUSE_TICKET_SHAPE_ONLY, or PENDING_TEAM_FILL"
         )
     change = xref.get("apply_change_ticket_ref", "")
     staging = xref.get("staging_import_ticket", "")
     if not change or not staging:
         raise SystemExit("apply_change_ticket_ref and staging_import_ticket required")
+    if status == "WAREHOUSE_TICKET_SHAPE_ONLY":
+        for ref, label in ((change, "apply_change_ticket_ref"), (staging, "staging_import_ticket")):
+            upper = ref.upper()
+            if "REHEARSAL" in upper:
+                raise SystemExit(f"{label} must not contain REHEARSAL for warehouse acceptance")
     bundle = json.loads((FX / xref["bundle_fixture"]).read_text())
     ledger = json.loads((FX / xref["ledger_fixture"]).read_text())
     stix = json.loads((FX / xref["staging_ticket_fixture"]).read_text())

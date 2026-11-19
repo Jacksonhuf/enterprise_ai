@@ -1,0 +1,15 @@
+{
+  "bundle_status": "APPROVED_SHAPE_ONLY",
+  "runbook_smoke_artifact": "runbook-smoke-summary-validation",
+  "tier_probe_artifact": "r09-tier-probe-summary",
+  "r18_screenshot_artifact": "r18-spot-screenshots",
+  "staging_alert_artifact": "r21-staging-alert-render",
+  "openmetrics_ci_snapshot_artifact": "openmetrics-ci-snapshot",
+  "openmetrics_linked_metric_count": 6,
+  "linked_runbook_checklist": "mysql-schema8-runbook-production-fill-checklist.md",
+  "confirmed_by_platform": "PLACEHOLDER-NOT-SIGNED",
+  "confirmed_by_sre": "PLACEHOLDER-NOT-SIGNED",
+  "staging_import_ticket_ref": "STG-IMPORT-WAREHOUSE-SHAPE-0001",
+  "apply_change_ticket_ref": "CHG-ENG-WAREHOUSE-SHAPE-0001",
+  "notes": "入库工单号格式彩排；非 REHEARSAL 前缀；仍 PLACEHOLDER 签核"
+}
