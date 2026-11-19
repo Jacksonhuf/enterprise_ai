@@ -580,6 +580,10 @@ OpenMetrics 全量 CI 联动；容差审计与治理窄屏收紧。见 test-repo
 
 38 抽页 manifest 同步；exporter 评审形状。见 test-report-v1.24.md。
 
+## 第125轮（v1.25）：release 门禁与第三轮容差
+
+APPROVED 形状；`mysql-schema8-r20-release-gate-r18-manifest.md`。见 test-report-v1.25.md。
+
 ## 第119轮（v1.19）：tier 联动 OpenMetrics
 
 35 抽页。见 test-report-v1.19.md。

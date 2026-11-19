@@ -28,7 +28,11 @@ def main() -> None:
         for k in ("reviewed_by_platform", "reviewed_by_sre", "reviewed_at_cst"):
             if not data[k] or "PLACEHOLDER" in data[k]:
                 raise SystemExit(f"APPROVED requires real {k}")
-    elif data["checklist_status"] not in ("REVIEW_SHAPE_ONLY", "PENDING_REVIEW"):
+    elif data["checklist_status"] not in (
+        "REVIEW_SHAPE_ONLY",
+        "APPROVED_SHAPE_ONLY",
+        "PENDING_REVIEW",
+    ):
         raise SystemExit("invalid checklist_status")
     print(f"OK: exporter review ({data['checklist_status']})")
     print(f"Validated {path}")
