@@ -572,6 +572,10 @@ CI `r18-spot-screenshots`；彩排登记模板。见 test-report-v1.04.md。
 
 33 抽页。见 test-report-v1.18.md。
 
+## 第122–123轮（v1.22–v1.23）
+
+OpenMetrics 全量 CI 联动；容差审计与治理窄屏收紧。见 test-report-v1.22.md、test-report-v1.23.md。
+
 ## 第119轮（v1.19）：tier 联动 OpenMetrics
 
 35 抽页。见 test-report-v1.19.md。
