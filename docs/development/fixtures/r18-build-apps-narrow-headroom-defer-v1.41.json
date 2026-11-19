@@ -1,0 +1,7 @@
+{
+  "defer_status": "BUILD_APPS_NARROW_V129_HOLD",
+  "slug": "build-apps-narrow",
+  "locked_max_diff_ratio": 0.034,
+  "blocking_manifest": "r18-tolerance-tightening-v1.29.json",
+  "notes": "Candidate build-apps-narrow deferred; CI measured headroom ~0.0017"
+}

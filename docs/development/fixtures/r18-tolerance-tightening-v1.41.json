@@ -1,0 +1,11 @@
+{
+  "disclaimer": "ENGINEERING_INVENTORY_V141",
+  "rationale": "No max-diff-ratio changes; build-apps-narrow defer and subset/bundle only",
+  "tightened": [],
+  "deferred_candidates": [
+    {
+      "slug": "build-apps-narrow",
+      "reason": "v1.29 hold locks max 0.034; see r18-build-apps-narrow-headroom-defer-v1.41.json"
+    }
+  ]
+}
