@@ -660,6 +660,10 @@ narrow subset；ENTERED/CONFIRMED joint。见 test-report-v1.42.md。
 
 四类 headroom defer rollup；CAND-09/11/14 豁免登记。见 test-report-v1.44.md。
 
+## 第145轮（v1.45）：R18 +3 抽页与豁免关闭
+
+41 抽页；matrix v1.45；Figma enter-app-cta matched。见 test-report-v1.45.md。
+
 ## 第119轮（v1.19）：tier 联动 OpenMetrics
 
 35 抽页。见 test-report-v1.19.md。

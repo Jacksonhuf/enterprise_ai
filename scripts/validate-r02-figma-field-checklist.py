@@ -5,16 +5,31 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-MATRIX = ROOT / "docs/development/fixtures/r02-page-api-acceptance-matrix-v1.43.json"
+MATRIX = ROOT / "docs/development/fixtures/r02-page-api-acceptance-matrix-v1.45.json"
 
 
 def main() -> None:
     path = Path(sys.argv[1])
     doc = json.loads(path.read_text())
-    if doc.get("checklist_status") != "R02_FIGMA_FIELD_CHECKLIST_V144":
-        raise SystemExit("checklist_status must be R02_FIGMA_FIELD_CHECKLIST_V144")
-    if doc.get("signoff") not in ("REHEARSAL_PENDING", "PRODUCT_SIGNED"):
+    if doc.get("checklist_status") not in (
+        "R02_FIGMA_FIELD_CHECKLIST_V144",
+        "R02_FIGMA_FIELD_CHECKLIST_V145",
+    ):
+        raise SystemExit("invalid checklist_status")
+    if doc.get("signoff") not in (
+        "REHEARSAL_PENDING",
+        "REHEARSAL_PARTIAL",
+        "PRODUCT_SIGNED",
+    ):
         raise SystemExit("invalid signoff state")
+    matched = sum(
+        1
+        for entry in doc.get("entries", [])
+        for f in entry.get("fields", [])
+        if f.get("status") == "matched"
+    )
+    if doc.get("checklist_status") == "R02_FIGMA_FIELD_CHECKLIST_V145" and matched < 1:
+        raise SystemExit("v1.45 checklist requires at least one matched field")
     entries = doc.get("entries", [])
     want = int(doc.get("design_entry_count", 17))
     if len(entries) != want:

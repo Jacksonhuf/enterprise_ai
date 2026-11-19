@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-19T00:29:03.202Z",
+  "generated_at": "2026-11-19T18:45:08.737Z",
   "spots": [
     {
       "slug": "login-public",
@@ -105,6 +105,36 @@
       "publishReview": false,
       "sessionSidebar": false,
       "file": "governance-access.png"
+    },
+    {
+      "slug": "governance-access-groups",
+      "path": "/governance/access?tab=groups",
+      "viewport": [
+        1280,
+        720
+      ],
+      "identity": "demo-admin",
+      "forbidden": false,
+      "publicLogin": false,
+      "chatEntry": false,
+      "publishReview": false,
+      "sessionSidebar": false,
+      "file": "governance-access-groups.png"
+    },
+    {
+      "slug": "governance-access-roles",
+      "path": "/governance/access?tab=roles",
+      "viewport": [
+        1280,
+        720
+      ],
+      "identity": "demo-admin",
+      "forbidden": false,
+      "publicLogin": false,
+      "chatEntry": false,
+      "publishReview": false,
+      "sessionSidebar": false,
+      "file": "governance-access-roles.png"
     },
     {
       "slug": "governance-audit",
@@ -315,6 +345,21 @@
       "publishReview": false,
       "sessionSidebar": false,
       "file": "governance-ops-exceptions-narrow.png"
+    },
+    {
+      "slug": "services-engineer",
+      "path": "/services",
+      "viewport": [
+        1280,
+        720
+      ],
+      "identity": "demo-engineer",
+      "forbidden": false,
+      "publicLogin": false,
+      "chatEntry": false,
+      "publishReview": false,
+      "sessionSidebar": false,
+      "file": "services-engineer.png"
     },
     {
       "slug": "services-narrow",

@@ -586,4 +586,8 @@ R02：17 条目页面/API matrix + JSON fixture + CI；R18：`r18-gap-checklist-
 
 headroom defer 四类汇总；CAND-09/11/14 共享壳豁免；R02 Figma 字段清单（REHEARSAL_PENDING）。见 test-report-v1.44.md 及 PR CI。
 
-**建议下一轮（v1.45+）**：services-engineer 宽屏抽页；groups/roles 专署 slug 或产品签字确认豁免；字段清单首条 matched。
+### 第145轮增量（v1.45）
+
+R18 +3 抽页（services 宽屏、access groups/roles）；豁免关闭；Figma 首条 matched。见 test-report-v1.45.md 及 PR CI。
+
+**建议下一轮（v1.46+）**：staging/crossref/bundle 三表同窗；真签拒 SHAPE 脚本；Figma 字段批量 matched。
