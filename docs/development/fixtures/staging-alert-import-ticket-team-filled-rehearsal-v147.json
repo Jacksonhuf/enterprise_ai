@@ -1,0 +1,11 @@
+{
+  "team_fill_status": "TEAM_FILLED_REHEARSAL_V147",
+  "ticket_status": "CLOSED",
+  "release_window_id": "WIN-WAREHOUSE-REHEARSAL-0146",
+  "staging_import_ticket": "STG-IMPORT-2026-1119-TEAM-0147",
+  "artifact_name": "r21-staging-alert-render",
+  "rules_count": 6,
+  "imported_at_cst": "2026-11-19T14:30:00+08:00",
+  "verified_by_sre": "SIGNATORY-SRE-TEAM-REHEARSAL-0147",
+  "notes": "团队票号格式彩排；非生产库实填；禁止 PLACEHOLDER/SHAPE_ONLY"
+}

@@ -668,6 +668,10 @@ narrow subset；ENTERED/CONFIRMED joint。见 test-report-v1.42.md。
 
 `THREE_TABLE_WINDOW_SYNC_V146`；shape-rejection gate。见 test-report-v1.46.md。
 
+## 第147轮（v1.47）：§3 defer 联动与 staging 团队票彩排
+
+runbook C7 linkage；Figma 8 matched。见 test-report-v1.47.md。
+
 ## 第119轮（v1.19）：tier 联动 OpenMetrics
 
 35 抽页。见 test-report-v1.19.md。

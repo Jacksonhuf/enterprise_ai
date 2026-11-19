@@ -594,4 +594,8 @@ R18 +3 抽页（services 宽屏、access groups/roles）；豁免关闭；Figma 
 
 三表同窗 `WIN-WAREHOUSE-REHEARSAL-0146`；shape-rejection gate；Figma 3×matched。见 test-report-v1.46.md 及 PR CI。
 
-**建议下一轮（v1.47+）**：staging 真 CLOSED 团队票实填；Figma matched 批量扩展；defer rollup 挂 runbook §3。
+### 第147轮增量（v1.47）
+
+staging 团队票彩排；§3 defer↔三表联动；Figma 8×matched。见 test-report-v1.47.md 及 PR CI。
+
+**建议下一轮（v1.48+）**：crossref 引用 team-fill staging；生产台账首条真填模板；Figma 半数 matched。
