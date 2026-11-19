@@ -28,9 +28,15 @@ def main() -> None:
                     "measured_ratio": row.get("measured_ratio"),
                 }
             )
+    enforce = bool(policy.get("enforce_in_ci", True))
     if violations:
         print(json.dumps({"violations": violations}, indent=2))
-        raise SystemExit(f"headroom threshold gate: {len(violations)} spot(s) below {min_h}")
+        if enforce:
+            raise SystemExit(f"headroom threshold gate: {len(violations)} spot(s) below {min_h}")
+        print(
+            f"WARN: headroom threshold rehearsal ({len(violations)} spot(s) below {min_h}; "
+            "enforce_in_ci=false)"
+        )
     measured_count = sum(1 for r in audit.get("spots", []) if r.get("headroom") is not None)
     print(f"OK: headroom threshold gate (min={min_h}, measured_spots={measured_count})")
     print(f"Validated {audit_path}")

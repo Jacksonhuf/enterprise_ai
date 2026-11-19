@@ -4,7 +4,7 @@
 
 - `r18-implicit-default-spot-catalog-v1.36.json`（batch-1 八 spot 显式 2% hold）。
 - `r18-tolerance-tightening-v1.36.json`；`report-r18-implicit-default-spot-catalog.py` artifact。
-- `validate-r18-headroom-threshold-gate.py`（min 0.002）；headroom audit 带 `threshold_alerts`。
+- `validate-r18-headroom-threshold-gate.py`（min 0.002，`enforce_in_ci=false` 告警）；headroom audit 带 `threshold_alerts`。
 - `production-gate-ticket-crossref-filled-shape-example.json`（`FILLED_SHAPE_ONLY`）。
 
 ## 测试

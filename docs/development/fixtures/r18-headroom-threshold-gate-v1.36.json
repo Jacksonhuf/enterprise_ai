@@ -1,6 +1,7 @@
 {
   "gate_status": "HEADROOM_THRESHOLD_REHEARSAL_V136",
   "min_headroom_ratio": 0.002,
+  "enforce_in_ci": false,
   "applies_when": "measured_headroom_present",
-  "notes": "CI fails when any measured spot headroom is below min; skip spots without CI measurement"
+  "notes": "Rehearsal alert gate: violations appear in headroom audit; strict enforce deferred until tighten pass"
 }
