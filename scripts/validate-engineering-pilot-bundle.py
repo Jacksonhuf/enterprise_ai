@@ -45,11 +45,21 @@ def main() -> None:
             raise SystemExit("CONFIRMED bundle requires staging_import_ticket_ref")
         if not data["apply_change_ticket_ref"] or "PLACEHOLDER" in data["apply_change_ticket_ref"]:
             raise SystemExit("CONFIRMED bundle requires apply_change_ticket_ref")
+    elif data["bundle_status"] == "CONFIRMED_SIGNATORY_NAMES_SHAPE_ONLY":
+        for k in ("confirmed_by_platform", "confirmed_by_sre"):
+            val = data[k]
+            if "PLACEHOLDER" in val:
+                raise SystemExit(f"{k} must not use PLACEHOLDER for signatory names shape")
+            if "SIGNATORY" not in val or "SHAPE" not in val:
+                raise SystemExit(f"{k} must be SIGNATORY-*-SHAPE-* for names shape")
+        if "REHEARSAL" in data["apply_change_ticket_ref"].upper():
+            raise SystemExit("signatory names shape expects warehouse ticket refs")
     elif data["bundle_status"] in ("APPROVED_SHAPE_ONLY", "CONFIRMED_SHAPE_ONLY"):
         pass
     elif data["bundle_status"] != "PENDING_TEAM_CONFIRM":
         raise SystemExit(
             "bundle_status must be PENDING_TEAM_CONFIRM, CONFIRMED, "
+            "CONFIRMED_SIGNATORY_NAMES_SHAPE_ONLY, "
             "CONFIRMED_SHAPE_ONLY, or APPROVED_SHAPE_ONLY"
         )
     print(f"OK: engineering pilot bundle ({data['bundle_status']})")

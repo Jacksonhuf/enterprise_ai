@@ -566,4 +566,8 @@ batch-2 编目完成；headroom↔SLO 联动；`WAREHOUSE_TICKET_SHAPE_ONLY`。�
 
 publish-review headroom；services-narrow v1.34 推迟说明；enforce workflow；CONFIRMED 联席。见 test-report-v1.39.md 及 PR CI。
 
-**建议下一轮（v1.40+）**：候选 #2 forbidden-user-narrow 等；main CI 可选 headroom enforce 子集；bundle 真 CONFIRMED 双人签字名形状。
+### 第140轮增量（v1.40）
+
+chat-user 容差；headroom 子集 enforce；签字名形状 bundle。见 test-report-v1.40.md 及 PR CI。
+
+**建议下一轮（v1.41+）**：build-apps-narrow 候选；子集 slug 扩展；bundle `CONFIRMED`（非 SHAPE）工单验收彩排。

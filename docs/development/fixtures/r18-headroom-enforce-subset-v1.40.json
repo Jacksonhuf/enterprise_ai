@@ -1,0 +1,6 @@
+{
+  "subset_status": "HEADROOM_ENFORCE_SUBSET_V140",
+  "min_headroom_ratio": 0.002,
+  "enforce_slugs": ["publish-review", "chat-user"],
+  "notes": "F-G validation enforces threshold only on this subset; other spots warn"
+}
