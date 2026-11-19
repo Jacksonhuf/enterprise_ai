@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate production exporter review checklist JSON (v1.24)."""
+"""Validate production exporter review checklist JSON (v1.24+)."""
 import json
 import sys
 from pathlib import Path
@@ -15,13 +15,26 @@ REQUIRED = frozenset(
         "notes",
     }
 )
+APPENDIX_G4 = frozenset(
+    {
+        "runbook_g4_smoke_artifact",
+        "runbook_g4_smoke_sha256",
+    }
+)
 
 
 def main() -> None:
     path = Path(sys.argv[1])
     data = json.loads(path.read_text())
-    if set(data.keys()) != REQUIRED:
-        raise SystemExit(f"keys must be {sorted(REQUIRED)}")
+    keys = set(data.keys())
+    if keys == REQUIRED | APPENDIX_G4:
+        if data["runbook_g4_smoke_artifact"] != "runbook-smoke-summary-validation":
+            raise SystemExit("runbook_g4_smoke_artifact must be runbook-smoke-summary-validation")
+        sha = data["runbook_g4_smoke_sha256"]
+        if not sha or (sha != "PLACEHOLDER-NOT-PRODUCTION" and len(sha) != 64):
+            raise SystemExit("runbook_g4_smoke_sha256 must be PLACEHOLDER or 64 hex chars")
+    elif keys != REQUIRED:
+        raise SystemExit(f"keys must be {sorted(REQUIRED)} or base+appendix G4")
     if data["items_passed"] != 6:
         raise SystemExit("items_passed must be 6")
     if data["checklist_status"] == "APPROVED":

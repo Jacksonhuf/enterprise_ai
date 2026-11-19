@@ -5,5 +5,6 @@
   "applied_at_cst": "PLACEHOLDER-NOT-PRODUCTION",
   "verified_by_platform": "PLACEHOLDER-NOT-SIGNED",
   "runbook_smoke_summary_artifact": "runbook-smoke-summary-validation",
+  "runbook_smoke_summary_sha256": "PLACEHOLDER-NOT-PRODUCTION",
   "notes": "ENTERED 字段形状示例；非真仓台账"
 }

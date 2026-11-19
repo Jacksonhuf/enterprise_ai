@@ -16,3 +16,5 @@ Agent 不代签。彩排 bundle 仍为 `PENDING_TEAM_CONFIRM` / PLACEHOLDER `CON
 签字形状样例（v1.24）：`fixtures/production-exporter-review-signed-shape-example.json`（`validate-production-exporter-review.py`）。
 
 APPROVED 形状（v1.25）：`production-exporter-review-approved-shape-example.json`。
+
+附录 A（v1.28）：G4 `runbook-smoke-summary` artifact 与 SHA256 — 见 `mysql-schema8-production-exporter-readonly-review-appendix-g4.md`；形状样例 `production-exporter-review-g4-appendix-shape-example.json`。

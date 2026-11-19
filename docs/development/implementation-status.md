@@ -592,6 +592,10 @@ editor 窄屏（chat 保持）；§4 G1–G4。见 test-report-v1.26.md。
 
 session/publish 窄屏；`mysql-schema8-runbook-section3-g4-linkage.md`。见 test-report-v1.27.md。
 
+## 第128轮（v1.28）：第六轮容差与 G4 SHA256 附录
+
+app-detail/forbidden 窄屏；exporter 附录 A、台账 SHA256 形状。见 test-report-v1.28.md。
+
 ## 第119轮（v1.19）：tier 联动 OpenMetrics
 
 35 抽页。见 test-report-v1.19.md。
