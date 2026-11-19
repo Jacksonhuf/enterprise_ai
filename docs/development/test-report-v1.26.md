@@ -1,0 +1,18 @@
+# 第126轮（v1.26）：第四轮容差、runbook §4 发版勾选
+
+## 变更摘要
+
+- `r18-tolerance-tightening-v1.26.json`（`chat-user-narrow`、`editor-channel-narrow`）。
+- `mysql-schema8-production-apply-runbook.md` §4 **G1–G4** 勾选表。
+- `mysql-schema8-runbook-production-fill-checklist.md` 彩排 **C4**。
+- release 门禁文档容差跨度更新为 v1.23–v1.26。
+
+## 测试
+
+```bash
+for v in v1.23 v1.24 v1.25 v1.26; do
+  python scripts/validate-r18-tolerance-tightening.py docs/development/fixtures/r18-tolerance-tightening-$v.json
+done
+python scripts/validate-r18-spot-manifest-sync.py
+cd backend/platform && COGNARA_REQUIRE_MYSQL_TESTS=0 go test -p 1 -count=1 ./internal/platform/api/ -run TestR20Schema8RunbookDefaultSmoke -timeout 5m
+```
