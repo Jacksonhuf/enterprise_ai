@@ -7,4 +7,6 @@
 | `staging_import_ticket_ref` | 空（`PENDING_TEAM_CONFIRM`）或 `STG-ALERT-REHEARSAL-SHAPE-ONLY` | staging 工单号（无 PLACEHOLDER） |
 | `bundle_status` | `CONFIRMED_SHAPE_ONLY` / `APPROVED_SHAPE_ONLY` | `CONFIRMED`（双人签字 + 工单号） |
 
+§3 变更单与 bundle 对齐（v1.31）：`mysql-schema8-r21-pilot-ledger-ticket-sync.md`。
+
 Agent 不代填真签或真工单闭环。形状：`engineering-pilot-bundle-*-example.json`。

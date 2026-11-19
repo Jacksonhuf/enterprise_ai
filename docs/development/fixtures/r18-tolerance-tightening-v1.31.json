@@ -1,0 +1,8 @@
+{
+  "disclaimer": "TOLERANCE_TIGHTENING_V131",
+  "rationale": "Ninth pass; tighten governance-ops narrow shells",
+  "tightened": [
+    {"slug": "governance-ops-settings-narrow", "from": 0.03, "to": 0.029},
+    {"slug": "governance-ops-audit-narrow", "from": 0.03, "to": 0.029}
+  ]
+}

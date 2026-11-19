@@ -17,6 +17,7 @@ REQUIRED = frozenset(
         "confirmed_by_platform",
         "confirmed_by_sre",
         "staging_import_ticket_ref",
+        "apply_change_ticket_ref",
         "notes",
     }
 )
@@ -42,6 +43,8 @@ def main() -> None:
                 raise SystemExit(f"CONFIRMED bundle must not use PLACEHOLDER in {k}")
         if not ref or "PLACEHOLDER" in ref:
             raise SystemExit("CONFIRMED bundle requires staging_import_ticket_ref")
+        if not data["apply_change_ticket_ref"] or "PLACEHOLDER" in data["apply_change_ticket_ref"]:
+            raise SystemExit("CONFIRMED bundle requires apply_change_ticket_ref")
     elif data["bundle_status"] in ("APPROVED_SHAPE_ONLY", "CONFIRMED_SHAPE_ONLY"):
         pass
     elif data["bundle_status"] != "PENDING_TEAM_CONFIRM":

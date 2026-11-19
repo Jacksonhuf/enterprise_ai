@@ -604,6 +604,10 @@ build-apps 窄屏；`CLOSED_SHAPE_ONLY`。见 test-report-v1.29.md。
 
 settings 窄屏（assets 保持）；`staging_import_ticket_ref`。见 test-report-v1.30.md。
 
+## 第131轮（v1.31）：第九轮容差与 bundle↔ledger 工单对账
+
+governance-ops 窄屏；`validate-pilot-ledger-bundle-ticket-sync.py`。见 test-report-v1.31.md。
+
 ## 第119轮（v1.19）：tier 联动 OpenMetrics
 
 35 抽页。见 test-report-v1.19.md。

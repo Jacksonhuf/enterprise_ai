@@ -6,5 +6,6 @@
   "verified_by_platform": "PLACEHOLDER-NOT-SIGNED",
   "runbook_smoke_summary_artifact": "runbook-smoke-summary-validation",
   "runbook_smoke_summary_sha256": "PLACEHOLDER-NOT-PRODUCTION",
+  "apply_change_ticket_ref": "CHG-REHEARSAL-SHAPE-ONLY",
   "notes": "ENTERED 字段形状示例；非真仓台账"
 }

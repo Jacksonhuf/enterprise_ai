@@ -10,5 +10,6 @@
   "confirmed_by_platform": "",
   "confirmed_by_sre": "",
   "staging_import_ticket_ref": "",
+  "apply_change_ticket_ref": "",
   "notes": "Agent 不代填确认；粘贴 CI Run URL 与 artifact 下载"
 }
