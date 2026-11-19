@@ -596,6 +596,10 @@ session/publish 窄屏；`mysql-schema8-runbook-section3-g4-linkage.md`。见 te
 
 app-detail/forbidden 窄屏；exporter 附录 A、台账 SHA256 形状。见 test-report-v1.28.md。
 
+## 第129轮（v1.29）：第七轮容差与 staging CLOSED 形状
+
+build-apps 窄屏；`CLOSED_SHAPE_ONLY`。见 test-report-v1.29.md。
+
 ## 第119轮（v1.19）：tier 联动 OpenMetrics
 
 35 抽页。见 test-report-v1.19.md。

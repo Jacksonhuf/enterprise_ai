@@ -8,7 +8,7 @@
 | 2 | CI `openmetrics-ci-snapshot` 6 指标与 tier/runbook 联动 | ☐ |
 | 3 | Recording rules YAML 与 wiring 一致 | ☐ |
 | 4 | Scrape job **只读**、无 write 路径 | ☐ |
-| 5 | staging 告警 6 规则人工导入工单（非 CLOSED 不入账） | ☐ |
+| 5 | staging 告警 6 规则人工导入工单（非 **真 CLOSED** 不入账；彩排 `CLOSED_SHAPE_ONLY` 见 v1.29 形状样例） | ☐ |
 | 6 | 生产 §3 台账 **ENTERED** 由平台负责人实填 | ☐ |
 
 Agent 不代签。彩排 bundle 仍为 `PENDING_TEAM_CONFIRM` / PLACEHOLDER `CONFIRMED` 形状。

@@ -1,0 +1,7 @@
+{
+  "disclaimer": "TOLERANCE_TIGHTENING_V129",
+  "rationale": "Seventh pass; nudge build-apps narrow only (services-narrow held at 3% — CI ~2.97%)",
+  "tightened": [
+    {"slug": "build-apps-narrow", "from": 0.035, "to": 0.034}
+  ]
+}

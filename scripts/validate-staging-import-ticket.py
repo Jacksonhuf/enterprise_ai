@@ -29,8 +29,15 @@ def main() -> None:
     if data["ticket_status"] == "CLOSED":
         if not data["imported_at_cst"] or not data["verified_by_sre"]:
             raise SystemExit("CLOSED ticket requires imported_at_cst and verified_by_sre")
+        for k in ("imported_at_cst", "verified_by_sre"):
+            if "PLACEHOLDER" in data[k]:
+                raise SystemExit(f"CLOSED ticket must not use PLACEHOLDER in {k}")
+    elif data["ticket_status"] == "CLOSED_SHAPE_ONLY":
+        pass
     elif data["ticket_status"] != "PENDING_SRE_CLOSE":
-        raise SystemExit("ticket_status must be PENDING_SRE_CLOSE or CLOSED")
+        raise SystemExit(
+            "ticket_status must be PENDING_SRE_CLOSE, CLOSED, or CLOSED_SHAPE_ONLY"
+        )
     print(f"OK: staging import ticket ({data['ticket_status']})")
     print(f"Validated {path}")
 
