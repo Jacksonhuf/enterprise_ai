@@ -12,3 +12,5 @@
 | 6 | 生产 §3 台账 **ENTERED** 由平台负责人实填 | ☐ |
 
 Agent 不代签。彩排 bundle 仍为 `PENDING_TEAM_CONFIRM` / PLACEHOLDER `CONFIRMED` 形状。
+
+签字形状样例（v1.24）：`fixtures/production-exporter-review-signed-shape-example.json`（`validate-production-exporter-review.py`）。
