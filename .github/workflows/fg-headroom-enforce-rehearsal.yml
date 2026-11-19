@@ -1,0 +1,28 @@
+name: F-G headroom enforce rehearsal
+on:
+  workflow_dispatch:
+jobs:
+  headroom-enforce-switch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Pass sample without enforce
+        run: |
+          python scripts/validate-r18-headroom-threshold-gate.py \
+            docs/development/fixtures/r18-headroom-enforce-pass-audit-sample.json \
+            docs/development/fixtures/r18-headroom-threshold-gate-v1.38.json
+      - name: Fail sample with enforce env
+        run: |
+          set +e
+          COGNARA_HEADROOM_ENFORCE_IN_CI=1 python scripts/validate-r18-headroom-threshold-gate.py \
+            docs/development/fixtures/r18-headroom-enforce-fail-audit-sample.json \
+            docs/development/fixtures/r18-headroom-threshold-gate-v1.38.json
+          test $? -ne 0
+      - name: Pass sample with enforce env
+        run: |
+          COGNARA_HEADROOM_ENFORCE_IN_CI=1 python scripts/validate-r18-headroom-threshold-gate.py \
+            docs/development/fixtures/r18-headroom-enforce-pass-audit-sample.json \
+            docs/development/fixtures/r18-headroom-threshold-gate-v1.38.json

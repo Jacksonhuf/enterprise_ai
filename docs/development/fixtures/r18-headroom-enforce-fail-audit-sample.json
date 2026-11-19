@@ -1,0 +1,6 @@
+{
+  "audit_status": "HEADROOM_ENFORCE_REHEARSAL_FAIL",
+  "spots": [
+    {"slug": "services-narrow", "measured_ratio": 0.0299, "headroom": 0.0001, "max_diff_ratio": 0.03}
+  ]
+}

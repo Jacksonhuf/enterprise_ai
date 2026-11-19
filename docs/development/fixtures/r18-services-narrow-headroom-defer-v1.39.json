@@ -1,0 +1,7 @@
+{
+  "defer_status": "SERVICES_NARROW_V134_HOLD",
+  "slug": "services-narrow",
+  "locked_max_diff_ratio": 0.03,
+  "blocking_manifest": "r18-tolerance-tightening-v1.34.json",
+  "notes": "Widen requires team process to amend archival hold manifest; not done in v1.39"
+}

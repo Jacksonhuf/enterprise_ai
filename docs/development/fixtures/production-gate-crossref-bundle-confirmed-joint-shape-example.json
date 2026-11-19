@@ -1,0 +1,10 @@
+{
+  "joint_status": "CROSSREF_BUNDLE_CONFIRMED_JOINT_SHAPE_ONLY",
+  "crossref_fixture": "production-gate-ticket-crossref-warehouse-shape-example.json",
+  "bundle_fixture": "engineering-pilot-bundle-confirmed-warehouse-ticket-shape-example.json",
+  "ledger_fixture": "schema8-production-ledger-warehouse-ticket-shape-example.json",
+  "staging_ticket_fixture": "staging-alert-import-ticket-warehouse-shape-example.json",
+  "apply_change_ticket_ref": "CHG-ENG-WAREHOUSE-SHAPE-0001",
+  "staging_import_ticket": "STG-IMPORT-WAREHOUSE-SHAPE-0001",
+  "notes": "CONFIRMED bundle 与 warehouse 交叉表联席；真签字段验收仍为 PLACEHOLDER"
+}

@@ -636,6 +636,10 @@ implicit 清零；SLO 联动；WAREHOUSE 交叉表。见 test-report-v1.37.md。
 
 候选 artifact；headroom env 开关；joint 校验。见 test-report-v1.38.md。
 
+## 第139轮（v1.39）：publish-review 容差与 CONFIRMED 联席
+
+v1.39 tightening；services-narrow defer；enforce workflow。见 test-report-v1.39.md。
+
 ## 第119轮（v1.19）：tier 联动 OpenMetrics
 
 35 抽页。见 test-report-v1.19.md。
