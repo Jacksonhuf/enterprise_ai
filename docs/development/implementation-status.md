@@ -656,6 +656,10 @@ narrow subset；ENTERED/CONFIRMED joint。见 test-report-v1.42.md。
 
 17 设计条目映射 + 38 slug CI；进度 `progress-snapshot-2026-11-19-r02-r18.md`。见 test-report-v1.43.md。
 
+## 第144轮（v1.44）：defer 汇总、共享壳豁免、Figma 字段清单
+
+四类 headroom defer rollup；CAND-09/11/14 豁免登记。见 test-report-v1.44.md。
+
 ## 第119轮（v1.19）：tier 联动 OpenMetrics
 
 35 抽页。见 test-report-v1.19.md。

@@ -1,0 +1,90 @@
+{
+  "checklist_status": "R02_FIGMA_FIELD_CHECKLIST_V144",
+  "design_entry_count": 17,
+  "signoff": "REHEARSAL_PENDING",
+  "entries": [
+    {
+      "design_id": "PAGE-001",
+      "fields": [
+        {"id": "app-card-title", "figma_ref": "PAGE-001/card-title", "status": "pending"},
+        {"id": "enter-app-cta", "figma_ref": "PAGE-001/cta-enter", "status": "pending"}
+      ]
+    },
+    {
+      "design_id": "PAGE-002",
+      "fields": [
+        {"id": "chat-input-density", "figma_ref": "PAGE-002/composer", "status": "pending"},
+        {"id": "evidence-panel", "figma_ref": "PAGE-002/evidence", "status": "pending"}
+      ]
+    },
+    {
+      "design_id": "PAGE-F2-01",
+      "fields": [
+        {"id": "create-template-row", "figma_ref": "F2-01/templates", "status": "pending"},
+        {"id": "app-list-density", "figma_ref": "F2-01/table", "status": "pending"}
+      ]
+    },
+    {
+      "design_id": "PAGE-F2-02",
+      "fields": [
+        {"id": "four-config-groups", "figma_ref": "F2-02/tabs", "status": "pending"},
+        {"id": "publish-check-button", "figma_ref": "F2-02/publish-cta", "status": "pending"}
+      ]
+    },
+    {
+      "design_id": "CAND-05",
+      "fields": [{"id": "manage-header", "figma_ref": "CAND-05/header", "status": "pending"}]
+    },
+    {
+      "design_id": "CAND-06",
+      "fields": [{"id": "detail-meta", "figma_ref": "CAND-06/meta", "status": "pending"}]
+    },
+    {
+      "design_id": "CAND-07",
+      "fields": [{"id": "release-history-row", "figma_ref": "CAND-07/history", "status": "pending"}]
+    },
+    {
+      "design_id": "CAND-08",
+      "fields": [{"id": "users-table", "figma_ref": "CAND-08/users", "status": "pending"}]
+    },
+    {
+      "design_id": "CAND-09",
+      "fields": [{"id": "groups-table", "figma_ref": "CAND-09/groups", "status": "pending"}]
+    },
+    {
+      "design_id": "CAND-10",
+      "fields": [{"id": "clients-table", "figma_ref": "CAND-10/clients", "status": "pending"}]
+    },
+    {
+      "design_id": "CAND-11",
+      "fields": [{"id": "roles-table", "figma_ref": "CAND-11/roles", "status": "pending"}]
+    },
+    {
+      "design_id": "CAND-12",
+      "fields": [{"id": "grant-revoke-actions", "figma_ref": "CAND-12/grants", "status": "pending"}]
+    },
+    {
+      "design_id": "CAND-13",
+      "fields": [{"id": "audit-filters", "figma_ref": "CAND-13/filters", "status": "pending"}]
+    },
+    {
+      "design_id": "CAND-14",
+      "fields": [{"id": "services-status-list", "figma_ref": "CAND-14/services", "status": "pending"}]
+    },
+    {
+      "design_id": "CAND-15",
+      "fields": [{"id": "exception-cas-states", "figma_ref": "CAND-15/exceptions", "status": "pending"}]
+    },
+    {
+      "design_id": "CAND-16",
+      "fields": [{"id": "usage-unit-filter", "figma_ref": "CAND-16/usage", "status": "pending"}]
+    },
+    {
+      "design_id": "CAND-17",
+      "fields": [
+        {"id": "public-notice-editor", "figma_ref": "CAND-17/notice", "status": "pending"},
+        {"id": "ops-settings-alert", "figma_ref": "CAND-17/ops-alert", "status": "pending"}
+      ]
+    }
+  ]
+}

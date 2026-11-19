@@ -582,4 +582,8 @@ publish-review defer；narrow subset；ENTERED/CONFIRMED 同桌。见 test-repor
 
 R02：17 条目页面/API matrix + JSON fixture + CI；R18：`r18-gap-checklist-v1.43.md`。见 test-report-v1.43.md 及 PR CI。
 
-**建议下一轮（v1.44+）**：defer 汇总 artifact；CAND-09/11/14 专署抽页或签字豁免；字段级 Figma 核对表。
+### 第144轮增量（v1.44）
+
+headroom defer 四类汇总；CAND-09/11/14 共享壳豁免；R02 Figma 字段清单（REHEARSAL_PENDING）。见 test-report-v1.44.md 及 PR CI。
+
+**建议下一轮（v1.45+）**：services-engineer 宽屏抽页；groups/roles 专署 slug 或产品签字确认豁免；字段清单首条 matched。

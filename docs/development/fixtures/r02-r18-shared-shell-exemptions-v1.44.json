@@ -1,0 +1,29 @@
+{
+  "exemption_status": "R18_SHARED_SHELL_EXEMPTIONS_V144",
+  "engineering_signoff_shape": "EXEMPT_REHEARSAL_ONLY",
+  "matrix_fixture": "r02-page-api-acceptance-matrix-v1.43.json",
+  "exemptions": [
+    {
+      "design_id": "CAND-09",
+      "title": "治理访问-组",
+      "shared_shell_slug": "governance-access",
+      "rationale": "Groups tab shares access chrome; dedicated slug deferred to v1.45 unless design requests split",
+      "accepted_until": "v1.45-or-product-signoff"
+    },
+    {
+      "design_id": "CAND-11",
+      "title": "治理访问-角色",
+      "shared_shell_slug": "governance-access",
+      "rationale": "Roles tab shares access chrome with grants/users",
+      "accepted_until": "v1.45-or-product-signoff"
+    },
+    {
+      "design_id": "CAND-14",
+      "title": "运维-服务状态",
+      "shared_shell_slug": "services-narrow",
+      "rationale": "Wide services spot not yet in manifest; narrow spot covers layout regression for /services",
+      "accepted_until": "services-engineer spot or product waive wide"
+    }
+  ],
+  "notes": "Does not remove FIGMA_SIGNOFF; only documents R18 spot coverage gap"
+}
