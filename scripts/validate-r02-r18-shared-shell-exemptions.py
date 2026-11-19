@@ -11,14 +11,38 @@ FIXTURES = ROOT / "docs/development/fixtures"
 def main() -> None:
     path = Path(sys.argv[1])
     doc = json.loads(path.read_text())
-    if doc.get("exemption_status") != "R18_SHARED_SHELL_EXEMPTIONS_V144":
-        raise SystemExit("exemption_status must be R18_SHARED_SHELL_EXEMPTIONS_V144")
+    status = doc.get("exemption_status")
+    if status not in (
+        "R18_SHARED_SHELL_EXEMPTIONS_V144",
+        "R18_SHARED_SHELL_EXEMPTIONS_RESOLVED_V145",
+    ):
+        raise SystemExit("invalid exemption_status")
     matrix_path = FIXTURES / doc.get("matrix_fixture", "")
     if not matrix_path.is_file():
         raise SystemExit(f"missing matrix fixture: {matrix_path.name}")
     matrix = json.loads(matrix_path.read_text())
     by_id = {e["design_id"]: e for e in matrix.get("entries", [])}
     manifest_slugs = {s["slug"] for s in json.loads((ROOT / "frontend/r18-baselines/manifest.json").read_text())["spots"]}
+    if status == "R18_SHARED_SHELL_EXEMPTIONS_RESOLVED_V145":
+        if doc.get("exemptions"):
+            raise SystemExit("resolved v1.45 must have empty exemptions")
+        resolved = doc.get("resolved_in_v145", [])
+        if len(resolved) != 3:
+            raise SystemExit("resolved_in_v145 must list 3 slugs")
+        matrix_path = FIXTURES / doc.get("matrix_fixture", "")
+        slugs = {
+            s["slug"]
+            for s in json.loads(
+                (ROOT / "frontend/r18-baselines/manifest.json").read_text()
+            )["spots"]
+        }
+        for item in resolved:
+            slug = item.split(":", 1)[-1]
+            if slug not in slugs:
+                raise SystemExit(f"resolved slug missing from manifest: {slug}")
+        print(f"OK: shared-shell exemptions resolved ({len(resolved)} slugs)")
+        print(f"Validated {path}")
+        return
     for ex in doc.get("exemptions", []):
         did = ex.get("design_id")
         if did not in by_id:

@@ -1,0 +1,12 @@
+{
+  "exemption_status": "R18_SHARED_SHELL_EXEMPTIONS_RESOLVED_V145",
+  "supersedes": "r02-r18-shared-shell-exemptions-v1.44.json",
+  "matrix_fixture": "r02-page-api-acceptance-matrix-v1.45.json",
+  "exemptions": [],
+  "resolved_in_v145": [
+    "CAND-09:governance-access-groups",
+    "CAND-11:governance-access-roles",
+    "CAND-14:services-engineer"
+  ],
+  "notes": "v1.44 shell exemptions closed by dedicated R18 slugs; product Figma signoff still open"
+}

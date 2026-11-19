@@ -209,9 +209,9 @@ jobs:
       - run: python scripts/validate-production-exporter-review.py docs/development/fixtures/production-exporter-review-g4-appendix-shape-example.json
       - run: python scripts/validate-engineering-pilot-bundle.py docs/development/fixtures/engineering-pilot-bundle-approved-shape-example.json
       - run: python scripts/validate-r18-spot-manifest-sync.py
-      - run: python scripts/validate-r02-page-api-acceptance-matrix.py docs/development/fixtures/r02-page-api-acceptance-matrix-v1.43.json
+      - run: python scripts/validate-r02-page-api-acceptance-matrix.py docs/development/fixtures/r02-page-api-acceptance-matrix-v1.45.json
       - run: python scripts/validate-r18-headroom-defer-rollup.py docs/development/fixtures/r18-headroom-defer-rollup-v1.44.json
-      - run: python scripts/validate-r02-r18-shared-shell-exemptions.py docs/development/fixtures/r02-r18-shared-shell-exemptions-v1.44.json
+      - run: python scripts/validate-r02-r18-shared-shell-exemptions.py docs/development/fixtures/r02-r18-shared-shell-exemptions-v1.45.json
       - run: python scripts/validate-r02-figma-field-checklist.py docs/development/fixtures/r02-figma-field-checklist-v1.44.json
       - run: python scripts/validate-production-exporter-review.py docs/development/fixtures/production-exporter-review-signed-shape-example.json
       - name: Upload R18 narrow coverage report

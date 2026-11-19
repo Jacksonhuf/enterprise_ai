@@ -1,13 +1,18 @@
 {
-  "checklist_status": "R02_FIGMA_FIELD_CHECKLIST_V144",
+  "checklist_status": "R02_FIGMA_FIELD_CHECKLIST_V145",
   "design_entry_count": 17,
-  "signoff": "REHEARSAL_PENDING",
+  "signoff": "REHEARSAL_PARTIAL",
   "entries": [
     {
       "design_id": "PAGE-001",
       "fields": [
         {"id": "app-card-title", "figma_ref": "PAGE-001/card-title", "status": "pending"},
-        {"id": "enter-app-cta", "figma_ref": "PAGE-001/cta-enter", "status": "pending"}
+        {
+          "id": "enter-app-cta",
+          "figma_ref": "PAGE-001/cta-enter",
+          "status": "matched",
+          "evidence": "Chromium smoke: 进入应用 navigation v1.45"
+        }
       ]
     },
     {

@@ -21,8 +21,12 @@ def route_patterns(router_text: str) -> list[str]:
 def main() -> None:
     path = Path(sys.argv[1])
     matrix = json.loads(path.read_text())
-    if matrix.get("matrix_status") != "R02_PAGE_API_ACCEPTANCE_MATRIX_V143":
-        raise SystemExit("matrix_status must be R02_PAGE_API_ACCEPTANCE_MATRIX_V143")
+    status = matrix.get("matrix_status")
+    if status not in (
+        "R02_PAGE_API_ACCEPTANCE_MATRIX_V143",
+        "R02_PAGE_API_ACCEPTANCE_MATRIX_V145",
+    ):
+        raise SystemExit("matrix_status must be R02_PAGE_API_ACCEPTANCE_MATRIX_V143 or V145")
     entries = matrix.get("entries", [])
     expected = int(matrix.get("design_entry_count", 17))
     if len(entries) != expected:
