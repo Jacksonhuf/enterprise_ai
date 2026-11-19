@@ -644,6 +644,10 @@ v1.39 tightening；services-narrow defer；enforce workflow。见 test-report-v1
 
 v1.40 chat-user；forbidden defer；subset gate。见 test-report-v1.40.md。
 
+## 第141轮（v1.41）：CONFIRMED 彩排与子集扩展
+
+build-apps defer；subset + CONFIRMED rehearsal（无容差 diff）。见 test-report-v1.41.md。
+
 ## 第119轮（v1.19）：tier 联动 OpenMetrics
 
 35 抽页。见 test-report-v1.19.md。

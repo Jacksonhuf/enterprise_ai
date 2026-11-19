@@ -1,0 +1,7 @@
+{
+  "subset_status": "HEADROOM_ENFORCE_SUBSET_V141",
+  "min_headroom_ratio": 0.002,
+  "enforce_slugs": ["publish-review", "chat-user", "login-public"],
+  "supersedes": "r18-headroom-enforce-subset-v1.40.json",
+  "notes": "Extended subset after v1.40 chat-user widen"
+}

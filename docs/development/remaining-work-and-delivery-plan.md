@@ -570,4 +570,8 @@ publish-review headroom；services-narrow v1.34 推迟说明；enforce workflow�
 
 chat-user 容差；headroom 子集 enforce；签字名形状 bundle。见 test-report-v1.40.md 及 PR CI。
 
-**建议下一轮（v1.41+）**：build-apps-narrow 候选；子集 slug 扩展；bundle `CONFIRMED`（非 SHAPE）工单验收彩排。
+### 第141轮增量（v1.41）
+
+build-apps-narrow defer；subset + CONFIRMED bundle（无新容差 ratio）。见 test-report-v1.41.md 及 PR CI。
+
+**建议下一轮（v1.42+）**：publish-review v1.39 hold 下的 defer 文档；子集含 elevated narrow；ledger ENTERED 与 CONFIRMED bundle 工单同桌验收。

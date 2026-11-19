@@ -13,8 +13,11 @@ def main() -> None:
     policy_path = Path(sys.argv[2]) if len(sys.argv) > 2 else DEFAULT_POLICY
     audit = json.loads(audit_path.read_text())
     policy = json.loads(policy_path.read_text())
-    if policy.get("subset_status") != "HEADROOM_ENFORCE_SUBSET_V140":
-        raise SystemExit("subset_status must be HEADROOM_ENFORCE_SUBSET_V140")
+    if policy.get("subset_status") not in (
+        "HEADROOM_ENFORCE_SUBSET_V140",
+        "HEADROOM_ENFORCE_SUBSET_V141",
+    ):
+        raise SystemExit("subset_status must be HEADROOM_ENFORCE_SUBSET_V140 or V141")
     min_h = float(policy.get("min_headroom_ratio", 0.002))
     enforce_slugs = set(policy.get("enforce_slugs", []))
     failures = []

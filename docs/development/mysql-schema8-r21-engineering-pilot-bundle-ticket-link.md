@@ -10,4 +10,7 @@
 §3 变更单与 bundle 对齐（v1.31）：`mysql-schema8-r21-pilot-ledger-ticket-sync.md`。  
 交叉表（v1.34）：`mysql-schema8-r21-production-gate-ticket-crossref.md`。
 
+CONFIRMED 彩排（v1.41）：`engineering-pilot-bundle-confirmed-warehouse-rehearsal-example.json`（`bundle_status: CONFIRMED`，工单带 `WAREHOUSE-REHEARSAL`）。  
+校验：`validate-engineering-pilot-bundle-confirmed-warehouse-rehearsal.py`。
+
 Agent 不代填真签或真工单闭环。形状：`engineering-pilot-bundle-*-example.json`。
