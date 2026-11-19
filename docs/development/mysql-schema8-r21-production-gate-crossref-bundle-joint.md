@@ -5,6 +5,7 @@
 | 状态 | Fixture |
 |------|---------|
 | `CROSSREF_BUNDLE_JOINT_SHAPE_ONLY` | `production-gate-crossref-bundle-joint-shape-example.json` |
+| `CROSSREF_BUNDLE_CONFIRMED_JOINT_SHAPE_ONLY`（v1.39） | `production-gate-crossref-bundle-confirmed-joint-shape-example.json` |
 
 校验：`validate-production-gate-crossref-bundle-joint.py`（拒绝 REHEARSAL 工单号；签核字段须含 `PLACEHOLDER`）。
 

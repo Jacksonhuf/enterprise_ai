@@ -16,7 +16,7 @@
   "governance-usage": 0.02,
   "governance-ops-exceptions": 0.02,
   "governance-ops-audit": 0.02,
-  "publish-review": 0.03,
+  "publish-review": 0.031,
   "chat-user": 0.025,
   "services-narrow": 0.03,
   "assets-narrow": 0.042,

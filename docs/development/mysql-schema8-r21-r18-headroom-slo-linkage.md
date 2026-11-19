@@ -9,6 +9,7 @@
 | 彩排最小 headroom | **0.002**（`r18-headroom-threshold-gate-v1.36.json`） |
 | CI 强制 | `enforce_in_ci=false`（违规写入 `r18-elevated-headroom-audit` 的 `threshold_alerts`） |
 | 团队开关（v1.38） | 环境变量 `COGNARA_HEADROOM_ENFORCE_IN_CI=1` + `r18-headroom-threshold-gate-v1.38.json` |
+| 专项 workflow（v1.39） | **Actions → F-G headroom enforce rehearsal**（`fg-headroom-enforce-rehearsal.yml`） |
 | 联动 fixture | `r18-headroom-slo-linkage-v1.37.json` |
 
 ## 与 SLO 草案关系

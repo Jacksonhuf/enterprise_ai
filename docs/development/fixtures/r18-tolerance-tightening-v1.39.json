@@ -1,0 +1,13 @@
+{
+  "disclaimer": "TOLERANCE_HEADROOM_V139",
+  "rationale": "Elevated publish-review headroom; services-narrow blocked by v1.34 hold at 0.03",
+  "tightened": [
+    {"slug": "publish-review", "from": 0.03, "to": 0.031}
+  ],
+  "deferred_candidates": [
+    {
+      "slug": "services-narrow",
+      "reason": "v1.34 hold locks max 0.03; see r18-services-narrow-headroom-defer-v1.39.json"
+    }
+  ]
+}

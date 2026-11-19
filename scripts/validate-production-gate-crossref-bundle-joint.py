@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate crossref + bundle + ledger + staging joint warehouse rehearsal (v1.38)."""
+"""Validate crossref + bundle + ledger + staging joint warehouse rehearsal (v1.39)."""
 import json
 import sys
 from pathlib import Path
@@ -7,12 +7,20 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 FX = ROOT / "docs/development/fixtures"
 
+ALLOWED = frozenset(
+    {
+        "CROSSREF_BUNDLE_JOINT_SHAPE_ONLY",
+        "CROSSREF_BUNDLE_CONFIRMED_JOINT_SHAPE_ONLY",
+    }
+)
+
 
 def main() -> None:
     path = Path(sys.argv[1])
     joint = json.loads(path.read_text())
-    if joint.get("joint_status") != "CROSSREF_BUNDLE_JOINT_SHAPE_ONLY":
-        raise SystemExit("joint_status must be CROSSREF_BUNDLE_JOINT_SHAPE_ONLY")
+    status = joint.get("joint_status")
+    if status not in ALLOWED:
+        raise SystemExit(f"joint_status must be one of {sorted(ALLOWED)}")
     ticket = joint.get("apply_change_ticket_ref", "")
     staging = joint.get("staging_import_ticket", "")
     if not ticket or not staging:
@@ -37,13 +45,21 @@ def main() -> None:
             raise SystemExit(f"{label} mismatch: expected {want}, got {got}")
     if ledger.get("ledger_status") not in ("ENTERED", "ENTERED_SHAPE_ONLY"):
         raise SystemExit("ledger must be ENTERED shape")
-    if bundle.get("bundle_status") not in ("APPROVED_SHAPE_ONLY", "CONFIRMED_SHAPE_ONLY"):
+    bundle_status = bundle.get("bundle_status")
+    if status == "CROSSREF_BUNDLE_CONFIRMED_JOINT_SHAPE_ONLY":
+        if bundle_status != "CONFIRMED_SHAPE_ONLY":
+            raise SystemExit("confirmed joint requires CONFIRMED_SHAPE_ONLY bundle")
+    elif bundle_status not in ("APPROVED_SHAPE_ONLY", "CONFIRMED_SHAPE_ONLY"):
         raise SystemExit("bundle must be approved/confirmed shape")
     for field in ("confirmed_by_platform", "confirmed_by_sre", "verified_by_platform"):
         val = bundle.get(field) or ledger.get(field) or ""
         if val and "SIGNED" in val and "PLACEHOLDER" not in val:
             raise SystemExit(f"agent must not inject real signature in {field}")
-    print(f"OK: crossref-bundle joint ({ticket} / {staging})")
+    if status == "CROSSREF_BUNDLE_CONFIRMED_JOINT_SHAPE_ONLY":
+        for field in ("confirmed_by_platform", "confirmed_by_sre"):
+            if not bundle.get(field, "").startswith("PLACEHOLDER"):
+                raise SystemExit(f"{field} must be PLACEHOLDER for shape rehearsal")
+    print(f"OK: crossref-bundle joint ({status}) ({ticket} / {staging})")
     print(f"Validated {path}")
 
 

@@ -1,0 +1,6 @@
+{
+  "audit_status": "HEADROOM_ENFORCE_REHEARSAL_PASS",
+  "spots": [
+    {"slug": "publish-review", "measured_ratio": 0.0288, "headroom": 0.0022, "max_diff_ratio": 0.031}
+  ]
+}

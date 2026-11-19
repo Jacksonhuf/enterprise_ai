@@ -13,5 +13,7 @@
     "build-apps-narrow",
     "chat-user-narrow"
   ],
+  "applied_in_v1_39": ["publish-review"],
+  "deferred_in_v1_39": ["services-narrow"],
   "notes": "Inventory only; no max-diff-ratio changes in v1.38"
 }

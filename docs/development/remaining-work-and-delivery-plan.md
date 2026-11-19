@@ -562,4 +562,8 @@ batch-2 编目完成；headroom↔SLO 联动；`WAREHOUSE_TICKET_SHAPE_ONLY`。�
 
 收紧候选 artifact；headroom 团队 enforce 开关；crossref-bundle 联席。见 test-report-v1.38.md 及 PR CI。
 
-**建议下一轮（v1.39+）**：按候选清单执行下一轮窄屏/elevated 收紧；`COGNARA_HEADROOM_ENFORCE_IN_CI=1` 专项 workflow；bundle CONFIRMED 与 crossref 真签字段验收。
+### 第139轮增量（v1.39）
+
+publish-review headroom；services-narrow v1.34 推迟说明；enforce workflow；CONFIRMED 联席。见 test-report-v1.39.md 及 PR CI。
+
+**建议下一轮（v1.40+）**：候选 #2 forbidden-user-narrow 等；main CI 可选 headroom enforce 子集；bundle 真 CONFIRMED 双人签字名形状。
