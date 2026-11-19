@@ -8,6 +8,6 @@
 | **`r18-narrow-coverage`** | 窄屏抽页盘点（v1.21） |
 | `r18-spot-screenshots` | R18 抽页证据 |
 
-打包模板：`fixtures/engineering-pilot-bundle-pending-example.json`（`validate-engineering-pilot-bundle.py`）。
+打包模板：`fixtures/engineering-pilot-bundle-pending-example.json`（`validate-engineering-pilot-bundle.py`）。Staging 工单挂接（v1.30）：见 `mysql-schema8-r21-engineering-pilot-bundle-ticket-link.md`。
 
 dry-run 告警 `fg_mixed_read_smoke_high` 仍绑定 `fg.read.mixed_smoke_wall_s`；tier 摘要 **不替代** mixed-read 单测编排证据。

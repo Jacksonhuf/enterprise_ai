@@ -515,3 +515,9 @@ OpenMetrics CI snapshot 全 6 指标联动验收；R18 像素容差审计 artifa
 第七轮 build-apps 窄屏（services 保持）；staging **`CLOSED_SHAPE_ONLY`**；真 CLOSED 拒 PLACEHOLDER。见 test-report-v1.29.md 及 PR CI。
 
 **建议下一轮（v1.30+）**：第八轮容差（assets/settings 窄屏）；工单真 CLOSED 与 ENTERED/APPROVED 真签；bundle 挂工单号形状字段。
+
+### 第130轮增量（v1.30）
+
+第八轮 settings 窄屏（assets 保持）；bundle `staging_import_ticket_ref`；`CONFIRMED_SHAPE_ONLY`。见 test-report-v1.30.md 及 PR CI。
+
+**建议下一轮（v1.31+）**：第九轮容差（governance-ops 窄屏）；bundle 真 CONFIRMED 与台账 ENTERED 同工单号校验脚本。

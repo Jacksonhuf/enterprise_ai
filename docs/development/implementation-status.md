@@ -600,6 +600,10 @@ app-detail/forbidden 窄屏；exporter 附录 A、台账 SHA256 形状。见 tes
 
 build-apps 窄屏；`CLOSED_SHAPE_ONLY`。见 test-report-v1.29.md。
 
+## 第130轮（v1.30）：第八轮容差与 bundle 工单挂接
+
+settings 窄屏（assets 保持）；`staging_import_ticket_ref`。见 test-report-v1.30.md。
+
 ## 第119轮（v1.19）：tier 联动 OpenMetrics
 
 35 抽页。见 test-report-v1.19.md。
