@@ -2,7 +2,7 @@
   "default": 0.02,
   "publish-review": 0.03,
   "chat-user": 0.025,
-  "services-narrow": 0.028,
+  "services-narrow": 0.03,
   "assets-narrow": 0.042,
   "build-apps-narrow": 0.035,
   "chat-user-narrow": 0.05,
