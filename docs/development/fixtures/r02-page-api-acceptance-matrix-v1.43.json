@@ -1,0 +1,237 @@
+{
+  "matrix_status": "R02_PAGE_API_ACCEPTANCE_MATRIX_V143",
+  "supersedes_note": "Expands section-4 scope matrix with routes, views, R18 slugs, and explicit gaps; does not claim R02/R18 closeout.",
+  "design_entry_count": 17,
+  "r18_spot_count_expected": 38,
+  "entries": [
+    {
+      "design_id": "PAGE-001",
+      "title": "授权应用门户列表",
+      "routes": ["/apps"],
+      "views": ["frontend/src/cognara/views/Applications.vue"],
+      "r18_slugs": ["apps-narrow", "chat-user", "session-sidebar", "chat-user-narrow", "session-sidebar-narrow"],
+      "primary_apis": ["GET /api/v1/cognitive/apps", "GET /api/v1/cognitive/governance/grants"],
+      "link_mode": "mock_demo_identity",
+      "api_evidence": ["cognara-contract.jsonl", "Chromium scripts-smoke.mjs"],
+      "gaps": ["REAL_MODEL_AE", "FIELD_BY_FIELD", "FIGMA_SIGNOFF", "KEYBOARD_A11Y"]
+    },
+    {
+      "design_id": "PAGE-002",
+      "title": "应用会话聊天",
+      "routes": ["/apps/:appId/chat/:sessionId"],
+      "views": ["frontend/src/cognara/views/Chat.vue"],
+      "r18_slugs": ["chat-user", "chat-user-narrow"],
+      "primary_apis": [
+        "POST /api/v1/sessions",
+        "GET /api/v1/sessions/continue-stream/{id}",
+        "GET /api/v1/messages/{id}/load"
+      ],
+      "link_mode": "mock_ae_chain",
+      "api_evidence": ["TestR07Schema8RevokedHistoryRedaction", "TestR20Schema8DualHostContinueStreamReplay", "r02-mysql-api-evidence-v0.85.md"],
+      "gaps": ["REAL_MODEL_AE", "REMOTE_CANCEL", "FIGMA_SIGNOFF"]
+    },
+    {
+      "design_id": "PAGE-F2-01",
+      "title": "构建应用列表",
+      "routes": ["/build/apps"],
+      "views": ["frontend/src/cognara/views/Applications.vue"],
+      "r18_slugs": ["build-apps-engineer", "build-apps-narrow"],
+      "primary_apis": ["GET /api/v1/cognitive/apps", "POST /api/v1/cognitive/apps"],
+      "link_mode": "mock_demo_identity",
+      "api_evidence": ["Chromium template copy flow", "TestR20Schema8ConcurrentTemplateCopy"],
+      "gaps": ["FIELD_BY_FIELD", "FIGMA_SIGNOFF"]
+    },
+    {
+      "design_id": "PAGE-F2-02",
+      "title": "应用编辑四组配置",
+      "routes": ["/build/apps/:appId/edit"],
+      "views": ["frontend/src/cognara/views/Editor.vue"],
+      "r18_slugs": ["editor-channel", "publish-review", "editor-channel-narrow", "publish-review-narrow"],
+      "primary_apis": ["PUT /api/v1/cognitive/apps/{id}", "POST /api/v1/cognitive/apps/{id}/release-checks"],
+      "link_mode": "mock_demo_identity",
+      "api_evidence": ["Chromium publish-review", "HTTP draft CAS tests"],
+      "gaps": ["REAL_PROVIDER_REFS", "FIGMA_SIGNOFF", "KEYBOARD_A11Y"]
+    },
+    {
+      "design_id": "CAND-05",
+      "title": "构建应用管理壳层",
+      "routes": ["/build/apps"],
+      "views": ["frontend/src/cognara/views/Applications.vue"],
+      "r18_slugs": ["build-apps-engineer", "build-apps-narrow"],
+      "primary_apis": ["GET /api/v1/cognitive/apps"],
+      "link_mode": "mock_demo_identity",
+      "api_evidence": ["R18 spot shell assertion"],
+      "gaps": ["FIELD_BY_FIELD"]
+    },
+    {
+      "design_id": "CAND-06",
+      "title": "构建应用详情",
+      "routes": ["/build/apps/:appId"],
+      "views": ["frontend/src/cognara/views/ApplicationDetail.vue"],
+      "r18_slugs": ["app-detail-build", "app-detail-build-narrow"],
+      "primary_apis": ["GET /api/v1/cognitive/apps/{id}"],
+      "link_mode": "mock_demo_identity",
+      "api_evidence": ["Chromium SPA transitions"],
+      "gaps": ["FIGMA_SIGNOFF", "DISABLE_WITHDRAW_NOT_DEFAULT"]
+    },
+    {
+      "design_id": "CAND-07",
+      "title": "发布历史与恢复草稿",
+      "routes": ["/build/apps/:appId"],
+      "views": ["frontend/src/cognara/views/ApplicationDetail.vue"],
+      "r18_slugs": ["build-releases", "build-releases-narrow"],
+      "primary_apis": ["POST /api/v1/cognitive/apps/{id}/releases", "POST .../restore-draft"],
+      "link_mode": "mock_demo_identity",
+      "api_evidence": ["Chromium historical release restore"],
+      "gaps": ["ONLINE_ROLLBACK_OUT_OF_SCOPE"]
+    },
+    {
+      "design_id": "CAND-08",
+      "title": "治理访问-用户",
+      "routes": ["/governance/access?tab=users"],
+      "views": ["frontend/src/cognara/views/Governance.vue"],
+      "r18_slugs": ["governance-access", "forbidden-user", "governance-grants-narrow", "forbidden-user-narrow"],
+      "primary_apis": ["GET /api/v1/cognitive/governance/users"],
+      "link_mode": "demo_fixed_list",
+      "api_evidence": ["Chromium grant isolation"],
+      "gaps": ["REAL_IDENTITY", "FIGMA_SIGNOFF"]
+    },
+    {
+      "design_id": "CAND-09",
+      "title": "治理访问-组",
+      "routes": ["/governance/access?tab=groups"],
+      "views": ["frontend/src/cognara/views/Governance.vue"],
+      "r18_slugs": ["governance-access"],
+      "primary_apis": ["GET /api/v1/cognitive/governance/groups"],
+      "link_mode": "demo_fixed_list",
+      "api_evidence": ["contract capture only"],
+      "gaps": ["REAL_IDENTITY", "NO_R18_DEDICATED_SPOT"]
+    },
+    {
+      "design_id": "CAND-10",
+      "title": "治理访问-应用身份",
+      "routes": ["/governance/access?tab=clients"],
+      "views": ["frontend/src/cognara/views/Governance.vue"],
+      "r18_slugs": ["governance-access", "governance-grants-narrow"],
+      "primary_apis": ["GET /api/v1/cognitive/governance/clients"],
+      "link_mode": "demo_fixed_list",
+      "api_evidence": ["Chromium clients tab via grants spot"],
+      "gaps": ["REAL_IDENTITY", "TAB_PIXEL_GAP"]
+    },
+    {
+      "design_id": "CAND-11",
+      "title": "治理访问-角色",
+      "routes": ["/governance/access?tab=roles"],
+      "views": ["frontend/src/cognara/views/Governance.vue"],
+      "r18_slugs": ["governance-access"],
+      "primary_apis": ["GET /api/v1/cognitive/governance/roles"],
+      "link_mode": "demo_fixed_list",
+      "api_evidence": ["contract capture only"],
+      "gaps": ["REAL_IDENTITY", "NO_R18_DEDICATED_SPOT"]
+    },
+    {
+      "design_id": "CAND-12",
+      "title": "授权审阅与撤权",
+      "routes": ["/governance/access?tab=grants"],
+      "views": ["frontend/src/cognara/views/Governance.vue"],
+      "r18_slugs": ["governance-access", "governance-grants-narrow"],
+      "primary_apis": ["POST/DELETE /api/v1/cognitive/governance/grants"],
+      "link_mode": "mock_demo_identity",
+      "api_evidence": ["TestR20Schema8DualHostConcurrentGrants", "r02-mysql-api-evidence-v0.85.md"],
+      "gaps": ["REAL_SUBJECT_SCOPE", "FIGMA_SIGNOFF"]
+    },
+    {
+      "design_id": "CAND-13",
+      "title": "审计筛选分页",
+      "routes": ["/governance/audit"],
+      "views": ["frontend/src/cognara/views/Governance.vue"],
+      "r18_slugs": ["governance-audit", "governance-audit-narrow"],
+      "primary_apis": ["GET /api/v1/cognitive/governance/audit"],
+      "link_mode": "mock_demo_identity",
+      "api_evidence": ["Chromium audit trace", "schema8 audit query"],
+      "gaps": ["CROSS_SERVICE_DELIVERY", "FIGMA_SIGNOFF"]
+    },
+    {
+      "design_id": "CAND-14",
+      "title": "运维-服务状态",
+      "routes": ["/governance/operations?tab=services"],
+      "views": ["frontend/src/cognara/views/Governance.vue"],
+      "r18_slugs": ["services-narrow"],
+      "primary_apis": ["GET /api/v1/cognitive/governance/services"],
+      "link_mode": "mock_demo_identity",
+      "api_evidence": ["Chromium service contract smoke"],
+      "gaps": ["NO_WIDE_R18_SPOT", "REAL_SAMPLING"]
+    },
+    {
+      "design_id": "CAND-15",
+      "title": "运维-异常 CAS",
+      "routes": ["/governance/operations?tab=exceptions"],
+      "views": ["frontend/src/cognara/views/Governance.vue"],
+      "r18_slugs": ["governance-ops-exceptions", "governance-ops-exceptions-narrow"],
+      "primary_apis": ["GET/PUT /api/v1/cognitive/governance/exceptions"],
+      "link_mode": "mock_demo_identity",
+      "api_evidence": ["Chromium exception lifecycle", "TestR20Schema8DualHost exceptions CAS"],
+      "gaps": ["FIGMA_SIGNOFF"]
+    },
+    {
+      "design_id": "CAND-16",
+      "title": "运维-用量筛选",
+      "routes": ["/governance/operations?tab=usage"],
+      "views": ["frontend/src/cognara/views/Governance.vue"],
+      "r18_slugs": ["governance-usage", "governance-usage-narrow"],
+      "primary_apis": ["GET /api/v1/cognitive/governance/usage"],
+      "link_mode": "mock_demo_identity",
+      "api_evidence": ["TestR07Schema8GovernanceUsageRelationalPaging", "r02-mysql-api-evidence-v0.85.md"],
+      "gaps": ["NOT_BILLING", "FIGMA_SIGNOFF"]
+    },
+    {
+      "design_id": "CAND-17",
+      "title": "运维设置与企业公告",
+      "routes": ["/governance/operations?tab=settings", "/settings/:section"],
+      "views": ["frontend/src/cognara/views/Governance.vue", "frontend/src/cognara/views/Settings.vue"],
+      "r18_slugs": ["governance-ops-settings", "governance-ops-settings-narrow"],
+      "primary_apis": ["GET/PUT /api/v1/cognitive/settings/{section}", "GET /api/v1/settings/public"],
+      "link_mode": "mock_demo_identity",
+      "api_evidence": ["R01 PR40", "TestR20Schema8DualHostSettingsProfileCAS", "Chromium public notice"],
+      "gaps": ["NO_FULL_USER_BROADCAST", "FIGMA_SIGNOFF"]
+    }
+  ],
+  "settings_sections_entry": {
+    "design_id": "SETTINGS-SECTIONS",
+    "title": "Go 支撑配置子视图（计划挂靠项）",
+    "routes": ["/settings/:section", "/assets", "/services"],
+    "views": ["frontend/src/cognara/views/Settings.vue", "frontend/src/cognara/views/References.vue"],
+    "r18_slugs": ["settings-models", "settings-models-narrow", "assets-engineer", "assets-narrow", "settings-tenant", "settings-tenant-narrow"],
+    "primary_apis": ["GET /api/v1/cognitive/settings/models"],
+    "link_mode": "partial_readonly_placeholders",
+    "api_evidence": ["Chromium models + assets spots"],
+    "gaps": ["R17_PER_CAPABILITY_ENABLE", "FIELD_BY_FIELD"]
+  },
+  "supplementary_r18_mappings": [
+    {
+      "label": "公共登录与拒绝态（PANEL 挂靠）",
+      "routes": ["/login", "/forbidden"],
+      "views": ["frontend/src/cognara/views/Login.vue", "frontend/src/cognara/views/State.vue"],
+      "r18_slugs": ["login-public", "login-public-narrow"]
+    },
+    {
+      "label": "运维 Drawer 内审计 Tab",
+      "routes": ["/governance/operations?tab=audit"],
+      "views": ["frontend/src/cognara/views/Governance.vue"],
+      "r18_slugs": ["governance-ops-audit", "governance-ops-audit-narrow"]
+    }
+  ],
+  "r18_global_gaps": [
+    "FIGMA_SIGNOFF_ALL",
+    "KEYBOARD_A11Y_FULL",
+    "EMPTY_ERROR_LOADING_ALL_STATES",
+    "REAL_IDENTITY_NAV",
+    "PRODUCTION_UAT_SIGNOFF"
+  ],
+  "r18_spot_automation": {
+    "chromium_smoke": true,
+    "pixel_baseline_ci": true,
+    "spot_count": 38,
+    "manifest_sync_script": "scripts/validate-r18-spot-manifest-sync.py"
+  }
+}

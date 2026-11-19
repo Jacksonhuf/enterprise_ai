@@ -652,6 +652,10 @@ build-apps defer；subset + CONFIRMED rehearsal（无容差 diff）。见 test-r
 
 narrow subset；ENTERED/CONFIRMED joint。见 test-report-v1.42.md。
 
+## 第143轮（v1.43）：R02 全条目 matrix 与 R18 缺口清单
+
+17 设计条目映射 + 38 slug CI；进度 `progress-snapshot-2026-11-19-r02-r18.md`。见 test-report-v1.43.md。
+
 ## 第119轮（v1.19）：tier 联动 OpenMetrics
 
 35 抽页。见 test-report-v1.19.md。
