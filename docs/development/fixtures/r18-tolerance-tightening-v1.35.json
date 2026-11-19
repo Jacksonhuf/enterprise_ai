@@ -1,0 +1,8 @@
+{
+  "disclaimer": "TOLERANCE_TIGHTENING_V135",
+  "rationale": "Catalog apps-narrow and governance-ops-exceptions-narrow explicit ratios (were default 2%)",
+  "tightened": [
+    {"slug": "apps-narrow", "from": 0.02, "to": 0.021},
+    {"slug": "governance-ops-exceptions-narrow", "from": 0.02, "to": 0.021}
+  ]
+}

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /** Compare R18 spot captures against committed PNG baselines (pixel gate, v1.05). */
-import { readFileSync, existsSync } from 'node:fs';
+import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { PNG } from 'pngjs';
@@ -23,6 +23,7 @@ if (!existsSync(manifestPath)) {
 }
 const manifest = JSON.parse(readFileSync(manifestPath, 'utf8'));
 let failed = false;
+const measurements = [];
 
 for (const spot of manifest.spots) {
   const basePath = join(baselineRoot, spot.file);
@@ -63,10 +64,23 @@ for (const spot of manifest.spots) {
       0.02,
   );
   console.log(`${spot.slug}: diff=${diffPixels} (${(ratio * 100).toFixed(3)}%) max=${maxRatio}`);
+  measurements.push({
+    slug: spot.slug,
+    measured_ratio: Number(ratio.toFixed(6)),
+    max_diff_ratio: maxRatio,
+    headroom: Number((maxRatio - ratio).toFixed(6)),
+  });
   if (ratio > maxRatio) {
     console.error(`${spot.slug}: exceeds max ratio ${maxRatio}`);
     failed = true;
   }
+}
+const measuredPath = process.env.COGNARA_R18_PIXEL_MEASURED;
+if (measuredPath) {
+  writeFileSync(
+    measuredPath,
+    `${JSON.stringify({gate: 'r18-pixel-baseline', spots: measurements}, null, 2)}\n`,
+  );
 }
 if (failed) process.exit(1);
 console.log(`R18 baseline gate OK`);

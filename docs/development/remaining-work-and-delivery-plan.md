@@ -545,3 +545,9 @@ OpenMetrics CI snapshot 全 6 指标联动验收；R18 像素容差审计 artifa
 services-narrow 锁定清单；rollup 分段；变更单交叉表形状。见 test-report-v1.34.md 及 PR CI。
 
 **建议下一轮（v1.35+）**：apps-narrow 等新 slug 编目；真签交叉表入库工单模板；R18 全 elevated spot 与 CI 差值对照 artifact。
+
+### 第135轮增量（v1.35）
+
+apps / ops-exceptions-narrow 编目；像素门 measured + headroom artifact；交叉表入库模板。见 test-report-v1.35.md 及 PR CI。
+
+**建议下一轮（v1.36+）**：implicit-default spot 批量编目策略；headroom 阈值告警门；真签交叉表 PENDING→FILLED 校验分支。

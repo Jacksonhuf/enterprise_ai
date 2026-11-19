@@ -104,9 +104,9 @@ go test -p 1 -race -count=1 ./internal/platform/api/ -run 'R20Schema8|R07Schema8
 | # | 项 | 通过 |
 |---|-----|------|
 | G1 | **F-G validation** 绿，且含 `validate-r18-spot-manifest-sync.py`（**38** 抽页） | ☐ |
-| G2 | 容差清单 **v1.23–v1.34** 与 `max-diff-ratio.json` 一致；rollup 分段 artifact | | ☐ |
-| G3 | 归档 CI artifact：`r18-spot-screenshots`、`r18-pixel-tolerance-audit` | | ☐ |
-| G4 | 上述默认门或完整 §4 列表已在隔离 DSN 跑通（`TestR20Schema8RunbookDefaultSmoke` 或等价） | | ☐ |
+| G2 | 容差清单 **v1.23–v1.35** 与 `max-diff-ratio.json` 一致；rollup / headroom artifact | ☐ |
+| G3 | 归档 CI artifact：`r18-spot-screenshots`、`r18-pixel-tolerance-audit` | ☐ |
+| G4 | 上述默认门或完整 §4 列表已在隔离 DSN 跑通（`TestR20Schema8RunbookDefaultSmoke` 或等价） | ☐ |
 
 彩排对照亦见 `mysql-schema8-runbook-production-fill-checklist.md` §「彩排首条勾选」。
 
