@@ -1,0 +1,10 @@
+{
+  "crossref_status": "PENDING_TEAM_FILL",
+  "apply_change_ticket_ref": "",
+  "staging_import_ticket": "",
+  "bundle_fixture": "",
+  "ledger_fixture": "",
+  "staging_ticket_fixture": "",
+  "exporter_review_fixture": "",
+  "notes": "生产入库模板；团队填工单号后替换 fixture 路径为真 JSON"
+}

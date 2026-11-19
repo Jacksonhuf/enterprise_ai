@@ -620,6 +620,10 @@ rollup artifact；triple + joint 校验。见 test-report-v1.32.md。
 
 rollup 分段；`validate-production-gate-ticket-crossref.py`。见 test-report-v1.34.md。
 
+## 第135轮（v1.35）：slug 编目与 headroom artifact
+
+像素门 measured；交叉表入库模板。见 test-report-v1.35.md。
+
 ## 第119轮（v1.19）：tier 联动 OpenMetrics
 
 35 抽页。见 test-report-v1.19.md。

@@ -11,8 +11,15 @@ FX = ROOT / "docs/development/fixtures"
 def main() -> None:
     path = Path(sys.argv[1])
     xref = json.loads(path.read_text())
-    if xref.get("crossref_status") != "CROSSREF_SHAPE_ONLY":
-        raise SystemExit("crossref_status must be CROSSREF_SHAPE_ONLY")
+    status = xref.get("crossref_status")
+    if status == "PENDING_TEAM_FILL":
+        if xref.get("apply_change_ticket_ref") or xref.get("staging_import_ticket"):
+            raise SystemExit("PENDING_TEAM_FILL must leave ticket refs empty")
+        print("OK: gate ticket crossref (PENDING_TEAM_FILL template)")
+        print(f"Validated {path}")
+        return
+    if status != "CROSSREF_SHAPE_ONLY":
+        raise SystemExit("crossref_status must be CROSSREF_SHAPE_ONLY or PENDING_TEAM_FILL")
     change = xref.get("apply_change_ticket_ref", "")
     staging = xref.get("staging_import_ticket", "")
     if not change or not staging:
