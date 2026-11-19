@@ -96,6 +96,19 @@ go test -p 1 -race -count=1 ./internal/platform/applications/
 go test -p 1 -race -count=1 ./internal/platform/api/ -run 'R20Schema8|R07Schema8' -timeout 30m
 ```
 
+### 合入 main / 生产烟雾前的工程勾选（v1.26）
+
+与 `mysql-schema8-r20-release-gate-r18-manifest.md` 一致；**团队真签仍由运维/发布负责人勾选**，Agent 不代填。
+
+| # | 项 | 通过 |
+|---|-----|------|
+| G1 | **F-G validation** 绿，且含 `validate-r18-spot-manifest-sync.py`（**38** 抽页） | ☐ |
+| G2 | 容差清单 **v1.23–v1.26** 与 `frontend/r18-baselines/max-diff-ratio.json` 一致 | ☐ |
+| G3 | 归档 CI artifact：`r18-spot-screenshots`、`r18-pixel-tolerance-audit` | ☐ |
+| G4 | 上述默认门或完整 §4 列表已在隔离 DSN 跑通（`TestR20Schema8RunbookDefaultSmoke` 或等价） | ☐ |
+
+彩排对照亦见 `mysql-schema8-runbook-production-fill-checklist.md` §「彩排首条勾选」。
+
 ## 5. schema8 快照回退演练（变更单模板）
 
 与 `TestR20Schema8RunbookSnapshotImportDrill` / `TestMySQLV8SnapshotRoundTripPreservesUsageRows` 对齐。

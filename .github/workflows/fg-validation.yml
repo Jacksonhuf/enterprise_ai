@@ -163,6 +163,7 @@ jobs:
       - run: python scripts/validate-r18-tolerance-tightening.py docs/development/fixtures/r18-tolerance-tightening-v1.23.json
       - run: python scripts/validate-r18-tolerance-tightening.py docs/development/fixtures/r18-tolerance-tightening-v1.24.json
       - run: python scripts/validate-r18-tolerance-tightening.py docs/development/fixtures/r18-tolerance-tightening-v1.25.json
+      - run: python scripts/validate-r18-tolerance-tightening.py docs/development/fixtures/r18-tolerance-tightening-v1.26.json
       - run: python scripts/validate-production-exporter-review.py docs/development/fixtures/production-exporter-review-approved-shape-example.json
       - run: python scripts/validate-engineering-pilot-bundle.py docs/development/fixtures/engineering-pilot-bundle-approved-shape-example.json
       - run: python scripts/validate-r18-spot-manifest-sync.py
