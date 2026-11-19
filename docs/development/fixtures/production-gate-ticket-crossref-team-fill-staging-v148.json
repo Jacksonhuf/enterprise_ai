@@ -1,0 +1,12 @@
+{
+  "crossref_status": "TEAM_FILL_STAGING_V148",
+  "release_window_id": "WIN-WAREHOUSE-REHEARSAL-0146",
+  "apply_change_ticket_ref": "CHG-ENG-WAREHOUSE-REHEARSAL-0001",
+  "staging_import_ticket": "STG-IMPORT-2026-1119-TEAM-0147",
+  "staging_ticket_fixture": "staging-alert-import-ticket-team-filled-rehearsal-v147.json",
+  "bundle_fixture": "engineering-pilot-bundle-confirmed-team-fill-v148.json",
+  "ledger_fixture": "schema8-production-ledger-entered-team-fill-v148.json",
+  "exporter_review_fixture": "production-exporter-review-g4-appendix-shape-example.json",
+  "first_fill_ledger_template": "schema8-production-ledger-first-production-fill-template-v1.48.json",
+  "notes": "crossref 显式引用 team-fill CLOSED staging（v1.48）"
+}

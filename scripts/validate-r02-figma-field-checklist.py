@@ -16,6 +16,7 @@ def main() -> None:
         "R02_FIGMA_FIELD_CHECKLIST_V145",
         "R02_FIGMA_FIELD_CHECKLIST_V146",
         "R02_FIGMA_FIELD_CHECKLIST_V147",
+        "R02_FIGMA_FIELD_CHECKLIST_V148",
     ):
         raise SystemExit("invalid checklist_status")
     if doc.get("signoff") not in (
@@ -36,6 +37,8 @@ def main() -> None:
         raise SystemExit("v1.46 checklist requires at least three matched fields")
     if doc.get("checklist_status") == "R02_FIGMA_FIELD_CHECKLIST_V147" and matched < 8:
         raise SystemExit("v1.47 checklist requires at least eight matched fields")
+    if doc.get("checklist_status") == "R02_FIGMA_FIELD_CHECKLIST_V148" and matched < 11:
+        raise SystemExit("v1.48 checklist requires at least eleven matched fields (half)")
     entries = doc.get("entries", [])
     want = int(doc.get("design_entry_count", 17))
     if len(entries) != want:

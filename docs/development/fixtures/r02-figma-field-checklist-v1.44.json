@@ -1,5 +1,5 @@
 {
-  "checklist_status": "R02_FIGMA_FIELD_CHECKLIST_V147",
+  "checklist_status": "R02_FIGMA_FIELD_CHECKLIST_V148",
   "design_entry_count": 17,
   "signoff": "REHEARSAL_PARTIAL",
   "entries": [
@@ -29,7 +29,12 @@
           "status": "matched",
           "evidence": "Chromium smoke SO1002 chat v1.46"
         },
-        {"id": "evidence-panel", "figma_ref": "PAGE-002/evidence", "status": "pending"}
+        {
+          "id": "evidence-panel",
+          "figma_ref": "PAGE-002/evidence",
+          "status": "matched",
+          "evidence": "Chromium evidence panel SO1002 v1.48"
+        }
       ]
     },
     {
@@ -47,7 +52,12 @@
     {
       "design_id": "PAGE-F2-02",
       "fields": [
-        {"id": "four-config-groups", "figma_ref": "F2-02/tabs", "status": "pending"},
+        {
+          "id": "four-config-groups",
+          "figma_ref": "F2-02/tabs",
+          "status": "matched",
+          "evidence": "Chromium editor four-config-groups v1.48"
+        },
         {
           "id": "publish-check-button",
           "figma_ref": "F2-02/publish-cta",
@@ -96,7 +106,14 @@
     },
     {
       "design_id": "CAND-11",
-      "fields": [{"id": "roles-table", "figma_ref": "CAND-11/roles", "status": "pending"}]
+      "fields": [
+        {
+          "id": "roles-table",
+          "figma_ref": "CAND-11/roles",
+          "status": "matched",
+          "evidence": "R18 governance-access-roles v1.45"
+        }
+      ]
     },
     {
       "design_id": "CAND-12",
@@ -115,7 +132,14 @@
     },
     {
       "design_id": "CAND-14",
-      "fields": [{"id": "services-status-list", "figma_ref": "CAND-14/services", "status": "pending"}]
+      "fields": [
+        {
+          "id": "services-status-list",
+          "figma_ref": "CAND-14/services",
+          "status": "matched",
+          "evidence": "R18 services-engineer v1.45"
+        }
+      ]
     },
     {
       "design_id": "CAND-15",

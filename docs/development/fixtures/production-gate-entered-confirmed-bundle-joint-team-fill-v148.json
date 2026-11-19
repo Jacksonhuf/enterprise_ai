@@ -1,0 +1,9 @@
+{
+  "joint_status": "ENTERED_CONFIRMED_BUNDLE_JOINT_TEAM_FILL_V148",
+  "apply_change_ticket_ref": "CHG-ENG-WAREHOUSE-REHEARSAL-0001",
+  "staging_import_ticket": "STG-IMPORT-2026-1119-TEAM-0147",
+  "bundle_fixture": "engineering-pilot-bundle-confirmed-team-fill-v148.json",
+  "ledger_fixture": "schema8-production-ledger-entered-team-fill-v148.json",
+  "staging_ticket_fixture": "staging-alert-import-ticket-team-filled-rehearsal-v147.json",
+  "notes": "ENTERED+CONFIRMED 与 team-fill staging crossref 同工单"
+}

@@ -1,0 +1,15 @@
+{
+  "bundle_status": "CONFIRMED",
+  "runbook_smoke_artifact": "runbook-smoke-summary-validation",
+  "tier_probe_artifact": "r09-tier-probe-summary",
+  "r18_screenshot_artifact": "r18-spot-screenshots",
+  "staging_alert_artifact": "r21-staging-alert-render",
+  "openmetrics_ci_snapshot_artifact": "openmetrics-ci-snapshot",
+  "openmetrics_linked_metric_count": 6,
+  "linked_runbook_checklist": "mysql-schema8-runbook-production-fill-checklist.md",
+  "confirmed_by_platform": "SIGNATORY-PLATFORM-WAREHOUSE-REHEARSAL-0001",
+  "confirmed_by_sre": "SIGNATORY-SRE-WAREHOUSE-REHEARSAL-0001",
+  "staging_import_ticket_ref": "STG-IMPORT-2026-1119-TEAM-0147",
+  "apply_change_ticket_ref": "CHG-ENG-WAREHOUSE-REHEARSAL-0001",
+  "notes": "CONFIRMED 彩排；staging 指向团队票 v1.47；非真人签"
+}
