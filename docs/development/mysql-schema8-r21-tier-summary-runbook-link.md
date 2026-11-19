@@ -4,6 +4,8 @@
 |-------------|----------|
 | `runbook-smoke-summary-validation` | runbook §4 默认门读阶段 |
 | **`r09-tier-probe-summary`** | 工程彩排台账 tier 行（非 SLO 签核） |
+| **`openmetrics-ci-snapshot`** | tier + runbook + mixed-read（v1.21） |
+| **`r18-narrow-coverage`** | 窄屏抽页盘点（v1.21） |
 | `r18-spot-screenshots` | R18 抽页证据 |
 
 打包模板：`fixtures/engineering-pilot-bundle-pending-example.json`（`validate-engineering-pilot-bundle.py`）。
