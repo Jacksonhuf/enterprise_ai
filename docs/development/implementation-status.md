@@ -640,6 +640,10 @@ implicit 清零；SLO 联动；WAREHOUSE 交叉表。见 test-report-v1.37.md。
 
 v1.39 tightening；services-narrow defer；enforce workflow。见 test-report-v1.39.md。
 
+## 第140轮（v1.40）：headroom 子集与签字名形状
+
+v1.40 chat-user；forbidden defer；subset gate。见 test-report-v1.40.md。
+
 ## 第119轮（v1.19）：tier 联动 OpenMetrics
 
 35 抽页。见 test-report-v1.19.md。

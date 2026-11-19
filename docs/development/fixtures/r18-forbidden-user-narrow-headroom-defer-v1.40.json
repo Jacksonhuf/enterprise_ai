@@ -1,0 +1,7 @@
+{
+  "defer_status": "FORBIDDEN_USER_NARROW_V128_HOLD",
+  "slug": "forbidden-user-narrow",
+  "locked_max_diff_ratio": 0.039,
+  "blocking_manifest": "r18-tolerance-tightening-v1.28.json",
+  "notes": "Candidate #2 deferred; amend archival hold only via team process"
+}

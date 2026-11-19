@@ -1,0 +1,13 @@
+{
+  "disclaimer": "TOLERANCE_HEADROOM_V140",
+  "rationale": "Elevated chat-user headroom; forbidden-user-narrow blocked by v1.28 hold",
+  "tightened": [
+    {"slug": "chat-user", "from": 0.025, "to": 0.026}
+  ],
+  "deferred_candidates": [
+    {
+      "slug": "forbidden-user-narrow",
+      "reason": "v1.28 hold locks max 0.039; see r18-forbidden-user-narrow-headroom-defer-v1.40.json"
+    }
+  ]
+}
