@@ -160,12 +160,12 @@ jobs:
         working-directory: frontend
       - run: python scripts/report-r18-elevated-headroom-audit.py /tmp/r18-pixel-gate-measured.json /tmp/r18-elevated-headroom-audit.json
       - run: python scripts/validate-r18-headroom-threshold-gate.py /tmp/r18-elevated-headroom-audit.json docs/development/fixtures/r18-headroom-threshold-gate-v1.38.json
-      - run: python scripts/validate-r18-headroom-threshold-subset-gate.py /tmp/r18-elevated-headroom-audit.json docs/development/fixtures/r18-headroom-enforce-subset-v1.41.json
+      - run: python scripts/validate-r18-headroom-threshold-subset-gate.py /tmp/r18-elevated-headroom-audit.json docs/development/fixtures/r18-headroom-enforce-subset-v1.42.json
       - run: python scripts/report-r18-tolerance-tightening-candidates.py /tmp/r18-elevated-headroom-audit.json /tmp/r18-tolerance-tightening-candidates.json
       - run: python scripts/report-r18-implicit-default-spot-catalog.py /tmp/r18-implicit-default-spot-catalog.json
       - run: python scripts/report-r18-narrow-coverage.py /tmp/r18-spots/manifest.json /tmp/r18-narrow-coverage.json
       - run: python scripts/report-r18-pixel-tolerance-audit.py /tmp/r18-pixel-tolerance-audit.json
-      - run: python scripts/report-r18-tolerance-tightening-rollup.py /tmp/r18-tolerance-tightening-rollup-v1.41.json
+      - run: python scripts/report-r18-tolerance-tightening-rollup.py /tmp/r18-tolerance-tightening-rollup-v1.42.json
       - run: python scripts/validate-runbook-triple-gate-rehearsal.py
       - run: python scripts/validate-r18-tolerance-tightening.py docs/development/fixtures/r18-tolerance-tightening-v1.23.json
       - run: python scripts/validate-r18-tolerance-tightening.py docs/development/fixtures/r18-tolerance-tightening-v1.24.json
@@ -188,6 +188,9 @@ jobs:
       - run: python scripts/validate-r18-tolerance-tightening.py docs/development/fixtures/r18-tolerance-tightening-v1.41.json
       - run: python scripts/validate-r18-build-apps-narrow-headroom-defer.py docs/development/fixtures/r18-build-apps-narrow-headroom-defer-v1.41.json
       - run: python scripts/validate-engineering-pilot-bundle-confirmed-warehouse-rehearsal.py docs/development/fixtures/engineering-pilot-bundle-confirmed-warehouse-rehearsal-example.json
+      - run: python scripts/validate-r18-tolerance-tightening.py docs/development/fixtures/r18-tolerance-tightening-v1.42.json
+      - run: python scripts/validate-r18-publish-review-headroom-defer.py docs/development/fixtures/r18-publish-review-headroom-defer-v1.42.json
+      - run: python scripts/validate-production-gate-entered-confirmed-bundle-joint.py docs/development/fixtures/production-gate-entered-confirmed-bundle-joint-shape-example.json
       - run: python scripts/validate-r18-implicit-default-spot-catalog.py docs/development/fixtures/r18-implicit-default-spot-catalog-v1.37.json
       - run: python scripts/validate-r18-headroom-slo-linkage.py docs/development/fixtures/r18-headroom-slo-linkage-v1.37.json
       - run: python scripts/validate-r18-tolerance-tightening-candidates.py docs/development/fixtures/r18-tolerance-tightening-candidates-v1.38.json
@@ -230,7 +233,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: r18-tolerance-tightening-rollup
-          path: /tmp/r18-tolerance-tightening-rollup-v1.41.json
+          path: /tmp/r18-tolerance-tightening-rollup-v1.42.json
       - name: Upload R18 tolerance tightening candidates
         if: always()
         uses: actions/upload-artifact@v4

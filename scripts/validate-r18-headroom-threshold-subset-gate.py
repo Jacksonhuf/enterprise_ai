@@ -1,11 +1,18 @@
 #!/usr/bin/env python3
-"""Enforce headroom threshold on a CI subset of spots (v1.40)."""
+"""Enforce headroom threshold on a CI subset of spots (v1.42)."""
 import json
 import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_POLICY = ROOT / "docs/development/fixtures/r18-headroom-enforce-subset-v1.40.json"
+ALLOWED = frozenset(
+    {
+        "HEADROOM_ENFORCE_SUBSET_V140",
+        "HEADROOM_ENFORCE_SUBSET_V141",
+        "HEADROOM_ENFORCE_SUBSET_V142",
+    }
+)
 
 
 def main() -> None:
@@ -13,13 +20,12 @@ def main() -> None:
     policy_path = Path(sys.argv[2]) if len(sys.argv) > 2 else DEFAULT_POLICY
     audit = json.loads(audit_path.read_text())
     policy = json.loads(policy_path.read_text())
-    if policy.get("subset_status") not in (
-        "HEADROOM_ENFORCE_SUBSET_V140",
-        "HEADROOM_ENFORCE_SUBSET_V141",
-    ):
-        raise SystemExit("subset_status must be HEADROOM_ENFORCE_SUBSET_V140 or V141")
+    if policy.get("subset_status") not in ALLOWED:
+        raise SystemExit(f"subset_status must be one of {sorted(ALLOWED)}")
     min_h = float(policy.get("min_headroom_ratio", 0.002))
+    narrow_h = float(policy.get("narrow_min_headroom_ratio", min_h))
     enforce_slugs = set(policy.get("enforce_slugs", []))
+    enforce_narrow = set(policy.get("enforce_narrow_slugs", []))
     failures = []
     warnings = []
     for row in audit.get("spots", []):
@@ -27,23 +33,25 @@ def main() -> None:
         headroom = row.get("headroom")
         if headroom is None:
             continue
-        if float(headroom) < min_h:
+        threshold = narrow_h if slug in enforce_narrow else min_h
+        if float(headroom) < threshold:
             entry = {
                 "slug": slug,
                 "headroom": headroom,
-                "min_headroom_ratio": min_h,
+                "min_headroom_ratio": threshold,
                 "measured_ratio": row.get("measured_ratio"),
             }
-            if slug in enforce_slugs:
+            if slug in enforce_slugs or slug in enforce_narrow:
                 failures.append(entry)
             else:
                 warnings.append(entry)
     if failures:
         print(json.dumps({"subset_enforce_failures": failures}, indent=2))
-        raise SystemExit(f"headroom subset gate: {len(failures)} enforced slug(s) below {min_h}")
+        raise SystemExit(f"headroom subset gate: {len(failures)} enforced slug(s) below threshold")
     if warnings:
-        print(f"WARN: headroom subset gate ({len(warnings)} non-enforced slug(s) below {min_h})")
-    print(f"OK: headroom subset gate (enforce={sorted(enforce_slugs)}, failures=0)")
+        print(f"WARN: headroom subset gate ({len(warnings)} non-enforced slug(s) below threshold)")
+    enforced = sorted(enforce_slugs | enforce_narrow)
+    print(f"OK: headroom subset gate (enforce={enforced}, failures=0)")
     print(f"Validated {audit_path}")
 
 

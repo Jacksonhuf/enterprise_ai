@@ -648,6 +648,10 @@ v1.40 chat-user；forbidden defer；subset gate。见 test-report-v1.40.md。
 
 build-apps defer；subset + CONFIRMED rehearsal（无容差 diff）。见 test-report-v1.41.md。
 
+## 第142轮（v1.42）：publish-review defer 与 ENTERED 同桌
+
+narrow subset；ENTERED/CONFIRMED joint。见 test-report-v1.42.md。
+
 ## 第119轮（v1.19）：tier 联动 OpenMetrics
 
 35 抽页。见 test-report-v1.19.md。

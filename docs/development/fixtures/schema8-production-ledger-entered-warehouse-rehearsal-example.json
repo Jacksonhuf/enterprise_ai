@@ -1,0 +1,11 @@
+{
+  "ledger_status": "ENTERED",
+  "apply_runbook_section": "3",
+  "production_cluster_id": "PLACEHOLDER-NOT-PRODUCTION",
+  "applied_at_cst": "PLACEHOLDER-NOT-PRODUCTION",
+  "verified_by_platform": "PLACEHOLDER-NOT-SIGNED",
+  "runbook_smoke_summary_artifact": "runbook-smoke-summary-validation",
+  "runbook_smoke_summary_sha256": "PLACEHOLDER-NOT-PRODUCTION",
+  "apply_change_ticket_ref": "CHG-ENG-WAREHOUSE-REHEARSAL-0001",
+  "notes": "ENTERED 与 CONFIRMED bundle 同工单彩排"
+}

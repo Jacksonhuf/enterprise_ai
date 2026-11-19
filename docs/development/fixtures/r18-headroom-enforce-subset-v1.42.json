@@ -1,0 +1,9 @@
+{
+  "subset_status": "HEADROOM_ENFORCE_SUBSET_V142",
+  "min_headroom_ratio": 0.002,
+  "enforce_slugs": ["publish-review", "chat-user", "login-public"],
+  "enforce_narrow_slugs": ["governance-grants-narrow", "apps-narrow"],
+  "narrow_min_headroom_ratio": 0.0005,
+  "supersedes": "r18-headroom-enforce-subset-v1.41.json",
+  "notes": "Elevated narrow slugs use lower narrow_min; near-cap narrows stay in defer fixtures only"
+}
