@@ -1,0 +1,8 @@
+{
+  "disclaimer": "TOLERANCE_TIGHTENING_V130",
+  "rationale": "Eighth pass; tighten settings narrow only (assets held at 0.042 — v1.24 gate)",
+  "tightened": [
+    {"slug": "settings-tenant-narrow", "from": 0.03, "to": 0.029},
+    {"slug": "settings-models-narrow", "from": 0.03, "to": 0.029}
+  ]
+}
