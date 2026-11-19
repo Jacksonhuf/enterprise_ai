@@ -117,6 +117,7 @@ jobs:
       - run: python scripts/validate-openmetrics-runbook-linkage.py /tmp/runbook-smoke-summary.json /tmp/openmetrics-ci-snapshot.txt
       - run: python scripts/render-openmetrics-from-mixed-read-summary.py /tmp/mixed-read-probe-summary.json /tmp/openmetrics-ci-snapshot.txt
       - run: python scripts/validate-openmetrics-mixed-read-linkage.py /tmp/mixed-read-probe-summary.json /tmp/openmetrics-ci-snapshot.txt
+      - run: python scripts/validate-openmetrics-ci-snapshot-full.py /tmp/r09-tier-probe-summary.json /tmp/runbook-smoke-summary.json /tmp/mixed-read-probe-summary.json /tmp/openmetrics-ci-snapshot.txt
       - name: Upload OpenMetrics CI snapshot
         if: always()
         uses: actions/upload-artifact@v4
@@ -158,12 +159,19 @@ jobs:
           node scripts-verify-r18-baseline.mjs /tmp/r18-spots
         working-directory: frontend
       - run: python scripts/report-r18-narrow-coverage.py /tmp/r18-spots/manifest.json /tmp/r18-narrow-coverage.json
+      - run: python scripts/report-r18-pixel-tolerance-audit.py /tmp/r18-pixel-tolerance-audit.json
       - name: Upload R18 narrow coverage report
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: r18-narrow-coverage
           path: /tmp/r18-narrow-coverage.json
+      - name: Upload R18 pixel tolerance audit
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: r18-pixel-tolerance-audit
+          path: /tmp/r18-pixel-tolerance-audit.json
       - name: Upload R18 spot screenshot baseline
         if: always()
         uses: actions/upload-artifact@v4
