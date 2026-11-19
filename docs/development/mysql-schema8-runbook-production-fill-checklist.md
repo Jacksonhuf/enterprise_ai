@@ -27,6 +27,7 @@
 | C4 | runbook §4 **G1–G3** 发版勾选与 release 门禁文档一致（v1.26） | ☐ |
 | C5 | 彩排 **G4↔§3** 联动说明已读（v1.27；真 §3 填后方勾选主表 #7） | ☐ |
 | C6 | `validate-runbook-triple-gate-rehearsal.py` 绿或 CI 等价（v1.33） | ☐ |
+| C7 | `validate-runbook-section3-defer-rollup-linkage.py` 绿（v1.47；defer 汇总↔三表同窗） | ☐ |
 | D | 工程彩排台账两方确认（见 `mysql-schema8-r21-engineering-pilot-ledger-2026-11-18.md`） | ☐ |
 | E | 彩排登记模板已填（非生产）见 `mysql-schema8-production-apply-rehearsal-log-template.md` | ☐ |
 

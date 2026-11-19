@@ -1,5 +1,5 @@
 {
-  "checklist_status": "R02_FIGMA_FIELD_CHECKLIST_V146",
+  "checklist_status": "R02_FIGMA_FIELD_CHECKLIST_V147",
   "design_entry_count": 17,
   "signoff": "REHEARSAL_PARTIAL",
   "entries": [
@@ -35,7 +35,12 @@
     {
       "design_id": "PAGE-F2-01",
       "fields": [
-        {"id": "create-template-row", "figma_ref": "F2-01/templates", "status": "pending"},
+        {
+          "id": "create-template-row",
+          "figma_ref": "F2-01/templates",
+          "status": "matched",
+          "evidence": "Chromium template copy flow v1.47"
+        },
         {"id": "app-list-density", "figma_ref": "F2-01/table", "status": "pending"}
       ]
     },
@@ -43,7 +48,12 @@
       "design_id": "PAGE-F2-02",
       "fields": [
         {"id": "four-config-groups", "figma_ref": "F2-02/tabs", "status": "pending"},
-        {"id": "publish-check-button", "figma_ref": "F2-02/publish-cta", "status": "pending"}
+        {
+          "id": "publish-check-button",
+          "figma_ref": "F2-02/publish-cta",
+          "status": "matched",
+          "evidence": "Chromium publish-review spot v1.47"
+        }
       ]
     },
     {
@@ -60,11 +70,25 @@
     },
     {
       "design_id": "CAND-08",
-      "fields": [{"id": "users-table", "figma_ref": "CAND-08/users", "status": "pending"}]
+      "fields": [
+        {
+          "id": "users-table",
+          "figma_ref": "CAND-08/users",
+          "status": "matched",
+          "evidence": "R18 governance-access v1.47"
+        }
+      ]
     },
     {
       "design_id": "CAND-09",
-      "fields": [{"id": "groups-table", "figma_ref": "CAND-09/groups", "status": "pending"}]
+      "fields": [
+        {
+          "id": "groups-table",
+          "figma_ref": "CAND-09/groups",
+          "status": "matched",
+          "evidence": "R18 governance-access-groups v1.45"
+        }
+      ]
     },
     {
       "design_id": "CAND-10",
@@ -76,7 +100,14 @@
     },
     {
       "design_id": "CAND-12",
-      "fields": [{"id": "grant-revoke-actions", "figma_ref": "CAND-12/grants", "status": "pending"}]
+      "fields": [
+        {
+          "id": "grant-revoke-actions",
+          "figma_ref": "CAND-12/grants",
+          "status": "matched",
+          "evidence": "Chromium grant isolation v1.47"
+        }
+      ]
     },
     {
       "design_id": "CAND-13",

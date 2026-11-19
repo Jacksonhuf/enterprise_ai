@@ -1,0 +1,12 @@
+{
+  "linkage_status": "RUNBOOK_SECTION3_DEFER_ROLLUP_V147",
+  "defer_rollup_fixture": "r18-headroom-defer-rollup-v1.44.json",
+  "three_table_window_fixture": "production-gate-three-table-window-v1.46.json",
+  "staging_team_fill_fixture": "staging-alert-import-ticket-team-filled-rehearsal-v147.json",
+  "runbook_checklist_hooks": ["C6", "main_table_8"],
+  "runbook_docs": [
+    "mysql-schema8-runbook-section3-triple-gate-linkage.md",
+    "mysql-schema8-runbook-production-fill-checklist.md"
+  ],
+  "notes": "§3 三联门与 headroom defer 汇总、三表同窗同窗验收链；非生产真签"
+}
