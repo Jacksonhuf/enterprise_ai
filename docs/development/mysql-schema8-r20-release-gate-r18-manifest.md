@@ -5,6 +5,7 @@
 1. `validate-r18-spot-manifest-sync.py`：**38** 抽页 `scripts-smoke.mjs` ↔ `r18-baselines/manifest.json` ↔ PNG 一致。
 2. `validate-r18-tolerance-tightening.py`（v1.23–v1.37 累积清单）与 `max-diff-ratio.json` 一致。
 3. 下载 artifact **`r18-spot-screenshots`**、**`r18-pixel-tolerance-audit`**、**`r18-elevated-headroom-audit`**、**`r18-implicit-default-spot-catalog`**（implicit **0**）、**`r18-tolerance-tightening-rollup`**（收口 v1.37）归档彩排。
-4. Headroom↔SLO 联动见 `mysql-schema8-r21-r18-headroom-slo-linkage.md`；`validate-r18-headroom-threshold-gate.py` 彩排告警（min **0.002**，`enforce_in_ci=false`）。
+4. Headroom↔SLO 联动见 `mysql-schema8-r21-r18-headroom-slo-linkage.md`；默认 `enforce_in_ci=false`；团队可用 `COGNARA_HEADROOM_ENFORCE_IN_CI=1`。
+5. 下载 **`r18-tolerance-tightening-candidates`**（v1.38 盘点；下一收紧轮输入）。
 
 团队真 **CONFIRMED/APPROVED** 仍走 `engineering-pilot-bundle-*.json` 与 exporter 评审清单，**Agent 不代填真签**。

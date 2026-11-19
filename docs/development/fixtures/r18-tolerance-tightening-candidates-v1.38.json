@@ -1,0 +1,17 @@
+{
+  "inventory_status": "TIGHTENING_CANDIDATE_INVENTORY_V138",
+  "candidate_order_policy": "tightest_measured_headroom_first",
+  "exclude_from_automatic_tighten": [
+    "chat-user-narrow",
+    "editor-channel-narrow",
+    "session-sidebar-narrow",
+    "assets-narrow"
+  ],
+  "pinned_priority_slugs": [
+    "services-narrow",
+    "forbidden-user-narrow",
+    "build-apps-narrow",
+    "chat-user-narrow"
+  ],
+  "notes": "Inventory only; no max-diff-ratio changes in v1.38"
+}

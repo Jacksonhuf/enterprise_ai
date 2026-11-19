@@ -17,3 +17,5 @@
 填妥彩排（v1.36）：`production-gate-ticket-crossref-filled-shape-example.json`（`FILLED_SHAPE_ONLY`，仍 REHEARSAL 工单号）。
 
 入库工单号格式（v1.37）：`production-gate-ticket-crossref-warehouse-shape-example.json`（`WAREHOUSE_TICKET_SHAPE_ONLY`，禁止 REHEARSAL 前缀）。
+
+联席 bundle（v1.38）：`mysql-schema8-r21-production-gate-crossref-bundle-joint.md`。

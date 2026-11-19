@@ -1,0 +1,8 @@
+{
+  "gate_status": "HEADROOM_THRESHOLD_TEAM_SWITCH_V138",
+  "min_headroom_ratio": 0.002,
+  "enforce_in_ci": false,
+  "team_enforce_env_var": "COGNARA_HEADROOM_ENFORCE_IN_CI",
+  "applies_when": "measured_headroom_present",
+  "notes": "Default CI alert-only; team sets env var to 1 for strict rehearsal workflow"
+}
