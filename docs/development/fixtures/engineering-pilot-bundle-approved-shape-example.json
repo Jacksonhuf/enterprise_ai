@@ -10,5 +10,6 @@
   "confirmed_by_platform": "PLACEHOLDER-NOT-SIGNED",
   "confirmed_by_sre": "PLACEHOLDER-NOT-SIGNED",
   "staging_import_ticket_ref": "STG-ALERT-REHEARSAL-SHAPE-ONLY",
+  "apply_change_ticket_ref": "CHG-REHEARSAL-SHAPE-ONLY",
   "notes": "APPROVED 彩排形状；非团队真签"
 }

@@ -104,7 +104,7 @@ go test -p 1 -race -count=1 ./internal/platform/api/ -run 'R20Schema8|R07Schema8
 | # | 项 | 通过 |
 |---|-----|------|
 | G1 | **F-G validation** 绿，且含 `validate-r18-spot-manifest-sync.py`（**38** 抽页） | ☐ |
-| G2 | 容差清单 **v1.23–v1.30** 与 `frontend/r18-baselines/max-diff-ratio.json` 一致 | ☐ |
+| G2 | 容差清单 **v1.23–v1.31** 与 `frontend/r18-baselines/max-diff-ratio.json` 一致 |
 | G3 | 归档 CI artifact：`r18-spot-screenshots`、`r18-pixel-tolerance-audit` | ☐ |
 | G4 | 上述默认门或完整 §4 列表已在隔离 DSN 跑通（`TestR20Schema8RunbookDefaultSmoke` 或等价） | ☐ |
 

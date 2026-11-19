@@ -13,6 +13,7 @@ REQUIRED = frozenset(
         "verified_by_platform",
         "runbook_smoke_summary_artifact",
         "runbook_smoke_summary_sha256",
+        "apply_change_ticket_ref",
         "notes",
     }
 )
@@ -31,6 +32,8 @@ def main() -> None:
         sha = data["runbook_smoke_summary_sha256"]
         if not sha or (sha != "PLACEHOLDER-NOT-PRODUCTION" and len(sha) != 64):
             raise SystemExit("ENTERED ledger requires smoke_summary_sha256 (PLACEHOLDER or 64 hex)")
+        if not data["apply_change_ticket_ref"]:
+            raise SystemExit("ENTERED ledger requires apply_change_ticket_ref")
     elif data["ledger_status"] != "PENDING_TEAM_ENTRY":
         raise SystemExit("ledger_status must be PENDING_TEAM_ENTRY or ENTERED")
     print(f"OK: production ledger ({data['ledger_status']})")
