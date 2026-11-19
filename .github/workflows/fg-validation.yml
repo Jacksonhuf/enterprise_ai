@@ -159,9 +159,11 @@ jobs:
           COGNARA_R18_PIXEL_MEASURED=/tmp/r18-pixel-gate-measured.json node scripts-verify-r18-baseline.mjs /tmp/r18-spots
         working-directory: frontend
       - run: python scripts/report-r18-elevated-headroom-audit.py /tmp/r18-pixel-gate-measured.json /tmp/r18-elevated-headroom-audit.json
+      - run: python scripts/validate-r18-headroom-threshold-gate.py /tmp/r18-elevated-headroom-audit.json
+      - run: python scripts/report-r18-implicit-default-spot-catalog.py /tmp/r18-implicit-default-spot-catalog.json
       - run: python scripts/report-r18-narrow-coverage.py /tmp/r18-spots/manifest.json /tmp/r18-narrow-coverage.json
       - run: python scripts/report-r18-pixel-tolerance-audit.py /tmp/r18-pixel-tolerance-audit.json
-      - run: python scripts/report-r18-tolerance-tightening-rollup.py /tmp/r18-tolerance-tightening-rollup-v1.35.json
+      - run: python scripts/report-r18-tolerance-tightening-rollup.py /tmp/r18-tolerance-tightening-rollup-v1.36.json
       - run: python scripts/validate-runbook-triple-gate-rehearsal.py
       - run: python scripts/validate-r18-tolerance-tightening.py docs/development/fixtures/r18-tolerance-tightening-v1.23.json
       - run: python scripts/validate-r18-tolerance-tightening.py docs/development/fixtures/r18-tolerance-tightening-v1.24.json
@@ -175,8 +177,11 @@ jobs:
       - run: python scripts/validate-r18-tolerance-tightening.py docs/development/fixtures/r18-tolerance-tightening-v1.33.json
       - run: python scripts/validate-r18-tolerance-tightening.py docs/development/fixtures/r18-tolerance-tightening-v1.34.json
       - run: python scripts/validate-r18-tolerance-tightening.py docs/development/fixtures/r18-tolerance-tightening-v1.35.json
+      - run: python scripts/validate-r18-tolerance-tightening.py docs/development/fixtures/r18-tolerance-tightening-v1.36.json
+      - run: python scripts/validate-r18-implicit-default-spot-catalog.py docs/development/fixtures/r18-implicit-default-spot-catalog-v1.36.json
       - run: python scripts/validate-production-gate-ticket-crossref.py docs/development/fixtures/production-gate-ticket-crossref-pending-template.json
       - run: python scripts/validate-production-gate-ticket-crossref.py docs/development/fixtures/production-gate-ticket-crossref-shape-example.json
+      - run: python scripts/validate-production-gate-ticket-crossref.py docs/development/fixtures/production-gate-ticket-crossref-filled-shape-example.json
       - run: python scripts/validate-pilot-ledger-bundle-ticket-sync.py docs/development/fixtures/engineering-pilot-bundle-confirmed-shape-example.json docs/development/fixtures/schema8-production-ledger-entered-shape-example.json
       - run: python scripts/validate-pilot-ticket-triple-sync.py docs/development/fixtures/engineering-pilot-bundle-approved-shape-example.json docs/development/fixtures/schema8-production-ledger-entered-shape-example.json docs/development/fixtures/staging-alert-import-ticket-closed-shape-example.json
       - run: python scripts/validate-production-gate-joint-shape.py docs/development/fixtures/production-gate-entered-exporter-joint-shape-example.json
@@ -208,7 +213,13 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: r18-tolerance-tightening-rollup
-          path: /tmp/r18-tolerance-tightening-rollup-v1.35.json
+          path: /tmp/r18-tolerance-tightening-rollup-v1.36.json
+      - name: Upload R18 implicit-default spot catalog
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: r18-implicit-default-spot-catalog
+          path: /tmp/r18-implicit-default-spot-catalog.json
       - name: Upload R18 spot screenshot baseline
         if: always()
         uses: actions/upload-artifact@v4

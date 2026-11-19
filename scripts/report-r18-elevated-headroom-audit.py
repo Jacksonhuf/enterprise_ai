@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Merge elevated tolerances with CI pixel gate measurements (v1.35)."""
+"""Merge elevated tolerances with CI pixel gate measurements (v1.36)."""
 import json
 import sys
 from pathlib import Path
@@ -52,8 +52,17 @@ def main() -> None:
         [r for r in rows if r.get("headroom") is not None],
         key=lambda r: r["headroom"],
     )[:5]
+    min_headroom = 0.002
+    threshold_alerts = [
+        r
+        for r in rows
+        if r.get("headroom") is not None and float(r["headroom"]) < min_headroom
+    ]
     payload = {
-        "audit_status": "ELEVATED_HEADROOM_V135",
+        "audit_status": "ELEVATED_HEADROOM_V136",
+        "headroom_threshold_ratio": min_headroom,
+        "headroom_threshold_alert_count": len(threshold_alerts),
+        "headroom_threshold_alerts": threshold_alerts,
         "default_max_diff_ratio": default,
         "spot_count": len(rows),
         "elevated_count": len(elevated),

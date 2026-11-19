@@ -1,0 +1,10 @@
+{
+  "crossref_status": "FILLED_SHAPE_ONLY",
+  "apply_change_ticket_ref": "CHG-REHEARSAL-SHAPE-ONLY",
+  "staging_import_ticket": "STG-ALERT-REHEARSAL-SHAPE-ONLY",
+  "bundle_fixture": "engineering-pilot-bundle-approved-shape-example.json",
+  "ledger_fixture": "schema8-production-ledger-entered-shape-example.json",
+  "staging_ticket_fixture": "staging-alert-import-ticket-closed-shape-example.json",
+  "exporter_review_fixture": "production-exporter-review-g4-appendix-shape-example.json",
+  "notes": "PENDING_TEAM_FILL 填妥工单号与 fixture 路径后的彩排分支；仍为 REHEARSAL-SHAPE-ONLY"
+}

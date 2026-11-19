@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate production gate ticket cross-reference table shape (v1.34)."""
+"""Validate production gate ticket cross-reference table shape (v1.36)."""
 import json
 import sys
 from pathlib import Path
@@ -18,8 +18,10 @@ def main() -> None:
         print("OK: gate ticket crossref (PENDING_TEAM_FILL template)")
         print(f"Validated {path}")
         return
-    if status != "CROSSREF_SHAPE_ONLY":
-        raise SystemExit("crossref_status must be CROSSREF_SHAPE_ONLY or PENDING_TEAM_FILL")
+    if status not in ("CROSSREF_SHAPE_ONLY", "FILLED_SHAPE_ONLY"):
+        raise SystemExit(
+            "crossref_status must be CROSSREF_SHAPE_ONLY, FILLED_SHAPE_ONLY, or PENDING_TEAM_FILL"
+        )
     change = xref.get("apply_change_ticket_ref", "")
     staging = xref.get("staging_import_ticket", "")
     if not change or not staging:

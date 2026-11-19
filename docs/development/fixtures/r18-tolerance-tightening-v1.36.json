@@ -1,0 +1,14 @@
+{
+  "disclaimer": "IMPLICIT_DEFAULT_CATALOG_V136",
+  "rationale": "Batch-1 implicit-default spots cataloged at explicit 2% hold (no tightening)",
+  "tightened": [
+    {"slug": "login-public", "from": 0.02, "to": 0.02},
+    {"slug": "build-apps-engineer", "from": 0.02, "to": 0.02},
+    {"slug": "assets-engineer", "from": 0.02, "to": 0.02},
+    {"slug": "settings-tenant", "from": 0.02, "to": 0.02},
+    {"slug": "governance-ops-settings", "from": 0.02, "to": 0.02},
+    {"slug": "settings-models", "from": 0.02, "to": 0.02},
+    {"slug": "governance-access", "from": 0.02, "to": 0.02},
+    {"slug": "governance-audit", "from": 0.02, "to": 0.02}
+  ]
+}

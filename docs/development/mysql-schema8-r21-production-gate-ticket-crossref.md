@@ -13,3 +13,5 @@
 与 `validate-runbook-triple-gate-rehearsal.py` 叠加；真签由团队实填。
 
 入库模板（v1.35）：`production-gate-ticket-crossref-pending-template.json`（`PENDING_TEAM_FILL`）。
+
+填妥彩排（v1.36）：`production-gate-ticket-crossref-filled-shape-example.json`（`FILLED_SHAPE_ONLY`，仍 REHEARSAL 工单号）。
