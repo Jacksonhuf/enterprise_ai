@@ -3,7 +3,7 @@
 set -euo pipefail
 LOG="${1:-/tmp/mixed-read-probe.log}"
 OUT="${2:-/tmp/mixed-read-probe-summary.json}"
-ROOT="$(dirname "$0")/.."
+ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT/backend/platform"
 export COGNARA_REQUIRE_MYSQL_TESTS=1
 go test -p 1 -race -count=1 -v ./internal/platform/api/ \
