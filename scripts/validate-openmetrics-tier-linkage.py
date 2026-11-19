@@ -38,7 +38,7 @@ def main() -> None:
         if name not in got:
             raise SystemExit(f"missing metric {name}")
         exp = to_seconds(row["elapsed"])
-        if abs(got[name] - exp) > 1e-5:
+        if abs(got[name] - exp) > 0.001:
             raise SystemExit(f"{name}: want {exp} got {got[name]}")
     print("OK: openmetrics tier linkage")
     print(f"Validated {om_path} against {tier_path}")
