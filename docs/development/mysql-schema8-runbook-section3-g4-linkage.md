@@ -6,8 +6,8 @@
 
 1. **§3** 填执行时间、DSN（无密码）、七步 plan/apply SHA256、变更单号（见 §3 表）。
 2. 在隔离或生产 DSN 上跑通 **§4 G4** 默认门（`TestR20Schema8RunbookDefaultSmoke` 或 CI artifact `runbook-smoke-summary-validation` 且 `status=pass`）。
-3. 勾选 `mysql-schema8-runbook-production-fill-checklist.md` 主表 **#1–#6** 与 **#7（G4 联动）**。
-4. 留存 smoke summary 的 artifact 名/SHA256 与 §3 变更单同一工单。
+3. 勾选 `mysql-schema8-runbook-production-fill-checklist.md` 主表 **#1–#7**。
+4. 留存 smoke summary 的 artifact 名/SHA256 与 §3 变更单同一工单；exporter 评审附录 A（v1.28）可挂同源 SHA256 形状。
 
 ## 彩排（非生产）
 

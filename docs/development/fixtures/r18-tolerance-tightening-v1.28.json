@@ -1,0 +1,8 @@
+{
+  "disclaimer": "TOLERANCE_TIGHTENING_V128",
+  "rationale": "Sixth pass; tighten app-detail/forbidden narrow (CI ~4.00% / ~3.86%)",
+  "tightened": [
+    {"slug": "app-detail-build-narrow", "from": 0.05, "to": 0.048},
+    {"slug": "forbidden-user-narrow", "from": 0.04, "to": 0.039}
+  ]
+}
