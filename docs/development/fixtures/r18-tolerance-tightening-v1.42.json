@@ -1,0 +1,11 @@
+{
+  "disclaimer": "ENGINEERING_INVENTORY_V142",
+  "rationale": "publish-review defer; subset narrow; ENTERED/CONFIRMED joint — no ratio edits",
+  "tightened": [],
+  "deferred_candidates": [
+    {
+      "slug": "publish-review",
+      "reason": "v1.39 hold at 0.031; see r18-publish-review-headroom-defer-v1.42.json"
+    }
+  ]
+}

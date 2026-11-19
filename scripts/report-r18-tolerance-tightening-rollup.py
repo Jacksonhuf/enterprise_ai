@@ -13,10 +13,10 @@ def main() -> None:
     out = (
         Path(sys.argv[1])
         if len(sys.argv) > 1
-        else Path("/tmp/r18-tolerance-tightening-rollup-v1.41.json")
+        else Path("/tmp/r18-tolerance-tightening-rollup-v1.42.json")
     )
     steps = []
-    for minor in range(23, 42):
+    for minor in range(23, 43):
         tag = f"v1.{minor}"
         path = FIXTURES / f"r18-tolerance-tightening-{tag}.json"
         if not path.exists():
@@ -34,8 +34,8 @@ def main() -> None:
     early = [s for s in steps if s["manifest"] in {f"v1.{m}" for m in range(23, 29)}]
     late = [s for s in steps if s not in early]
     payload = {
-        "rollup_status": "TIGHTENING_CLOSED_THROUGH_V141",
-        "closed_through_manifest": "v1.41",
+        "rollup_status": "TIGHTENING_CLOSED_THROUGH_V142",
+        "closed_through_manifest": "v1.42",
         "engineering_inventory_v138": "r18-tolerance-tightening-candidates-v1.38.json",
         "manifest_step_count": len(steps),
         "manifest_steps": steps,

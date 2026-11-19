@@ -18,5 +18,6 @@
   "applied_in_v1_40": ["chat-user"],
   "deferred_in_v1_40": ["forbidden-user-narrow"],
   "deferred_in_v1_41": ["build-apps-narrow"],
+  "deferred_in_v1_42": ["publish-review"],
   "notes": "Inventory only; no max-diff-ratio changes in v1.38"
 }

@@ -1,0 +1,9 @@
+{
+  "joint_status": "ENTERED_CONFIRMED_BUNDLE_JOINT_SHAPE_ONLY",
+  "apply_change_ticket_ref": "CHG-ENG-WAREHOUSE-REHEARSAL-0001",
+  "staging_import_ticket": "STG-IMPORT-WAREHOUSE-REHEARSAL-0001",
+  "bundle_fixture": "engineering-pilot-bundle-confirmed-warehouse-rehearsal-example.json",
+  "ledger_fixture": "schema8-production-ledger-entered-warehouse-rehearsal-example.json",
+  "staging_ticket_fixture": "staging-alert-import-ticket-warehouse-rehearsal-example.json",
+  "notes": "§3 台账 ENTERED 与 CONFIRMED bundle 同工单同桌验收形状"
+}

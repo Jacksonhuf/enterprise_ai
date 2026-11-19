@@ -1,0 +1,7 @@
+{
+  "defer_status": "PUBLISH_REVIEW_V139_HOLD",
+  "slug": "publish-review",
+  "locked_max_diff_ratio": 0.031,
+  "blocking_manifest": "r18-tolerance-tightening-v1.39.json",
+  "notes": "Further widen blocked by v1.39 hold; pair with services-narrow defer process"
+}

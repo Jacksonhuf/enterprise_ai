@@ -574,4 +574,8 @@ chat-user 容差；headroom 子集 enforce；签字名形状 bundle。见 test-r
 
 build-apps-narrow defer；subset + CONFIRMED bundle（无新容差 ratio）。见 test-report-v1.41.md 及 PR CI。
 
-**建议下一轮（v1.42+）**：publish-review v1.39 hold 下的 defer 文档；子集含 elevated narrow；ledger ENTERED 与 CONFIRMED bundle 工单同桌验收。
+### 第142轮增量（v1.42）
+
+publish-review defer；narrow subset；ENTERED/CONFIRMED 同桌。见 test-report-v1.42.md 及 PR CI。
+
+**建议下一轮（v1.43+）**：defer 汇总 artifact；staging 工单与 crossref 三表同窗；真签字段拒 SHAPE 验收脚本。
