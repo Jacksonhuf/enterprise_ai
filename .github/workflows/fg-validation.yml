@@ -75,7 +75,7 @@ jobs:
       - run: go build -C backend/platform -tags=nomsgpack -o /tmp/cognara-state-export ./cmd/cognara-state-export
       - name: Platform Go tests
         run: |
-          COGNARA_CONTRACT_CAPTURE=/tmp/cognara-contract.jsonl go test -C backend/platform -tags=nomsgpack -p 1 -race -count=1 \
+          COGNARA_CONTRACT_CAPTURE=/tmp/cognara-contract.jsonl go test -C backend/platform -tags=nomsgpack -p 1 -race -count=1 -v \
             ./internal/platform/... ./cmd/cognara-dev ./cmd/cognara-state-export ./cmd/cognara-state-import ./cmd/cognara-migrate-audit \
             ./cmd/cognara-migrate-applications ./cmd/cognara-migrate-grants ./cmd/cognara-migrate-sessions ./cmd/cognara-migrate-settings \
             ./cmd/cognara-migrate-exceptions ./cmd/cognara-migrate-usage 2>&1 | tee /tmp/platform-go-test.log
