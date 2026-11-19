@@ -312,6 +312,9 @@ try {
   {slug:'session-sidebar-narrow',path:'/apps',viewport:[390,844],identity:'demo-user',sessionSidebar:true},
   {slug:'build-releases-narrow',path:'/build/apps/channel-replenishment?tab=releases',viewport:[390,844],identity:'demo-engineer'},
   {slug:'governance-usage-narrow',path:'/governance/operations?tab=usage',viewport:[390,844]},
+  {slug:'governance-audit-narrow',path:'/governance/audit',viewport:[390,844]},
+  {slug:'governance-ops-settings-narrow',path:'/governance/operations?tab=settings',viewport:[390,844]},
+  {slug:'governance-ops-audit-narrow',path:'/governance/operations?tab=audit',viewport:[390,844]},
  ];
  for(const spot of r18Spots)await assertR18Spot(page,spot);
  if(r18CaptureDir)await writeFile(join(r18CaptureDir,'manifest.json'),JSON.stringify({generated_at:new Date().toISOString(),spots:r18Manifest},null,2)+'\n');

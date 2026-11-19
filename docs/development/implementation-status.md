@@ -575,3 +575,11 @@ CI `r18-spot-screenshots`；彩排登记模板。见 test-report-v1.04.md。
 ## 第119轮（v1.19）：tier 联动 OpenMetrics
 
 35 抽页。见 test-report-v1.19.md。
+
+## 第120轮（v1.20）：runbook OpenMetrics 与治理窄屏补齐
+
+38 抽页。见 test-report-v1.20.md。
+
+## 第119轮（v1.19）：tier 联动 OpenMetrics
+
+35 抽页。见 test-report-v1.19.md。
