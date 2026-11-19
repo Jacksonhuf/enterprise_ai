@@ -1,5 +1,5 @@
 {
-  "checklist_status": "R02_FIGMA_FIELD_CHECKLIST_V149",
+  "checklist_status": "R02_FIGMA_FIELD_CHECKLIST_V150",
   "design_entry_count": 17,
   "signoff": "REHEARSAL_PARTIAL",
   "entries": [
@@ -73,7 +73,14 @@
     },
     {
       "design_id": "CAND-05",
-      "fields": [{"id": "manage-header", "figma_ref": "CAND-05/header", "status": "pending"}]
+      "fields": [
+        {
+          "id": "manage-header",
+          "figma_ref": "CAND-05/header",
+          "status": "matched",
+          "evidence": "R18 build-apps shell v1.50"
+        }
+      ]
     },
     {
       "design_id": "CAND-06",
@@ -81,7 +88,14 @@
     },
     {
       "design_id": "CAND-07",
-      "fields": [{"id": "release-history-row", "figma_ref": "CAND-07/history", "status": "pending"}]
+      "fields": [
+        {
+          "id": "release-history-row",
+          "figma_ref": "CAND-07/history",
+          "status": "matched",
+          "evidence": "Chromium build-releases spot v1.50"
+        }
+      ]
     },
     {
       "design_id": "CAND-08",

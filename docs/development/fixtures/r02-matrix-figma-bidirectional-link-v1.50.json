@@ -1,0 +1,11 @@
+{
+  "link_status": "R02_MATRIX_FIGMA_BIDIRECTIONAL_V150",
+  "matrix_fixture": "r02-page-api-acceptance-matrix-v1.45.json",
+  "figma_checklist_fixture": "r02-figma-field-checklist-v1.44.json",
+  "rules": {
+    "checklist_design_ids_must_match_matrix": true,
+    "matrix_entries_with_figma_gap_need_checklist_field": true,
+    "matched_fields_must_reference_matrix_design_id": true
+  },
+  "notes": "工程双向映射；不等同产品 Figma 签字"
+}

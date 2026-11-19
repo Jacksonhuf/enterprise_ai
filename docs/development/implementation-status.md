@@ -680,6 +680,10 @@ runbook C7 linkage；Figma 8 matched。见 test-report-v1.47.md。
 
 matrix V149；RUNBOOK defer V149。见 test-report-v1.49.md。
 
+## 第150轮（v1.50）：matrix↔Figma 双向与真填演练表
+
+首条真填演练 JSON；Figma V150。见 test-report-v1.50.md。
+
 ## 第119轮（v1.19）：tier 联动 OpenMetrics
 
 35 抽页。见 test-report-v1.19.md。

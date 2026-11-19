@@ -606,4 +606,8 @@ team-fill crossref；生产台账首条真填模板；Figma 11×matched（半数
 
 defer V149→V148 窗口；R02 gap closeout×4；Figma 13 matched。见 test-report-v1.49.md 及 PR CI。
 
-**建议下一轮（v1.50+）**：matrix V149 与 Figma 双向映射校验；runbook 首条真填演练表；Figma 14+ matched。
+### 第150轮增量（v1.50）
+
+matrix↔Figma 双向链；runbook 首条真填演练表；Figma 15 matched。见 test-report-v1.50.md 及 PR CI。
+
+**建议下一轮（v1.51+）**：gap closeout 与 Figma matched 交叉校验；生产 log 形状与演练表行对齐；Figma 16+ matched。
