@@ -1,0 +1,8 @@
+{
+  "window_status": "THREE_TABLE_WINDOW_SYNC_V146",
+  "release_window_id": "WIN-WAREHOUSE-REHEARSAL-0146",
+  "crossref_fixture": "production-gate-ticket-crossref-three-table-window-v146-shape-example.json",
+  "entered_confirmed_joint_fixture": "production-gate-entered-confirmed-bundle-joint-shape-example.json",
+  "tables": ["engineering-pilot-bundle", "schema8-production-ledger", "staging-import-ticket"],
+  "notes": "Crossref row is the fourth index; all share tickets + window id"
+}

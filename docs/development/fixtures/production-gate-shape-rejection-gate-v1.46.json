@@ -1,0 +1,10 @@
+{
+  "gate_status": "SHAPE_REJECTION_GATE_V146",
+  "reject_fixtures": [
+    "engineering-pilot-bundle-invalid-shape-signatory-v146.json"
+  ],
+  "accept_fixtures": [
+    "engineering-pilot-bundle-confirmed-warehouse-rehearsal-example.json"
+  ],
+  "notes": "CI ensures prod-signature claim cannot carry SHAPE/PLACEHOLDER markers"
+}

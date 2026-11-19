@@ -664,6 +664,10 @@ narrow subset；ENTERED/CONFIRMED joint。见 test-report-v1.42.md。
 
 41 抽页；matrix v1.45；Figma enter-app-cta matched。见 test-report-v1.45.md。
 
+## 第146轮（v1.46）：三表同窗与拒 SHAPE 真签门
+
+`THREE_TABLE_WINDOW_SYNC_V146`；shape-rejection gate。见 test-report-v1.46.md。
+
 ## 第119轮（v1.19）：tier 联动 OpenMetrics
 
 35 抽页。见 test-report-v1.19.md。
