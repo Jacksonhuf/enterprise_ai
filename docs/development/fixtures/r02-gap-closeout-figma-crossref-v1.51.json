@@ -1,0 +1,12 @@
+{
+  "crossref_status": "R02_GAP_CLOSEOUT_FIGMA_V151",
+  "closeout_fixture": "r02-page-api-gap-closeout-v1.49.json",
+  "figma_checklist_fixture": "r02-figma-field-checklist-v1.44.json",
+  "required_matched_fields": {
+    "CAND-09": ["groups-table"],
+    "CAND-10": ["clients-table"],
+    "CAND-11": ["roles-table"],
+    "CAND-14": ["services-status-list"]
+  },
+  "notes": "closeout 项须有对应 Figma engineering matched 字段"
+}

@@ -1,5 +1,5 @@
 {
-  "checklist_status": "R02_FIGMA_FIELD_CHECKLIST_V150",
+  "checklist_status": "R02_FIGMA_FIELD_CHECKLIST_V151",
   "design_entry_count": 17,
   "signoff": "REHEARSAL_PARTIAL",
   "entries": [
@@ -84,7 +84,14 @@
     },
     {
       "design_id": "CAND-06",
-      "fields": [{"id": "detail-meta", "figma_ref": "CAND-06/meta", "status": "pending"}]
+      "fields": [
+        {
+          "id": "detail-meta",
+          "figma_ref": "CAND-06/meta",
+          "status": "matched",
+          "evidence": "R18 app-detail-build v1.51"
+        }
+      ]
     },
     {
       "design_id": "CAND-07",
