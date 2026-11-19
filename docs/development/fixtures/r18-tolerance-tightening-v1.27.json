@@ -1,0 +1,8 @@
+{
+  "disclaimer": "TOLERANCE_TIGHTENING_V127",
+  "rationale": "Fifth pass; tighten session/publish narrow (CI publish 0%, session ~4.895%)",
+  "tightened": [
+    {"slug": "publish-review-narrow", "from": 0.045, "to": 0.043},
+    {"slug": "session-sidebar-narrow", "from": 0.06, "to": 0.058}
+  ]
+}

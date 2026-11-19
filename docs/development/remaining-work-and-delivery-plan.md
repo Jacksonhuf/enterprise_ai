@@ -497,3 +497,9 @@ OpenMetrics CI snapshot 全 6 指标联动验收；R18 像素容差审计 artifa
 第四轮 chat/editor 窄屏容差；runbook §4 G1–G4 发版勾选与彩排 C4。见 test-report-v1.26.md 及 PR CI。
 
 **建议下一轮（v1.27+）**：第五轮容差（session/publish 窄屏）；团队真 APPROVED/ENTERED；G4 与生产 §3 实填联动验收。
+
+### 第127轮增量（v1.27）
+
+第五轮 session/publish 窄屏容差；§3↔G4 联动文档与清单 #7/C5。见 test-report-v1.27.md 及 PR CI。
+
+**建议下一轮（v1.28+）**：第六轮容差（app-detail/forbidden 窄屏）；台账 ENTERED 真值；G4 artifact SHA256 写入 exporter 评审附录。

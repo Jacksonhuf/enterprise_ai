@@ -63,6 +63,7 @@ SELECT schema_version FROM cognara_fg_state WHERE id=1;
 | 变更单号 | |
 | SLO 签核 | 见 `mysql-schema8-r21-slo-draft.md` §3 |
 | 首条实填验收 | 见 `mysql-schema8-runbook-production-fill-checklist.md` |
+| §4 G4 烟雾证据 | 默认门日志或 `runbook-smoke-summary.json` artifact SHA256（与变更单同工单；见 `mysql-schema8-runbook-section3-g4-linkage.md`） |
 
 ## 4. 发布后烟雾（与 R20 测试对齐）
 
@@ -103,7 +104,7 @@ go test -p 1 -race -count=1 ./internal/platform/api/ -run 'R20Schema8|R07Schema8
 | # | 项 | 通过 |
 |---|-----|------|
 | G1 | **F-G validation** 绿，且含 `validate-r18-spot-manifest-sync.py`（**38** 抽页） | ☐ |
-| G2 | 容差清单 **v1.23–v1.26** 与 `frontend/r18-baselines/max-diff-ratio.json` 一致 | ☐ |
+| G2 | 容差清单 **v1.23–v1.27** 与 `frontend/r18-baselines/max-diff-ratio.json` 一致 | ☐ |
 | G3 | 归档 CI artifact：`r18-spot-screenshots`、`r18-pixel-tolerance-audit` | ☐ |
 | G4 | 上述默认门或完整 §4 列表已在隔离 DSN 跑通（`TestR20Schema8RunbookDefaultSmoke` 或等价） | ☐ |
 

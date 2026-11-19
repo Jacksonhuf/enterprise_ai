@@ -588,6 +588,10 @@ APPROVED 形状；`mysql-schema8-r20-release-gate-r18-manifest.md`。见 test-re
 
 editor 窄屏（chat 保持）；§4 G1–G4。见 test-report-v1.26.md。
 
+## 第127轮（v1.27）：第五轮容差与 §3↔G4 联动
+
+session/publish 窄屏；`mysql-schema8-runbook-section3-g4-linkage.md`。见 test-report-v1.27.md。
+
 ## 第119轮（v1.19）：tier 联动 OpenMetrics
 
 35 抽页。见 test-report-v1.19.md。

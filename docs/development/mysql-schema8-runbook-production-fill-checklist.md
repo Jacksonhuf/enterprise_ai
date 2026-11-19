@@ -10,6 +10,7 @@
 | 4 | §4 烟雾含混合只读探针（v0.95）及 public/SSE 项（v0.96）或同等手工检查 | ☐ |
 | 5 | 回退决策（备份路径或快照 SHA256）与批准人 | ☐ |
 | 6 | `mysql-schema8-r21-slo-draft.md` 签核或明确「待签核」 | ☐ |
+| 7 | §4 **G4** 默认门证据与 §3 变更单同工单（见 `mysql-schema8-runbook-section3-g4-linkage.md`） | ☐ |
 
 **彩排对照（非生产）：**§4 默认门为 `TestR20Schema8RunbookDefaultSmoke`（v1.00）或 CI **F-G runbook default smoke**（v1.01）。步骤见 `mysql-schema8-runbook-first-fill-guide-v1.01.md`。SLO：试点 `mysql-schema8-r21-slo-pilot-signoff.md`；正式签字 `mysql-schema8-r21-slo-signoff-record.md`。
 
@@ -23,7 +24,8 @@
 | C2 | CI artifact `r18-spot-screenshots` 已与 manifest 核对（v1.04） | ☐ |
 | C3 | R18 像素基线门绿（v1.05，`scripts-verify-r18-baseline.mjs`） | ☐ |
 | C4 | runbook §4 **G1–G3** 发版勾选与 release 门禁文档一致（v1.26） | ☐ |
+| C5 | 彩排 **G4↔§3** 联动说明已读（v1.27；真 §3 填后方勾选主表 #7） | ☐ |
 | D | 工程彩排台账两方确认（见 `mysql-schema8-r21-engineering-pilot-ledger-2026-11-18.md`） | ☐ |
 | E | 彩排登记模板已填（非生产）见 `mysql-schema8-production-apply-rehearsal-log-template.md` | ☐ |
 
-生产 §3 实填后，方勾选上文主表 #1–#6。
+生产 §3 实填后，方勾选上文主表 #1–#7。
