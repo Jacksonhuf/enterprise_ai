@@ -25,8 +25,9 @@ def main() -> None:
     if status not in (
         "R02_PAGE_API_ACCEPTANCE_MATRIX_V143",
         "R02_PAGE_API_ACCEPTANCE_MATRIX_V145",
+        "R02_PAGE_API_ACCEPTANCE_MATRIX_V149",
     ):
-        raise SystemExit("matrix_status must be R02_PAGE_API_ACCEPTANCE_MATRIX_V143 or V145")
+        raise SystemExit("matrix_status must be V143, V145, or V149")
     entries = matrix.get("entries", [])
     expected = int(matrix.get("design_entry_count", 17))
     if len(entries) != expected:

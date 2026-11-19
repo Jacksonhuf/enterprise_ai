@@ -198,6 +198,8 @@ jobs:
       - run: python scripts/validate-production-gate-shape-rejection-gate.py docs/development/fixtures/production-gate-shape-rejection-gate-v1.46.json
       - run: python scripts/validate-staging-team-filled-rehearsal.py docs/development/fixtures/staging-alert-import-ticket-team-filled-rehearsal-v147.json
       - run: python scripts/validate-runbook-section3-defer-rollup-linkage.py docs/development/fixtures/runbook-section3-defer-rollup-linkage-v1.47.json
+      - run: python scripts/validate-runbook-section3-defer-rollup-linkage.py docs/development/fixtures/runbook-section3-defer-rollup-linkage-v1.49.json
+      - run: python scripts/validate-r02-page-api-gap-closeout.py docs/development/fixtures/r02-page-api-gap-closeout-v1.49.json
       - run: python scripts/validate-r18-implicit-default-spot-catalog.py docs/development/fixtures/r18-implicit-default-spot-catalog-v1.37.json
       - run: python scripts/validate-r18-headroom-slo-linkage.py docs/development/fixtures/r18-headroom-slo-linkage-v1.37.json
       - run: python scripts/validate-r18-tolerance-tightening-candidates.py docs/development/fixtures/r18-tolerance-tightening-candidates-v1.38.json

@@ -1,0 +1,14 @@
+{
+  "linkage_status": "RUNBOOK_SECTION3_DEFER_ROLLUP_V149",
+  "defer_rollup_fixture": "r18-headroom-defer-rollup-v1.44.json",
+  "three_table_window_fixture": "production-gate-three-table-window-v1.48.json",
+  "crossref_fixture": "production-gate-ticket-crossref-team-fill-staging-v148.json",
+  "first_fill_ledger_template": "schema8-production-ledger-first-production-fill-template-v1.48.json",
+  "runbook_checklist_hooks": ["C6", "C7", "main_table_8"],
+  "runbook_docs": [
+    "mysql-schema8-runbook-section3-defer-rollup-linkage-v1.47.md",
+    "mysql-schema8-production-ledger-first-fill-guide-v1.48.md",
+    "mysql-schema8-runbook-production-fill-checklist.md"
+  ],
+  "notes": "§3 defer 链升级 V148 team-fill 三表同窗 + 首条台账模板引用"
+}

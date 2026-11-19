@@ -676,6 +676,10 @@ runbook C7 linkage；Figma 8 matched。见 test-report-v1.47.md。
 
 `THREE_TABLE_WINDOW_SYNC_V148`；Figma 半数 matched。见 test-report-v1.48.md。
 
+## 第149轮（v1.49）：defer V148 链与 R02 gap 收口
+
+matrix V149；RUNBOOK defer V149。见 test-report-v1.49.md。
+
 ## 第119轮（v1.19）：tier 联动 OpenMetrics
 
 35 抽页。见 test-report-v1.19.md。

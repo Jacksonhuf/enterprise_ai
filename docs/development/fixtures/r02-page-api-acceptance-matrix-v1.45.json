@@ -1,5 +1,5 @@
 {
-  "matrix_status": "R02_PAGE_API_ACCEPTANCE_MATRIX_V143",
+  "matrix_status": "R02_PAGE_API_ACCEPTANCE_MATRIX_V149",
   "supersedes_note": "Expands section-4 scope matrix with routes, views, R18 slugs, and explicit gaps; does not claim R02/R18 closeout.",
   "design_entry_count": 17,
   "r18_spot_count_expected": 41,
@@ -115,8 +115,8 @@
       "r18_slugs": ["governance-access", "governance-grants-narrow"],
       "primary_apis": ["GET /api/v1/cognitive/governance/clients"],
       "link_mode": "demo_fixed_list",
-      "api_evidence": ["Chromium clients tab via grants spot"],
-      "gaps": ["REAL_IDENTITY", "TAB_PIXEL_GAP"]
+      "api_evidence": ["Chromium clients tab via grants spot", "R02 gap closeout TAB_PIXEL v1.49"],
+      "gaps": ["REAL_IDENTITY", "FIGMA_SIGNOFF"]
     },
     {
       "design_id": "CAND-11",
@@ -231,7 +231,7 @@
   "r18_spot_automation": {
     "chromium_smoke": true,
     "pixel_baseline_ci": true,
-    "spot_count": 38,
+    "spot_count": 41,
     "manifest_sync_script": "scripts/validate-r18-spot-manifest-sync.py"
   }
 }
