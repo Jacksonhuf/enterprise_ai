@@ -11,14 +11,20 @@ FX = ROOT / "docs/development/fixtures"
 def main() -> None:
     path = Path(sys.argv[1])
     win = json.loads(path.read_text())
-    if win.get("window_status") != "THREE_TABLE_WINDOW_SYNC_V146":
-        raise SystemExit("window_status must be THREE_TABLE_WINDOW_SYNC_V146")
+    window_status = win.get("window_status")
+    if window_status not in ("THREE_TABLE_WINDOW_SYNC_V146", "THREE_TABLE_WINDOW_SYNC_V148"):
+        raise SystemExit("window_status must be THREE_TABLE_WINDOW_SYNC_V146 or V148")
+    xref_status_by_window = {
+        "THREE_TABLE_WINDOW_SYNC_V146": "THREE_TABLE_WINDOW_SHAPE_V146",
+        "THREE_TABLE_WINDOW_SYNC_V148": "TEAM_FILL_STAGING_V148",
+    }
     window_id = win.get("release_window_id", "")
     if not window_id:
         raise SystemExit("release_window_id required")
     xref = json.loads((FX / win["crossref_fixture"]).read_text())
-    if xref.get("crossref_status") != "THREE_TABLE_WINDOW_SHAPE_V146":
-        raise SystemExit("crossref must be THREE_TABLE_WINDOW_SHAPE_V146")
+    want_xref = xref_status_by_window[window_status]
+    if xref.get("crossref_status") != want_xref:
+        raise SystemExit(f"crossref must be {want_xref}")
     if xref.get("release_window_id") != window_id:
         raise SystemExit("crossref release_window_id mismatch")
     joint = json.loads((FX / win["entered_confirmed_joint_fixture"]).read_text())

@@ -18,4 +18,6 @@
 
 入库工单号格式（v1.37）：`production-gate-ticket-crossref-warehouse-shape-example.json`（`WAREHOUSE_TICKET_SHAPE_ONLY`，禁止 REHEARSAL 前缀）。
 
+team-fill staging（v1.48）：`production-gate-ticket-crossref-team-fill-staging-v148.json`；校验 `validate-production-gate-ticket-crossref-team-fill.py`。
+
 联席 bundle（v1.38）：`mysql-schema8-r21-production-gate-crossref-bundle-joint.md`。

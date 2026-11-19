@@ -1,0 +1,11 @@
+{
+  "ledger_status": "PENDING_TEAM_ENTRY",
+  "apply_runbook_section": "3",
+  "production_cluster_id": "",
+  "applied_at_cst": "",
+  "verified_by_platform": "",
+  "runbook_smoke_summary_artifact": "runbook-smoke-summary-validation",
+  "runbook_smoke_summary_sha256": "",
+  "apply_change_ticket_ref": "",
+  "notes": "FIRST_PRODUCTION_FILL_TEMPLATE_V148 — 生产 §3 首条真填前；与 crossref team-fill 彩排对照"
+}

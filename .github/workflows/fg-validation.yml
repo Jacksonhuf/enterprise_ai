@@ -192,6 +192,9 @@ jobs:
       - run: python scripts/validate-r18-publish-review-headroom-defer.py docs/development/fixtures/r18-publish-review-headroom-defer-v1.42.json
       - run: python scripts/validate-production-gate-entered-confirmed-bundle-joint.py docs/development/fixtures/production-gate-entered-confirmed-bundle-joint-shape-example.json
       - run: python scripts/validate-production-gate-three-table-window.py docs/development/fixtures/production-gate-three-table-window-v1.46.json
+      - run: python scripts/validate-production-gate-ticket-crossref-team-fill.py docs/development/fixtures/production-gate-ticket-crossref-team-fill-staging-v148.json
+      - run: python scripts/validate-production-gate-three-table-window.py docs/development/fixtures/production-gate-three-table-window-v1.48.json
+      - run: python scripts/validate-schema8-production-ledger-first-fill-template.py docs/development/fixtures/schema8-production-ledger-first-production-fill-template-v1.48.json
       - run: python scripts/validate-production-gate-shape-rejection-gate.py docs/development/fixtures/production-gate-shape-rejection-gate-v1.46.json
       - run: python scripts/validate-staging-team-filled-rehearsal.py docs/development/fixtures/staging-alert-import-ticket-team-filled-rehearsal-v147.json
       - run: python scripts/validate-runbook-section3-defer-rollup-linkage.py docs/development/fixtures/runbook-section3-defer-rollup-linkage-v1.47.json
