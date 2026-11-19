@@ -1,0 +1,36 @@
+{
+  "rollup_status": "HEADROOM_DEFER_ROLLUP_V144",
+  "closed_through_manifest": "v1.42",
+  "defer_records": [
+    {
+      "slug": "services-narrow",
+      "locked_max_diff_ratio": 0.03,
+      "blocking_manifest": "r18-tolerance-tightening-v1.34.json",
+      "fixture": "r18-services-narrow-headroom-defer-v1.39.json",
+      "introduced_round": "v1.39"
+    },
+    {
+      "slug": "forbidden-user-narrow",
+      "locked_max_diff_ratio": 0.039,
+      "blocking_manifest": "r18-tolerance-tightening-v1.28.json",
+      "fixture": "r18-forbidden-user-narrow-headroom-defer-v1.40.json",
+      "introduced_round": "v1.40"
+    },
+    {
+      "slug": "build-apps-narrow",
+      "locked_max_diff_ratio": 0.034,
+      "blocking_manifest": "r18-tolerance-tightening-v1.29.json",
+      "fixture": "r18-build-apps-narrow-headroom-defer-v1.41.json",
+      "introduced_round": "v1.41"
+    },
+    {
+      "slug": "publish-review",
+      "locked_max_diff_ratio": 0.031,
+      "blocking_manifest": "r18-tolerance-tightening-v1.39.json",
+      "fixture": "r18-publish-review-headroom-defer-v1.42.json",
+      "introduced_round": "v1.42",
+      "notes": "Wide publish-review slug; narrow uses separate ratio in max-diff"
+    }
+  ],
+  "notes": "Single artifact for all headroom widen blocks; amend archival manifest to relax"
+}
