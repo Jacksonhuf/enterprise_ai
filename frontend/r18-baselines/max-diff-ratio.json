@@ -1,5 +1,13 @@
 {
   "default": 0.02,
+  "login-public": 0.02,
+  "build-apps-engineer": 0.02,
+  "assets-engineer": 0.02,
+  "settings-tenant": 0.02,
+  "governance-ops-settings": 0.02,
+  "settings-models": 0.02,
+  "governance-access": 0.02,
+  "governance-audit": 0.02,
   "publish-review": 0.03,
   "chat-user": 0.025,
   "services-narrow": 0.03,

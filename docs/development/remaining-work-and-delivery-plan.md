@@ -550,4 +550,8 @@ services-narrow 锁定清单；rollup 分段；变更单交叉表形状。见 te
 
 apps / ops-exceptions-narrow 编目；像素门 measured + headroom artifact；交叉表入库模板。见 test-report-v1.35.md 及 PR CI。
 
-**建议下一轮（v1.36+）**：implicit-default spot 批量编目策略；headroom 阈值告警门；真签交叉表 PENDING→FILLED 校验分支。
+### 第136轮增量（v1.36）
+
+batch-1 implicit-default 编目；headroom 阈值门；交叉表 `FILLED_SHAPE_ONLY`。见 test-report-v1.36.md 及 PR CI。
+
+**建议下一轮（v1.37+）**：batch-2 八 spot 编目；headroom 阈值与 SLO 联动文档；交叉表真工单号（非 REHEARSAL）入库验收。

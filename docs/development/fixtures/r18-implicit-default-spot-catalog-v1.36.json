@@ -1,0 +1,37 @@
+{
+  "catalog_status": "IMPLICIT_DEFAULT_BATCH_POLICY_V136",
+  "default_max_diff_ratio": 0.02,
+  "batch_size_target": 8,
+  "batches": [
+    {
+      "batch_id": "batch-1-wide-login-settings",
+      "manifest_version": "v1.36",
+      "slugs": [
+        "login-public",
+        "build-apps-engineer",
+        "assets-engineer",
+        "settings-tenant",
+        "governance-ops-settings",
+        "settings-models",
+        "governance-access",
+        "governance-audit"
+      ],
+      "notes": "First implicit-default catalog pass; explicit 0.02 hold in max-diff-ratio.json"
+    },
+    {
+      "batch_id": "batch-2-wide-remaining",
+      "manifest_version": "v1.37+",
+      "slugs": [
+        "forbidden-user",
+        "editor-channel",
+        "app-detail-build",
+        "session-sidebar",
+        "build-releases",
+        "governance-usage",
+        "governance-ops-exceptions",
+        "governance-ops-audit"
+      ],
+      "notes": "Reserved for next catalog pass; remains implicit until manifest lands"
+    }
+  ]
+}

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Roll up R18 tolerance tightening manifests into segmented artifact (v1.35)."""
+"""Roll up R18 tolerance tightening manifests into segmented artifact (v1.36)."""
 import json
 import sys
 from pathlib import Path
@@ -13,10 +13,10 @@ def main() -> None:
     out = (
         Path(sys.argv[1])
         if len(sys.argv) > 1
-        else Path("/tmp/r18-tolerance-tightening-rollup-v1.35.json")
+        else Path("/tmp/r18-tolerance-tightening-rollup-v1.36.json")
     )
     steps = []
-    for minor in range(23, 36):
+    for minor in range(23, 37):
         tag = f"v1.{minor}"
         path = FIXTURES / f"r18-tolerance-tightening-{tag}.json"
         if not path.exists():
@@ -34,8 +34,8 @@ def main() -> None:
     early = [s for s in steps if s["manifest"] in {f"v1.{m}" for m in range(23, 29)}]
     late = [s for s in steps if s not in early]
     payload = {
-        "rollup_status": "TIGHTENING_CLOSED_THROUGH_V135",
-        "closed_through_manifest": "v1.35",
+        "rollup_status": "TIGHTENING_CLOSED_THROUGH_V136",
+        "closed_through_manifest": "v1.36",
         "manifest_step_count": len(steps),
         "manifest_steps": steps,
         "archive_segments": [
@@ -45,7 +45,7 @@ def main() -> None:
                 "manifests": [s["manifest"] for s in early],
             },
             {
-                "label": "v1.29-v1.35",
+                "label": "v1.29-v1.36",
                 "manifest_step_count": len(late),
                 "manifests": [s["manifest"] for s in late],
             },

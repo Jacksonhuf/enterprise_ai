@@ -624,6 +624,10 @@ rollup 分段；`validate-production-gate-ticket-crossref.py`。见 test-report-
 
 像素门 measured；交叉表入库模板。见 test-report-v1.35.md。
 
+## 第136轮（v1.36）：implicit-default 批量编目与 headroom 门
+
+batch-1 显式 2%；阈值门与 FILLED 交叉表。见 test-report-v1.36.md。
+
 ## 第119轮（v1.19）：tier 联动 OpenMetrics
 
 35 抽页。见 test-report-v1.19.md。
