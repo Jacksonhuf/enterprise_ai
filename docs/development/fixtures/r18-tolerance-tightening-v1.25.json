@@ -1,8 +1,7 @@
 {
   "disclaimer": "TOLERANCE_TIGHTENING_V125",
-  "rationale": "Third pass after manifest gate; nudge releases/usage narrow (CI headroom retained)",
+  "rationale": "Third pass after manifest gate; nudge build-releases narrow only (v1.23 governance-usage gate preserved)",
   "tightened": [
-    {"slug": "build-releases-narrow", "from": 0.045, "to": 0.043},
-    {"slug": "governance-usage-narrow", "from": 0.025, "to": 0.024}
+    {"slug": "build-releases-narrow", "from": 0.045, "to": 0.043}
   ]
 }

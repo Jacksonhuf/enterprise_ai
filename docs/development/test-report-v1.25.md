@@ -2,7 +2,7 @@
 
 ## 变更摘要
 
-- `r18-tolerance-tightening-v1.25.json`（build-releases / governance-usage 窄屏）。
+- `r18-tolerance-tightening-v1.25.json`（`build-releases-narrow`）。
 - Exporter **`APPROVED_SHAPE_ONLY`**、彩排 bundle **`APPROVED_SHAPE_ONLY`** 样例。
 - `mysql-schema8-r20-release-gate-r18-manifest.md`。
 
