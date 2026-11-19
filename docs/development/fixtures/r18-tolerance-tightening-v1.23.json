@@ -1,0 +1,8 @@
+{
+  "disclaimer": "TOLERANCE_TIGHTENING_V123",
+  "rationale": "Green CI pixel gate; shrink headroom on governance narrow ops shells",
+  "tightened": [
+    {"slug": "governance-usage-narrow", "from": 0.03, "to": 0.025},
+    {"slug": "governance-audit-narrow", "from": 0.03, "to": 0.025}
+  ]
+}

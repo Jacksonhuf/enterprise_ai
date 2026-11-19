@@ -160,6 +160,7 @@ jobs:
         working-directory: frontend
       - run: python scripts/report-r18-narrow-coverage.py /tmp/r18-spots/manifest.json /tmp/r18-narrow-coverage.json
       - run: python scripts/report-r18-pixel-tolerance-audit.py /tmp/r18-pixel-tolerance-audit.json
+      - run: python scripts/validate-r18-tolerance-tightening.py
       - name: Upload R18 narrow coverage report
         if: always()
         uses: actions/upload-artifact@v4

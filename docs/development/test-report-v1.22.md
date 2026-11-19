@@ -18,5 +18,5 @@ python scripts/report-r18-pixel-tolerance-audit.py /tmp/r18-pt-audit.json
 
 ## Not in scope
 
-- 团队真 CONFIRMED / ENTERED 签字名（仍为 PLACEHOLDER 形状样例）。
+- 团队真 CONFIRMED / ENTERED 签字名（仍为 PLACEHOLDER 形状样例）；生产 exporter 评审见 v1.23 清单。
 - 生产 scrape 与正式台账入账。
