@@ -455,3 +455,9 @@ CONFIRMED 彩排形状；OpenMetrics loopback mock；detail/session 窄屏 R18�
 tier→OpenMetrics 渲染与校验；build-releases/governance-usage 窄屏。见 test-report-v1.19.md 及 PR CI。
 
 **建议下一轮（v1.20+）**：真 CONFIRMED/ENTERED；runbook 读阶段写入 mock；R18 governance-audit/ops 窄屏补齐。
+
+### 第120轮增量（v1.20）
+
+runbook read→OpenMetrics CI snapshot；治理 audit/ops 窄屏 R18。见 test-report-v1.20.md 及 PR CI。
+
+**建议下一轮（v1.21+）**：mixed-read 写入 snapshot；团队真台账；R18 全站窄屏覆盖率盘点或阈值收紧。
