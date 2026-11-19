@@ -35,8 +35,12 @@ def main() -> None:
     if data["bundle_status"] == "CONFIRMED":
         if not data["confirmed_by_platform"] or not data["confirmed_by_sre"]:
             raise SystemExit("CONFIRMED bundle requires both confirmations")
+    elif data["bundle_status"] in ("APPROVED_SHAPE_ONLY",):
+        pass
     elif data["bundle_status"] != "PENDING_TEAM_CONFIRM":
-        raise SystemExit("bundle_status must be PENDING_TEAM_CONFIRM or CONFIRMED")
+        raise SystemExit(
+            "bundle_status must be PENDING_TEAM_CONFIRM, CONFIRMED, or APPROVED_SHAPE_ONLY"
+        )
     print(f"OK: engineering pilot bundle ({data['bundle_status']})")
     print(f"Validated {path}")
 
