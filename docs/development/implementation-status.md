@@ -608,6 +608,10 @@ settings 窄屏（assets 保持）；`staging_import_ticket_ref`。见 test-repo
 
 governance-ops 窄屏；`validate-pilot-ledger-bundle-ticket-sync.py`。见 test-report-v1.31.md。
 
+## 第132轮（v1.32）：容差 rollup 与三证/联席形状
+
+rollup artifact；triple + joint 校验。见 test-report-v1.32.md。
+
 ## 第119轮（v1.19）：tier 联动 OpenMetrics
 
 35 抽页。见 test-report-v1.19.md。

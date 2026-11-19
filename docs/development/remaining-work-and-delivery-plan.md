@@ -527,3 +527,9 @@ OpenMetrics CI snapshot 全 6 指标联动验收；R18 像素容差审计 artifa
 第九轮 governance-ops 窄屏；`apply_change_ticket_ref` 对账脚本。见 test-report-v1.31.md 及 PR CI。
 
 **建议下一轮（v1.32+）**：R18 容差 v1.31 收口盘点 artifact；三证同工单（bundle/ledger/staging）可选强化；真 ENTERED 与 exporter APPROVED 联席形状。
+
+### 第132轮增量（v1.32）
+
+容差 rollup artifact；三证工单校验；ENTERED↔exporter 联席形状。见 test-report-v1.32.md 及 PR CI。
+
+**建议下一轮（v1.33+）**：第十轮容差（仅新 slug 或 JSON 基线刷新）；真签三联验收 runbook 实填挂钩。

@@ -1,0 +1,8 @@
+{
+  "joint_status": "JOINT_SHAPE_ONLY",
+  "apply_change_ticket_ref": "CHG-REHEARSAL-SHAPE-ONLY",
+  "ledger_fixture": "schema8-production-ledger-entered-shape-example.json",
+  "bundle_fixture": "engineering-pilot-bundle-approved-shape-example.json",
+  "exporter_review_fixture": "production-exporter-review-approved-shape-example.json",
+  "notes": "ENTERED 台账与 APPROVED exporter 联席彩排；非真签"
+}
