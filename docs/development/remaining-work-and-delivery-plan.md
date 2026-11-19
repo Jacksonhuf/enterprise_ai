@@ -533,3 +533,9 @@ OpenMetrics CI snapshot 全 6 指标联动验收；R18 像素容差审计 artifa
 容差 rollup artifact；三证工单校验；ENTERED↔exporter 联席形状。见 test-report-v1.32.md 及 PR CI。
 
 **建议下一轮（v1.33+）**：第十轮容差（仅新 slug 或 JSON 基线刷新）；真签三联验收 runbook 实填挂钩。
+
+### 第133轮增量（v1.33）
+
+`governance-grants-narrow` 显式容差；三联 runbook 门 C6/#8。见 test-report-v1.33.md 及 PR CI。
+
+**建议下一轮（v1.34+）**：services 窄屏显式比率（待定 CI）；rollup 分段归档策略；真签 bundle 写入变更单号 shape 交叉表。

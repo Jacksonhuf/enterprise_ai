@@ -612,6 +612,10 @@ governance-ops 窄屏；`validate-pilot-ledger-bundle-ticket-sync.py`。见 test
 
 rollup artifact；triple + joint 校验。见 test-report-v1.32.md。
 
+## 第133轮（v1.33）：grants 容差与三联 runbook 门
+
+`governance-grants-narrow`；`validate-runbook-triple-gate-rehearsal.py`。见 test-report-v1.33.md。
+
 ## 第119轮（v1.19）：tier 联动 OpenMetrics
 
 35 抽页。见 test-report-v1.19.md。

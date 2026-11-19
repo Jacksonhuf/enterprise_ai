@@ -1,0 +1,7 @@
+{
+  "disclaimer": "TOLERANCE_TIGHTENING_V133",
+  "rationale": "Tenth pass; first explicit max-diff for governance-grants-narrow (was default 2%)",
+  "tightened": [
+    {"slug": "governance-grants-narrow", "from": 0.02, "to": 0.021}
+  ]
+}
