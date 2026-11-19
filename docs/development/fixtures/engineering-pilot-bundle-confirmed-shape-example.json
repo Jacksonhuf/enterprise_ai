@@ -4,6 +4,7 @@
   "tier_probe_artifact": "r09-tier-probe-summary",
   "r18_screenshot_artifact": "r18-spot-screenshots",
   "staging_alert_artifact": "r21-staging-alert-render",
+  "openmetrics_ci_snapshot_artifact": "openmetrics-ci-snapshot",
   "linked_runbook_checklist": "mysql-schema8-runbook-production-fill-checklist.md",
   "confirmed_by_platform": "PLACEHOLDER-NOT-SIGNED",
   "confirmed_by_sre": "PLACEHOLDER-NOT-SIGNED",

@@ -112,8 +112,11 @@ jobs:
       - run: python scripts/validate-tier-probe-summary.py /tmp/r09-tier-probe-summary.json
       - run: python scripts/render-openmetrics-from-tier-summary.py /tmp/r09-tier-probe-summary.json /tmp/openmetrics-from-tier.txt
       - run: python scripts/validate-openmetrics-tier-linkage.py /tmp/r09-tier-probe-summary.json /tmp/openmetrics-from-tier.txt
+      - run: bash scripts/r09-mixed-read-probe-harness.sh /tmp/mixed-read-probe.log /tmp/mixed-read-probe-summary.json
       - run: python scripts/render-openmetrics-from-runbook-summary.py /tmp/runbook-smoke-summary.json /tmp/openmetrics-from-tier.txt /tmp/openmetrics-ci-snapshot.txt
       - run: python scripts/validate-openmetrics-runbook-linkage.py /tmp/runbook-smoke-summary.json /tmp/openmetrics-ci-snapshot.txt
+      - run: python scripts/render-openmetrics-from-mixed-read-summary.py /tmp/mixed-read-probe-summary.json /tmp/openmetrics-ci-snapshot.txt
+      - run: python scripts/validate-openmetrics-mixed-read-linkage.py /tmp/mixed-read-probe-summary.json /tmp/openmetrics-ci-snapshot.txt
       - name: Upload OpenMetrics CI snapshot
         if: always()
         uses: actions/upload-artifact@v4
@@ -123,6 +126,7 @@ jobs:
       - run: python scripts/validate-tier-probe-summary.py docs/development/fixtures/r09-tier-probe-summary-shape-example.json
       - run: python scripts/validate-engineering-pilot-bundle.py docs/development/fixtures/engineering-pilot-bundle-pending-example.json
       - run: python scripts/validate-engineering-pilot-bundle.py docs/development/fixtures/engineering-pilot-bundle-confirmed-shape-example.json
+      - run: python scripts/validate-mixed-read-probe-summary.py docs/development/fixtures/mixed-read-probe-summary-shape-example.json
       - run: python scripts/validate-r21-slo-signoff-record.py docs/development/fixtures/r21-slo-signoff-record-signed-shape-example.json
       - run: python scripts/validate-r21-metrics-wiring-draft.py docs/development/fixtures/r21-metrics-wiring-draft.json
       - run: python scripts/validate-production-ledger.py docs/development/fixtures/schema8-production-ledger-pending-example.json
@@ -153,6 +157,13 @@ jobs:
           npm install --no-save pixelmatch pngjs
           node scripts-verify-r18-baseline.mjs /tmp/r18-spots
         working-directory: frontend
+      - run: python scripts/report-r18-narrow-coverage.py /tmp/r18-spots/manifest.json /tmp/r18-narrow-coverage.json
+      - name: Upload R18 narrow coverage report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: r18-narrow-coverage
+          path: /tmp/r18-narrow-coverage.json
       - name: Upload R18 spot screenshot baseline
         if: always()
         uses: actions/upload-artifact@v4

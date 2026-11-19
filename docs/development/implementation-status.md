@@ -580,6 +580,10 @@ CI `r18-spot-screenshots`；彩排登记模板。见 test-report-v1.04.md。
 
 38 抽页。见 test-report-v1.20.md。
 
+## 第121轮（v1.21）：mixed-read snapshot 与窄屏盘点
+
+窄屏覆盖率 artifact。见 test-report-v1.21.md。
+
 ## 第119轮（v1.19）：tier 联动 OpenMetrics
 
 35 抽页。见 test-report-v1.19.md。

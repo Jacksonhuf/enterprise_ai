@@ -1,0 +1,9 @@
+{
+  "disclaimer": "MIXED_READ_PROBE_SUMMARY_NOT_SLO",
+  "generated_at_utc": "PLACEHOLDER",
+  "routes": 6,
+  "workers": 36,
+  "elapsed": "0s",
+  "source_test": "TestR20Schema8MixedReadOnlySmokeOrchestration",
+  "notes": "形状样例；CI 真值见 mixed-read-probe-summary.json"
+}

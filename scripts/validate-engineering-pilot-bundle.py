@@ -11,6 +11,7 @@ REQUIRED = frozenset(
         "tier_probe_artifact",
         "r18_screenshot_artifact",
         "staging_alert_artifact",
+        "openmetrics_ci_snapshot_artifact",
         "linked_runbook_checklist",
         "confirmed_by_platform",
         "confirmed_by_sre",
@@ -26,6 +27,8 @@ def main() -> None:
         raise SystemExit(f"keys must be {sorted(REQUIRED)}")
     if data["tier_probe_artifact"] != "r09-tier-probe-summary":
         raise SystemExit("tier_probe_artifact must be r09-tier-probe-summary")
+    if data["openmetrics_ci_snapshot_artifact"] != "openmetrics-ci-snapshot":
+        raise SystemExit("openmetrics_ci_snapshot_artifact must be openmetrics-ci-snapshot")
     if data["bundle_status"] == "CONFIRMED":
         if not data["confirmed_by_platform"] or not data["confirmed_by_sre"]:
             raise SystemExit("CONFIRMED bundle requires both confirmations")
