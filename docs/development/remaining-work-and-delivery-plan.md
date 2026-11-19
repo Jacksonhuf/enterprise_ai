@@ -554,4 +554,8 @@ apps / ops-exceptions-narrow 编目；像素门 measured + headroom artifact；�
 
 batch-1 implicit-default 编目；headroom 阈值门；交叉表 `FILLED_SHAPE_ONLY`。见 test-report-v1.36.md 及 PR CI。
 
-**建议下一轮（v1.37+）**：batch-2 八 spot 编目；headroom 阈值与 SLO 联动文档；交叉表真工单号（非 REHEARSAL）入库验收。
+### 第137轮增量（v1.37）
+
+batch-2 编目完成；headroom↔SLO 联动；`WAREHOUSE_TICKET_SHAPE_ONLY`。见 test-report-v1.37.md 及 PR CI。
+
+**建议下一轮（v1.38+）**：elevated / narrow 下一轮容差收紧候选盘点；headroom `enforce_in_ci` 团队开关；交叉表与 bundle 真签联席验收。
