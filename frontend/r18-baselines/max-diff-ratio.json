@@ -18,5 +18,6 @@
   "governance-usage-narrow": 0.025,
   "governance-audit-narrow": 0.025,
   "governance-ops-settings-narrow": 0.029,
-  "governance-ops-audit-narrow": 0.029
+  "governance-ops-audit-narrow": 0.029,
+  "governance-grants-narrow": 0.021
 }

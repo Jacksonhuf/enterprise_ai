@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Roll up R18 tolerance tightening manifests v1.23–v1.31 into one artifact (v1.32)."""
+"""Roll up R18 tolerance tightening manifests into one artifact (v1.33)."""
 import json
 import sys
 from pathlib import Path
@@ -13,10 +13,10 @@ def main() -> None:
     out = (
         Path(sys.argv[1])
         if len(sys.argv) > 1
-        else Path("/tmp/r18-tolerance-tightening-rollup-v1.32.json")
+        else Path("/tmp/r18-tolerance-tightening-rollup-v1.33.json")
     )
     steps = []
-    for minor in range(23, 32):
+    for minor in range(23, 34):
         tag = f"v1.{minor}"
         path = FIXTURES / f"r18-tolerance-tightening-{tag}.json"
         if not path.exists():
@@ -32,8 +32,8 @@ def main() -> None:
         )
     cfg = json.loads(RATIOS.read_text())
     payload = {
-        "rollup_status": "TIGHTENING_CLOSED_THROUGH_V131",
-        "closed_through_manifest": "v1.31",
+        "rollup_status": "TIGHTENING_CLOSED_THROUGH_V133",
+        "closed_through_manifest": "v1.33",
         "manifest_step_count": len(steps),
         "manifest_steps": steps,
         "current_max_diff_ratio": cfg,

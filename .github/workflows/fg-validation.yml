@@ -160,7 +160,8 @@ jobs:
         working-directory: frontend
       - run: python scripts/report-r18-narrow-coverage.py /tmp/r18-spots/manifest.json /tmp/r18-narrow-coverage.json
       - run: python scripts/report-r18-pixel-tolerance-audit.py /tmp/r18-pixel-tolerance-audit.json
-      - run: python scripts/report-r18-tolerance-tightening-rollup.py /tmp/r18-tolerance-tightening-rollup-v1.32.json
+      - run: python scripts/report-r18-tolerance-tightening-rollup.py /tmp/r18-tolerance-tightening-rollup-v1.33.json
+      - run: python scripts/validate-runbook-triple-gate-rehearsal.py
       - run: python scripts/validate-r18-tolerance-tightening.py docs/development/fixtures/r18-tolerance-tightening-v1.23.json
       - run: python scripts/validate-r18-tolerance-tightening.py docs/development/fixtures/r18-tolerance-tightening-v1.24.json
       - run: python scripts/validate-r18-tolerance-tightening.py docs/development/fixtures/r18-tolerance-tightening-v1.25.json
@@ -170,6 +171,7 @@ jobs:
       - run: python scripts/validate-r18-tolerance-tightening.py docs/development/fixtures/r18-tolerance-tightening-v1.29.json
       - run: python scripts/validate-r18-tolerance-tightening.py docs/development/fixtures/r18-tolerance-tightening-v1.30.json
       - run: python scripts/validate-r18-tolerance-tightening.py docs/development/fixtures/r18-tolerance-tightening-v1.31.json
+      - run: python scripts/validate-r18-tolerance-tightening.py docs/development/fixtures/r18-tolerance-tightening-v1.33.json
       - run: python scripts/validate-pilot-ledger-bundle-ticket-sync.py docs/development/fixtures/engineering-pilot-bundle-confirmed-shape-example.json docs/development/fixtures/schema8-production-ledger-entered-shape-example.json
       - run: python scripts/validate-pilot-ticket-triple-sync.py docs/development/fixtures/engineering-pilot-bundle-approved-shape-example.json docs/development/fixtures/schema8-production-ledger-entered-shape-example.json docs/development/fixtures/staging-alert-import-ticket-closed-shape-example.json
       - run: python scripts/validate-production-gate-joint-shape.py docs/development/fixtures/production-gate-entered-exporter-joint-shape-example.json
@@ -195,7 +197,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: r18-tolerance-tightening-rollup
-          path: /tmp/r18-tolerance-tightening-rollup-v1.32.json
+          path: /tmp/r18-tolerance-tightening-rollup-v1.33.json
       - name: Upload R18 spot screenshot baseline
         if: always()
         uses: actions/upload-artifact@v4
