@@ -1,0 +1,7 @@
+{
+  "disclaimer": "TOLERANCE_HOLD_V134",
+  "rationale": "Catalog services-narrow explicit hold at 3% (CI ~2.97%); not tightened this round",
+  "tightened": [
+    {"slug": "services-narrow", "from": 0.03, "to": 0.03}
+  ]
+}

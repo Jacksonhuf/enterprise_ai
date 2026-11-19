@@ -1,0 +1,10 @@
+{
+  "crossref_status": "CROSSREF_SHAPE_ONLY",
+  "apply_change_ticket_ref": "CHG-REHEARSAL-SHAPE-ONLY",
+  "staging_import_ticket": "STG-ALERT-REHEARSAL-SHAPE-ONLY",
+  "bundle_fixture": "engineering-pilot-bundle-approved-shape-example.json",
+  "ledger_fixture": "schema8-production-ledger-entered-shape-example.json",
+  "staging_ticket_fixture": "staging-alert-import-ticket-closed-shape-example.json",
+  "exporter_review_fixture": "production-exporter-review-g4-appendix-shape-example.json",
+  "notes": "变更单/staging/bundle/ledger/exporter 交叉表形状；非真签"
+}

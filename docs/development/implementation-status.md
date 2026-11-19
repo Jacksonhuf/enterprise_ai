@@ -616,6 +616,10 @@ rollup artifact；triple + joint 校验。见 test-report-v1.32.md。
 
 `governance-grants-narrow`；`validate-runbook-triple-gate-rehearsal.py`。见 test-report-v1.33.md。
 
+## 第134轮（v1.34）：services 锁定与工单交叉表
+
+rollup 分段；`validate-production-gate-ticket-crossref.py`。见 test-report-v1.34.md。
+
 ## 第119轮（v1.19）：tier 联动 OpenMetrics
 
 35 抽页。见 test-report-v1.19.md。
