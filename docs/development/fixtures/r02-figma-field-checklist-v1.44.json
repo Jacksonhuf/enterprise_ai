@@ -1,5 +1,5 @@
 {
-  "checklist_status": "R02_FIGMA_FIELD_CHECKLIST_V148",
+  "checklist_status": "R02_FIGMA_FIELD_CHECKLIST_V149",
   "design_entry_count": 17,
   "signoff": "REHEARSAL_PARTIAL",
   "entries": [
@@ -46,7 +46,12 @@
           "status": "matched",
           "evidence": "Chromium template copy flow v1.47"
         },
-        {"id": "app-list-density", "figma_ref": "F2-01/table", "status": "pending"}
+        {
+          "id": "app-list-density",
+          "figma_ref": "F2-01/table",
+          "status": "matched",
+          "evidence": "R18 build-apps-engineer table density v1.49"
+        }
       ]
     },
     {
@@ -102,7 +107,14 @@
     },
     {
       "design_id": "CAND-10",
-      "fields": [{"id": "clients-table", "figma_ref": "CAND-10/clients", "status": "pending"}]
+      "fields": [
+        {
+          "id": "clients-table",
+          "figma_ref": "CAND-10/clients",
+          "status": "matched",
+          "evidence": "governance-access clients tab v1.49"
+        }
+      ]
     },
     {
       "design_id": "CAND-11",

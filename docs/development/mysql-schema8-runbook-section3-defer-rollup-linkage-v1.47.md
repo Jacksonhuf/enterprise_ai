@@ -8,4 +8,6 @@
 
 CI：`validate-runbook-section3-defer-rollup-linkage.py`
 
+V148 升级（v1.49）：`runbook-section3-defer-rollup-linkage-v1.49.json`（team-fill crossref + 首条台账模板）。
+
 清单：**C7**（彩排）；**不**替代 **#8** 真三联门勾选。

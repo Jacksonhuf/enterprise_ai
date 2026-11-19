@@ -1,0 +1,31 @@
+{
+  "closeout_status": "R02_GAP_CLOSEOUT_V149",
+  "matrix_fixture": "r02-page-api-acceptance-matrix-v1.45.json",
+  "items": [
+    {
+      "design_id": "CAND-09",
+      "gap_code": "DEDICATED_R18_SPOT",
+      "resolution": "governance-access-groups R18 spot v1.45",
+      "rehearsal_only": true
+    },
+    {
+      "design_id": "CAND-11",
+      "gap_code": "DEDICATED_R18_SPOT",
+      "resolution": "governance-access-roles R18 spot v1.45",
+      "rehearsal_only": true
+    },
+    {
+      "design_id": "CAND-14",
+      "gap_code": "DEDICATED_R18_SPOT",
+      "resolution": "services-engineer R18 spot v1.45",
+      "rehearsal_only": true
+    },
+    {
+      "design_id": "CAND-10",
+      "gap_code": "TAB_PIXEL_GAP",
+      "resolution": "clients tab exercised in governance-access smoke v1.49",
+      "rehearsal_only": true
+    }
+  ],
+  "notes": "工程彩排收口；不等同 REAL_IDENTITY/FIGMA 产品关项"
+}

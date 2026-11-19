@@ -602,4 +602,8 @@ staging 团队票彩排；§3 defer↔三表联动；Figma 8×matched。见 test
 
 team-fill crossref；生产台账首条真填模板；Figma 11×matched（半数）。见 test-report-v1.48.md 及 PR CI。
 
-**建议下一轮（v1.49+）**：defer linkage 升级引用 V148 窗口；R02 matrix gap 收口项；Figma 12+ matched。
+### 第149轮增量（v1.49）
+
+defer V149→V148 窗口；R02 gap closeout×4；Figma 13 matched。见 test-report-v1.49.md 及 PR CI。
+
+**建议下一轮（v1.50+）**：matrix V149 与 Figma 双向映射校验；runbook 首条真填演练表；Figma 14+ matched。
