@@ -584,6 +584,10 @@ CI `r18-spot-screenshots`；彩排登记模板。见 test-report-v1.04.md。
 
 窄屏覆盖率 artifact。见 test-report-v1.21.md。
 
+## 第122轮（v1.22）：OpenMetrics snapshot 全链路验收
+
+CI 6 指标联动脚本与 R18 容差审计 artifact。见 test-report-v1.22.md。
+
 ## 第119轮（v1.19）：tier 联动 OpenMetrics
 
 35 抽页。见 test-report-v1.19.md。

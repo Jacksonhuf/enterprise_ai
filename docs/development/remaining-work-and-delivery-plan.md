@@ -467,3 +467,9 @@ runbook read→OpenMetrics CI snapshot；治理 audit/ops 窄屏 R18。见 test-
 mixed-read→OpenMetrics；窄屏覆盖率 JSON；bundle 含 snapshot artifact。见 test-report-v1.21.md 及 PR CI。
 
 **建议下一轮（v1.22+）**：snapshot 全 6 指标 CI 联动验收；团队真 CONFIRMED；R18 阈值审计收紧（删冗余容差）。
+
+### 第122轮增量（v1.22）
+
+OpenMetrics CI snapshot 全 6 指标联动验收；R18 像素容差审计 artifact；bundle `openmetrics_linked_metric_count`。见 test-report-v1.22.md 及 PR CI。
+
+**建议下一轮（v1.23+）**：在绿 CI 下逐步下调窄屏容差；团队真 CONFIRMED/ENTERED；生产 exporter 只读上线草案评审。
