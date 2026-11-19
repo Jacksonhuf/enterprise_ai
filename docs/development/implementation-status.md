@@ -632,6 +632,10 @@ batch-1 显式 2%；阈值门与 FILLED 交叉表。见 test-report-v1.36.md。
 
 implicit 清零；SLO 联动；WAREHOUSE 交叉表。见 test-report-v1.37.md。
 
+## 第138轮（v1.38）：收紧候选与 crossref 联席
+
+候选 artifact；headroom env 开关；joint 校验。见 test-report-v1.38.md。
+
 ## 第119轮（v1.19）：tier 联动 OpenMetrics
 
 35 抽页。见 test-report-v1.19.md。

@@ -1,0 +1,11 @@
+{
+  "joint_status": "CROSSREF_BUNDLE_JOINT_SHAPE_ONLY",
+  "crossref_fixture": "production-gate-ticket-crossref-warehouse-shape-example.json",
+  "bundle_fixture": "engineering-pilot-bundle-warehouse-ticket-shape-example.json",
+  "ledger_fixture": "schema8-production-ledger-warehouse-ticket-shape-example.json",
+  "staging_ticket_fixture": "staging-alert-import-ticket-warehouse-shape-example.json",
+  "exporter_review_fixture": "production-exporter-review-g4-appendix-shape-example.json",
+  "apply_change_ticket_ref": "CHG-ENG-WAREHOUSE-SHAPE-0001",
+  "staging_import_ticket": "STG-IMPORT-WAREHOUSE-SHAPE-0001",
+  "notes": "交叉表与 bundle/台账/staging 联席入库彩排；签核仍 PLACEHOLDER"
+}

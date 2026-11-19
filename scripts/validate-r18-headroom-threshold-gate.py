@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
-"""Fail CI rehearsal when measured headroom drops below threshold (v1.36)."""
+"""Fail CI rehearsal when measured headroom drops below threshold (v1.38)."""
 import json
+import os
 import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-DEFAULT_POLICY = ROOT / "docs/development/fixtures/r18-headroom-threshold-gate-v1.36.json"
+DEFAULT_POLICY = ROOT / "docs/development/fixtures/r18-headroom-threshold-gate-v1.38.json"
 
 
 def main() -> None:
@@ -29,6 +30,9 @@ def main() -> None:
                 }
             )
     enforce = bool(policy.get("enforce_in_ci", True))
+    env_key = policy.get("team_enforce_env_var")
+    if env_key and os.environ.get(env_key, "").strip().lower() in ("1", "true", "yes"):
+        enforce = True
     if violations:
         print(json.dumps({"violations": violations}, indent=2))
         if enforce:

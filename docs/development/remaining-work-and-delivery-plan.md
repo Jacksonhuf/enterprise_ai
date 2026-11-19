@@ -558,4 +558,8 @@ batch-1 implicit-default 编目；headroom 阈值门；交叉表 `FILLED_SHAPE_O
 
 batch-2 编目完成；headroom↔SLO 联动；`WAREHOUSE_TICKET_SHAPE_ONLY`。见 test-report-v1.37.md 及 PR CI。
 
-**建议下一轮（v1.38+）**：elevated / narrow 下一轮容差收紧候选盘点；headroom `enforce_in_ci` 团队开关；交叉表与 bundle 真签联席验收。
+### 第138轮增量（v1.38）
+
+收紧候选 artifact；headroom 团队 enforce 开关；crossref-bundle 联席。见 test-report-v1.38.md 及 PR CI。
+
+**建议下一轮（v1.39+）**：按候选清单执行下一轮窄屏/elevated 收紧；`COGNARA_HEADROOM_ENFORCE_IN_CI=1` 专项 workflow；bundle CONFIRMED 与 crossref 真签字段验收。
