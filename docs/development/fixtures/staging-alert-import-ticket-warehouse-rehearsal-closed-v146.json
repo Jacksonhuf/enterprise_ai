@@ -1,0 +1,10 @@
+{
+  "ticket_status": "CLOSED",
+  "release_window_id": "WIN-WAREHOUSE-REHEARSAL-0146",
+  "staging_import_ticket": "STG-IMPORT-WAREHOUSE-REHEARSAL-0001",
+  "artifact_name": "r21-staging-alert-render",
+  "rules_count": 6,
+  "imported_at_cst": "PLACEHOLDER-NOT-PRODUCTION",
+  "verified_by_sre": "SIGNATORY-SRE-WAREHOUSE-REHEARSAL-0001",
+  "notes": "CLOSED 非 SHAPE；与 v1.46 三表同窗 crossref 对齐"
+}

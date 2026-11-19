@@ -1,0 +1,9 @@
+{
+  "bundle_status": "CONFIRMED",
+  "production_signature_claim": true,
+  "confirmed_by_platform": "SIGNATORY-PLATFORM-SHAPE-ONLY-0001",
+  "confirmed_by_sre": "SIGNATORY-SRE-SHAPE-ONLY-0001",
+  "apply_change_ticket_ref": "CHG-ENG-PROD-0001",
+  "staging_import_ticket_ref": "STG-IMPORT-PROD-0001",
+  "notes": "Negative fixture: must fail shape-rejection gate"
+}

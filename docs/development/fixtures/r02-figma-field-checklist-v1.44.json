@@ -1,12 +1,17 @@
 {
-  "checklist_status": "R02_FIGMA_FIELD_CHECKLIST_V145",
+  "checklist_status": "R02_FIGMA_FIELD_CHECKLIST_V146",
   "design_entry_count": 17,
   "signoff": "REHEARSAL_PARTIAL",
   "entries": [
     {
       "design_id": "PAGE-001",
       "fields": [
-        {"id": "app-card-title", "figma_ref": "PAGE-001/card-title", "status": "pending"},
+        {
+          "id": "app-card-title",
+          "figma_ref": "PAGE-001/card-title",
+          "status": "matched",
+          "evidence": "R18 apps-narrow pixel gate v1.45"
+        },
         {
           "id": "enter-app-cta",
           "figma_ref": "PAGE-001/cta-enter",
@@ -18,7 +23,12 @@
     {
       "design_id": "PAGE-002",
       "fields": [
-        {"id": "chat-input-density", "figma_ref": "PAGE-002/composer", "status": "pending"},
+        {
+          "id": "chat-input-density",
+          "figma_ref": "PAGE-002/composer",
+          "status": "matched",
+          "evidence": "Chromium smoke SO1002 chat v1.46"
+        },
         {"id": "evidence-panel", "figma_ref": "PAGE-002/evidence", "status": "pending"}
       ]
     },

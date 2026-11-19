@@ -1,0 +1,11 @@
+{
+  "crossref_status": "THREE_TABLE_WINDOW_SHAPE_V146",
+  "release_window_id": "WIN-WAREHOUSE-REHEARSAL-0146",
+  "apply_change_ticket_ref": "CHG-ENG-WAREHOUSE-REHEARSAL-0001",
+  "staging_import_ticket": "STG-IMPORT-WAREHOUSE-REHEARSAL-0001",
+  "bundle_fixture": "engineering-pilot-bundle-confirmed-warehouse-rehearsal-example.json",
+  "ledger_fixture": "schema8-production-ledger-entered-warehouse-rehearsal-example.json",
+  "staging_ticket_fixture": "staging-alert-import-ticket-warehouse-rehearsal-closed-v146.json",
+  "exporter_review_fixture": "production-exporter-review-g4-appendix-shape-example.json",
+  "notes": "Bundle + ledger + staging + crossref share one release_window_id (v1.46)"
+}

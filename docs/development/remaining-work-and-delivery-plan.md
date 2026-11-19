@@ -590,4 +590,8 @@ headroom defer 四类汇总；CAND-09/11/14 共享壳豁免；R02 Figma 字段�
 
 R18 +3 抽页（services 宽屏、access groups/roles）；豁免关闭；Figma 首条 matched。见 test-report-v1.45.md 及 PR CI。
 
-**建议下一轮（v1.46+）**：staging/crossref/bundle 三表同窗；真签拒 SHAPE 脚本；Figma 字段批量 matched。
+### 第146轮增量（v1.46）
+
+三表同窗 `WIN-WAREHOUSE-REHEARSAL-0146`；shape-rejection gate；Figma 3×matched。见 test-report-v1.46.md 及 PR CI。
+
+**建议下一轮（v1.47+）**：staging 真 CLOSED 团队票实填；Figma matched 批量扩展；defer rollup 挂 runbook §3。
