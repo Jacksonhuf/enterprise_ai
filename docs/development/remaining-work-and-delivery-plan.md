@@ -479,3 +479,9 @@ OpenMetrics CI snapshot 全 6 指标联动验收；R18 像素容差审计 artifa
 治理窄屏容差收紧；生产 exporter 只读评审清单。见 test-report-v1.23.md 及 PR CI。
 
 **建议下一轮（v1.24+）**：第二轮容差收紧（login/assets 等）；评审清单签字列实填；R18 manifest 与 spot 数自动对账。
+
+### 第124轮增量（v1.24）
+
+第二轮窄屏容差；exporter 评审签字形状；R18 manifest↔smoke↔PNG 对账（38）。见 test-report-v1.24.md 及 PR CI。
+
+**建议下一轮（v1.25+）**：团队 APPROVED/真 CONFIRMED；CI 后第三轮容差；manifest 对账进 release 门禁文档。

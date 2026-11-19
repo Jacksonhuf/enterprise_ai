@@ -1,0 +1,9 @@
+{
+  "disclaimer": "TOLERANCE_TIGHTENING_V124",
+  "rationale": "Second green-CI pass; tighten login/assets/services narrow headroom",
+  "tightened": [
+    {"slug": "login-public-narrow", "from": 0.035, "to": 0.032},
+    {"slug": "assets-narrow", "from": 0.045, "to": 0.042},
+    {"slug": "services-narrow", "from": 0.03, "to": 0.028}
+  ]
+}
