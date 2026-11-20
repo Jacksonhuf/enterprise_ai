@@ -1,0 +1,12 @@
+{
+  "gate_status": "RUNBOOK_ENTERED_LEDGER_WRITE_GATE_V166",
+  "not_production": true,
+  "section3_intake_fixture": "runbook-section3-entered-warehouse-intake-v1.65.json",
+  "first_entered_ledger_fixture": "schema8-production-ledger-first-entered-rehearsal-v1.57.json",
+  "filled_log_fixture": "schema8-production-log-rehearsal-filled-v1.64.json",
+  "write_allowed_without_platform_signoff": false,
+  "required_platform_field": "verified_by_platform",
+  "required_platform_prefix": "PLACEHOLDER",
+  "warehouse_ticket_fixture": "production-gate-ticket-crossref-warehouse-shape-example.json",
+  "notes": "真台账 ENTERED 写入门禁彩排：无 platform 真人签禁止 apply 写入"
+}

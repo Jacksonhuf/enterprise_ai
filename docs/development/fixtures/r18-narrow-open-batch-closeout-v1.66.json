@@ -1,0 +1,15 @@
+{
+  "closeout_status": "R18_NARROW_OPEN_BATCH_CLOSEOUT_V166",
+  "not_production": true,
+  "inventory_fixture": "r18-narrow-only-defer-inventory-v1.61.json",
+  "batch_fixtures": [
+    "r18-narrow-open-batch-wait-v1.63.json",
+    "r18-narrow-open-batch-wait-v1.64.json",
+    "r18-narrow-open-batch-wait-v1.65.json"
+  ],
+  "publish_review_narrow_fixture": "r18-publish-review-narrow-wait-decision-v1.62.json",
+  "publish_review_narrow_closeout_fixture": "r18-publish-review-narrow-closeout-v1.66.json",
+  "expected_batched_open_count": 16,
+  "expected_remaining_open_slugs": ["publish-review-narrow"],
+  "notes": "narrow 三批覆盖 16/17 open；余 publish-review-narrow 走专用等待决"
+}

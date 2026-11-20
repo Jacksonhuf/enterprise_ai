@@ -1,0 +1,19 @@
+{
+  "template_status": "RUNBOOK_MAIN_TABLE_PRODUCTION_SIGNOFF_TEMPLATE_V166",
+  "not_production": true,
+  "signoff_path_fixture": "runbook-main-table-signoff-path-rehearsal-v1.65.json",
+  "filled_log_fixture": "schema8-production-log-rehearsal-filled-v1.64.json",
+  "production_signoff_still_placeholder": true,
+  "main_table_rows": [
+    {"row": "1", "signoff_fields": ["executed_at_cst", "dsn_database_host", "change_ticket"], "rehearsal_production_shape_ok": true},
+    {"row": "2", "signoff_fields": ["migrate_plan_sha256", "apply_exit_codes"], "rehearsal_production_shape_ok": true},
+    {"row": "3", "signoff_fields": ["dual_instance_ready"], "rehearsal_production_shape_ok": true},
+    {"row": "4", "signoff_fields": ["runbook_smoke_mixed_read_ok"], "rehearsal_production_shape_ok": true},
+    {"row": "5", "signoff_fields": ["rollback_decision_recorded", "rollback_approval_shape"], "rehearsal_production_shape_ok": true},
+    {"row": "6", "signoff_fields": ["r21_slo_signoff_status", "production_signoff_ticket"], "rehearsal_production_shape_ok": true},
+    {"row": "7", "signoff_fields": ["change_ticket", "migrate_plan_sha256"], "rehearsal_production_shape_ok": true},
+    {"row": "8", "signoff_fields": ["production_signoff_ticket", "runbook_smoke_artifact"], "rehearsal_production_shape_ok": true, "via_dashboard_path": true}
+  ],
+  "dashboard_signoff_path_fixture": "runbook-main-table8-signoff-dashboard-path-v1.65.json",
+  "notes": "主表 #1–#8 生产真签字段 shape 模板；仍禁止勾选 production_checked"
+}
