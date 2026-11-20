@@ -24,8 +24,9 @@ def main() -> None:
         "R21_OPEN_GAP_DASHBOARD_V155",
         "R21_OPEN_GAP_DASHBOARD_V156",
         "R21_OPEN_GAP_DASHBOARD_V157",
+        "R21_OPEN_GAP_DASHBOARD_V158",
     ):
-        raise SystemExit("linkage_status must be V153–V157")
+        raise SystemExit("linkage_status must be V153–V158")
     for doc in link.get("runbook_docs", []):
         if not (ROOT / "docs/development" / doc).is_file():
             raise SystemExit(f"missing doc {doc}")
@@ -68,6 +69,13 @@ def main() -> None:
         if not win:
             raise SystemExit("V157 dashboard requires three_table_window_fixture")
         run("validate-production-gate-three-table-window.py", win)
+    if link_status == "R21_OPEN_GAP_DASHBOARD_V158":
+        if "v1.58" not in chain_fixture:
+            raise SystemExit("V158 dashboard must use v1.58 rehearsal chain")
+        defer = link.get("defer_rollup_linkage_fixture", "")
+        if "v1.58" not in defer:
+            raise SystemExit("V158 dashboard must use defer linkage v1.58")
+        run("validate-runbook-section3-defer-rollup-linkage.py", defer)
     print("OK: R21 open-gap dashboard linkage")
     print(f"Validated {path}")
 

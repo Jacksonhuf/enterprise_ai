@@ -1,0 +1,17 @@
+{
+  "linkage_status": "R21_OPEN_GAP_DASHBOARD_V158",
+  "open_gap_registry_fixture": "r02-page-api-open-gap-registry-v1.52.json",
+  "global_gap_visual_fixture": "r02-matrix-global-gap-visualization-v1.57.json",
+  "dashboard_matrix_joint_fixture": "r02-global-gap-dashboard-matrix-joint-v1.57.json",
+  "rehearsal_chain_fixture": "runbook-rehearsal-chain-orchestration-v1.58.json",
+  "first_fill_rehearsal_fixture": "schema8-runbook-first-fill-rehearsal-table-v1.58.json",
+  "figma_pending_plan_fixture": "r02-figma-pending-closeout-plan-v1.55.json",
+  "three_table_window_fixture": "production-gate-three-table-window-v1.57.json",
+  "defer_rollup_linkage_fixture": "runbook-section3-defer-rollup-linkage-v1.58.json",
+  "runbook_docs": [
+    "mysql-schema8-r21-open-gap-dashboard-v1.53.md",
+    "r02-global-figma-blocker-v1.56.md",
+    "r18-gap-checklist-v1.43.md"
+  ],
+  "notes": "v1.58 defer 挂 v1.57 三联窗"
+}
