@@ -1,0 +1,44 @@
+{
+  "shape_status": "REAL_JOINT_ENVIRONMENT_CONNECTED_SHAPE_V171",
+  "not_production": true,
+  "baseline_hooklist_fixture": "runbook-real-joint-environment-hooklist-rehearsal-v1.69.json",
+  "real_joint_environment_available": false,
+  "connected_shape_only": true,
+  "hooks": [
+    {
+      "hook_id": "R09_SHARED_IDENTITY",
+      "hook_state": "CONNECTED_SHAPE",
+      "shape_endpoint_ref": "PLACEHOLDER-SHAPE-SSO",
+      "rehearsal_only": true
+    },
+    {
+      "hook_id": "R10_REAL_LOGIN_GROUPS",
+      "hook_state": "CONNECTED_SHAPE",
+      "shape_endpoint_ref": "PLACEHOLDER-SHAPE-GROUPS",
+      "rehearsal_only": true
+    },
+    {
+      "hook_id": "R11_AE_CONTRACT_FREEZE",
+      "hook_state": "CONNECTED_SHAPE",
+      "shape_endpoint_ref": "PLACEHOLDER-SHAPE-AE-CONTRACT",
+      "rehearsal_only": true
+    },
+    {
+      "hook_id": "R12_REAL_AE_ACCEPTANCE",
+      "hook_state": "CONNECTED_SHAPE",
+      "shape_endpoint_ref": "PLACEHOLDER-SHAPE-AE-ACCEPT",
+      "rehearsal_only": true
+    },
+    {
+      "hook_id": "R16_REAL_MODEL_ENDPOINT",
+      "hook_state": "CONNECTED_SHAPE",
+      "shape_endpoint_ref": "PLACEHOLDER-SHAPE-MODEL",
+      "rehearsal_only": true
+    }
+  ],
+  "expected_hook_count": 5,
+  "real_human_uat_signoff_fixture": "r22-real-human-uat-signoff-shape-rehearsal-v1.70.json",
+  "unsigned_uat_apply_block_fixture": "runbook-unsigned-uat-apply-block-rehearsal-v1.70.json",
+  "production_apply_forbidden": true,
+  "notes": "挂钩 CONNECTED shape 彩排；非真连、签收仍 PLACEHOLDER"
+}

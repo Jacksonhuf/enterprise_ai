@@ -1,0 +1,10 @@
+{
+  "gate_status": "JOINT_ENV_CONNECTED_UNSIGNED_GATE_V171",
+  "not_production": true,
+  "connected_shape_fixture": "runbook-real-joint-environment-connected-shape-rehearsal-v1.71.json",
+  "unsigned_uat_apply_block_fixture": "runbook-unsigned-uat-apply-block-rehearsal-v1.70.json",
+  "rehearsal_only_gate_fixture": "runbook-rehearsal-only-gate-enforcement-v1.69.json",
+  "production_apply_forbidden": true,
+  "release_window_id": "WIN-WAREHOUSE-REHEARSAL-0146",
+  "notes": "CONNECTED shape 与未签字 apply 闸口同窗；禁止真 apply"
+}
