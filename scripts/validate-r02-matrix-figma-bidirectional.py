@@ -14,8 +14,12 @@ def main() -> None:
     path = Path(sys.argv[1])
     link = json.loads(path.read_text())
     link_status = link.get("link_status")
-    if link_status not in ("R02_MATRIX_FIGMA_BIDIRECTIONAL_V150", "R02_MATRIX_FIGMA_BIDIRECTIONAL_V151"):
-        raise SystemExit("link_status must be V150 or V151")
+    if link_status not in (
+        "R02_MATRIX_FIGMA_BIDIRECTIONAL_V150",
+        "R02_MATRIX_FIGMA_BIDIRECTIONAL_V151",
+        "R02_MATRIX_FIGMA_BIDIRECTIONAL_V155",
+    ):
+        raise SystemExit("link_status must be V150, V151, or V155")
     matrix_path = FX / link["matrix_fixture"]
     figma_path = FX / link["figma_checklist_fixture"]
     subprocess.run(
@@ -42,6 +46,7 @@ def main() -> None:
         "R02_FIGMA_FIELD_CHECKLIST_V152",
         "R02_FIGMA_FIELD_CHECKLIST_V153",
         "R02_FIGMA_FIELD_CHECKLIST_V154",
+        "R02_FIGMA_FIELD_CHECKLIST_V155",
     ):
         raise SystemExit("figma checklist must be V150, V151, or V152")
     matrix_ids = {e["design_id"] for e in matrix.get("entries", [])}
@@ -63,19 +68,29 @@ def main() -> None:
         "R02_FIGMA_FIELD_CHECKLIST_V152": 18,
         "R02_FIGMA_FIELD_CHECKLIST_V153": 19,
         "R02_FIGMA_FIELD_CHECKLIST_V154": 20,
+        "R02_FIGMA_FIELD_CHECKLIST_V155": 22,
     }
     min_matched = min_by_status.get(figma_status, 14)
     if total_matched < min_matched:
         raise SystemExit(f"bidirectional link requires at least {min_matched} matched figma fields")
     xref = link.get("rules", {}).get("gap_closeout_figma_crossref_fixture")
-    if link_status == "R02_MATRIX_FIGMA_BIDIRECTIONAL_V151":
+    if link_status in ("R02_MATRIX_FIGMA_BIDIRECTIONAL_V151", "R02_MATRIX_FIGMA_BIDIRECTIONAL_V155"):
         if not xref:
-            raise SystemExit("V151 link must name gap_closeout_figma_crossref_fixture")
+            raise SystemExit("V151/V155 link must name gap_closeout_figma_crossref_fixture")
         subprocess.run(
             [PY, str(ROOT / "scripts/validate-r02-gap-closeout-figma-crossref.py"), str(FX / xref)],
             check=True,
             cwd=ROOT,
         )
+    if link.get("rules", {}).get("rehearsal_all_fields_matched"):
+        pending = sum(
+            1
+            for entry in figma.get("entries", [])
+            for f in entry.get("fields", [])
+            if f.get("status") == "pending"
+        )
+        if pending:
+            raise SystemExit("rehearsal_all_fields_matched requires zero pending")
     print(f"OK: matrix↔figma bidirectional ({total_matched} matched fields)")
     print(f"Validated {path}")
 

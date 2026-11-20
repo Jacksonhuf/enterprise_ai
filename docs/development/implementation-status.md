@@ -700,6 +700,10 @@ RUNBOOK_REHEARSAL_CHAIN_V153；Figma V153。见 test-report-v1.53.md。
 
 GLOBAL_GAP_VISUAL_V154；Figma V154。见 test-report-v1.54.md。
 
+## 第155轮（v1.55）：Figma 字段满编与 rehearsal V155 链
+
+REHEARSAL_ALL_FIELDS_MATCHED；RUNBOOK_REHEARSAL_CHAIN_V155。见 test-report-v1.55.md。
+
 ## 第119轮（v1.19）：tier 联动 OpenMetrics
 
 35 抽页。见 test-report-v1.19.md。

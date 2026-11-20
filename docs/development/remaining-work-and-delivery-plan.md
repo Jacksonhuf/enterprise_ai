@@ -626,4 +626,8 @@ rehearsal 链编排；Figma pending 计划；R21↔open gap 看板；Figma 19 ma
 
 CAND-16 usage 收口；全局 gap 可视化；Figma 20 matched。见 test-report-v1.54.md 及 PR CI。
 
-**建议下一轮（v1.55+）**：CAND-17 双 pending 收口；rehearsal 链纳入 gap 可视化；Figma 21+ / 全 matched 彩排。
+### 第155轮增量（v1.55）
+
+CAND-17 双字段收口；rehearsal V155 链；Figma **22/22** engineering matched。见 test-report-v1.55.md 及 PR CI。
+
+**建议下一轮（v1.56+）**：全局 gap 看板与 matrix 双向联合门；生产 log 实填彩排（仍非真值）；R02 全局 FIGMA 阻塞说明文档。

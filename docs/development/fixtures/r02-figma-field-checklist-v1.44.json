@@ -1,7 +1,7 @@
 {
-  "checklist_status": "R02_FIGMA_FIELD_CHECKLIST_V154",
+  "checklist_status": "R02_FIGMA_FIELD_CHECKLIST_V155",
+  "signoff": "REHEARSAL_ALL_FIELDS_MATCHED",
   "design_entry_count": 17,
-  "signoff": "REHEARSAL_PARTIAL",
   "entries": [
     {
       "design_id": "PAGE-001",
@@ -206,8 +206,18 @@
     {
       "design_id": "CAND-17",
       "fields": [
-        {"id": "public-notice-editor", "figma_ref": "CAND-17/notice", "status": "pending"},
-        {"id": "ops-settings-alert", "figma_ref": "CAND-17/ops-alert", "status": "pending"}
+        {
+          "id": "public-notice-editor",
+          "figma_ref": "CAND-17/notice",
+          "status": "matched",
+          "evidence": "R01 public notice smoke v1.55"
+        },
+        {
+          "id": "ops-settings-alert",
+          "figma_ref": "CAND-17/ops-alert",
+          "status": "matched",
+          "evidence": "R18 governance-ops-settings v1.55"
+        }
       ]
     }
   ]

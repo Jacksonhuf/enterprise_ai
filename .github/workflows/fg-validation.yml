@@ -210,8 +210,10 @@ jobs:
       - run: python scripts/validate-r02-page-api-open-gap-registry.py docs/development/fixtures/r02-page-api-open-gap-registry-v1.52.json
       - run: python scripts/validate-runbook-rehearsal-chain-orchestration.py docs/development/fixtures/runbook-rehearsal-chain-orchestration-v1.53.json
       - run: python scripts/validate-r02-matrix-global-gap-visualization.py docs/development/fixtures/r02-matrix-global-gap-visualization-v1.54.json
-      - run: python scripts/validate-r02-figma-pending-closeout-plan.py docs/development/fixtures/r02-figma-pending-closeout-plan-v1.54.json
-      - run: python scripts/validate-r21-open-gap-dashboard-linkage.py docs/development/fixtures/r21-open-gap-dashboard-linkage-v1.54.json
+      - run: python scripts/validate-runbook-rehearsal-chain-orchestration.py docs/development/fixtures/runbook-rehearsal-chain-orchestration-v1.55.json
+      - run: python scripts/validate-r02-matrix-figma-bidirectional.py docs/development/fixtures/r02-matrix-figma-bidirectional-link-v1.55.json
+      - run: python scripts/validate-r02-figma-pending-closeout-plan.py docs/development/fixtures/r02-figma-pending-closeout-plan-v1.55.json
+      - run: python scripts/validate-r21-open-gap-dashboard-linkage.py docs/development/fixtures/r21-open-gap-dashboard-linkage-v1.55.json
       - run: python scripts/validate-r18-implicit-default-spot-catalog.py docs/development/fixtures/r18-implicit-default-spot-catalog-v1.37.json
       - run: python scripts/validate-r18-headroom-slo-linkage.py docs/development/fixtures/r18-headroom-slo-linkage-v1.37.json
       - run: python scripts/validate-r18-tolerance-tightening-candidates.py docs/development/fixtures/r18-tolerance-tightening-candidates-v1.38.json

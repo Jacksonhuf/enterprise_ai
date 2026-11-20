@@ -13,8 +13,9 @@ PY = sys.executable
 def main() -> None:
     path = Path(sys.argv[1])
     chain = json.loads(path.read_text())
-    if chain.get("chain_status") != "RUNBOOK_REHEARSAL_CHAIN_V153":
-        raise SystemExit("chain_status must be RUNBOOK_REHEARSAL_CHAIN_V153")
+    chain_status = chain.get("chain_status")
+    if chain_status not in ("RUNBOOK_REHEARSAL_CHAIN_V153", "RUNBOOK_REHEARSAL_CHAIN_V155"):
+        raise SystemExit("chain_status must be V153 or V155")
     if not chain.get("not_production"):
         raise SystemExit("not_production must be true")
     steps = chain.get("steps", [])

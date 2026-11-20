@@ -14,8 +14,12 @@ def main() -> None:
     path = Path(sys.argv[1])
     plan = json.loads(path.read_text())
     status = plan.get("plan_status")
-    if status not in ("R02_FIGMA_PENDING_CLOSEOUT_PLAN_V153", "R02_FIGMA_PENDING_CLOSEOUT_PLAN_V154"):
-        raise SystemExit("plan_status must be V153 or V154")
+    if status not in (
+        "R02_FIGMA_PENDING_CLOSEOUT_PLAN_V153",
+        "R02_FIGMA_PENDING_CLOSEOUT_PLAN_V154",
+        "R02_FIGMA_PENDING_CLOSEOUT_PLAN_V155",
+    ):
+        raise SystemExit("plan_status must be V153, V154, or V155")
     figma_path = FX / plan["figma_checklist_fixture"]
     subprocess.run(
         [PY, str(ROOT / "scripts/validate-r02-figma-field-checklist.py"), str(figma_path)],
@@ -49,6 +53,12 @@ def main() -> None:
         did, fid = item["design_id"], item["field_id"]
         if fid not in matched_by_design.get(did, set()):
             raise SystemExit(f"fulfilled {did}/{fid} must be matched in checklist")
+    for item in plan.get("fulfilled_in_v155", []):
+        did, fid = item["design_id"], item["field_id"]
+        if fid not in matched_by_design.get(did, set()):
+            raise SystemExit(f"fulfilled {did}/{fid} must be matched in checklist")
+    if status == "R02_FIGMA_PENDING_CLOSEOUT_PLAN_V155" and pending:
+        raise SystemExit("v1.55 plan must have zero pending fields")
     print(f"OK: Figma pending closeout plan ({len(pending)} pending)")
     print(f"Validated {path}")
 
