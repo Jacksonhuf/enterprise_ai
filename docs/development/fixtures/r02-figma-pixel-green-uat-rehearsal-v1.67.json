@@ -1,0 +1,12 @@
+{
+  "rehearsal_status": "R02_FIGMA_PIXEL_GREEN_UAT_V167",
+  "not_production": true,
+  "figma_pending_plan_fixture": "r02-figma-pending-closeout-plan-v1.55.json",
+  "open_gap_registry_fixture": "r02-page-api-open-gap-registry-v1.52.json",
+  "global_gap_visual_fixture": "r02-matrix-global-gap-visualization-v1.57.json",
+  "figma_bidirectional_fixture": "r02-matrix-figma-bidirectional-link-v1.55.json",
+  "uat_signoff_shape_fixture": "r02-production-uat-signoff-shape-v1.67.json",
+  "pixel_green_spot_slugs": ["governance-ops-settings-narrow", "login-public-narrow"],
+  "global_gaps_remain_open": ["FIGMA_SIGNOFF_ALL", "PRODUCTION_UAT_SIGNOFF"],
+  "notes": "Figma 像素绿子集 + UAT 签收 shape 彩排；全局 gap 仍开"
+}

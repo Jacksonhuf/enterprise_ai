@@ -33,8 +33,9 @@ def main() -> None:
         "R21_OPEN_GAP_DASHBOARD_V164",
         "R21_OPEN_GAP_DASHBOARD_V165",
         "R21_OPEN_GAP_DASHBOARD_V166",
+        "R21_OPEN_GAP_DASHBOARD_V167",
     ):
-        raise SystemExit("linkage_status must be V153–V166")
+        raise SystemExit("linkage_status must be V153–V167")
     for doc in link.get("runbook_docs", []):
         if not (ROOT / "docs/development" / doc).is_file():
             raise SystemExit(f"missing doc {doc}")
@@ -216,6 +217,18 @@ def main() -> None:
             run(script, fx)
         run("validate-runbook-main-table-signoff-path-rehearsal.py", link["main_table_signoff_path_fixture"])
         run("validate-r21-dashboard-triple-gate-window-registry.py", link["triple_gate_window_registry_fixture"])
+    if link_status == "R21_OPEN_GAP_DASHBOARD_V167":
+        if "v1.67" not in chain_fixture:
+            raise SystemExit("V167 dashboard must use v1.67 rehearsal chain")
+        for key, script in (
+            ("figma_pixel_green_uat_fixture", "validate-r02-figma-pixel-green-uat-rehearsal.py"),
+            ("sre_platform_dual_signoff_fixture", "validate-runbook-sre-platform-dual-signoff-shape.py"),
+            ("dsn_dry_run_ledger_fixture", "validate-runbook-dsn-dry-run-ledger-rehearsal.py"),
+        ):
+            fx = link.get(key, "")
+            if not fx:
+                raise SystemExit(f"V167 dashboard must name {key}")
+            run(script, fx)
     print("OK: R21 open-gap dashboard linkage")
     print(f"Validated {path}")
 

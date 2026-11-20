@@ -1,0 +1,11 @@
+{
+  "rehearsal_status": "RUNBOOK_DSN_DRY_RUN_LEDGER_V167",
+  "not_production": true,
+  "dsn_dry_run_ledger_fixture": "schema8-production-ledger-dsn-dry-run-v1.67.json",
+  "entered_write_gate_fixture": "runbook-entered-ledger-write-gate-v1.66.json",
+  "dual_signoff_shape_fixture": "runbook-sre-platform-dual-signoff-shape-v1.67.json",
+  "filled_log_fixture": "schema8-production-log-rehearsal-filled-v1.64.json",
+  "warehouse_intake_fixture": "runbook-section3-entered-warehouse-intake-v1.65.json",
+  "rehearsal_dsn_must_not_match_target": true,
+  "notes": "filled log REHEARSAL DSN vs dry-run 目标 shape 分轨"
+}

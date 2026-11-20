@@ -674,4 +674,8 @@ narrow open 第三批收尾（余 publish-review-narrow）；主表 #8 与 R21 d
 
 publish-review-narrow / narrow batch 收口；主表 #1–#8 生产真签字段模板；ENTERED 台账写入门禁彩排。见 test-report-v1.66.md。
 
-**建议下一轮（v1.67+）**：Figma 像素绿与 UAT 签收彩排；SRE/平台双签 shape；真 DSN dry-run 台账（仍无生产 apply）。
+### 第167轮增量（v1.67）
+
+Figma 像素绿子集 + UAT 签收 shape；SRE/平台双签 shape；真 DSN dry-run 台账 shape。见 test-report-v1.67.md。
+
+**建议下一轮（v1.68+）**：全局 gap 逐项关单彩排；R22 联合 UAT 场景脚本；生产 apply 前最后 dry-run 三联（仍禁止真 apply）。

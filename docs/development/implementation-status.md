@@ -748,6 +748,10 @@ narrow batch 3；main table #8 dashboard signoff path；section3 ENTERED warehou
 
 narrow batch closeout；publish-review-narrow closeout；main table production signoff template；ENTERED ledger write gate；彩排链 **V166**。见 test-report-v1.66.md、progress-completion-v1.66.md。
 
+## 第167轮（v1.67）：Figma/UAT、双签、DSN dry-run
+
+Figma pixel-green + UAT shape；SRE/platform dual signoff；DSN dry-run ledger；彩排链 **V167**。见 test-report-v1.67.md、progress-completion-v1.67.md。
+
 ## 第119轮（v1.19）：tier 联动 OpenMetrics
 
 35 抽页。见 test-report-v1.19.md。
