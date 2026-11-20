@@ -1,0 +1,14 @@
+{
+  "ledger_status": "DRY_RUN_SHAPE_ONLY",
+  "apply_runbook_section": "3",
+  "production_cluster_id": "DRY-RUN-CLUSTER-SHAPE",
+  "target_dsn_shape": "mysql://PLACEHOLDER-NOT-PRODUCTION:3306/cognara_prod_shape",
+  "applied_at_cst": "PLACEHOLDER-NOT-PRODUCTION",
+  "verified_by_platform": "PLACEHOLDER-NOT-SIGNED",
+  "verified_by_sre": "PLACEHOLDER-NOT-SIGNED",
+  "runbook_smoke_summary_artifact": "runbook-smoke-summary-validation",
+  "runbook_smoke_summary_sha256": "PLACEHOLDER-NOT-PRODUCTION",
+  "apply_change_ticket_ref": "CHG-ENG-WAREHOUSE-SHAPE-0001",
+  "write_to_production_ledger": false,
+  "notes": "真 DSN dry-run 台账 shape；禁止 apply 写入生产库"
+}

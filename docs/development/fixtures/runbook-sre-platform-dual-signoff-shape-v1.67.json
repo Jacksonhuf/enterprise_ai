@@ -1,0 +1,12 @@
+{
+  "shape_status": "RUNBOOK_SRE_PLATFORM_DUAL_SIGNOFF_V167",
+  "not_production": true,
+  "slo_signoff_pending_fixture": "r21-slo-signoff-record-pending.json",
+  "slo_signoff_shape_example_fixture": "r21-slo-signoff-record-signed-shape-example.json",
+  "main_table_signoff_template_fixture": "runbook-main-table-production-signoff-template-v1.66.json",
+  "filled_log_fixture": "schema8-production-log-rehearsal-filled-v1.64.json",
+  "required_platform_field": "production_signoff_ticket",
+  "required_sre_field": "r21_slo_signoff_status",
+  "dual_signoff_still_placeholder": true,
+  "notes": "SRE + 平台双签 shape 联席；仍为 PENDING/PLACEHOLDER"
+}

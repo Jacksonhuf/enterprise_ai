@@ -1,0 +1,12 @@
+{
+  "shape_status": "R02_PRODUCTION_UAT_SIGNOFF_SHAPE_V167",
+  "not_production": true,
+  "signoff_status": "PENDING_UAT_TEAM_SIGN",
+  "business_owner": "PLACEHOLDER-NOT-SIGNED",
+  "product_owner": "PLACEHOLDER-NOT-SIGNED",
+  "uat_lead_owner": "PLACEHOLDER-NOT-SIGNED",
+  "signed_at_cst": "PLACEHOLDER-NOT-PRODUCTION",
+  "pilot_reference": "remaining-work-and-delivery-plan.md",
+  "production_apply_blocked": true,
+  "notes": "联合 UAT 签收字段 shape；非真人签"
+}
