@@ -17,15 +17,16 @@ def main() -> None:
     if status not in (
         "R21_DASHBOARD_TRIPLE_GATE_WINDOW_V159",
         "R21_DASHBOARD_TRIPLE_GATE_WINDOW_V160",
+        "R21_DASHBOARD_TRIPLE_GATE_WINDOW_V165",
     ):
-        raise SystemExit("registry_status must be V159 or V160")
+        raise SystemExit("registry_status must be V159, V160, or V165")
     dash_name = reg.get("dashboard_linkage_fixture", "")
     dash = json.loads((FX / dash_name).read_text())
     dash_status = dash.get("linkage_status")
     if status == "R21_DASHBOARD_TRIPLE_GATE_WINDOW_V159":
         if dash_status != "R21_OPEN_GAP_DASHBOARD_V159":
             raise SystemExit("dashboard must be V159")
-    else:
+    elif status == "R21_DASHBOARD_TRIPLE_GATE_WINDOW_V160":
         if dash_status != "R21_OPEN_GAP_DASHBOARD_V160":
             raise SystemExit("dashboard must be V160")
         mt8 = reg.get("main_table8_check_fixture", "")
@@ -33,6 +34,12 @@ def main() -> None:
             raise SystemExit("V160 registry requires main_table8_check_fixture")
         if not (FX / mt8).is_file():
             raise SystemExit("missing main_table8_check_fixture file")
+    else:
+        if dash_status != "R21_OPEN_GAP_DASHBOARD_V165":
+            raise SystemExit("dashboard must be V165")
+        mt8 = reg.get("main_table8_check_fixture", "")
+        if "v1.65" not in mt8:
+            raise SystemExit("V165 registry requires main_table8 v1.65")
     if dash.get("triple_gate_window_registry_fixture") != path.name:
         raise SystemExit("dashboard must point to this registry")
     subprocess.run(

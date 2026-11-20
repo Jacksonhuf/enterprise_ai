@@ -1,0 +1,27 @@
+{
+  "path_status": "RUNBOOK_MAIN_TABLE_SIGNOFF_PATH_V165",
+  "not_production": true,
+  "prior_path_fixture": "runbook-main-table-signoff-path-rehearsal-v1.61.json",
+  "runbook_checklist_doc": "mysql-schema8-runbook-production-fill-checklist.md",
+  "signoff_sequence_doc": "mysql-schema8-runbook-section3-g4-linkage.md",
+  "main_table_rows": [
+    {"row": "1", "checklist_hook": "main_table_1", "rehearsal_checked": false, "production_gate": "executed_at_cst+dsn+change_ticket"},
+    {"row": "2", "checklist_hook": "main_table_2", "rehearsal_checked": false, "production_gate": "migrate_plan_sha256+apply_exit_codes"},
+    {"row": "3", "checklist_hook": "main_table_3", "rehearsal_checked": false, "production_gate": "dual_instance_ready"},
+    {"row": "4", "checklist_hook": "main_table_4", "rehearsal_checked": false, "production_gate": "runbook_smoke_mixed_read"},
+    {"row": "5", "checklist_hook": "main_table_5", "rehearsal_checked": false, "production_gate": "rollback_approval"},
+    {"row": "6", "checklist_hook": "main_table_6", "rehearsal_checked": false, "production_gate": "r21_slo_signoff"},
+    {"row": "7", "checklist_hook": "main_table_7", "rehearsal_checked": false, "production_gate": "g4_same_change_ticket"},
+    {
+      "row": "8",
+      "checklist_hook": "main_table_8",
+      "rehearsal_checked": true,
+      "rehearsal_only": true,
+      "production_signoff_shape_only": true,
+      "evidence_fixture": "runbook-main-table8-dashboard-window-check-v1.65.json",
+      "dashboard_signoff_path_fixture": "runbook-main-table8-signoff-dashboard-path-v1.65.json"
+    }
+  ],
+  "filled_log_shape_fixture": "schema8-production-log-rehearsal-filled-v1.64.json",
+  "notes": "v1.65 主表 #8 dashboard 真签路径 shape；#1–#7 仍不勾选生产"
+}

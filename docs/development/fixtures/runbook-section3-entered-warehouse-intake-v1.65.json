@@ -1,0 +1,13 @@
+{
+  "intake_status": "SECTION3_ENTERED_WAREHOUSE_INTAKE_V165",
+  "not_production": true,
+  "entered_crossref_fixture": "runbook-entered-crossref-warehouse-rehearsal-v1.62.json",
+  "first_entered_rehearsal_fixture": "schema8-production-ledger-first-entered-rehearsal-v1.57.json",
+  "confirmed_warehouse_bundle_fixture": "runbook-confirmed-warehouse-bundle-rehearsal-v1.63.json",
+  "teamfill_warehouse_window_fixture": "runbook-teamfill-confirmed-warehouse-window-v1.64.json",
+  "filled_log_fixture": "schema8-production-log-rehearsal-filled-v1.64.json",
+  "warehouse_crossref_fixture": "production-gate-ticket-crossref-warehouse-shape-example.json",
+  "apply_change_ticket_ref": "CHG-ENG-WAREHOUSE-SHAPE-0001",
+  "platform_verified_still_placeholder": true,
+  "notes": "§3 ENTERED 真格式入库 shape 联席；无 SRE 真人签"
+}

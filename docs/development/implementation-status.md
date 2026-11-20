@@ -740,6 +740,10 @@ ROWS4_6_LOG；narrow batch wait；CONFIRMED bundle warehouse；彩排链 **V163*
 
 filled log v1.64；row5 rollback shape；narrow batch 2；teamfill confirmed warehouse window；彩排链 **V164**。见 test-report-v1.64.md、progress-completion-v1.64.md。
 
+## 第165轮（v1.65）：narrow 收尾、#8 签路径、ENTERED 入库
+
+narrow batch 3；main table #8 dashboard signoff path；section3 ENTERED warehouse intake；彩排链 **V165**。见 test-report-v1.65.md、progress-completion-v1.65.md。
+
 ## 第119轮（v1.19）：tier 联动 OpenMetrics
 
 35 抽页。见 test-report-v1.19.md。
