@@ -1,0 +1,36 @@
+{
+  "ledger_status": "R21_ALERT_DRYRUN_SHAPE_LEDGER_V175",
+  "not_production": true,
+  "ops_observability_ledger_fixture": "runbook-r21-ops-observability-shape-ledger-v1.74.json",
+  "filled_log_fixture": "schema8-production-log-rehearsal-filled-v1.64.json",
+  "alert_dryrun_items": [
+    {
+      "alert_id": "staging-import-ticket",
+      "severity": "warning",
+      "pager_route_shape": "PLACEHOLDER-PAGER-ROUTE",
+      "dryrun_fired": false,
+      "ack_owner": "PLACEHOLDER-ONCALL-NOT-SIGNED"
+    },
+    {
+      "alert_id": "r21-slo-threshold",
+      "severity": "critical",
+      "pager_route_shape": "PLACEHOLDER-PAGER-ROUTE",
+      "dryrun_fired": false,
+      "ack_owner": "PLACEHOLDER-ONCALL-NOT-SIGNED"
+    },
+    {
+      "alert_id": "sse-disconnect-recovery",
+      "severity": "warning",
+      "pager_route_shape": "PLACEHOLDER-PAGER-ROUTE",
+      "dryrun_fired": false,
+      "ack_owner": "PLACEHOLDER-ONCALL-NOT-SIGNED"
+    }
+  ],
+  "expected_item_count": 3,
+  "production_apply_forbidden": true,
+  "pilot_docs": [
+    "mysql-schema8-r21-slo-pilot-signoff.md",
+    "remaining-work-and-delivery-plan.md"
+  ],
+  "notes": "R21 告警 dry-run shape 台账；全 PLACEHOLDER"
+}

@@ -780,6 +780,10 @@ R20 pressure/SSE fault measurement shape；S5 capacity gate；彩排链 **V173**
 
 R21 backup/RPO/observability shape ledger；backup RPO rehearsal gate；彩排链 **V174**（57 步）。见 test-report-v1.74.md、progress-completion-v1.74.md。
 
+## 第175轮（v1.75）：告警 dry-run 与 on-call 交接 shape
+
+R21 alert dry-run ledger；on-call handoff gate；彩排链 **V175**（59 步）。见 test-report-v1.75.md、progress-completion-v1.75.md。
+
 ## 第119轮（v1.19）：tier 联动 OpenMetrics
 
 35 抽页。见 test-report-v1.19.md。

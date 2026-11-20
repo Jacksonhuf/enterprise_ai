@@ -706,4 +706,8 @@ R20 压力/SSE 故障 **测量 shape**（mock）；S5 容量门禁彩排。见 t
 
 R21 备份/RPO/可观测 **shape 台账**；与 R20 S5 容量门禁同窗。见 test-report-v1.74.md。
 
-**建议下一轮（v1.75+）**：R21 告警 dry-run 与 on-call 交接 shape（仍为 PLACEHOLDER）。
+### 第175轮增量（v1.75）
+
+R21 **告警 dry-run** 与 **on-call 交接 shape** 台账。见 test-report-v1.75.md。
+
+**建议下一轮（v1.76+）**：R20 正式 SLO 定标 shape 与演练证据挂钩（仍为 mock）。
