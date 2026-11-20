@@ -1,0 +1,9 @@
+{
+  "gate_status": "R20_S5_CAPACITY_GATE_REHEARSAL_V173",
+  "not_production": true,
+  "measurement_shape_fixture": "runbook-r20-pressure-sse-fault-measurement-shape-v1.73.json",
+  "joint_env_shape_to_live_gate_fixture": "runbook-joint-env-shape-to-live-gate-rehearsal-v1.72.json",
+  "release_window_id": "WIN-WAREHOUSE-REHEARSAL-0146",
+  "production_apply_forbidden": true,
+  "notes": "R20 测量 shape 与 v1.72 LIVE 门禁同窗"
+}

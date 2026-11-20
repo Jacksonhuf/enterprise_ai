@@ -1,0 +1,41 @@
+{
+  "measurement_status": "R20_PRESSURE_SSE_FAULT_MEASUREMENT_SHAPE_V173",
+  "not_production": true,
+  "s5_release_ops_fixture": "runbook-s5-release-ops-checklist-rehearsal-v1.69.json",
+  "filled_log_fixture": "schema8-production-log-rehearsal-filled-v1.64.json",
+  "measurement_probes": [
+    {
+      "probe_id": "message-load-tier",
+      "kind": "pressure",
+      "harness_test": "TestR20Schema8TieredMessageLoadLoad",
+      "recorded_value_shape": "PLACEHOLDER-NO-FORMAL-SLO",
+      "slo_gate_met": false
+    },
+    {
+      "probe_id": "governance-usage-tier",
+      "kind": "pressure",
+      "harness_test": "TestR20Schema8TieredGovernanceUsageLoad",
+      "recorded_value_shape": "PLACEHOLDER-NO-FORMAL-SLO",
+      "slo_gate_met": false
+    },
+    {
+      "probe_id": "continue-stream-replay",
+      "kind": "sse_fault",
+      "harness_test": "TestR20Schema8ContinueStreamEarlyDisconnectRecovery",
+      "recorded_value_shape": "PLACEHOLDER-MOCK-REPLAY",
+      "slo_gate_met": false
+    },
+    {
+      "probe_id": "ready-light-probe",
+      "kind": "fault",
+      "harness_test": "TestR20Schema8ParallelReadyAcrossDualHosts",
+      "recorded_value_shape": "PLACEHOLDER-MOCK-PROBE",
+      "slo_gate_met": false
+    }
+  ],
+  "expected_probe_count": 4,
+  "formal_load_test_completed": false,
+  "production_apply_forbidden": true,
+  "pilot_doc": "remaining-work-and-delivery-plan.md",
+  "notes": "压力/SSE 测量 shape；非正式压测签字"
+}
