@@ -776,6 +776,10 @@ R22 UAT signoff dry-run ledger；joint env shape-to-LIVE gate；彩排链 **V172
 
 R20 pressure/SSE fault measurement shape；S5 capacity gate；彩排链 **V173**（55 步）。见 test-report-v1.73.md、progress-completion-v1.73.md。
 
+## 第174轮（v1.74）：R21 运维可观测 shape 台账
+
+R21 backup/RPO/observability shape ledger；backup RPO rehearsal gate；彩排链 **V174**（57 步）。见 test-report-v1.74.md、progress-completion-v1.74.md。
+
 ## 第119轮（v1.19）：tier 联动 OpenMetrics
 
 35 抽页。见 test-report-v1.19.md。
