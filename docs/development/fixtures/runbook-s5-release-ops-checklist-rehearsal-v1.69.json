@@ -1,0 +1,32 @@
+{
+  "checklist_status": "RUNBOOK_S5_RELEASE_OPS_CHECKLIST_V169",
+  "not_production": true,
+  "delivery_plan_doc": "remaining-work-and-delivery-plan.md",
+  "s5_phase_gate": "S5",
+  "task_ids": ["R20", "R21", "R22"],
+  "ops_items": [
+    {
+      "item_id": "R20-capacity-fault",
+      "label": "多实例/压力/SSE 故障测量",
+      "rehearsal_status": "ENGINEERING_MOCK_ONLY",
+      "exit_gate_met": false
+    },
+    {
+      "item_id": "R21-deploy-observability",
+      "label": "部署备份恢复与可观测性",
+      "rehearsal_status": "PLANNED_REHEARSAL_ONLY",
+      "exit_gate_met": false
+    },
+    {
+      "item_id": "R22-joint-uat-closeout",
+      "label": "联合 UAT 与发布关闭",
+      "rehearsal_status": "SCENARIO_SCRIPT_ONLY",
+      "exit_gate_met": false
+    }
+  ],
+  "production_apply_preflight_fixture": "runbook-production-apply-preflight-triple-dry-run-v1.68.json",
+  "joint_uat_scenario_fixture": "r22-joint-uat-scenario-rehearsal-v1.68.json",
+  "triple_gate_window_fixture": "production-gate-three-table-window-v1.57.json",
+  "production_apply_forbidden": true,
+  "notes": "S5 发布运营清单彩排；阶段门未满足"
+}

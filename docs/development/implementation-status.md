@@ -756,6 +756,10 @@ Figma pixel-green + UAT shape；SRE/platform dual signoff；DSN dry-run ledger�
 
 global gap item closeout；R22 joint UAT scenarios；production apply preflight triple；彩排链 **V168**。见 test-report-v1.68.md、progress-completion-v1.68.md。
 
+## 第169轮（v1.69）：S5 发布运营、联合环境挂钩、rehearsal-only 闸口
+
+S5 release ops checklist；real joint environment hooklist；rehearsal-only gate enforcement；彩排链 **V169**（47 步）。见 test-report-v1.69.md、progress-completion-v1.69.md。
+
 ## 第119轮（v1.19）：tier 联动 OpenMetrics
 
 35 抽页。见 test-report-v1.19.md。

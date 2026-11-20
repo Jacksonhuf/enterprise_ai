@@ -1,0 +1,42 @@
+{
+  "hooklist_status": "REAL_JOINT_ENVIRONMENT_HOOKLIST_V169",
+  "not_production": true,
+  "real_joint_environment_available": false,
+  "hooks": [
+    {
+      "hook_id": "R09_SHARED_IDENTITY",
+      "provider_owner": "shared_identity_team",
+      "hook_state": "NOT_CONNECTED",
+      "rehearsal_only": true
+    },
+    {
+      "hook_id": "R10_REAL_LOGIN_GROUPS",
+      "provider_owner": "shared_identity_team",
+      "hook_state": "NOT_CONNECTED",
+      "rehearsal_only": true
+    },
+    {
+      "hook_id": "R11_AE_CONTRACT_FREEZE",
+      "provider_owner": "ae_platform_owners",
+      "hook_state": "NOT_CONNECTED",
+      "rehearsal_only": true
+    },
+    {
+      "hook_id": "R12_REAL_AE_ACCEPTANCE",
+      "provider_owner": "ae_platform_owners",
+      "hook_state": "NOT_CONNECTED",
+      "rehearsal_only": true
+    },
+    {
+      "hook_id": "R16_REAL_MODEL_ENDPOINT",
+      "provider_owner": "model_ops",
+      "hook_state": "NOT_CONNECTED",
+      "rehearsal_only": true
+    }
+  ],
+  "expected_hook_count": 5,
+  "joint_uat_scenario_fixture": "r22-joint-uat-scenario-rehearsal-v1.68.json",
+  "s5_release_ops_fixture": "runbook-s5-release-ops-checklist-rehearsal-v1.69.json",
+  "production_apply_forbidden": true,
+  "notes": "真实联合环境挂钩清单；全部未连接，维持彩排"
+}
