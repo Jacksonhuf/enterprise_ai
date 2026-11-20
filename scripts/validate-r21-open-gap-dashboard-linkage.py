@@ -39,8 +39,9 @@ def main() -> None:
         "R21_OPEN_GAP_DASHBOARD_V170",
         "R21_OPEN_GAP_DASHBOARD_V171",
         "R21_OPEN_GAP_DASHBOARD_V172",
+        "R21_OPEN_GAP_DASHBOARD_V173",
     ):
-        raise SystemExit("linkage_status must be V153–V172")
+        raise SystemExit("linkage_status must be V153–V173")
     for doc in link.get("runbook_docs", []):
         if not (ROOT / "docs/development" / doc).is_file():
             raise SystemExit(f"missing doc {doc}")
@@ -290,6 +291,17 @@ def main() -> None:
             fx = link.get(key, "")
             if not fx:
                 raise SystemExit(f"V172 dashboard must name {key}")
+            run(script, fx)
+    if link_status == "R21_OPEN_GAP_DASHBOARD_V173":
+        if "v1.73" not in chain_fixture:
+            raise SystemExit("V173 dashboard must use v1.73 rehearsal chain")
+        for key, script in (
+            ("r20_pressure_sse_measurement_shape_fixture", "validate-runbook-r20-pressure-sse-fault-measurement-shape.py"),
+            ("r20_s5_capacity_gate_fixture", "validate-runbook-r20-s5-capacity-gate-rehearsal.py"),
+        ):
+            fx = link.get(key, "")
+            if not fx:
+                raise SystemExit(f"V173 dashboard must name {key}")
             run(script, fx)
     print("OK: R21 open-gap dashboard linkage")
     print(f"Validated {path}")

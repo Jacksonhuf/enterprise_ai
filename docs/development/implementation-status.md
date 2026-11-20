@@ -772,6 +772,10 @@ joint environment CONNECTED shape rehearsal；connected + unsigned gate；彩排
 
 R22 UAT signoff dry-run ledger；joint env shape-to-LIVE gate；彩排链 **V172**（53 步）。见 test-report-v1.72.md、progress-completion-v1.72.md。
 
+## 第173轮（v1.73）：R20 压力/SSE 测量 shape
+
+R20 pressure/SSE fault measurement shape；S5 capacity gate；彩排链 **V173**（55 步）。见 test-report-v1.73.md、progress-completion-v1.73.md。
+
 ## 第119轮（v1.19）：tier 联动 OpenMetrics
 
 35 抽页。见 test-report-v1.19.md。

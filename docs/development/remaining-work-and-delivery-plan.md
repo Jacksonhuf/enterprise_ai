@@ -698,4 +698,8 @@ R22 真人 UAT 签收 shape 彩排；未签字 production apply 阻断。见 tes
 
 R22 真人签收 dry-run 台账；挂钩 shape→LIVE 单独门禁。见 test-report-v1.72.md。
 
-**建议下一轮（v1.73+）**：S5 R20 压力/SSE 故障测量 shape 登记（仍为 mock）。
+### 第173轮增量（v1.73）
+
+R20 压力/SSE 故障 **测量 shape**（mock）；S5 容量门禁彩排。见 test-report-v1.73.md。
+
+**建议下一轮（v1.74+）**：R21 运维可观测性 shape 台账（备份/RPO shape，仍为 rehearsal）。
