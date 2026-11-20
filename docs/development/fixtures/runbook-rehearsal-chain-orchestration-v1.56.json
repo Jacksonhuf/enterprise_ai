@@ -1,0 +1,16 @@
+{
+  "chain_status": "RUNBOOK_REHEARSAL_CHAIN_V156",
+  "not_production": true,
+  "steps": [
+    {"script": "validate-runbook-first-fill-rehearsal-table.py", "fixture": "schema8-runbook-first-fill-rehearsal-table-v1.56.json"},
+    {"script": "validate-runbook-log-rehearsal-alignment.py", "fixture": "runbook-log-rehearsal-alignment-v1.56.json"},
+    {"script": "validate-runbook-section3-defer-rollup-linkage.py", "fixture": "runbook-section3-defer-rollup-linkage-v1.49.json"},
+    {"script": "validate-r02-page-api-open-gap-registry.py", "fixture": "r02-page-api-open-gap-registry-v1.52.json"},
+    {"script": "validate-r02-matrix-global-gap-visualization.py", "fixture": "r02-matrix-global-gap-visualization-v1.56.json"},
+    {"script": "validate-r02-global-gap-dashboard-matrix-joint.py", "fixture": "r02-global-gap-dashboard-matrix-joint-v1.56.json"},
+    {"script": "validate-r02-gap-closeout-figma-crossref.py", "fixture": "r02-gap-closeout-figma-crossref-v1.51.json"},
+    {"script": "validate-r02-matrix-figma-bidirectional.py", "fixture": "r02-matrix-figma-bidirectional-link-v1.55.json"},
+    {"script": "validate-r02-figma-pending-closeout-plan.py", "fixture": "r02-figma-pending-closeout-plan-v1.55.json"}
+  ],
+  "notes": "v1.56 联合门 + 实填 log 彩排"
+}

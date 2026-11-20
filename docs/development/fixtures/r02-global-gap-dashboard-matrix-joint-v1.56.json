@@ -1,0 +1,14 @@
+{
+  "joint_status": "R02_GLOBAL_GAP_DASHBOARD_MATRIX_JOINT_V156",
+  "not_production": true,
+  "global_gap_visual_fixture": "r02-matrix-global-gap-visualization-v1.56.json",
+  "matrix_bidirectional_fixture": "r02-matrix-figma-bidirectional-link-v1.55.json",
+  "open_gap_registry_fixture": "r02-page-api-open-gap-registry-v1.52.json",
+  "figma_checklist_fixture": "r02-figma-field-checklist-v1.44.json",
+  "figma_blocker_doc": "r02-global-figma-blocker-v1.56.md",
+  "rules": {
+    "engineering_field_signoff": "REHEARSAL_ALL_FIELDS_MATCHED",
+    "global_blocker_must_include": "FIGMA_SIGNOFF_ALL"
+  },
+  "notes": "全局 gap 看板 + matrix↔Figma 双向联合门；engineering matched 不关闭 FIGMA_SIGNOFF_ALL"
+}
