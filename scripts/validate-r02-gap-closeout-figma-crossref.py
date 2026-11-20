@@ -30,6 +30,7 @@ def main() -> None:
     if figma.get("checklist_status") not in (
         "R02_FIGMA_FIELD_CHECKLIST_V151",
         "R02_FIGMA_FIELD_CHECKLIST_V152",
+        "R02_FIGMA_FIELD_CHECKLIST_V153",
     ):
         raise SystemExit("figma checklist must be V151 or V152")
     closeout = json.loads((FX / doc["closeout_fixture"]).read_text())

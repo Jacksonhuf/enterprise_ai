@@ -1,5 +1,5 @@
 {
-  "checklist_status": "R02_FIGMA_FIELD_CHECKLIST_V152",
+  "checklist_status": "R02_FIGMA_FIELD_CHECKLIST_V153",
   "design_entry_count": 17,
   "signoff": "REHEARSAL_PARTIAL",
   "entries": [
@@ -183,7 +183,14 @@
     },
     {
       "design_id": "CAND-15",
-      "fields": [{"id": "exception-cas-states", "figma_ref": "CAND-15/exceptions", "status": "pending"}]
+      "fields": [
+        {
+          "id": "exception-cas-states",
+          "figma_ref": "CAND-15/exceptions",
+          "status": "matched",
+          "evidence": "R18 governance-ops-exceptions v1.53"
+        }
+      ]
     },
     {
       "design_id": "CAND-16",
