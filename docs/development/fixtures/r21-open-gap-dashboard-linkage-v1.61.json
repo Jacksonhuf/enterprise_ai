@@ -1,0 +1,26 @@
+{
+  "linkage_status": "R21_OPEN_GAP_DASHBOARD_V161",
+  "open_gap_registry_fixture": "r02-page-api-open-gap-registry-v1.52.json",
+  "global_gap_visual_fixture": "r02-matrix-global-gap-visualization-v1.57.json",
+  "dashboard_matrix_joint_fixture": "r02-global-gap-dashboard-matrix-joint-v1.57.json",
+  "rehearsal_chain_fixture": "runbook-rehearsal-chain-orchestration-v1.61.json",
+  "first_fill_rehearsal_fixture": "schema8-runbook-first-fill-rehearsal-table-v1.61.json",
+  "figma_pending_plan_fixture": "r02-figma-pending-closeout-plan-v1.55.json",
+  "three_table_window_fixture": "production-gate-three-table-window-v1.57.json",
+  "defer_rollup_linkage_fixture": "runbook-section3-defer-rollup-linkage-v1.58.json",
+  "triple_gate_window_registry_fixture": "r21-dashboard-triple-gate-window-registry-v1.60.json",
+  "matrix_entry_drilldown_fixture": "r02-matrix-entry-gap-r18-slug-drilldown-v1.59.json",
+  "g4_filled_log_linkage_fixture": "runbook-g4-filled-log-sha-linkage-v1.60.json",
+  "groups_roles_defer_fixture": "r18-groups-roles-tab-defer-decision-v1.60.json",
+  "main_table_signoff_path_fixture": "runbook-main-table-signoff-path-rehearsal-v1.61.json",
+  "narrow_defer_inventory_fixture": "r18-narrow-only-defer-inventory-v1.61.json",
+  "g4_staging_triple_sync_fixture": "runbook-g4-staging-ticket-triple-sync-v1.61.json",
+  "runbook_docs": [
+    "mysql-schema8-r21-open-gap-dashboard-v1.53.md",
+    "mysql-schema8-runbook-production-fill-checklist.md",
+    "mysql-schema8-runbook-section3-g4-linkage.md",
+    "r02-global-figma-blocker-v1.56.md",
+    "r18-gap-checklist-v1.43.md"
+  ],
+  "notes": "v1.61 主表签字路径、narrow 盘点、G4 staging 三联"
+}

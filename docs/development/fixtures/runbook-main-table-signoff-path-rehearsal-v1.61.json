@@ -1,0 +1,18 @@
+{
+  "path_status": "RUNBOOK_MAIN_TABLE_SIGNOFF_PATH_V161",
+  "not_production": true,
+  "runbook_checklist_doc": "mysql-schema8-runbook-production-fill-checklist.md",
+  "signoff_sequence_doc": "mysql-schema8-runbook-section3-g4-linkage.md",
+  "main_table_rows": [
+    {"row": "1", "checklist_hook": "main_table_1", "rehearsal_checked": false, "production_gate": "executed_at_cst+dsn+change_ticket"},
+    {"row": "2", "checklist_hook": "main_table_2", "rehearsal_checked": false, "production_gate": "migrate_plan_sha256+apply_exit_codes"},
+    {"row": "3", "checklist_hook": "main_table_3", "rehearsal_checked": false, "production_gate": "dual_instance_ready"},
+    {"row": "4", "checklist_hook": "main_table_4", "rehearsal_checked": false, "production_gate": "runbook_smoke_mixed_read"},
+    {"row": "5", "checklist_hook": "main_table_5", "rehearsal_checked": false, "production_gate": "rollback_approval"},
+    {"row": "6", "checklist_hook": "main_table_6", "rehearsal_checked": false, "production_gate": "r21_slo_signoff"},
+    {"row": "7", "checklist_hook": "main_table_7", "rehearsal_checked": false, "production_gate": "g4_same_change_ticket"},
+    {"row": "8", "checklist_hook": "main_table_8", "rehearsal_checked": true, "rehearsal_only": true, "evidence_fixture": "runbook-main-table8-dashboard-window-check-v1.60.json"}
+  ],
+  "filled_log_shape_fixture": "schema8-production-log-rehearsal-filled-v1.57.json",
+  "notes": "主表 #1–#7 真签字路径登记；#8 沿用 v1.60 彩排勾选"
+}

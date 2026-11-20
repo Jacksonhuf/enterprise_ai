@@ -724,6 +724,10 @@ FILL C6 DEFER；entry drilldown；triple-gate 同窗。见 test-report-v1.59.md�
 
 MAIN_TABLE_8 window check；G4↔filled log SHA；CAND-09/11 书面决策；彩排链 **V160**。见 test-report-v1.60.md。
 
+## 第161轮（v1.61）：主表签字路径、narrow 盘点、G4 staging 三联
+
+SIGNOFF_PATH #1–#8；narrow defer inventory；G4 staging triple shape；彩排链 **V161**。见 test-report-v1.61.md。
+
 ## 第119轮（v1.19）：tier 联动 OpenMetrics
 
 35 抽页。见 test-report-v1.19.md。
