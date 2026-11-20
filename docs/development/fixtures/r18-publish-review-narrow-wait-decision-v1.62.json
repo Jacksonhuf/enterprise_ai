@@ -1,0 +1,11 @@
+{
+  "decision_status": "R18_PUBLISH_REVIEW_NARROW_WAIT_V162",
+  "resolution": "WAIT_ON_PUBLISH_REVIEW_PARENT_DEFER",
+  "slug": "publish-review-narrow",
+  "parent_defer_slug": "publish-review",
+  "defer_rollup_fixture": "r18-headroom-defer-rollup-v1.44.json",
+  "narrow_inventory_fixture": "r18-narrow-only-defer-inventory-v1.61.json",
+  "expected_max_diff_ratio": 0.043,
+  "r18_gap_doc": "r18-gap-checklist-v1.43.md",
+  "notes": "窄屏跟随宽屏 publish-review defer；不单开 headroom defer 条目"
+}
