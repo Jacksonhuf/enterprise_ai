@@ -209,8 +209,6 @@ jobs:
       - run: python scripts/validate-runbook-log-rehearsal-alignment.py docs/development/fixtures/runbook-log-rehearsal-alignment-v1.52.json
       - run: python scripts/validate-r02-page-api-open-gap-registry.py docs/development/fixtures/r02-page-api-open-gap-registry-v1.52.json
       - run: python scripts/validate-runbook-rehearsal-chain-orchestration.py docs/development/fixtures/runbook-rehearsal-chain-orchestration-v1.53.json
-      - run: python scripts/validate-r02-figma-pending-closeout-plan.py docs/development/fixtures/r02-figma-pending-closeout-plan-v1.53.json
-      - run: python scripts/validate-r21-open-gap-dashboard-linkage.py docs/development/fixtures/r21-open-gap-dashboard-linkage-v1.53.json
       - run: python scripts/validate-r02-matrix-global-gap-visualization.py docs/development/fixtures/r02-matrix-global-gap-visualization-v1.54.json
       - run: python scripts/validate-r02-figma-pending-closeout-plan.py docs/development/fixtures/r02-figma-pending-closeout-plan-v1.54.json
       - run: python scripts/validate-r21-open-gap-dashboard-linkage.py docs/development/fixtures/r21-open-gap-dashboard-linkage-v1.54.json
