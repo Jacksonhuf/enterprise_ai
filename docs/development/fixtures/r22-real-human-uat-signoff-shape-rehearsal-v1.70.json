@@ -1,0 +1,22 @@
+{
+  "signoff_rehearsal_status": "R22_REAL_HUMAN_UAT_SIGNOFF_V170",
+  "not_production": true,
+  "base_uat_signoff_shape_fixture": "r02-production-uat-signoff-shape-v1.67.json",
+  "joint_uat_scenario_fixture": "r22-joint-uat-scenario-rehearsal-v1.68.json",
+  "joint_environment_hooklist_fixture": "runbook-real-joint-environment-hooklist-rehearsal-v1.69.json",
+  "real_human_signoff_obtained": false,
+  "joint_env_ready_for_uat": false,
+  "required_signatory_roles": [
+    "business_owner",
+    "product_owner",
+    "uat_lead_owner"
+  ],
+  "signoff_evidence_fields": [
+    "signed_at_cst",
+    "uat_session_minutes",
+    "p0_defect_count"
+  ],
+  "production_apply_forbidden": true,
+  "pilot_doc": "remaining-work-and-delivery-plan.md",
+  "notes": "真人 UAT 签收 shape；联合环境未就绪、未签字"
+}

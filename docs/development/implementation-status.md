@@ -760,6 +760,10 @@ global gap item closeout；R22 joint UAT scenarios；production apply preflight 
 
 S5 release ops checklist；real joint environment hooklist；rehearsal-only gate enforcement；彩排链 **V169**（47 步）。见 test-report-v1.69.md、progress-completion-v1.69.md。
 
+## 第170轮（v1.70）：真人 UAT 签收 shape、未签字 apply 阻断
+
+R22 real human UAT signoff shape；unsigned UAT production apply block；彩排链 **V170**（49 步）。见 test-report-v1.70.md、progress-completion-v1.70.md。
+
 ## 第119轮（v1.19）：tier 联动 OpenMetrics
 
 35 抽页。见 test-report-v1.19.md。

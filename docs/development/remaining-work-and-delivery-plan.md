@@ -686,4 +686,8 @@ Figma 像素绿子集 + UAT 签收 shape；SRE/平台双签 shape；真 DSN dry-
 
 S5 发布运营清单彩排；真实联合环境挂钩清单；rehearsal-only 闸口。见 test-report-v1.69.md。
 
-**建议下一轮（v1.70+）**：联合环境就绪后 R22 真人 UAT 签收 shape；仍禁止未签字 production apply。
+### 第170轮增量（v1.70）
+
+R22 真人 UAT 签收 shape 彩排；未签字 production apply 阻断。见 test-report-v1.70.md。
+
+**建议下一轮（v1.71+）**：联合环境挂钩逐项转 CONNECTED shape（仍 rehearsal）；真人签收字段仍为 PLACEHOLDER。

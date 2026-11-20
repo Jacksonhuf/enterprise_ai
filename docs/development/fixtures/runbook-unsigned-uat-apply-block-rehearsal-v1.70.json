@@ -1,0 +1,10 @@
+{
+  "block_status": "UNSIGNED_UAT_PRODUCTION_APPLY_BLOCK_V170",
+  "not_production": true,
+  "unsigned_uat_apply_forbidden": true,
+  "production_apply_forbidden": true,
+  "real_human_uat_signoff_fixture": "r22-real-human-uat-signoff-shape-rehearsal-v1.70.json",
+  "rehearsal_only_gate_fixture": "runbook-rehearsal-only-gate-enforcement-v1.69.json",
+  "release_window_id": "WIN-WAREHOUSE-REHEARSAL-0146",
+  "notes": "未获真人 UAT 签字时禁止 production apply"
+}
