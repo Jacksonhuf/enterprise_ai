@@ -1,0 +1,10 @@
+{
+  "rehearsal_status": "ENTERED_CROSSREF_WAREHOUSE_V162",
+  "not_production": true,
+  "warehouse_joint_fixture": "production-gate-crossref-bundle-joint-shape-example.json",
+  "team_fill_crossref_fixture": "production-gate-ticket-crossref-team-fill-staging-v148.json",
+  "entered_ledger_fixture": "schema8-production-ledger-entered-team-fill-v148.json",
+  "filled_log_fixture": "schema8-production-log-rehearsal-filled-v1.57.json",
+  "first_entered_rehearsal_fixture": "schema8-production-ledger-first-entered-rehearsal-v1.57.json",
+  "notes": "warehouse 入库 shape 与 team-fill ENTERED 彩排同台；工单前缀分轨"
+}

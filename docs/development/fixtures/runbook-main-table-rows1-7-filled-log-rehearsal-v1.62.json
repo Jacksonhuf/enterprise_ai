@@ -1,0 +1,18 @@
+{
+  "binding_status": "RUNBOOK_MAIN_TABLE_ROWS1_7_LOG_V162",
+  "not_production": true,
+  "signoff_path_fixture": "runbook-main-table-signoff-path-rehearsal-v1.61.json",
+  "log_alignment_fixture": "runbook-log-rehearsal-alignment-v1.61.json",
+  "filled_log_fixture": "schema8-production-log-rehearsal-filled-v1.57.json",
+  "row_bindings": [
+    {"row": "1", "alignment_ref": "main_1", "rehearsal_log_verified": true},
+    {"row": "2", "alignment_ref": "main_2", "rehearsal_log_verified": true},
+    {"row": "3", "alignment_ref": "main_3", "rehearsal_log_verified": true},
+    {"row": "4", "alignment_ref": null, "rehearsal_log_verified": false, "gap": "filled log 无主表 #4 专用字段"},
+    {"row": "5", "alignment_ref": null, "rehearsal_log_verified": false, "gap": "回退/批准人未入彩排 log"},
+    {"row": "6", "alignment_ref": null, "rehearsal_log_verified": false, "gap": "SLO 签核未入彩排 log"},
+    {"row": "7", "alignment_ref": "C19", "rehearsal_log_verified": true, "via_g4_linkage": true}
+  ],
+  "production_main_table_unchecked": true,
+  "notes": "主表 #1–#3、#7(G4) 与实填 log 同窗验证；#4–#6 仍待 shape 扩展"
+}

@@ -728,6 +728,10 @@ MAIN_TABLE_8 window check；G4↔filled log SHA；CAND-09/11 书面决策；彩�
 
 SIGNOFF_PATH #1–#8；narrow defer inventory；G4 staging triple shape；彩排链 **V161**。见 test-report-v1.61.md。
 
+## 第162轮（v1.62）：主表 log 绑定、publish-review-narrow、ENTERED warehouse
+
+ROWS1_7_LOG；publish-review-narrow wait；ENTERED warehouse crossref；彩排链 **V162**。见 test-report-v1.62.md。
+
 ## 第119轮（v1.19）：tier 联动 OpenMetrics
 
 35 抽页。见 test-report-v1.19.md。
