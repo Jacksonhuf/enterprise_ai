@@ -1,0 +1,14 @@
+{
+  "index_status": "R02_MATRIX_GLOBAL_GAP_R18_CROSS_INDEX_V157",
+  "matrix_fixture": "r02-page-api-acceptance-matrix-v1.45.json",
+  "global_gap_visual_fixture": "r02-matrix-global-gap-visualization-v1.57.json",
+  "r18_gap_doc": "r18-gap-checklist-v1.43.md",
+  "global_mappings": [
+    {"matrix_gap": "FIGMA_SIGNOFF_ALL", "r18_enum": "FIGMA_PIXEL_SIGNOFF", "doc_anchor": "对照 Figma 像素签字"},
+    {"matrix_gap": "KEYBOARD_A11Y_FULL", "r18_enum": "KEYBOARD_A11Y", "doc_anchor": "键盘"},
+    {"matrix_gap": "EMPTY_ERROR_LOADING_ALL_STATES", "r18_enum": "EMPTY_ERROR_LOADING", "doc_anchor": "空态"},
+    {"matrix_gap": "REAL_IDENTITY_NAV", "r18_enum": "REAL_IDENTITY", "doc_anchor": "真实身份"},
+    {"matrix_gap": "PRODUCTION_UAT_SIGNOFF", "r18_enum": "UAT_SIGNOFF", "doc_anchor": "关项"}
+  ],
+  "notes": "matrix r18_global_gaps 与 R18 缺口文档交叉索引"
+}

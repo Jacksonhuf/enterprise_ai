@@ -14,8 +14,12 @@ def main() -> None:
     path = Path(sys.argv[1])
     vis = json.loads(path.read_text())
     status = vis.get("visual_status")
-    if status not in ("R02_GLOBAL_GAP_VISUAL_V154", "R02_GLOBAL_GAP_VISUAL_V156"):
-        raise SystemExit("visual_status must be V154 or V156")
+    if status not in (
+        "R02_GLOBAL_GAP_VISUAL_V154",
+        "R02_GLOBAL_GAP_VISUAL_V156",
+        "R02_GLOBAL_GAP_VISUAL_V157",
+    ):
+        raise SystemExit("visual_status must be V154, V156, or V157")
     matrix_path = FX / vis["matrix_fixture"]
     subprocess.run(
         [PY, str(ROOT / "scripts/validate-r02-page-api-acceptance-matrix.py"), str(matrix_path)],
@@ -46,9 +50,13 @@ def main() -> None:
     if not (FX / closeout).is_file():
         raise SystemExit("engineering_closeout_ref missing")
     joint_ref = vis.get("dashboard_matrix_joint_fixture", "")
-    if status == "R02_GLOBAL_GAP_VISUAL_V156":
+    if status in ("R02_GLOBAL_GAP_VISUAL_V156", "R02_GLOBAL_GAP_VISUAL_V157"):
         if not joint_ref or not (FX / joint_ref).is_file():
-            raise SystemExit("V156 viz requires dashboard_matrix_joint_fixture file")
+            raise SystemExit("V156+ viz requires dashboard_matrix_joint_fixture file")
+    cross = vis.get("r18_gap_cross_index_fixture", "")
+    if status == "R02_GLOBAL_GAP_VISUAL_V157":
+        if not cross or not (FX / cross).is_file():
+            raise SystemExit("V157 viz requires r18_gap_cross_index_fixture file")
     print(f"OK: global gap visualization ({len(matrix_global)} global, {with_gaps} entries w/ gaps)")
     print(f"Validated {path}")
 

@@ -18,8 +18,12 @@ def run(script: str, fixture: str) -> None:
 def main() -> None:
     path = Path(sys.argv[1])
     joint = json.loads(path.read_text())
-    if joint.get("joint_status") != "R02_GLOBAL_GAP_DASHBOARD_MATRIX_JOINT_V156":
-        raise SystemExit("joint_status must be R02_GLOBAL_GAP_DASHBOARD_MATRIX_JOINT_V156")
+    status = joint.get("joint_status")
+    if status not in (
+        "R02_GLOBAL_GAP_DASHBOARD_MATRIX_JOINT_V156",
+        "R02_GLOBAL_GAP_DASHBOARD_MATRIX_JOINT_V157",
+    ):
+        raise SystemExit("joint_status must be V156 or V157")
     if not joint.get("not_production"):
         raise SystemExit("not_production must be true")
     viz = joint.get("global_gap_visual_fixture", "")
@@ -51,6 +55,11 @@ def main() -> None:
     for needle in ("FIGMA_SIGNOFF_ALL", "REHEARSAL_ALL_FIELDS_MATCHED", "非产品签字"):
         if needle not in text:
             raise SystemExit(f"figma blocker doc must mention {needle}")
+    cross = joint.get("r18_gap_cross_index_fixture", "")
+    if status == "R02_GLOBAL_GAP_DASHBOARD_MATRIX_JOINT_V157":
+        if not cross:
+            raise SystemExit("V157 joint requires r18_gap_cross_index_fixture")
+        run("validate-r02-matrix-global-gap-r18-cross-index.py", cross)
     print("OK: global gap↔dashboard↔matrix joint gate")
     print(f"Validated {path}")
 

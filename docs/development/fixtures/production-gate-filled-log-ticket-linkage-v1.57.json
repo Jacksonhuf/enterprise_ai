@@ -1,0 +1,8 @@
+{
+  "linkage_status": "FILLED_LOG_TICKET_LINKAGE_V157",
+  "not_production": true,
+  "filled_log_fixture": "schema8-production-log-rehearsal-filled-v1.57.json",
+  "three_table_window_fixture": "production-gate-three-table-window-v1.57.json",
+  "crossref_fixture": "production-gate-ticket-crossref-team-fill-staging-v148.json",
+  "notes": "实填 REHEARSAL log.change_ticket 须与 crossref.apply_change_ticket_ref 一致"
+}

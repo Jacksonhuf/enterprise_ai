@@ -1,0 +1,10 @@
+{
+  "window_status": "THREE_TABLE_WINDOW_SYNC_V157",
+  "release_window_id": "WIN-WAREHOUSE-REHEARSAL-0146",
+  "crossref_fixture": "production-gate-ticket-crossref-team-fill-staging-v148.json",
+  "entered_confirmed_joint_fixture": "production-gate-entered-confirmed-bundle-joint-team-fill-v148.json",
+  "filled_log_ticket_linkage_fixture": "production-gate-filled-log-ticket-linkage-v1.57.json",
+  "first_entered_ledger_fixture": "schema8-production-ledger-first-entered-rehearsal-v1.57.json",
+  "tables": ["engineering-pilot-bundle", "schema8-production-ledger", "staging-import-ticket"],
+  "notes": "v1.57 三联表与实填 log 工单同工单"
+}
