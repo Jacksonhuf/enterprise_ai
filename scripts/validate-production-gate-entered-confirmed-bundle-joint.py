@@ -11,8 +11,12 @@ FX = ROOT / "docs/development/fixtures"
 def main() -> None:
     path = Path(sys.argv[1])
     joint = json.loads(path.read_text())
-    if joint.get("joint_status") != "ENTERED_CONFIRMED_BUNDLE_JOINT_SHAPE_ONLY":
-        raise SystemExit("joint_status must be ENTERED_CONFIRMED_BUNDLE_JOINT_SHAPE_ONLY")
+    status = joint.get("joint_status")
+    if status not in (
+        "ENTERED_CONFIRMED_BUNDLE_JOINT_SHAPE_ONLY",
+        "ENTERED_CONFIRMED_BUNDLE_JOINT_TEAM_FILL_V148",
+    ):
+        raise SystemExit("joint_status must be shape-only or team-fill v148")
     ticket = joint.get("apply_change_ticket_ref", "")
     staging = joint.get("staging_import_ticket", "")
     if not ticket or not staging:

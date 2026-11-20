@@ -30,8 +30,9 @@ def main() -> None:
         "R21_OPEN_GAP_DASHBOARD_V161",
         "R21_OPEN_GAP_DASHBOARD_V162",
         "R21_OPEN_GAP_DASHBOARD_V163",
+        "R21_OPEN_GAP_DASHBOARD_V164",
     ):
-        raise SystemExit("linkage_status must be V153–V163")
+        raise SystemExit("linkage_status must be V153–V164")
     for doc in link.get("runbook_docs", []):
         if not (ROOT / "docs/development" / doc).is_file():
             raise SystemExit(f"missing doc {doc}")
@@ -153,6 +154,26 @@ def main() -> None:
         if "v1.63" not in link.get("main_table_rows1_7_log_fixture", ""):
             raise SystemExit("V163 must use rows1_7 log v1.63")
         run("validate-runbook-main-table-rows1-7-filled-log-rehearsal.py", link["main_table_rows1_7_log_fixture"])
+    if link_status == "R21_OPEN_GAP_DASHBOARD_V164":
+        if "v1.64" not in chain_fixture:
+            raise SystemExit("V164 dashboard must use v1.64 rehearsal chain")
+        for key, script in (
+            ("main_table_rows4_6_shape_fixture", "validate-runbook-main-table-rows4-6-log-shape.py"),
+            ("narrow_open_batch_wait_fixture", "validate-r18-narrow-open-batch-wait.py"),
+            ("row5_rollback_shape_fixture", "validate-runbook-main-table-row5-rollback-shape.py"),
+            ("teamfill_confirmed_warehouse_window_fixture", "validate-runbook-teamfill-confirmed-warehouse-window.py"),
+        ):
+            fx = link.get(key, "")
+            if not fx:
+                raise SystemExit(f"V164 dashboard must name {key}")
+            run(script, fx)
+        if "v1.64" not in link.get("main_table_rows1_7_log_fixture", ""):
+            raise SystemExit("V164 must use rows1_7 log v1.64")
+        run("validate-runbook-main-table-rows1-7-filled-log-rehearsal.py", link["main_table_rows1_7_log_fixture"])
+        run(
+            "validate-runbook-confirmed-warehouse-bundle-rehearsal.py",
+            link.get("confirmed_warehouse_bundle_fixture", ""),
+        )
     print("OK: R21 open-gap dashboard linkage")
     print(f"Validated {path}")
 

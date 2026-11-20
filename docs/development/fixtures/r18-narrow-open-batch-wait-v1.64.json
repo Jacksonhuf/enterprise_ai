@@ -1,0 +1,19 @@
+{
+  "batch_status": "R18_NARROW_OPEN_BATCH_WAIT_V164",
+  "batch_id": "governance-ops-batch-2",
+  "resolution": "WAIT_PIXEL_GREEN_NO_NEW_DEFER",
+  "inventory_fixture": "r18-narrow-only-defer-inventory-v1.61.json",
+  "publish_review_narrow_fixture": "r18-publish-review-narrow-wait-decision-v1.62.json",
+  "prior_batch_fixture": "r18-narrow-open-batch-wait-v1.63.json",
+  "batch_slugs": [
+    "editor-channel-narrow",
+    "build-releases-narrow",
+    "governance-audit-narrow",
+    "governance-ops-audit-narrow",
+    "governance-ops-exceptions-narrow",
+    "governance-ops-settings-narrow"
+  ],
+  "expected_batch_count": 6,
+  "remaining_open_after_batch": 6,
+  "notes": "open narrow 第二批；与 v1.63 批次不重叠"
+}

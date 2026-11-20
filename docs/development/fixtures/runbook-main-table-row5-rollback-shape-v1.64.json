@@ -1,0 +1,13 @@
+{
+  "shape_status": "RUNBOOK_MAIN_TABLE_ROW5_ROLLBACK_V164",
+  "not_production": true,
+  "filled_log_fixture": "schema8-production-log-rehearsal-filled-v1.64.json",
+  "prior_shape_fixture": "runbook-main-table-rows4-6-log-shape-v1.63.json",
+  "required_shape_fields": [
+    "rollback_decision_recorded",
+    "rollback_approver",
+    "rollback_approval_shape"
+  ],
+  "production_signoff_still_placeholder": true,
+  "notes": "主表 #5 回退/批准人生产 shape；仍 REHEARSAL 签核"
+}
