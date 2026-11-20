@@ -1,0 +1,19 @@
+{
+  "plan_status": "R02_FIGMA_PENDING_CLOSEOUT_PLAN_V155",
+  "supersedes": "r02-figma-pending-closeout-plan-v1.54.json",
+  "figma_checklist_fixture": "r02-figma-field-checklist-v1.44.json",
+  "fulfilled_in_v155": [
+    {
+      "design_id": "CAND-17",
+      "field_id": "public-notice-editor",
+      "evidence": "R01 public notice smoke v1.55"
+    },
+    {
+      "design_id": "CAND-17",
+      "field_id": "ops-settings-alert",
+      "evidence": "R18 governance-ops-settings v1.55"
+    }
+  ],
+  "pending_targets": [],
+  "notes": "v1.55 字段级 pending 清零（仍为 engineering matched，非产品签字）"
+}

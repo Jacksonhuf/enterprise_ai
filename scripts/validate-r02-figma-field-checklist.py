@@ -23,11 +23,13 @@ def main() -> None:
         "R02_FIGMA_FIELD_CHECKLIST_V152",
         "R02_FIGMA_FIELD_CHECKLIST_V153",
         "R02_FIGMA_FIELD_CHECKLIST_V154",
+        "R02_FIGMA_FIELD_CHECKLIST_V155",
     ):
         raise SystemExit("invalid checklist_status")
     if doc.get("signoff") not in (
         "REHEARSAL_PENDING",
         "REHEARSAL_PARTIAL",
+        "REHEARSAL_ALL_FIELDS_MATCHED",
         "PRODUCT_SIGNED",
     ):
         raise SystemExit("invalid signoff state")
@@ -57,6 +59,19 @@ def main() -> None:
         raise SystemExit("v1.53 checklist requires at least nineteen matched fields")
     if doc.get("checklist_status") == "R02_FIGMA_FIELD_CHECKLIST_V154" and matched < 20:
         raise SystemExit("v1.54 checklist requires at least twenty matched fields")
+    if doc.get("checklist_status") == "R02_FIGMA_FIELD_CHECKLIST_V155":
+        if matched < 22:
+            raise SystemExit("v1.55 checklist requires all 22 fields matched")
+        pending_count = sum(
+            1
+            for entry in doc.get("entries", [])
+            for f in entry.get("fields", [])
+            if f.get("status") == "pending"
+        )
+        if pending_count != 0:
+            raise SystemExit("v1.55 checklist must have zero pending fields")
+        if doc.get("signoff") != "REHEARSAL_ALL_FIELDS_MATCHED":
+            raise SystemExit("v1.55 requires REHEARSAL_ALL_FIELDS_MATCHED signoff state")
     entries = doc.get("entries", [])
     want = int(doc.get("design_entry_count", 17))
     if len(entries) != want:
