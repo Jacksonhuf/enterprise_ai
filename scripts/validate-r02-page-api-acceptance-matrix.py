@@ -5,6 +5,7 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
+FX = ROOT / "docs/development/fixtures"
 ROUTER = ROOT / "frontend/src/cognara/router.ts"
 MANIFEST = ROOT / "frontend/r18-baselines/manifest.json"
 
@@ -26,8 +27,13 @@ def main() -> None:
         "R02_PAGE_API_ACCEPTANCE_MATRIX_V143",
         "R02_PAGE_API_ACCEPTANCE_MATRIX_V145",
         "R02_PAGE_API_ACCEPTANCE_MATRIX_V149",
+        "R02_PAGE_API_ACCEPTANCE_MATRIX_V150",
     ):
-        raise SystemExit("matrix_status must be V143, V145, or V149")
+        raise SystemExit("matrix_status must be V143, V145, V149, or V150")
+    if matrix.get("matrix_status") == "R02_PAGE_API_ACCEPTANCE_MATRIX_V150":
+        link = matrix.get("gap_registry_link", "")
+        if not link or not (FX / link).is_file():
+            raise SystemExit("V150 matrix requires valid gap_registry_link fixture")
     entries = matrix.get("entries", [])
     expected = int(matrix.get("design_entry_count", 17))
     if len(entries) != expected:

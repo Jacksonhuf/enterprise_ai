@@ -43,8 +43,11 @@ def main() -> None:
         if item.get("gap_code") == "DEDICATED_R18_SPOT" and did == "CAND-14":
             if "services-engineer" not in slugs:
                 raise SystemExit("CAND-14 must list services-engineer slug")
-    if matrix.get("matrix_status") != "R02_PAGE_API_ACCEPTANCE_MATRIX_V149":
-        raise SystemExit("matrix must be R02_PAGE_API_ACCEPTANCE_MATRIX_V149")
+    if matrix.get("matrix_status") not in (
+        "R02_PAGE_API_ACCEPTANCE_MATRIX_V149",
+        "R02_PAGE_API_ACCEPTANCE_MATRIX_V150",
+    ):
+        raise SystemExit("matrix must be V149 or V150")
     print(f"OK: R02 gap closeout ({len(doc.get('items', []))} items)")
     print(f"Validated {path}")
 

@@ -614,4 +614,8 @@ matrix↔Figma 双向链；runbook 首条真填演练表；Figma 15 matched。�
 
 closeout↔Figma 交叉；log↔演练表对齐；Figma 17 matched。见 test-report-v1.51.md 及 PR CI。
 
-**建议下一轮（v1.52+）**：rehearsal 表升级含 C8 与 log 对齐；matrix V150 gap 登记；Figma 18+ matched。
+### 第152轮增量（v1.52）
+
+演练表 C8/log_align；matrix V150 gap 登记；Figma 18 matched。见 test-report-v1.52.md 及 PR CI。
+
+**建议下一轮（v1.53+）**：rehearsal 表链式单测编排；FIGMA 剩余 pending 收口计划；R21 与 open gap 看板。

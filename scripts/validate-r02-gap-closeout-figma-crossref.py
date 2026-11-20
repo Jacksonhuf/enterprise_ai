@@ -27,8 +27,11 @@ def main() -> None:
         cwd=ROOT,
     )
     figma = json.loads(figma_path.read_text())
-    if figma.get("checklist_status") != "R02_FIGMA_FIELD_CHECKLIST_V151":
-        raise SystemExit("figma checklist must be V151")
+    if figma.get("checklist_status") not in (
+        "R02_FIGMA_FIELD_CHECKLIST_V151",
+        "R02_FIGMA_FIELD_CHECKLIST_V152",
+    ):
+        raise SystemExit("figma checklist must be V151 or V152")
     closeout = json.loads((FX / doc["closeout_fixture"]).read_text())
     required = doc.get("required_matched_fields", {})
     closeout_ids = {item["design_id"] for item in closeout.get("items", [])}

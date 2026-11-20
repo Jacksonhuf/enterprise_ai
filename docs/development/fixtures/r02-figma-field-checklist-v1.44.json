@@ -1,5 +1,5 @@
 {
-  "checklist_status": "R02_FIGMA_FIELD_CHECKLIST_V151",
+  "checklist_status": "R02_FIGMA_FIELD_CHECKLIST_V152",
   "design_entry_count": 17,
   "signoff": "REHEARSAL_PARTIAL",
   "entries": [
@@ -161,7 +161,14 @@
     },
     {
       "design_id": "CAND-13",
-      "fields": [{"id": "audit-filters", "figma_ref": "CAND-13/filters", "status": "pending"}]
+      "fields": [
+        {
+          "id": "audit-filters",
+          "figma_ref": "CAND-13/filters",
+          "status": "matched",
+          "evidence": "R18 governance-audit filters v1.52"
+        }
+      ]
     },
     {
       "design_id": "CAND-14",

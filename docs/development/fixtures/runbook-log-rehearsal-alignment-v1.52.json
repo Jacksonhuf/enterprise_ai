@@ -1,0 +1,43 @@
+{
+  "alignment_status": "RUNBOOK_LOG_REHEARSAL_ALIGNMENT_V152",
+  "rehearsal_table_fixture": "schema8-runbook-first-fill-rehearsal-table-v1.52.json",
+  "production_log_shape_fixture": "schema8-production-log-shape-example.json",
+  "row_field_map": [
+    {
+      "checklist_ref": "main_1",
+      "log_fields": ["executed_at_cst", "dsn_database_host", "change_ticket"],
+      "shape_template_allows_empty": true
+    },
+    {
+      "checklist_ref": "main_2",
+      "log_fields": ["migrate_plan_sha256", "apply_exit_codes"],
+      "rehearsal_value_hint": "CI-F-G-VALIDATION"
+    },
+    {
+      "checklist_ref": "main_3",
+      "log_fields": ["dual_instance_ready"],
+      "rehearsal_value_hint": "TestR20Schema8RunbookDefaultSmoke"
+    },
+    {
+      "checklist_ref": "C7",
+      "log_fields": ["runbook_smoke_artifact"],
+      "rehearsal_value_hint": "validate-runbook-section3-defer-rollup-linkage"
+    },
+    {
+      "checklist_ref": "C8",
+      "log_fields": ["runbook_smoke_artifact"],
+      "rehearsal_value_hint": "validate-r02-matrix-figma-bidirectional"
+    },
+    {
+      "checklist_ref": "log_align",
+      "log_fields": ["shape_example_only"],
+      "rehearsal_value_hint": "validate-runbook-log-rehearsal-alignment"
+    },
+    {
+      "checklist_ref": "ledger_pending",
+      "log_fields": ["r18_artifact"],
+      "rehearsal_value_hint": "FIRST_PRODUCTION_FILL_TEMPLATE_V148"
+    }
+  ],
+  "notes": "v1.52 演练表含 C8/log_align"
+}
