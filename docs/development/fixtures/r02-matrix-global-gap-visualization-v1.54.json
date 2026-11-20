@@ -1,0 +1,21 @@
+{
+  "visual_status": "R02_GLOBAL_GAP_VISUAL_V154",
+  "matrix_fixture": "r02-page-api-acceptance-matrix-v1.45.json",
+  "open_gap_registry_fixture": "r02-page-api-open-gap-registry-v1.52.json",
+  "panels": {
+    "global_blockers": [
+      "FIGMA_SIGNOFF_ALL",
+      "KEYBOARD_A11Y_FULL",
+      "EMPTY_ERROR_LOADING_ALL_STATES",
+      "REAL_IDENTITY_NAV",
+      "PRODUCTION_UAT_SIGNOFF"
+    ],
+    "engineering_closeout_ref": "r02-page-api-gap-closeout-v1.49.json"
+  },
+  "expected_counts": {
+    "design_entries": 17,
+    "global_gaps": 5,
+    "entries_with_any_gap_min": 14
+  },
+  "notes": "机器可读全局 gap 看板；非产品关项证明"
+}

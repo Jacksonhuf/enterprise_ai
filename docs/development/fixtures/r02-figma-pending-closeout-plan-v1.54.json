@@ -1,0 +1,27 @@
+{
+  "plan_status": "R02_FIGMA_PENDING_CLOSEOUT_PLAN_V154",
+  "supersedes": "r02-figma-pending-closeout-plan-v1.53.json",
+  "figma_checklist_fixture": "r02-figma-field-checklist-v1.44.json",
+  "fulfilled_in_v154": [
+    {
+      "design_id": "CAND-16",
+      "field_id": "usage-unit-filter",
+      "evidence": "R18 governance-usage v1.54"
+    }
+  ],
+  "pending_targets": [
+    {
+      "design_id": "CAND-17",
+      "field_id": "public-notice-editor",
+      "planned_evidence": "R01 public notice smoke",
+      "target_round": "v1.55+"
+    },
+    {
+      "design_id": "CAND-17",
+      "field_id": "ops-settings-alert",
+      "planned_evidence": "R18 governance-ops-settings",
+      "target_round": "v1.55+"
+    }
+  ],
+  "notes": "v1.54 执行 CAND-16 usage 收口"
+}

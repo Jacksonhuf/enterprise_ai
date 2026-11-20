@@ -622,4 +622,8 @@ closeout↔Figma 交叉；log↔演练表对齐；Figma 17 matched。见 test-re
 
 rehearsal 链编排；Figma pending 计划；R21↔open gap 看板；Figma 19 matched。见 test-report-v1.53.md 及 PR CI。
 
-**建议下一轮（v1.54+）**：执行 pending 计划 CAND-16 usage；matrix 全局 gap 可视化 JSON；Figma 20+ matched。
+### 第154轮增量（v1.54）
+
+CAND-16 usage 收口；全局 gap 可视化；Figma 20 matched。见 test-report-v1.54.md 及 PR CI。
+
+**建议下一轮（v1.55+）**：CAND-17 双 pending 收口；rehearsal 链纳入 gap 可视化；Figma 21+ / 全 matched 彩排。
