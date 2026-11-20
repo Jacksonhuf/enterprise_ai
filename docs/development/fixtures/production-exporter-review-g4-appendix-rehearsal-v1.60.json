@@ -1,0 +1,11 @@
+{
+  "checklist_status": "APPROVED_SHAPE_ONLY",
+  "items_passed": 6,
+  "reviewed_by_platform": "PLACEHOLDER-NOT-SIGNED",
+  "reviewed_by_sre": "PLACEHOLDER-NOT-SIGNED",
+  "reviewed_at_cst": "PLACEHOLDER-NOT-PRODUCTION",
+  "linked_exporter_review_doc": "mysql-schema8-production-exporter-readonly-review.md",
+  "runbook_g4_smoke_artifact": "runbook-smoke-summary-validation",
+  "runbook_g4_smoke_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "notes": "v1.60 REHEARSAL SHA from schema8-production-log-rehearsal-filled-v1.57.json migrate_plan_sha256.audit"
+}

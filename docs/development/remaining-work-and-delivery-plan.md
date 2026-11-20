@@ -646,4 +646,8 @@ defer V158 挂 v1.57 三联；ENTERED↔log 联席；CAND-14 宽屏 slug 决策�
 
 §3 C6↔defer；matrix 17 条目 R18 slug 下钻；triple-gate 同窗。见 test-report-v1.59.md 及 PR CI。
 
-**建议下一轮（v1.60+）**：主表 #8 与 dashboard 三联同窗显式勾选 artifact；R18 groups/roles 抽页或书面 defer；G4↔filled log SHA 附录联动。
+### 第160轮增量（v1.60）
+
+主表 #8 彩排勾选与三联同窗；G4 附录 SHA↔filled log；groups/roles 书面决策。见 test-report-v1.60.md 及 PR CI。
+
+**建议下一轮（v1.61+）**：生产 §3 主表 #1–#8 真签字路径演练 artifact（仍非生产）；R18 narrow-only 剩余 defer 盘点；G4 与 staging 工单三联真同步 shape。

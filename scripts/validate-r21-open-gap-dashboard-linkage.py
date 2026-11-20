@@ -26,8 +26,9 @@ def main() -> None:
         "R21_OPEN_GAP_DASHBOARD_V157",
         "R21_OPEN_GAP_DASHBOARD_V158",
         "R21_OPEN_GAP_DASHBOARD_V159",
+        "R21_OPEN_GAP_DASHBOARD_V160",
     ):
-        raise SystemExit("linkage_status must be V153–V159")
+        raise SystemExit("linkage_status must be V153–V160")
     for doc in link.get("runbook_docs", []):
         if not (ROOT / "docs/development" / doc).is_file():
             raise SystemExit(f"missing doc {doc}")
@@ -88,6 +89,22 @@ def main() -> None:
             raise SystemExit("V159 dashboard must list production fill checklist doc")
         run("validate-r21-dashboard-triple-gate-window-registry.py", reg)
         run("validate-r02-matrix-entry-gap-r18-slug-drilldown.py", drill)
+    if link_status == "R21_OPEN_GAP_DASHBOARD_V160":
+        if "v1.60" not in chain_fixture:
+            raise SystemExit("V160 dashboard must use v1.60 rehearsal chain")
+        reg = link.get("triple_gate_window_registry_fixture", "")
+        if "v1.60" not in reg:
+            raise SystemExit("V160 dashboard must use triple-gate registry v1.60")
+        g4 = link.get("g4_filled_log_linkage_fixture", "")
+        groups = link.get("groups_roles_defer_fixture", "")
+        if not g4 or not groups:
+            raise SystemExit("V160 dashboard must name G4 and groups/roles fixtures")
+        if "mysql-schema8-runbook-section3-g4-linkage.md" not in link.get("runbook_docs", []):
+            raise SystemExit("V160 dashboard must list G4 linkage doc")
+        run("validate-r21-dashboard-triple-gate-window-registry.py", reg)
+        run("validate-runbook-g4-filled-log-sha-linkage.py", g4)
+        run("validate-r18-groups-roles-tab-defer-decision.py", groups)
+        run("validate-runbook-main-table8-dashboard-window-check.py", "runbook-main-table8-dashboard-window-check-v1.60.json")
     print("OK: R21 open-gap dashboard linkage")
     print(f"Validated {path}")
 

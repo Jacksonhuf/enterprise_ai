@@ -21,8 +21,9 @@ def main() -> None:
         "RUNBOOK_REHEARSAL_CHAIN_V157",
         "RUNBOOK_REHEARSAL_CHAIN_V158",
         "RUNBOOK_REHEARSAL_CHAIN_V159",
+        "RUNBOOK_REHEARSAL_CHAIN_V160",
     ):
-        raise SystemExit("chain_status must be V153–V159")
+        raise SystemExit("chain_status must be V153–V160")
     if not chain.get("not_production"):
         raise SystemExit("not_production must be true")
     steps = chain.get("steps", [])

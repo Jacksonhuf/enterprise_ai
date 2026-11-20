@@ -1,0 +1,9 @@
+{
+  "linkage_status": "RUNBOOK_G4_FILLED_LOG_SHA_V160",
+  "not_production": true,
+  "filled_log_fixture": "schema8-production-log-rehearsal-filled-v1.57.json",
+  "g4_appendix_fixture": "production-exporter-review-g4-appendix-rehearsal-v1.60.json",
+  "sha_source_path": "migrate_plan_sha256.audit",
+  "g4_link_doc": "mysql-schema8-runbook-section3-g4-linkage.md",
+  "notes": "G4 附录 SHA 与实填彩排 log 同窗 digest 联动"
+}

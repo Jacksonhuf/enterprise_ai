@@ -1,0 +1,10 @@
+{
+  "decision_status": "R18_GROUPS_ROLES_TAB_DEFER_V160",
+  "resolution": "DEDICATED_SLUGS_ACCEPTED",
+  "design_ids": ["CAND-09", "CAND-11"],
+  "manifest_slugs": ["governance-access-groups", "governance-access-roles"],
+  "matrix_fixture": "r02-page-api-acceptance-matrix-v1.45.json",
+  "r18_gap_doc": "r18-gap-checklist-v1.43.md",
+  "product_narrow_only_deferred": false,
+  "notes": "v1.45+ 已有 groups/roles 宽屏抽页；书面确认不单独补窄屏-only 条目"
+}

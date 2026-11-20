@@ -20,8 +20,12 @@ def run(script: str, fixture: str | None = None) -> None:
 def main() -> None:
     path = Path(sys.argv[1])
     link = json.loads(path.read_text())
-    if link.get("linkage_status") != "RUNBOOK_SECTION3_FILL_C6_DEFER_V159":
-        raise SystemExit("linkage_status must be RUNBOOK_SECTION3_FILL_C6_DEFER_V159")
+    link_status = link.get("linkage_status")
+    if link_status not in (
+        "RUNBOOK_SECTION3_FILL_C6_DEFER_V159",
+        "RUNBOOK_SECTION3_FILL_C6_DEFER_V160",
+    ):
+        raise SystemExit("linkage_status must be V159 or V160")
     run("validate-runbook-section3-fill-checklist-rehearsal.py", link["fill_checklist_fixture"])
     run("validate-r18-headroom-defer-rollup.py", link["defer_rollup_fixture"])
     run("validate-runbook-section3-defer-rollup-linkage.py", link["defer_linkage_fixture"])
@@ -37,6 +41,11 @@ def main() -> None:
     checklist = json.loads((FX / link["fill_checklist_fixture"]).read_text())
     if not checklist.get("rehearsal_checkmarks", {}).get("C15", {}).get("checked"):
         raise SystemExit("fill checklist must mark C15 for this linkage")
+    if link_status == "RUNBOOK_SECTION3_FILL_C6_DEFER_V160":
+        mt8 = link.get("main_table8_check_fixture", "")
+        if not mt8:
+            raise SystemExit("V160 requires main_table8_check_fixture")
+        run("validate-runbook-main-table8-dashboard-window-check.py", mt8)
     print(f"OK: §3 fill C6↔defer ({len(slugs)} defer slugs)")
     print(f"Validated {path}")
 
