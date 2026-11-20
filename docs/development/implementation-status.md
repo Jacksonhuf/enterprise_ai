@@ -696,6 +696,10 @@ RUNBOOK_FIRST_FILL_REHEARSAL_TABLE_V152；open gap registry。见 test-report-v1
 
 RUNBOOK_REHEARSAL_CHAIN_V153；Figma V153。见 test-report-v1.53.md。
 
+## 第154轮（v1.54）：全局 gap 可视化与 usage Figma 收口
+
+GLOBAL_GAP_VISUAL_V154；Figma V154。见 test-report-v1.54.md。
+
 ## 第119轮（v1.19）：tier 联动 OpenMetrics
 
 35 抽页。见 test-report-v1.19.md。

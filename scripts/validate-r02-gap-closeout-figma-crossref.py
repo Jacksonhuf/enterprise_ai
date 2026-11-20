@@ -31,6 +31,7 @@ def main() -> None:
         "R02_FIGMA_FIELD_CHECKLIST_V151",
         "R02_FIGMA_FIELD_CHECKLIST_V152",
         "R02_FIGMA_FIELD_CHECKLIST_V153",
+        "R02_FIGMA_FIELD_CHECKLIST_V154",
     ):
         raise SystemExit("figma checklist must be V151 or V152")
     closeout = json.loads((FX / doc["closeout_fixture"]).read_text())

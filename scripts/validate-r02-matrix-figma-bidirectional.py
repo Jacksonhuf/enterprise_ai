@@ -41,6 +41,7 @@ def main() -> None:
         "R02_FIGMA_FIELD_CHECKLIST_V151",
         "R02_FIGMA_FIELD_CHECKLIST_V152",
         "R02_FIGMA_FIELD_CHECKLIST_V153",
+        "R02_FIGMA_FIELD_CHECKLIST_V154",
     ):
         raise SystemExit("figma checklist must be V150, V151, or V152")
     matrix_ids = {e["design_id"] for e in matrix.get("entries", [])}
@@ -61,6 +62,7 @@ def main() -> None:
         "R02_FIGMA_FIELD_CHECKLIST_V151": 17,
         "R02_FIGMA_FIELD_CHECKLIST_V152": 18,
         "R02_FIGMA_FIELD_CHECKLIST_V153": 19,
+        "R02_FIGMA_FIELD_CHECKLIST_V154": 20,
     }
     min_matched = min_by_status.get(figma_status, 14)
     if total_matched < min_matched:

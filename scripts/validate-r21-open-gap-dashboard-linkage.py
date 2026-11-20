@@ -17,8 +17,9 @@ def run(script: str, fixture: str) -> None:
 def main() -> None:
     path = Path(sys.argv[1])
     link = json.loads(path.read_text())
-    if link.get("linkage_status") != "R21_OPEN_GAP_DASHBOARD_V153":
-        raise SystemExit("linkage_status must be R21_OPEN_GAP_DASHBOARD_V153")
+    link_status = link.get("linkage_status")
+    if link_status not in ("R21_OPEN_GAP_DASHBOARD_V153", "R21_OPEN_GAP_DASHBOARD_V154"):
+        raise SystemExit("linkage_status must be V153 or V154")
     for doc in link.get("runbook_docs", []):
         if not (ROOT / "docs/development" / doc).is_file():
             raise SystemExit(f"missing doc {doc}")
@@ -26,6 +27,11 @@ def main() -> None:
     run("validate-runbook-rehearsal-chain-orchestration.py", link["rehearsal_chain_fixture"])
     run("validate-runbook-first-fill-rehearsal-table.py", link["first_fill_rehearsal_fixture"])
     run("validate-r02-figma-pending-closeout-plan.py", link["figma_pending_plan_fixture"])
+    viz = link.get("global_gap_visual_fixture")
+    if link_status == "R21_OPEN_GAP_DASHBOARD_V154":
+        if not viz:
+            raise SystemExit("V154 linkage requires global_gap_visual_fixture")
+        run("validate-r02-matrix-global-gap-visualization.py", viz)
     print("OK: R21 open-gap dashboard linkage")
     print(f"Validated {path}")
 

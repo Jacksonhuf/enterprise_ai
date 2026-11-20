@@ -47,6 +47,9 @@ def main() -> None:
     dash = reg.get("r21_dashboard_linkage_fixture", "")
     if dash and not (FX / dash).is_file():
         raise SystemExit("missing r21_dashboard_linkage_fixture file")
+    viz = reg.get("global_gap_visual_fixture", "")
+    if viz and not (FX / viz).is_file():
+        raise SystemExit("missing global_gap_visual_fixture file")
     print(f"OK: open gap registry ({len(rollup)} entries, {len(global_gaps)} global)")
     print(f"Validated {path}")
 
