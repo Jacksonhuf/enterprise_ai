@@ -1,5 +1,6 @@
 {
-  "matrix_status": "R02_PAGE_API_ACCEPTANCE_MATRIX_V149",
+  "matrix_status": "R02_PAGE_API_ACCEPTANCE_MATRIX_V150",
+  "gap_registry_link": "r02-page-api-open-gap-registry-v1.52.json",
   "supersedes_note": "Expands section-4 scope matrix with routes, views, R18 slugs, and explicit gaps; does not claim R02/R18 closeout.",
   "design_entry_count": 17,
   "r18_spot_count_expected": 41,

@@ -1,0 +1,15 @@
+{
+  "registry_status": "R02_OPEN_GAP_REGISTRY_V152",
+  "matrix_fixture": "r02-page-api-acceptance-matrix-v1.45.json",
+  "matrix_status_required": "R02_PAGE_API_ACCEPTANCE_MATRIX_V150",
+  "closeout_fixture": "r02-page-api-gap-closeout-v1.49.json",
+  "engineering_closeout_count": 4,
+  "global_gaps_expected": [
+    "FIGMA_SIGNOFF_ALL",
+    "KEYBOARD_A11Y_FULL",
+    "EMPTY_ERROR_LOADING_ALL_STATES",
+    "REAL_IDENTITY_NAV",
+    "PRODUCTION_UAT_SIGNOFF"
+  ],
+  "notes": "登记 matrix 仍开放 gap；closeout 不改变全局 FIGMA/身份/UAT 阻塞"
+}

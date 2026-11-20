@@ -13,8 +13,12 @@ PY = sys.executable
 def main() -> None:
     path = Path(sys.argv[1])
     align = json.loads(path.read_text())
-    if align.get("alignment_status") != "RUNBOOK_LOG_REHEARSAL_ALIGNMENT_V151":
-        raise SystemExit("alignment_status must be RUNBOOK_LOG_REHEARSAL_ALIGNMENT_V151")
+    align_status = align.get("alignment_status")
+    if align_status not in (
+        "RUNBOOK_LOG_REHEARSAL_ALIGNMENT_V151",
+        "RUNBOOK_LOG_REHEARSAL_ALIGNMENT_V152",
+    ):
+        raise SystemExit("alignment_status must be V151 or V152")
     table_path = FX / align["rehearsal_table_fixture"]
     log_path = FX / align["production_log_shape_fixture"]
     subprocess.run(
@@ -43,8 +47,13 @@ def main() -> None:
             val = str(row.get("rehearsal_value", ""))
             if hint not in val and mapping["checklist_ref"] not in ("main_1",):
                 raise SystemExit(f"{mapping['checklist_ref']}: rehearsal_value must contain {hint}")
-    if align.get("rehearsal_table_fixture") != "schema8-runbook-first-fill-rehearsal-table-v1.50.json":
-        raise SystemExit("v1.51 alignment must use v1.50 rehearsal table")
+    table_name = align.get("rehearsal_table_fixture", "")
+    if align_status == "RUNBOOK_LOG_REHEARSAL_ALIGNMENT_V151":
+        if table_name != "schema8-runbook-first-fill-rehearsal-table-v1.50.json":
+            raise SystemExit("v1.51 alignment must use v1.50 rehearsal table")
+    if align_status == "RUNBOOK_LOG_REHEARSAL_ALIGNMENT_V152":
+        if table_name != "schema8-runbook-first-fill-rehearsal-table-v1.52.json":
+            raise SystemExit("v1.52 alignment must use v1.52 rehearsal table")
     print("OK: runbook log↔rehearsal table alignment")
     print(f"Validated {path}")
 

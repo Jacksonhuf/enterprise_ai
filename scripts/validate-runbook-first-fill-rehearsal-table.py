@@ -17,8 +17,12 @@ def run(script: str, fixture: str) -> None:
 def main() -> None:
     path = Path(sys.argv[1])
     doc = json.loads(path.read_text())
-    if doc.get("rehearsal_status") != "RUNBOOK_FIRST_FILL_REHEARSAL_TABLE_V150":
-        raise SystemExit("rehearsal_status must be RUNBOOK_FIRST_FILL_REHEARSAL_TABLE_V150")
+    status = doc.get("rehearsal_status")
+    if status not in (
+        "RUNBOOK_FIRST_FILL_REHEARSAL_TABLE_V150",
+        "RUNBOOK_FIRST_FILL_REHEARSAL_TABLE_V152",
+    ):
+        raise SystemExit("rehearsal_status must be V150 or V152")
     if not doc.get("not_production"):
         raise SystemExit("not_production must be true")
     links = doc.get("links", {})
@@ -29,6 +33,13 @@ def main() -> None:
     for need in ("C7", "ledger_pending"):
         if need not in refs:
             raise SystemExit(f"checklist_rows must include {need}")
+    if status == "RUNBOOK_FIRST_FILL_REHEARSAL_TABLE_V152":
+        for need in ("C8", "log_align"):
+            if need not in refs:
+                raise SystemExit(f"V152 checklist_rows must include {need}")
+        align = links.get("log_alignment_fixture", "")
+        if not align or not (FX / align).is_file():
+            raise SystemExit("V152 requires log_alignment_fixture file")
     for row in doc.get("checklist_rows", []):
         val = str(row.get("rehearsal_value", ""))
         if "PLACEHOLDER" in val.upper():

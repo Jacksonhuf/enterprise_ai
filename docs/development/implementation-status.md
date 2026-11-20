@@ -688,6 +688,10 @@ matrix V149；RUNBOOK defer V149。见 test-report-v1.49.md。
 
 RUNBOOK_LOG_REHEARSAL_ALIGNMENT；Figma V151。见 test-report-v1.51.md。
 
+## 第152轮（v1.52）：演练表 C8 与 matrix V150 gap 登记
+
+RUNBOOK_FIRST_FILL_REHEARSAL_TABLE_V152；open gap registry。见 test-report-v1.52.md。
+
 ## 第119轮（v1.19）：tier 联动 OpenMetrics
 
 35 抽页。见 test-report-v1.19.md。

@@ -1,0 +1,20 @@
+{
+  "rehearsal_status": "RUNBOOK_FIRST_FILL_REHEARSAL_TABLE_V152",
+  "not_production": true,
+  "links": {
+    "first_fill_ledger_template": "schema8-production-ledger-first-production-fill-template-v1.48.json",
+    "crossref_fixture": "production-gate-ticket-crossref-team-fill-staging-v148.json",
+    "defer_linkage_fixture": "runbook-section3-defer-rollup-linkage-v1.49.json",
+    "log_alignment_fixture": "runbook-log-rehearsal-alignment-v1.52.json"
+  },
+  "checklist_rows": [
+    {"checklist_ref": "main_1", "label": "§3 执行时间/DSN/变更单", "rehearsal_value": "REHEARSAL-NOT-PRODUCTION"},
+    {"checklist_ref": "main_2", "label": "七步 migrate plan/exit", "rehearsal_value": "CI-F-G-VALIDATION"},
+    {"checklist_ref": "main_3", "label": "双实例 /ready", "rehearsal_value": "TestR20Schema8RunbookDefaultSmoke"},
+    {"checklist_ref": "C7", "label": "defer↔V148 联动", "rehearsal_value": "validate-runbook-section3-defer-rollup-linkage-v1.49.json"},
+    {"checklist_ref": "C8", "label": "首条真填演练表+matrix↔Figma", "rehearsal_value": "validate-r02-matrix-figma-bidirectional-link-v1.51.json"},
+    {"checklist_ref": "log_align", "label": "log↔演练表行", "rehearsal_value": "validate-runbook-log-rehearsal-alignment-v1.52.json"},
+    {"checklist_ref": "ledger_pending", "label": "台账 PENDING 模板", "rehearsal_value": "FIRST_PRODUCTION_FILL_TEMPLATE_V148"}
+  ],
+  "notes": "v1.52 含 C8 与 log 对齐彩排行"
+}
