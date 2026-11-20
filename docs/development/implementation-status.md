@@ -784,6 +784,10 @@ R21 backup/RPO/observability shape ledger；backup RPO rehearsal gate；彩排�
 
 R21 alert dry-run ledger；on-call handoff gate；彩排链 **V175**（59 步）。见 test-report-v1.75.md、progress-completion-v1.75.md。
 
+## 第176轮（v1.76）：R20 正式 SLO 定标与演练证据
+
+R20 formal SLO target shape ledger；SLO evidence rehearsal gate；彩排链 **V176**（61 步）。见 test-report-v1.76.md、progress-completion-v1.76.md。
+
 ## 第119轮（v1.19）：tier 联动 OpenMetrics
 
 35 抽页。见 test-report-v1.19.md。

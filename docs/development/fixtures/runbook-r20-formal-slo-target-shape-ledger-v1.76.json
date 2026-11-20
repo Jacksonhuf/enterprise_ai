@@ -1,0 +1,45 @@
+{
+  "ledger_status": "R20_FORMAL_SLO_TARGET_SHAPE_V176",
+  "not_production": true,
+  "measurement_shape_fixture": "runbook-r20-pressure-sse-fault-measurement-shape-v1.73.json",
+  "slo_signoff_pending_fixture": "r21-slo-signoff-record-pending.json",
+  "filled_log_fixture": "schema8-production-log-rehearsal-filled-v1.64.json",
+  "slo_targets": [
+    {
+      "target_id": "message-load-p99-ms",
+      "linked_probe_id": "message-load-tier",
+      "target_value_shape": "PLACEHOLDER-TEAM-TBD",
+      "evidence_harness_test": "TestR20Schema8TieredMessageLoadLoad",
+      "target_adopted": false
+    },
+    {
+      "target_id": "governance-usage-p99-ms",
+      "linked_probe_id": "governance-usage-tier",
+      "target_value_shape": "PLACEHOLDER-TEAM-TBD",
+      "evidence_harness_test": "TestR20Schema8TieredGovernanceUsageLoad",
+      "target_adopted": false
+    },
+    {
+      "target_id": "sse-reconnect-recovery-ms",
+      "linked_probe_id": "continue-stream-replay",
+      "target_value_shape": "PLACEHOLDER-TEAM-TBD",
+      "evidence_harness_test": "TestR20Schema8ContinueStreamEarlyDisconnectRecovery",
+      "target_adopted": false
+    },
+    {
+      "target_id": "dual-host-ready-ms",
+      "linked_probe_id": "ready-light-probe",
+      "target_value_shape": "PLACEHOLDER-TEAM-TBD",
+      "evidence_harness_test": "TestR20Schema8ParallelReadyAcrossDualHosts",
+      "target_adopted": false
+    }
+  ],
+  "expected_target_count": 4,
+  "formal_slo_adopted": false,
+  "production_apply_forbidden": true,
+  "pilot_docs": [
+    "mysql-schema8-r21-slo-pilot-signoff.md",
+    "remaining-work-and-delivery-plan.md"
+  ],
+  "notes": "R20 正式 SLO 定标 shape；未团队定标"
+}

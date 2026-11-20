@@ -1,0 +1,10 @@
+{
+  "gate_status": "R20_SLO_EVIDENCE_REHEARSAL_GATE_V176",
+  "not_production": true,
+  "formal_slo_target_ledger_fixture": "runbook-r20-formal-slo-target-shape-ledger-v1.76.json",
+  "r20_s5_capacity_gate_fixture": "runbook-r20-s5-capacity-gate-rehearsal-v1.73.json",
+  "r21_oncall_handoff_gate_fixture": "runbook-r21-oncall-handoff-gate-rehearsal-v1.75.json",
+  "production_apply_forbidden": true,
+  "release_window_id": "WIN-WAREHOUSE-REHEARSAL-0146",
+  "notes": "SLO 定标 shape 与 R20/R21 演练证据同窗"
+}
