@@ -650,4 +650,8 @@ defer V158 挂 v1.57 三联；ENTERED↔log 联席；CAND-14 宽屏 slug 决策�
 
 主表 #8 彩排勾选与三联同窗；G4 附录 SHA↔filled log；groups/roles 书面决策。见 test-report-v1.60.md 及 PR CI。
 
-**建议下一轮（v1.61+）**：生产 §3 主表 #1–#8 真签字路径演练 artifact（仍非生产）；R18 narrow-only 剩余 defer 盘点；G4 与 staging 工单三联真同步 shape。
+### 第161轮增量（v1.61）
+
+主表 #1–#8 签字路径彩排；R18 narrow-only defer 盘点；G4↔staging 三联 shape。见 test-report-v1.61.md 及 PR CI。
+
+**建议下一轮（v1.62+）**：主表 #1–#7 与实填 log 字段逐项 rehearsal 勾选扩展；publish-review-narrow 等待决；真库 ENTERED 工单 shape 与 crossref 入库演练。

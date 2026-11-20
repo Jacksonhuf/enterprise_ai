@@ -1,0 +1,14 @@
+{
+  "sync_status": "RUNBOOK_G4_STAGING_TICKET_TRIPLE_V161",
+  "not_production": true,
+  "g4_filled_log_linkage_fixture": "runbook-g4-filled-log-sha-linkage-v1.60.json",
+  "crossref_fixture": "production-gate-ticket-crossref-team-fill-staging-v148.json",
+  "filled_log_fixture": "schema8-production-log-rehearsal-filled-v1.57.json",
+  "g4_appendix_fixture": "production-exporter-review-g4-appendix-rehearsal-v1.60.json",
+  "triple_sync_shape_examples": {
+    "bundle": "engineering-pilot-bundle-confirmed-team-fill-v148.json",
+    "ledger": "schema8-production-ledger-entered-team-fill-v148.json",
+    "staging": "staging-alert-import-ticket-team-filled-rehearsal-v147.json"
+  },
+  "notes": "G4 appendix、team-fill 交叉表、实填 log 变更单同窗 shape"
+}

@@ -1,0 +1,33 @@
+{
+  "inventory_status": "R18_NARROW_ONLY_DEFER_INVENTORY_V161",
+  "defer_rollup_fixture": "r18-headroom-defer-rollup-v1.44.json",
+  "manifest_path": "frontend/r18-baselines/manifest.json",
+  "deferred_narrow_slugs": [
+    "services-narrow",
+    "forbidden-user-narrow",
+    "build-apps-narrow"
+  ],
+  "deferred_non_narrow_slugs": ["publish-review"],
+  "expected_manifest_narrow_count": 20,
+  "expected_open_narrow_without_defer_count": 17,
+  "open_narrow_without_defer_slugs": [
+    "app-detail-build-narrow",
+    "apps-narrow",
+    "assets-narrow",
+    "build-releases-narrow",
+    "chat-user-narrow",
+    "editor-channel-narrow",
+    "governance-audit-narrow",
+    "governance-grants-narrow",
+    "governance-ops-audit-narrow",
+    "governance-ops-exceptions-narrow",
+    "governance-ops-settings-narrow",
+    "governance-usage-narrow",
+    "login-public-narrow",
+    "publish-review-narrow",
+    "session-sidebar-narrow",
+    "settings-models-narrow",
+    "settings-tenant-narrow"
+  ],
+  "notes": "headroom defer rollup 中 *-narrow 与 manifest 剩余 narrow 盘点"
+}

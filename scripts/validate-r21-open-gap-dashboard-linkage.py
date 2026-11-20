@@ -27,8 +27,9 @@ def main() -> None:
         "R21_OPEN_GAP_DASHBOARD_V158",
         "R21_OPEN_GAP_DASHBOARD_V159",
         "R21_OPEN_GAP_DASHBOARD_V160",
+        "R21_OPEN_GAP_DASHBOARD_V161",
     ):
-        raise SystemExit("linkage_status must be V153–V160")
+        raise SystemExit("linkage_status must be V153–V161")
     for doc in link.get("runbook_docs", []):
         if not (ROOT / "docs/development" / doc).is_file():
             raise SystemExit(f"missing doc {doc}")
@@ -105,6 +106,24 @@ def main() -> None:
         run("validate-runbook-g4-filled-log-sha-linkage.py", g4)
         run("validate-r18-groups-roles-tab-defer-decision.py", groups)
         run("validate-runbook-main-table8-dashboard-window-check.py", "runbook-main-table8-dashboard-window-check-v1.60.json")
+    if link_status == "R21_OPEN_GAP_DASHBOARD_V161":
+        if "v1.61" not in chain_fixture:
+            raise SystemExit("V161 dashboard must use v1.61 rehearsal chain")
+        for key, script in (
+            ("main_table_signoff_path_fixture", "validate-runbook-main-table-signoff-path-rehearsal.py"),
+            ("narrow_defer_inventory_fixture", "validate-r18-narrow-only-defer-inventory.py"),
+            ("g4_staging_triple_sync_fixture", "validate-runbook-g4-staging-ticket-triple-sync.py"),
+        ):
+            fx = link.get(key, "")
+            if not fx:
+                raise SystemExit(f"V161 dashboard must name {key}")
+            run(script, fx)
+        # V160 gates still required
+        if "v1.60" not in link.get("g4_filled_log_linkage_fixture", ""):
+            raise SystemExit("V161 must retain g4_filled_log_linkage v1.60")
+        run("validate-runbook-g4-filled-log-sha-linkage.py", link["g4_filled_log_linkage_fixture"])
+        run("validate-r21-dashboard-triple-gate-window-registry.py", link["triple_gate_window_registry_fixture"])
+        run("validate-r02-matrix-entry-gap-r18-slug-drilldown.py", link["matrix_entry_drilldown_fixture"])
     print("OK: R21 open-gap dashboard linkage")
     print(f"Validated {path}")
 
