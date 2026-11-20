@@ -1,0 +1,12 @@
+{
+  "gate_status": "JOINT_ENV_SHAPE_TO_LIVE_GATE_V172",
+  "not_production": true,
+  "connected_shape_fixture": "runbook-real-joint-environment-connected-shape-rehearsal-v1.71.json",
+  "live_hooks_permitted": false,
+  "required_prior_hook_state": "CONNECTED_SHAPE",
+  "joint_env_connected_unsigned_gate_fixture": "runbook-joint-env-connected-unsigned-gate-v1.71.json",
+  "uat_signoff_dryrun_ledger_fixture": "r22-real-human-uat-signoff-dryrun-ledger-v1.72.json",
+  "production_apply_forbidden": true,
+  "release_window_id": "WIN-WAREHOUSE-REHEARSAL-0146",
+  "notes": "shape→LIVE 单独门禁；LIVE 未开放"
+}

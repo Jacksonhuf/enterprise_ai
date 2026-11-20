@@ -768,6 +768,10 @@ R22 real human UAT signoff shape；unsigned UAT production apply block；彩排�
 
 joint environment CONNECTED shape rehearsal；connected + unsigned gate；彩排链 **V171**（51 步）。见 test-report-v1.71.md、progress-completion-v1.71.md。
 
+## 第172轮（v1.72）：签收 dry-run 台账、shape→LIVE 门禁
+
+R22 UAT signoff dry-run ledger；joint env shape-to-LIVE gate；彩排链 **V172**（53 步）。见 test-report-v1.72.md、progress-completion-v1.72.md。
+
 ## 第119轮（v1.19）：tier 联动 OpenMetrics
 
 35 抽页。见 test-report-v1.19.md。

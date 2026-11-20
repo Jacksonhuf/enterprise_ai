@@ -256,14 +256,16 @@ jobs:
       - run: python scripts/validate-runbook-unsigned-uat-apply-block-rehearsal.py docs/development/fixtures/runbook-unsigned-uat-apply-block-rehearsal-v1.70.json
       - run: python scripts/validate-runbook-real-joint-environment-connected-shape-rehearsal.py docs/development/fixtures/runbook-real-joint-environment-connected-shape-rehearsal-v1.71.json
       - run: python scripts/validate-runbook-joint-env-connected-unsigned-gate.py docs/development/fixtures/runbook-joint-env-connected-unsigned-gate-v1.71.json
-      - run: python scripts/validate-runbook-first-fill-rehearsal-table.py docs/development/fixtures/schema8-runbook-first-fill-rehearsal-table-v1.71.json
-      - run: python scripts/validate-runbook-log-rehearsal-alignment.py docs/development/fixtures/runbook-log-rehearsal-alignment-v1.71.json
+      - run: python scripts/validate-r22-real-human-uat-signoff-dryrun-ledger.py docs/development/fixtures/r22-real-human-uat-signoff-dryrun-ledger-v1.72.json
+      - run: python scripts/validate-runbook-joint-env-shape-to-live-gate-rehearsal.py docs/development/fixtures/runbook-joint-env-shape-to-live-gate-rehearsal-v1.72.json
+      - run: python scripts/validate-runbook-first-fill-rehearsal-table.py docs/development/fixtures/schema8-runbook-first-fill-rehearsal-table-v1.72.json
+      - run: python scripts/validate-runbook-log-rehearsal-alignment.py docs/development/fixtures/runbook-log-rehearsal-alignment-v1.72.json
       - run: python scripts/validate-production-exporter-review.py docs/development/fixtures/production-exporter-review-g4-appendix-rehearsal-v1.60.json
       - run: python scripts/validate-r02-matrix-global-gap-r18-cross-index.py docs/development/fixtures/r02-matrix-global-gap-r18-cross-index-v1.57.json
       - run: python scripts/validate-r02-matrix-global-gap-visualization.py docs/development/fixtures/r02-matrix-global-gap-visualization-v1.57.json
       - run: python scripts/validate-r02-global-gap-dashboard-matrix-joint.py docs/development/fixtures/r02-global-gap-dashboard-matrix-joint-v1.57.json
-      - run: python scripts/validate-runbook-rehearsal-chain-orchestration.py docs/development/fixtures/runbook-rehearsal-chain-orchestration-v1.71.json
-      - run: python scripts/validate-r21-open-gap-dashboard-linkage.py docs/development/fixtures/r21-open-gap-dashboard-linkage-v1.71.json
+      - run: python scripts/validate-runbook-rehearsal-chain-orchestration.py docs/development/fixtures/runbook-rehearsal-chain-orchestration-v1.72.json
+      - run: python scripts/validate-r21-open-gap-dashboard-linkage.py docs/development/fixtures/r21-open-gap-dashboard-linkage-v1.72.json
       - run: python scripts/validate-r18-implicit-default-spot-catalog.py docs/development/fixtures/r18-implicit-default-spot-catalog-v1.37.json
       - run: python scripts/validate-r18-headroom-slo-linkage.py docs/development/fixtures/r18-headroom-slo-linkage-v1.37.json
       - run: python scripts/validate-r18-tolerance-tightening-candidates.py docs/development/fixtures/r18-tolerance-tightening-candidates-v1.38.json

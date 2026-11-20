@@ -694,4 +694,8 @@ R22 真人 UAT 签收 shape 彩排；未签字 production apply 阻断。见 tes
 
 联合环境挂钩 **CONNECTED shape** 彩排；与未签字 apply 闸口同窗。见 test-report-v1.71.md。
 
-**建议下一轮（v1.72+）**：R22 真人签收 dry-run 台账（仍为 PLACEHOLDER）；挂钩从 shape 到 LIVE 须单独门禁。
+### 第172轮增量（v1.72）
+
+R22 真人签收 dry-run 台账；挂钩 shape→LIVE 单独门禁。见 test-report-v1.72.md。
+
+**建议下一轮（v1.73+）**：S5 R20 压力/SSE 故障测量 shape 登记（仍为 mock）。
