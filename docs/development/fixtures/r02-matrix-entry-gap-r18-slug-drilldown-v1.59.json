@@ -1,0 +1,12 @@
+{
+  "drilldown_status": "R02_MATRIX_ENTRY_GAP_R18_DRILLDOWN_V159",
+  "matrix_fixture": "r02-page-api-acceptance-matrix-v1.45.json",
+  "global_cross_index_fixture": "r02-matrix-global-gap-r18-cross-index-v1.57.json",
+  "r18_gap_doc": "r18-gap-checklist-v1.43.md",
+  "required_design_entries": 17,
+  "sample_entry_links": [
+    {"design_id": "CAND-14", "matrix_gaps": ["REAL_SAMPLING", "FIGMA_SIGNOFF"], "r18_slugs": ["services-engineer", "services-narrow"]},
+    {"design_id": "PAGE-001", "matrix_gaps": ["REAL_MODEL_AE", "FIGMA_SIGNOFF"], "r18_slugs": ["apps-narrow", "chat-user", "session-sidebar", "chat-user-narrow", "session-sidebar-narrow"]}
+  ],
+  "notes": "条目级 gap↔R18 slug 下钻；CI 全量校验 17 条目"
+}

@@ -25,8 +25,9 @@ def main() -> None:
         "R21_OPEN_GAP_DASHBOARD_V156",
         "R21_OPEN_GAP_DASHBOARD_V157",
         "R21_OPEN_GAP_DASHBOARD_V158",
+        "R21_OPEN_GAP_DASHBOARD_V159",
     ):
-        raise SystemExit("linkage_status must be V153–V158")
+        raise SystemExit("linkage_status must be V153–V159")
     for doc in link.get("runbook_docs", []):
         if not (ROOT / "docs/development" / doc).is_file():
             raise SystemExit(f"missing doc {doc}")
@@ -76,6 +77,17 @@ def main() -> None:
         if "v1.58" not in defer:
             raise SystemExit("V158 dashboard must use defer linkage v1.58")
         run("validate-runbook-section3-defer-rollup-linkage.py", defer)
+    if link_status == "R21_OPEN_GAP_DASHBOARD_V159":
+        if "v1.59" not in chain_fixture:
+            raise SystemExit("V159 dashboard must use v1.59 rehearsal chain")
+        reg = link.get("triple_gate_window_registry_fixture", "")
+        drill = link.get("matrix_entry_drilldown_fixture", "")
+        if not reg or not drill:
+            raise SystemExit("V159 dashboard must name registry and drilldown fixtures")
+        if "mysql-schema8-runbook-production-fill-checklist.md" not in link.get("runbook_docs", []):
+            raise SystemExit("V159 dashboard must list production fill checklist doc")
+        run("validate-r21-dashboard-triple-gate-window-registry.py", reg)
+        run("validate-r02-matrix-entry-gap-r18-slug-drilldown.py", drill)
     print("OK: R21 open-gap dashboard linkage")
     print(f"Validated {path}")
 

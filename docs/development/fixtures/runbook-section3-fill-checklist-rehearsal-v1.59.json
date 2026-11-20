@@ -1,0 +1,22 @@
+{
+  "checklist_status": "RUNBOOK_SECTION3_FILL_CHECKLIST_REHEARSAL_V159",
+  "not_production": true,
+  "rehearsal_checkmarks": {
+    "C6": {
+      "checked": true,
+      "evidence": "validate-runbook-triple-gate-rehearsal.py",
+      "maps_to_main_table": "8"
+    },
+    "C7": {
+      "checked": true,
+      "evidence_fixture": "runbook-section3-defer-rollup-linkage-v1.58.json"
+    },
+    "C15": {
+      "checked": true,
+      "evidence_fixture": "runbook-section3-fill-c6-defer-linkage-v1.59.json"
+    }
+  },
+  "production_main_table_rows": "unchecked — 真 §3 实填后勾选 #1–#8",
+  "runbook_doc": "mysql-schema8-runbook-production-fill-checklist.md",
+  "notes": "§3 彩排勾选 artifact；非生产主表签字"
+}

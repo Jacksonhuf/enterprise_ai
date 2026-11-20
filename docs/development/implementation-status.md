@@ -716,6 +716,10 @@ THREE_TABLE V157；ENTERED 首条彩排；gap↔R18 cross-index。见 test-repor
 
 DEFER V158；ENTERED/log 联席；services-engineer 决策 artifact。见 test-report-v1.58.md。
 
+## 第159轮（v1.59）：§3 勾选 C6/defer 与条目 gap 下钻
+
+FILL C6 DEFER；entry drilldown；triple-gate 同窗。见 test-report-v1.59.md。
+
 ## 第119轮（v1.19）：tier 联动 OpenMetrics
 
 35 抽页。见 test-report-v1.19.md。
