@@ -1,0 +1,15 @@
+{
+  "scenario_status": "R22_JOINT_UAT_SCENARIO_V168",
+  "not_production": true,
+  "uat_signoff_shape_fixture": "r02-production-uat-signoff-shape-v1.67.json",
+  "main_table_signoff_template_fixture": "runbook-main-table-production-signoff-template-v1.66.json",
+  "scenarios": [
+    {"scenario_id": "admin-grants-apply-read", "persona": "platform_admin", "matrix_design_id": "CAND-06", "rehearsal_only": true},
+    {"scenario_id": "developer-app-publish", "persona": "app_developer", "matrix_design_id": "CAND-17", "rehearsal_only": true},
+    {"scenario_id": "business-usage-review", "persona": "business_user", "matrix_design_id": "CAND-08", "rehearsal_only": true}
+  ],
+  "expected_scenario_count": 3,
+  "production_apply_forbidden": true,
+  "pilot_doc": "remaining-work-and-delivery-plan.md",
+  "notes": "R22 联合 UAT 场景脚本彩排；无真人验收"
+}

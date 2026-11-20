@@ -678,4 +678,8 @@ publish-review-narrow / narrow batch 收口；主表 #1–#8 生产真签字段�
 
 Figma 像素绿子集 + UAT 签收 shape；SRE/平台双签 shape；真 DSN dry-run 台账 shape。见 test-report-v1.67.md。
 
-**建议下一轮（v1.68+）**：全局 gap 逐项关单彩排；R22 联合 UAT 场景脚本；生产 apply 前最后 dry-run 三联（仍禁止真 apply）。
+### 第168轮增量（v1.68）
+
+全局 gap 五项逐项关单彩排；R22 联合 UAT 三场景；生产 apply 前三联 dry-run。见 test-report-v1.68.md。
+
+**建议下一轮（v1.69+）**：S5 发布运营与真实联合环境挂钩清单；在真环境可用前维持 rehearsal-only 闸口。

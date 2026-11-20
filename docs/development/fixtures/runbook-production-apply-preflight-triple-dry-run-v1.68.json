@@ -1,0 +1,13 @@
+{
+  "preflight_status": "PRODUCTION_APPLY_PREFLIGHT_TRIPLE_V168",
+  "not_production": true,
+  "three_table_window_fixture": "production-gate-three-table-window-v1.57.json",
+  "dsn_dry_run_fixture": "runbook-dsn-dry-run-ledger-rehearsal-v1.67.json",
+  "dual_signoff_fixture": "runbook-sre-platform-dual-signoff-shape-v1.67.json",
+  "global_gap_closeout_fixture": "r02-global-gap-item-closeout-rehearsal-v1.68.json",
+  "joint_uat_scenario_fixture": "r22-joint-uat-scenario-rehearsal-v1.68.json",
+  "entered_write_gate_fixture": "runbook-entered-ledger-write-gate-v1.66.json",
+  "release_window_id": "WIN-WAREHOUSE-REHEARSAL-0146",
+  "production_apply_forbidden": true,
+  "notes": "生产 apply 前最后 dry-run 三联；禁止真 apply"
+}

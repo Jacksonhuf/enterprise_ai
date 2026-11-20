@@ -752,6 +752,10 @@ narrow batch closeout；publish-review-narrow closeout；main table production s
 
 Figma pixel-green + UAT shape；SRE/platform dual signoff；DSN dry-run ledger；彩排链 **V167**。见 test-report-v1.67.md、progress-completion-v1.67.md。
 
+## 第168轮（v1.68）：全局 gap 逐项、R22 UAT、apply 前三联
+
+global gap item closeout；R22 joint UAT scenarios；production apply preflight triple；彩排链 **V168**。见 test-report-v1.68.md、progress-completion-v1.68.md。
+
 ## 第119轮（v1.19）：tier 联动 OpenMetrics
 
 35 抽页。见 test-report-v1.19.md。
