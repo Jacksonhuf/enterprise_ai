@@ -662,4 +662,8 @@ defer V158 挂 v1.57 三联；ENTERED↔log 联席；CAND-14 宽屏 slug 决策�
 
 filled log v1.63；主表 #4–#6 shape；narrow 首批 5 条等待决；CONFIRMED warehouse bundle 彩排。见 test-report-v1.63.md。
 
-**建议下一轮（v1.64+）**：narrow open 第二批；主表 #5 真回退字段生产 shape；team-fill CONFIRMED 与 warehouse 工单同窗真格式（仍无真人签）。
+### 第164轮增量（v1.64）
+
+filled log v1.64；主表 #5 回退生产 shape（签核 PLACEHOLDER）；narrow open 第二批 6 条；team-fill CONFIRMED 与 warehouse 真格式工单同窗彩排。见 test-report-v1.64.md。
+
+**建议下一轮（v1.65+）**：narrow open 第三批/收尾；主表 #8 与 dashboard 真签路径；真 §3 ENTERED 入库（仍无 SRE 真人签）。

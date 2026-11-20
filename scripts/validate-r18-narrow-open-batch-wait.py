@@ -13,8 +13,12 @@ PY = sys.executable
 def main() -> None:
     path = Path(sys.argv[1])
     doc = json.loads(path.read_text())
-    if doc.get("batch_status") != "R18_NARROW_OPEN_BATCH_WAIT_V163":
-        raise SystemExit("batch_status must be R18_NARROW_OPEN_BATCH_WAIT_V163")
+    batch_status = doc.get("batch_status")
+    if batch_status not in (
+        "R18_NARROW_OPEN_BATCH_WAIT_V163",
+        "R18_NARROW_OPEN_BATCH_WAIT_V164",
+    ):
+        raise SystemExit("batch_status must be V163 or V164")
     subprocess.run(
         [PY, str(ROOT / "scripts/validate-r18-narrow-only-defer-inventory.py"), str(FX / doc["inventory_fixture"])],
         check=True,
@@ -36,7 +40,17 @@ def main() -> None:
     pr_slug = "publish-review-narrow"
     if pr_slug in batch:
         raise SystemExit("publish-review-narrow must use dedicated wait fixture, not batch defer")
-    remain = len(open_slugs) - len(batch)
+    if batch_status == "R18_NARROW_OPEN_BATCH_WAIT_V164":
+        prior_name = doc.get("prior_batch_fixture", "")
+        if "v1.63" not in prior_name:
+            raise SystemExit("V164 requires prior_batch_fixture v1.63")
+        prior = json.loads((FX / prior_name).read_text())
+        prior_slugs = set(prior.get("batch_slugs", []))
+        if prior_slugs & set(batch):
+            raise SystemExit("batch 2 must not overlap batch 1 slugs")
+        remain = len(open_slugs) - len(prior_slugs) - len(batch)
+    else:
+        remain = len(open_slugs) - len(batch)
     if remain != int(doc.get("remaining_open_after_batch", -1)):
         raise SystemExit("remaining_open_after_batch mismatch")
     print(f"OK: narrow open batch wait ({len(batch)} slugs, {remain} remain)")

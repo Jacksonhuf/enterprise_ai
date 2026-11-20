@@ -1,0 +1,19 @@
+{
+  "binding_status": "RUNBOOK_MAIN_TABLE_ROWS1_7_LOG_V164",
+  "not_production": true,
+  "signoff_path_fixture": "runbook-main-table-signoff-path-rehearsal-v1.61.json",
+  "log_alignment_fixture": "runbook-log-rehearsal-alignment-v1.64.json",
+  "filled_log_fixture": "schema8-production-log-rehearsal-filled-v1.64.json",
+  "rows4_6_shape_fixture": "runbook-main-table-rows4-6-log-shape-v1.64.json",
+  "row_bindings": [
+    {"row": "1", "alignment_ref": "main_1", "rehearsal_log_verified": true},
+    {"row": "2", "alignment_ref": "main_2", "rehearsal_log_verified": true},
+    {"row": "3", "alignment_ref": "main_3", "rehearsal_log_verified": true},
+    {"row": "4", "alignment_ref": "C27", "rehearsal_log_verified": true},
+    {"row": "5", "alignment_ref": "C27", "rehearsal_log_verified": true, "rehearsal_shape_only": true},
+    {"row": "6", "alignment_ref": "C27", "rehearsal_log_verified": true},
+    {"row": "7", "alignment_ref": "C19", "rehearsal_log_verified": true, "via_g4_linkage": true}
+  ],
+  "production_main_table_unchecked": true,
+  "notes": "v1.64 filled log v1.64 + #5 rollback shape"
+}

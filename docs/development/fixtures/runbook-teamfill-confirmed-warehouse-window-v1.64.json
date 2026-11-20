@@ -1,0 +1,12 @@
+{
+  "window_status": "TEAMFILL_CONFIRMED_WAREHOUSE_WINDOW_V164",
+  "not_production": true,
+  "team_fill_joint_fixture": "production-gate-entered-confirmed-bundle-joint-team-fill-v148.json",
+  "team_crossref_fixture": "production-gate-ticket-crossref-team-fill-staging-v148.json",
+  "warehouse_confirmed_fixture": "runbook-confirmed-warehouse-bundle-rehearsal-v1.63.json",
+  "warehouse_crossref_fixture": "production-gate-ticket-crossref-warehouse-shape-example.json",
+  "filled_log_fixture": "schema8-production-log-rehearsal-filled-v1.64.json",
+  "three_table_window_fixture": "production-gate-three-table-window-v1.57.json",
+  "release_window_id": "WIN-WAREHOUSE-REHEARSAL-0146",
+  "notes": "team-fill CONFIRMED 与 warehouse 真格式工单同窗 REHEARSAL 窗"
+}

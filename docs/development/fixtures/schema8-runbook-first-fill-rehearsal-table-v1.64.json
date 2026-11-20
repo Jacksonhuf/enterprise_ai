@@ -1,0 +1,185 @@
+{
+  "rehearsal_status": "RUNBOOK_FIRST_FILL_REHEARSAL_TABLE_V164",
+  "not_production": true,
+  "links": {
+    "first_fill_ledger_template": "schema8-production-ledger-first-production-fill-template-v1.48.json",
+    "crossref_fixture": "production-gate-ticket-crossref-team-fill-staging-v148.json",
+    "defer_linkage_fixture": "runbook-section3-defer-rollup-linkage-v1.58.json",
+    "fill_c6_defer_linkage_fixture": "runbook-section3-fill-c6-defer-linkage-v1.60.json",
+    "log_alignment_fixture": "runbook-log-rehearsal-alignment-v1.64.json",
+    "three_table_window_fixture": "production-gate-three-table-window-v1.57.json",
+    "entered_filled_log_joint_fixture": "production-gate-entered-filled-log-joint-v1.58.json",
+    "g4_filled_log_linkage_fixture": "runbook-g4-filled-log-sha-linkage-v1.60.json",
+    "groups_roles_defer_fixture": "r18-groups-roles-tab-defer-decision-v1.60.json",
+    "main_table_signoff_path_fixture": "runbook-main-table-signoff-path-rehearsal-v1.61.json",
+    "narrow_defer_inventory_fixture": "r18-narrow-only-defer-inventory-v1.61.json",
+    "g4_staging_triple_sync_fixture": "runbook-g4-staging-ticket-triple-sync-v1.61.json",
+    "main_table_rows1_7_log_fixture": "runbook-main-table-rows1-7-filled-log-rehearsal-v1.64.json",
+    "main_table_rows4_6_shape_fixture": "runbook-main-table-rows4-6-log-shape-v1.64.json",
+    "publish_review_narrow_wait_fixture": "r18-publish-review-narrow-wait-decision-v1.62.json",
+    "entered_warehouse_crossref_fixture": "runbook-entered-crossref-warehouse-rehearsal-v1.62.json",
+    "narrow_open_batch_wait_fixture": "r18-narrow-open-batch-wait-v1.64.json",
+    "confirmed_warehouse_bundle_fixture": "runbook-confirmed-warehouse-bundle-rehearsal-v1.63.json",
+    "filled_log_shape_fixture": "schema8-production-log-rehearsal-filled-v1.64.json",
+    "row5_rollback_shape_fixture": "runbook-main-table-row5-rollback-shape-v1.64.json",
+    "teamfill_confirmed_warehouse_window_fixture": "runbook-teamfill-confirmed-warehouse-window-v1.64.json"
+  },
+  "checklist_rows": [
+    {
+      "checklist_ref": "main_1",
+      "label": "§3 执行时间/DSN/变更单",
+      "rehearsal_value": "REHEARSAL-NOT-PRODUCTION"
+    },
+    {
+      "checklist_ref": "main_2",
+      "label": "七步 migrate plan/exit",
+      "rehearsal_value": "CI-F-G-VALIDATION"
+    },
+    {
+      "checklist_ref": "main_3",
+      "label": "双实例 /ready",
+      "rehearsal_value": "TestR20Schema8RunbookDefaultSmoke"
+    },
+    {
+      "checklist_ref": "C7",
+      "label": "defer↔三联 V158",
+      "rehearsal_value": "runbook-section3-defer-rollup-linkage-v1.58.json"
+    },
+    {
+      "checklist_ref": "C8",
+      "label": "matrix↔Figma V155",
+      "rehearsal_value": "validate-r02-matrix-figma-bidirectional-link-v1.55.json"
+    },
+    {
+      "checklist_ref": "C9",
+      "label": "全局 gap 联合门 V157",
+      "rehearsal_value": "validate-r02-global-gap-dashboard-matrix-joint-v1.57.json"
+    },
+    {
+      "checklist_ref": "C10",
+      "label": "三联表↔实填 log 工单",
+      "rehearsal_value": "production-gate-filled-log-ticket-linkage-v1.57.json"
+    },
+    {
+      "checklist_ref": "C11",
+      "label": "gap↔R18 交叉索引",
+      "rehearsal_value": "r02-matrix-global-gap-r18-cross-index-v1.57.json"
+    },
+    {
+      "checklist_ref": "C12",
+      "label": "§3 首条 ENTERED 彩排",
+      "rehearsal_value": "schema8-production-ledger-first-entered-rehearsal-v1.57.json"
+    },
+    {
+      "checklist_ref": "C13",
+      "label": "ENTERED↔log 联席",
+      "rehearsal_value": "production-gate-entered-filled-log-joint-v1.58.json"
+    },
+    {
+      "checklist_ref": "C14",
+      "label": "services 宽屏 slug 决策",
+      "rehearsal_value": "r18-services-wide-slug-decision-v1.58.json"
+    },
+    {
+      "checklist_ref": "C15",
+      "label": "§3 C6↔defer 联动",
+      "rehearsal_value": "runbook-section3-fill-c6-defer-linkage-v1.60.json"
+    },
+    {
+      "checklist_ref": "C16",
+      "label": "条目 gap↔R18 slug",
+      "rehearsal_value": "r02-matrix-entry-gap-r18-slug-drilldown-v1.59.json"
+    },
+    {
+      "checklist_ref": "C17",
+      "label": "triple-gate 同窗登记",
+      "rehearsal_value": "r21-dashboard-triple-gate-window-registry-v1.60.json"
+    },
+    {
+      "checklist_ref": "C18",
+      "label": "主表 #8 同窗彩排",
+      "rehearsal_value": "runbook-main-table8-dashboard-window-check-v1.60.json"
+    },
+    {
+      "checklist_ref": "C19",
+      "label": "G4↔filled log SHA",
+      "rehearsal_value": "runbook-g4-filled-log-sha-linkage-v1.60.json"
+    },
+    {
+      "checklist_ref": "C20",
+      "label": "groups/roles tab 决策",
+      "rehearsal_value": "r18-groups-roles-tab-defer-decision-v1.60.json"
+    },
+    {
+      "checklist_ref": "C21",
+      "label": "主表 #1–#8 签字路径",
+      "rehearsal_value": "runbook-main-table-signoff-path-rehearsal-v1.61.json"
+    },
+    {
+      "checklist_ref": "C22",
+      "label": "narrow-only defer 盘点",
+      "rehearsal_value": "r18-narrow-only-defer-inventory-v1.61.json"
+    },
+    {
+      "checklist_ref": "C23",
+      "label": "G4↔staging 三联 shape",
+      "rehearsal_value": "runbook-g4-staging-ticket-triple-sync-v1.61.json"
+    },
+    {
+      "checklist_ref": "C24",
+      "label": "主表 #1–#7↔log",
+      "rehearsal_value": "runbook-main-table-rows1-7-filled-log-rehearsal-v1.64.json"
+    },
+    {
+      "checklist_ref": "C25",
+      "label": "publish-review-narrow 等待决",
+      "rehearsal_value": "r18-publish-review-narrow-wait-decision-v1.62.json"
+    },
+    {
+      "checklist_ref": "C26",
+      "label": "ENTERED 入库 crossref 彩排",
+      "rehearsal_value": "runbook-entered-crossref-warehouse-rehearsal-v1.62.json"
+    },
+    {
+      "checklist_ref": "C27",
+      "label": "主表 #4–#6 log shape",
+      "rehearsal_value": "runbook-main-table-rows4-6-log-shape-v1.64.json"
+    },
+    {
+      "checklist_ref": "C28",
+      "label": "narrow open 分批等待",
+      "rehearsal_value": "r18-narrow-open-batch-wait-v1.64.json"
+    },
+    {
+      "checklist_ref": "C29",
+      "label": "CONFIRMED warehouse 彩排",
+      "rehearsal_value": "runbook-confirmed-warehouse-bundle-rehearsal-v1.63.json"
+    },
+    {
+      "checklist_ref": "log_align",
+      "label": "log↔演练表（v1.64）",
+      "rehearsal_value": "validate-runbook-log-rehearsal-alignment-v1.64.json"
+    },
+    {
+      "checklist_ref": "ledger_pending",
+      "label": "台账 PENDING 模板",
+      "rehearsal_value": "FIRST_PRODUCTION_FILL_TEMPLATE_V148"
+    },
+    {
+      "checklist_ref": "C30",
+      "label": "主表 #5 回退 shape",
+      "rehearsal_value": "runbook-main-table-row5-rollback-shape-v1.64.json"
+    },
+    {
+      "checklist_ref": "C31",
+      "label": "team-fill/warehouse 同窗",
+      "rehearsal_value": "runbook-teamfill-confirmed-warehouse-window-v1.64.json"
+    },
+    {
+      "checklist_ref": "C32",
+      "label": "narrow open 第二批",
+      "rehearsal_value": "r18-narrow-open-batch-wait-v1.64.json"
+    }
+  ],
+  "notes": "v1.64 #5 rollback shape、narrow 第二批、team-fill/warehouse 同窗"
+}

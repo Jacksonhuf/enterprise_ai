@@ -1,0 +1,32 @@
+{
+  "disclaimer": "REHEARSAL_ONLY — 非生产库，勿写入生产台账",
+  "production_signoff_ticket": "PENDING-SRE-SIGNOFF",
+  "executed_at_cst": "2026-11-20T10:30:00+08:00",
+  "dsn_database_host": "REHEARSAL-MYSQL-NOT-PRODUCTION",
+  "change_ticket": "CHG-ENG-WAREHOUSE-REHEARSAL-0001",
+  "migrate_plan_sha256": {
+    "audit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "applications": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "grants": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+    "sessions": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+    "settings": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+    "exceptions": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+    "usage": "1111111111111111111111111111111111111111111111111111111111111111"
+  },
+  "apply_exit_codes": [0, 0, 0, 0, 0, 0, 0],
+  "dual_instance_ready": true,
+  "runbook_smoke_artifact": "validate-production-gate-three-table-window-v1.57",
+  "r18_artifact": "r18-gap-checklist-v1.43.md",
+  "runbook_smoke_mixed_read_ok": true,
+  "rollback_decision_recorded": true,
+  "rollback_approver": "PLACEHOLDER-NOT-SIGNED",
+  "rollback_approval_shape": {
+    "backup_path_or_snapshot_sha256": "PLACEHOLDER-NOT-PRODUCTION",
+    "approved_by": "PLACEHOLDER-NOT-SIGNED",
+    "recorded_at_cst": "PLACEHOLDER-NOT-PRODUCTION"
+  },
+  "rollback_rehearsal_only": true,
+  "r21_slo_signoff_status": "PENDING-SRE-SIGNOFF",
+  "main_table_log_extensions_v163": ["row_4_mixed_read", "row_5_rollback", "row_6_slo"],
+  "main_table_row5_shape_v164": true
+}
