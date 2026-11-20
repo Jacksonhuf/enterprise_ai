@@ -1,0 +1,458 @@
+{
+  "alignment_status": "RUNBOOK_LOG_REHEARSAL_ALIGNMENT_V176",
+  "rehearsal_table_fixture": "schema8-runbook-first-fill-rehearsal-table-v1.76.json",
+  "production_log_shape_fixture": "schema8-production-log-rehearsal-filled-v1.64.json",
+  "filled_log_gate": true,
+  "row_field_map": [
+    {
+      "checklist_ref": "main_1",
+      "log_fields": [
+        "executed_at_cst",
+        "dsn_database_host",
+        "change_ticket"
+      ],
+      "require_log_nonempty": true
+    },
+    {
+      "checklist_ref": "main_2",
+      "log_fields": [
+        "migrate_plan_sha256",
+        "apply_exit_codes"
+      ],
+      "rehearsal_value_hint": "CI-F-G-VALIDATION"
+    },
+    {
+      "checklist_ref": "main_3",
+      "log_fields": [
+        "dual_instance_ready"
+      ],
+      "rehearsal_value_hint": "TestR20Schema8RunbookDefaultSmoke"
+    },
+    {
+      "checklist_ref": "C7",
+      "log_fields": [
+        "runbook_smoke_artifact"
+      ],
+      "rehearsal_value_hint": "runbook-section3-defer-rollup-linkage-v1.58"
+    },
+    {
+      "checklist_ref": "C8",
+      "log_fields": [
+        "runbook_smoke_artifact"
+      ],
+      "rehearsal_value_hint": "validate-r02-matrix-figma-bidirectional"
+    },
+    {
+      "checklist_ref": "C9",
+      "log_fields": [
+        "runbook_smoke_artifact"
+      ],
+      "rehearsal_value_hint": "validate-r02-global-gap-dashboard-matrix-joint"
+    },
+    {
+      "checklist_ref": "C10",
+      "log_fields": [
+        "change_ticket"
+      ],
+      "rehearsal_value_hint": "production-gate-filled-log-ticket-linkage"
+    },
+    {
+      "checklist_ref": "C11",
+      "log_fields": [
+        "runbook_smoke_artifact"
+      ],
+      "rehearsal_value_hint": "r02-matrix-global-gap-r18-cross-index"
+    },
+    {
+      "checklist_ref": "C12",
+      "log_fields": [
+        "change_ticket"
+      ],
+      "rehearsal_value_hint": "first-entered-rehearsal-v1.57"
+    },
+    {
+      "checklist_ref": "C13",
+      "log_fields": [
+        "change_ticket",
+        "production_signoff_ticket"
+      ],
+      "rehearsal_value_hint": "production-gate-entered-filled-log-joint"
+    },
+    {
+      "checklist_ref": "C14",
+      "log_fields": [
+        "r18_artifact"
+      ],
+      "rehearsal_value_hint": "r18-services-wide-slug-decision"
+    },
+    {
+      "checklist_ref": "C15",
+      "log_fields": [
+        "runbook_smoke_artifact"
+      ],
+      "rehearsal_value_hint": "runbook-section3-fill-c6-defer-linkage"
+    },
+    {
+      "checklist_ref": "C16",
+      "log_fields": [
+        "r18_artifact"
+      ],
+      "rehearsal_value_hint": "matrix-entry-gap-r18-slug-drilldown"
+    },
+    {
+      "checklist_ref": "C17",
+      "log_fields": [
+        "runbook_smoke_artifact"
+      ],
+      "rehearsal_value_hint": "dashboard-triple-gate-window-registry"
+    },
+    {
+      "checklist_ref": "C18",
+      "log_fields": [
+        "runbook_smoke_artifact"
+      ],
+      "rehearsal_value_hint": "runbook-main-table8-dashboard-window-check"
+    },
+    {
+      "checklist_ref": "C19",
+      "log_fields": [
+        "migrate_plan_sha256"
+      ],
+      "rehearsal_value_hint": "runbook-g4-filled-log-sha-linkage"
+    },
+    {
+      "checklist_ref": "C20",
+      "log_fields": [
+        "r18_artifact"
+      ],
+      "rehearsal_value_hint": "r18-groups-roles-tab-defer-decision"
+    },
+    {
+      "checklist_ref": "C21",
+      "log_fields": [
+        "change_ticket",
+        "production_signoff_ticket"
+      ],
+      "rehearsal_value_hint": "runbook-main-table-signoff-path-rehearsal"
+    },
+    {
+      "checklist_ref": "C22",
+      "log_fields": [
+        "r18_artifact"
+      ],
+      "rehearsal_value_hint": "r18-narrow-only-defer-inventory"
+    },
+    {
+      "checklist_ref": "C23",
+      "log_fields": [
+        "change_ticket"
+      ],
+      "rehearsal_value_hint": "runbook-g4-staging-ticket-triple-sync"
+    },
+    {
+      "checklist_ref": "C24",
+      "log_fields": [
+        "executed_at_cst",
+        "migrate_plan_sha256",
+        "dual_instance_ready"
+      ],
+      "rehearsal_value_hint": "runbook-main-table-rows1-7-filled-log-rehearsal-v1.64"
+    },
+    {
+      "checklist_ref": "C25",
+      "log_fields": [
+        "r18_artifact"
+      ],
+      "rehearsal_value_hint": "publish-review-narrow-wait-decision"
+    },
+    {
+      "checklist_ref": "C26",
+      "log_fields": [
+        "change_ticket"
+      ],
+      "rehearsal_value_hint": "runbook-entered-crossref-warehouse-rehearsal"
+    },
+    {
+      "checklist_ref": "C27",
+      "log_fields": [
+        "runbook_smoke_mixed_read_ok",
+        "rollback_decision_recorded",
+        "rollback_approval_shape",
+        "r21_slo_signoff_status"
+      ],
+      "rehearsal_value_hint": "runbook-main-table-rows4-6-log-shape"
+    },
+    {
+      "checklist_ref": "C28",
+      "log_fields": [
+        "r18_artifact"
+      ],
+      "rehearsal_value_hint": "r18-narrow-open-batch-wait"
+    },
+    {
+      "checklist_ref": "C29",
+      "log_fields": [
+        "change_ticket"
+      ],
+      "rehearsal_value_hint": "runbook-confirmed-warehouse-bundle-rehearsal"
+    },
+    {
+      "checklist_ref": "log_align",
+      "log_fields": [
+        "disclaimer"
+      ],
+      "rehearsal_value_hint": "validate-runbook-log-rehearsal-alignment"
+    },
+    {
+      "checklist_ref": "ledger_pending",
+      "log_fields": [
+        "r18_artifact"
+      ],
+      "rehearsal_value_hint": "FIRST_PRODUCTION_FILL_TEMPLATE_V148"
+    },
+    {
+      "checklist_ref": "C30",
+      "log_fields": [
+        "rollback_approval_shape",
+        "rollback_decision_recorded"
+      ],
+      "rehearsal_value_hint": "runbook-main-table-row5-rollback-shape"
+    },
+    {
+      "checklist_ref": "C31",
+      "log_fields": [
+        "change_ticket"
+      ],
+      "rehearsal_value_hint": "runbook-teamfill-confirmed-warehouse-window"
+    },
+    {
+      "checklist_ref": "C32",
+      "log_fields": [
+        "r18_artifact"
+      ],
+      "rehearsal_value_hint": "r18-narrow-open-batch-wait-v1.64"
+    },
+    {
+      "checklist_ref": "C33",
+      "log_fields": [
+        "production_signoff_ticket",
+        "runbook_smoke_artifact"
+      ],
+      "rehearsal_value_hint": "runbook-main-table8-signoff-dashboard-path"
+    },
+    {
+      "checklist_ref": "C34",
+      "log_fields": [
+        "r18_artifact"
+      ],
+      "rehearsal_value_hint": "r18-narrow-open-batch-wait-v1.65"
+    },
+    {
+      "checklist_ref": "C35",
+      "log_fields": [
+        "change_ticket"
+      ],
+      "rehearsal_value_hint": "runbook-section3-entered-warehouse-intake"
+    },
+    {
+      "checklist_ref": "C36",
+      "log_fields": [
+        "r18_artifact"
+      ],
+      "rehearsal_value_hint": "publish-review-narrow-closeout"
+    },
+    {
+      "checklist_ref": "C37",
+      "log_fields": [
+        "r18_artifact"
+      ],
+      "rehearsal_value_hint": "narrow-open-batch-closeout"
+    },
+    {
+      "checklist_ref": "C38",
+      "log_fields": [
+        "production_signoff_ticket",
+        "rollback_approval_shape"
+      ],
+      "rehearsal_value_hint": "main-table-production-signoff-template"
+    },
+    {
+      "checklist_ref": "C39",
+      "log_fields": [
+        "change_ticket"
+      ],
+      "rehearsal_value_hint": "entered-ledger-write-gate"
+    },
+    {
+      "checklist_ref": "C40",
+      "log_fields": [
+        "r18_artifact"
+      ],
+      "rehearsal_value_hint": "figma-pixel-green-uat"
+    },
+    {
+      "checklist_ref": "C41",
+      "log_fields": [
+        "production_signoff_ticket",
+        "r21_slo_signoff_status"
+      ],
+      "rehearsal_value_hint": "sre-platform-dual-signoff"
+    },
+    {
+      "checklist_ref": "C42",
+      "log_fields": [
+        "dsn_database_host",
+        "change_ticket"
+      ],
+      "rehearsal_value_hint": "dsn-dry-run-ledger"
+    },
+    {
+      "checklist_ref": "C43",
+      "log_fields": [
+        "r18_artifact"
+      ],
+      "rehearsal_value_hint": "global-gap-item-closeout"
+    },
+    {
+      "checklist_ref": "C44",
+      "log_fields": [
+        "production_signoff_ticket"
+      ],
+      "rehearsal_value_hint": "r22-joint-uat-scenario"
+    },
+    {
+      "checklist_ref": "C45",
+      "log_fields": [
+        "change_ticket",
+        "dsn_database_host"
+      ],
+      "rehearsal_value_hint": "production-apply-preflight-triple"
+    },
+    {
+      "checklist_ref": "C46",
+      "log_fields": [
+        "runbook_smoke_artifact"
+      ],
+      "rehearsal_value_hint": "s5-release-ops-checklist"
+    },
+    {
+      "checklist_ref": "C47",
+      "log_fields": [
+        "dual_instance_ready"
+      ],
+      "rehearsal_value_hint": "real-joint-environment-hooklist"
+    },
+    {
+      "checklist_ref": "C48",
+      "log_fields": [
+        "change_ticket"
+      ],
+      "rehearsal_value_hint": "rehearsal-only-gate"
+    },
+    {
+      "checklist_ref": "C49",
+      "log_fields": [
+        "production_signoff_ticket"
+      ],
+      "rehearsal_value_hint": "real-human-uat-signoff"
+    },
+    {
+      "checklist_ref": "C50",
+      "log_fields": [
+        "change_ticket"
+      ],
+      "rehearsal_value_hint": "unsigned-uat-apply-block"
+    },
+    {
+      "checklist_ref": "C51",
+      "log_fields": [
+        "dual_instance_ready"
+      ],
+      "rehearsal_value_hint": "real-joint-environment-connected-shape"
+    },
+    {
+      "checklist_ref": "C52",
+      "log_fields": [
+        "change_ticket",
+        "production_signoff_ticket"
+      ],
+      "rehearsal_value_hint": "joint-env-connected-unsigned-gate"
+    },
+    {
+      "checklist_ref": "C53",
+      "log_fields": [
+        "production_signoff_ticket"
+      ],
+      "rehearsal_value_hint": "real-human-uat-signoff-dryrun-ledger"
+    },
+    {
+      "checklist_ref": "C54",
+      "log_fields": [
+        "dual_instance_ready"
+      ],
+      "rehearsal_value_hint": "joint-env-shape-to-live-gate"
+    },
+    {
+      "checklist_ref": "C55",
+      "log_fields": [
+        "dual_instance_ready",
+        "runbook_smoke_mixed_read_ok"
+      ],
+      "rehearsal_value_hint": "r20-pressure-sse-fault-measurement-shape"
+    },
+    {
+      "checklist_ref": "C56",
+      "log_fields": [
+        "r21_slo_signoff_status"
+      ],
+      "rehearsal_value_hint": "r20-s5-capacity-gate-rehearsal"
+    },
+    {
+      "checklist_ref": "C57",
+      "log_fields": [
+        "r21_slo_signoff_status",
+        "rollback_approval_shape"
+      ],
+      "rehearsal_value_hint": "r21-ops-observability-shape-ledger"
+    },
+    {
+      "checklist_ref": "C58",
+      "log_fields": [
+        "change_ticket"
+      ],
+      "rehearsal_value_hint": "r21-backup-rpo-rto-rehearsal-gate"
+    },
+    {
+      "checklist_ref": "C59",
+      "log_fields": [
+        "r21_slo_signoff_status"
+      ],
+      "rehearsal_value_hint": "r21-alert-dryrun-shape-ledger"
+    },
+    {
+      "checklist_ref": "C60",
+      "log_fields": [
+        "change_ticket",
+        "production_signoff_ticket"
+      ],
+      "rehearsal_value_hint": "r21-oncall-handoff-gate-rehearsal"
+    },
+    {
+      "checklist_ref": "C61",
+      "log_fields": [
+        "r21_slo_signoff_status",
+        "dual_instance_ready"
+      ],
+      "rehearsal_value_hint": "r20-formal-slo-target-shape-ledger"
+    },
+    {
+      "checklist_ref": "C62",
+      "log_fields": [
+        "change_ticket",
+        "runbook_smoke_mixed_read_ok"
+      ],
+      "rehearsal_value_hint": "r20-slo-evidence-rehearsal-gate"
+    }
+  ],
+  "notes": "v1.76 增 C61–C62"
+}
