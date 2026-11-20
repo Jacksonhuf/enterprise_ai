@@ -25,8 +25,9 @@ def main() -> None:
         "RUNBOOK_FIRST_FILL_REHEARSAL_TABLE_V157",
         "RUNBOOK_FIRST_FILL_REHEARSAL_TABLE_V158",
         "RUNBOOK_FIRST_FILL_REHEARSAL_TABLE_V159",
+        "RUNBOOK_FIRST_FILL_REHEARSAL_TABLE_V160",
     ):
-        raise SystemExit("rehearsal_status must be V150–V159")
+        raise SystemExit("rehearsal_status must be V150–V160")
     if not doc.get("not_production"):
         raise SystemExit("not_production must be true")
     links = doc.get("links", {})
@@ -83,6 +84,17 @@ def main() -> None:
             raise SystemExit("V159 requires fill_c6_defer_linkage_fixture v1.59")
         if "v1.59" not in links.get("log_alignment_fixture", ""):
             raise SystemExit("V159 requires log_alignment_fixture v1.59")
+    if status == "RUNBOOK_FIRST_FILL_REHEARSAL_TABLE_V160":
+        for need in ("C18", "C19", "C20"):
+            if need not in refs:
+                raise SystemExit(f"V160 checklist_rows must include {need}")
+        if "v1.60" not in links.get("fill_c6_defer_linkage_fixture", ""):
+            raise SystemExit("V160 requires fill_c6_defer_linkage_fixture v1.60")
+        if "v1.60" not in links.get("log_alignment_fixture", ""):
+            raise SystemExit("V160 requires log_alignment_fixture v1.60")
+        for key in ("g4_filled_log_linkage_fixture", "groups_roles_defer_fixture"):
+            if "v1.60" not in links.get(key, ""):
+                raise SystemExit(f"V160 requires {key} v1.60")
     for row in doc.get("checklist_rows", []):
         val = str(row.get("rehearsal_value", ""))
         if "PLACEHOLDER" in val.upper():

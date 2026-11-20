@@ -720,6 +720,10 @@ DEFER V158；ENTERED/log 联席；services-engineer 决策 artifact。见 test-r
 
 FILL C6 DEFER；entry drilldown；triple-gate 同窗。见 test-report-v1.59.md。
 
+## 第160轮（v1.60）：主表 #8、G4 SHA、groups/roles
+
+MAIN_TABLE_8 window check；G4↔filled log SHA；CAND-09/11 书面决策；彩排链 **V160**。见 test-report-v1.60.md。
+
 ## 第119轮（v1.19）：tier 联动 OpenMetrics
 
 35 抽页。见 test-report-v1.19.md。

@@ -11,8 +11,12 @@ DOC = ROOT / "docs/development"
 def main() -> None:
     path = Path(sys.argv[1])
     doc = json.loads(path.read_text())
-    if doc.get("checklist_status") != "RUNBOOK_SECTION3_FILL_CHECKLIST_REHEARSAL_V159":
-        raise SystemExit("checklist_status must be RUNBOOK_SECTION3_FILL_CHECKLIST_REHEARSAL_V159")
+    checklist_status = doc.get("checklist_status")
+    if checklist_status not in (
+        "RUNBOOK_SECTION3_FILL_CHECKLIST_REHEARSAL_V159",
+        "RUNBOOK_SECTION3_FILL_CHECKLIST_REHEARSAL_V160",
+    ):
+        raise SystemExit("checklist_status must be V159 or V160")
     if not doc.get("not_production"):
         raise SystemExit("not_production must be true")
     marks = doc.get("rehearsal_checkmarks", {})
@@ -32,6 +36,12 @@ def main() -> None:
         raise SystemExit("runbook doc must document C6")
     if "unchecked" not in str(doc.get("production_main_table_rows", "")).lower():
         raise SystemExit("production main table must remain unchecked in rehearsal")
+    if checklist_status == "RUNBOOK_SECTION3_FILL_CHECKLIST_REHEARSAL_V160":
+        mt8 = marks.get("main_table_8", {})
+        if not mt8.get("checked") or not mt8.get("rehearsal_only"):
+            raise SystemExit("V160 must mark main_table_8 rehearsal_only")
+        if "v1.60" not in mt8.get("evidence_fixture", ""):
+            raise SystemExit("main_table_8 must reference v1.60 evidence")
     print("OK: runbook §3 fill checklist rehearsal")
     print(f"Validated {path}")
 

@@ -13,12 +13,26 @@ PY = sys.executable
 def main() -> None:
     path = Path(sys.argv[1])
     reg = json.loads(path.read_text())
-    if reg.get("registry_status") != "R21_DASHBOARD_TRIPLE_GATE_WINDOW_V159":
-        raise SystemExit("registry_status must be R21_DASHBOARD_TRIPLE_GATE_WINDOW_V159")
+    status = reg.get("registry_status")
+    if status not in (
+        "R21_DASHBOARD_TRIPLE_GATE_WINDOW_V159",
+        "R21_DASHBOARD_TRIPLE_GATE_WINDOW_V160",
+    ):
+        raise SystemExit("registry_status must be V159 or V160")
     dash_name = reg.get("dashboard_linkage_fixture", "")
     dash = json.loads((FX / dash_name).read_text())
-    if dash.get("linkage_status") != "R21_OPEN_GAP_DASHBOARD_V159":
-        raise SystemExit("dashboard must be V159")
+    dash_status = dash.get("linkage_status")
+    if status == "R21_DASHBOARD_TRIPLE_GATE_WINDOW_V159":
+        if dash_status != "R21_OPEN_GAP_DASHBOARD_V159":
+            raise SystemExit("dashboard must be V159")
+    else:
+        if dash_status != "R21_OPEN_GAP_DASHBOARD_V160":
+            raise SystemExit("dashboard must be V160")
+        mt8 = reg.get("main_table8_check_fixture", "")
+        if not mt8:
+            raise SystemExit("V160 registry requires main_table8_check_fixture")
+        if not (FX / mt8).is_file():
+            raise SystemExit("missing main_table8_check_fixture file")
     if dash.get("triple_gate_window_registry_fixture") != path.name:
         raise SystemExit("dashboard must point to this registry")
     subprocess.run(
