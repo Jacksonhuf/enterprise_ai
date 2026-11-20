@@ -1,0 +1,22 @@
+{
+  "chain_status": "RUNBOOK_REHEARSAL_CHAIN_V158",
+  "not_production": true,
+  "steps": [
+    {"script": "validate-runbook-first-fill-rehearsal-table.py", "fixture": "schema8-runbook-first-fill-rehearsal-table-v1.58.json"},
+    {"script": "validate-runbook-log-rehearsal-alignment.py", "fixture": "runbook-log-rehearsal-alignment-v1.58.json"},
+    {"script": "validate-production-gate-entered-filled-log-joint.py", "fixture": "production-gate-entered-filled-log-joint-v1.58.json"},
+    {"script": "validate-r18-services-wide-slug-decision.py", "fixture": "r18-services-wide-slug-decision-v1.58.json"},
+    {"script": "validate-runbook-section3-defer-rollup-linkage.py", "fixture": "runbook-section3-defer-rollup-linkage-v1.58.json"},
+    {"script": "validate-production-gate-filled-log-ticket-linkage.py", "fixture": "production-gate-filled-log-ticket-linkage-v1.57.json"},
+    {"script": "validate-production-gate-three-table-window.py", "fixture": "production-gate-three-table-window-v1.57.json"},
+    {"script": "validate-schema8-production-ledger-first-entered-rehearsal.py", "fixture": "schema8-production-ledger-first-entered-rehearsal-v1.57.json"},
+    {"script": "validate-r02-page-api-open-gap-registry.py", "fixture": "r02-page-api-open-gap-registry-v1.52.json"},
+    {"script": "validate-r02-matrix-global-gap-visualization.py", "fixture": "r02-matrix-global-gap-visualization-v1.57.json"},
+    {"script": "validate-r02-matrix-global-gap-r18-cross-index.py", "fixture": "r02-matrix-global-gap-r18-cross-index-v1.57.json"},
+    {"script": "validate-r02-global-gap-dashboard-matrix-joint.py", "fixture": "r02-global-gap-dashboard-matrix-joint-v1.57.json"},
+    {"script": "validate-r02-gap-closeout-figma-crossref.py", "fixture": "r02-gap-closeout-figma-crossref-v1.51.json"},
+    {"script": "validate-r02-matrix-figma-bidirectional.py", "fixture": "r02-matrix-figma-bidirectional-link-v1.55.json"},
+    {"script": "validate-r02-figma-pending-closeout-plan.py", "fixture": "r02-figma-pending-closeout-plan-v1.55.json"}
+  ],
+  "notes": "v1.58 defer V157 三联 + 联席签字形状 + services 决策"
+}

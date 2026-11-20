@@ -1,0 +1,10 @@
+{
+  "decision_status": "R18_SERVICES_WIDE_SLUG_DECISION_V158",
+  "design_id": "CAND-14",
+  "engineering_resolution": "MANIFEST_WIDE_SLUG_PRESENT",
+  "required_manifest_slugs": ["services-engineer", "services-narrow"],
+  "matrix_fixture": "r02-page-api-acceptance-matrix-v1.45.json",
+  "r18_gap_doc": "r18-gap-checklist-v1.43.md",
+  "product_signoff_still_required": true,
+  "notes": "工程接受宽屏抽页；Figma/产品签字仍属 R18 关项"
+}

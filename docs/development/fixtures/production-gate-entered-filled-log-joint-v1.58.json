@@ -1,0 +1,9 @@
+{
+  "joint_status": "ENTERED_FILLED_LOG_JOINT_V158",
+  "not_production": true,
+  "filled_log_fixture": "schema8-production-log-rehearsal-filled-v1.57.json",
+  "first_entered_ledger_fixture": "schema8-production-ledger-first-entered-rehearsal-v1.57.json",
+  "three_table_window_fixture": "production-gate-three-table-window-v1.57.json",
+  "signoff_shape_rule": "PLACEHOLDER_GATE",
+  "notes": "ENTERED 台账与实填 §3 log 同工单联席形状；非 SRE 真签"
+}

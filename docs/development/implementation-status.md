@@ -712,6 +712,10 @@ JOINT_V156；REHEARSAL 实填 log；FIGMA 全局阻塞说明。见 test-report-v
 
 THREE_TABLE V157；ENTERED 首条彩排；gap↔R18 cross-index。见 test-report-v1.57.md。
 
+## 第158轮（v1.58）：defer 升级与 services 宽屏决策
+
+DEFER V158；ENTERED/log 联席；services-engineer 决策 artifact。见 test-report-v1.58.md。
+
 ## 第119轮（v1.19）：tier 联动 OpenMetrics
 
 35 抽页。见 test-report-v1.19.md。

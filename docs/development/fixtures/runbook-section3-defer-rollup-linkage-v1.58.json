@@ -1,0 +1,17 @@
+{
+  "linkage_status": "RUNBOOK_SECTION3_DEFER_ROLLUP_V158",
+  "defer_rollup_fixture": "r18-headroom-defer-rollup-v1.44.json",
+  "three_table_window_fixture": "production-gate-three-table-window-v1.57.json",
+  "crossref_fixture": "production-gate-ticket-crossref-team-fill-staging-v148.json",
+  "filled_log_ticket_linkage_fixture": "production-gate-filled-log-ticket-linkage-v1.57.json",
+  "entered_filled_log_joint_fixture": "production-gate-entered-filled-log-joint-v1.58.json",
+  "first_fill_ledger_template": "schema8-production-ledger-first-production-fill-template-v1.48.json",
+  "r18_services_wide_decision_fixture": "r18-services-wide-slug-decision-v1.58.json",
+  "runbook_checklist_hooks": ["C6", "C7", "C10", "C13", "main_table_8"],
+  "runbook_docs": [
+    "mysql-schema8-runbook-section3-defer-rollup-linkage-v1.47.md",
+    "mysql-schema8-production-ledger-first-fill-guide-v1.48.md",
+    "mysql-schema8-runbook-production-fill-checklist.md"
+  ],
+  "notes": "defer 链挂 v1.57 三联窗 + ENTERED/log 联席 + services 宽屏决策"
+}

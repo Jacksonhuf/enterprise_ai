@@ -11,7 +11,7 @@
     "REAL_IDENTITY_NAV",
     "PRODUCTION_UAT_SIGNOFF"
   ],
-  "r21_dashboard_linkage_fixture": "r21-open-gap-dashboard-linkage-v1.57.json",
+  "r21_dashboard_linkage_fixture": "r21-open-gap-dashboard-linkage-v1.58.json",
   "global_gap_visual_fixture": "r02-matrix-global-gap-visualization-v1.57.json",
   "notes": "登记 matrix 仍开放 gap；closeout 不改变全局 FIGMA/身份/UAT 阻塞"
 }

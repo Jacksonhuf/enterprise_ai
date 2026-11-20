@@ -638,4 +638,8 @@ CAND-17 双字段收口；rehearsal V155 链；Figma **22/22** engineering match
 
 三联表与实填 log 工单联动；首条 ENTERED 彩排；gap↔R18 交叉索引。见 test-report-v1.57.md 及 PR CI。
 
-**建议下一轮（v1.58+）**：defer rollup 挂 v1.57 三联窗；生产 gate ENTERED 与 filled log 联席签字形状；R18 services 宽屏 slug 决策 artifact。
+### 第158轮增量（v1.58）
+
+defer V158 挂 v1.57 三联；ENTERED↔log 联席；CAND-14 宽屏 slug 决策。见 test-report-v1.58.md 及 PR CI。
+
+**建议下一轮（v1.59+）**：§3 runbook 实填勾选与 defer C6 数值联动；matrix 条目级 gap↔R18 slug 下钻表；生产 triple-gate 与 dashboard 同窗登记。
