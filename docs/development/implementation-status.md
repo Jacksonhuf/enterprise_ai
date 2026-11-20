@@ -744,6 +744,10 @@ filled log v1.64；row5 rollback shape；narrow batch 2；teamfill confirmed war
 
 narrow batch 3；main table #8 dashboard signoff path；section3 ENTERED warehouse intake；彩排链 **V165**。见 test-report-v1.65.md、progress-completion-v1.65.md。
 
+## 第166轮（v1.66）：publish-review 收口、真签模板、ENTERED 门禁
+
+narrow batch closeout；publish-review-narrow closeout；main table production signoff template；ENTERED ledger write gate；彩排链 **V166**。见 test-report-v1.66.md、progress-completion-v1.66.md。
+
 ## 第119轮（v1.19）：tier 联动 OpenMetrics
 
 35 抽页。见 test-report-v1.19.md。

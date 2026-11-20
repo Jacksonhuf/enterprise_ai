@@ -670,4 +670,8 @@ filled log v1.64；主表 #5 回退生产 shape（签核 PLACEHOLDER）；narrow
 
 narrow open 第三批收尾（余 publish-review-narrow）；主表 #8 与 R21 dashboard 签路径 shape；§3 ENTERED 真格式入库联席彩排。见 test-report-v1.65.md。
 
-**建议下一轮（v1.66+）**：publish-review-narrow 等待决收口；主表 #1–#8 生产真签彩排模板；真台账 ENTERED 写入门禁（仍无真人签）。
+### 第166轮增量（v1.66）
+
+publish-review-narrow / narrow batch 收口；主表 #1–#8 生产真签字段模板；ENTERED 台账写入门禁彩排。见 test-report-v1.66.md。
+
+**建议下一轮（v1.67+）**：Figma 像素绿与 UAT 签收彩排；SRE/平台双签 shape；真 DSN dry-run 台账（仍无生产 apply）。

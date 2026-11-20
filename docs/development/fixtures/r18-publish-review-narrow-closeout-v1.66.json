@@ -1,0 +1,11 @@
+{
+  "closeout_status": "R18_PUBLISH_REVIEW_NARROW_CLOSEOUT_V166",
+  "not_production": true,
+  "prior_wait_fixture": "r18-publish-review-narrow-wait-decision-v1.62.json",
+  "narrow_batch_closeout_fixture": "r18-narrow-open-batch-closeout-v1.66.json",
+  "resolution": "WAIT_ON_PUBLISH_REVIEW_PARENT_DEFER",
+  "resolution_unchanged": true,
+  "slug": "publish-review-narrow",
+  "only_remaining_open_narrow": true,
+  "notes": "收口登记：窄屏仍跟随 publish-review defer；不并入 batch defer"
+}
