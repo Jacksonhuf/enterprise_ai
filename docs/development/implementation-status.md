@@ -684,6 +684,10 @@ matrix V149；RUNBOOK defer V149。见 test-report-v1.49.md。
 
 首条真填演练 JSON；Figma V150。见 test-report-v1.50.md。
 
+## 第151轮（v1.51）：closeout↔Figma 与 log 演练对齐
+
+RUNBOOK_LOG_REHEARSAL_ALIGNMENT；Figma V151。见 test-report-v1.51.md。
+
 ## 第119轮（v1.19）：tier 联动 OpenMetrics
 
 35 抽页。见 test-report-v1.19.md。

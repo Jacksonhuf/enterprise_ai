@@ -1,0 +1,10 @@
+{
+  "link_status": "R02_MATRIX_FIGMA_BIDIRECTIONAL_V151",
+  "matrix_fixture": "r02-page-api-acceptance-matrix-v1.45.json",
+  "figma_checklist_fixture": "r02-figma-field-checklist-v1.44.json",
+  "rules": {
+    "checklist_design_ids_must_match_matrix": true,
+    "gap_closeout_figma_crossref_fixture": "r02-gap-closeout-figma-crossref-v1.51.json"
+  },
+  "notes": "v1.51 含 closeout↔figma 交叉校验"
+}

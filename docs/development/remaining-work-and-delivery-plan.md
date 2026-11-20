@@ -610,4 +610,8 @@ defer V149→V148 窗口；R02 gap closeout×4；Figma 13 matched。见 test-rep
 
 matrix↔Figma 双向链；runbook 首条真填演练表；Figma 15 matched。见 test-report-v1.50.md 及 PR CI。
 
-**建议下一轮（v1.51+）**：gap closeout 与 Figma matched 交叉校验；生产 log 形状与演练表行对齐；Figma 16+ matched。
+### 第151轮增量（v1.51）
+
+closeout↔Figma 交叉；log↔演练表对齐；Figma 17 matched。见 test-report-v1.51.md 及 PR CI。
+
+**建议下一轮（v1.52+）**：rehearsal 表升级含 C8 与 log 对齐；matrix V150 gap 登记；Figma 18+ matched。
