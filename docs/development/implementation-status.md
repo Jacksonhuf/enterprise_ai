@@ -764,6 +764,10 @@ S5 release ops checklist；real joint environment hooklist；rehearsal-only gate
 
 R22 real human UAT signoff shape；unsigned UAT production apply block；彩排链 **V170**（49 步）。见 test-report-v1.70.md、progress-completion-v1.70.md。
 
+## 第171轮（v1.71）：联合环境 CONNECTED shape
+
+joint environment CONNECTED shape rehearsal；connected + unsigned gate；彩排链 **V171**（51 步）。见 test-report-v1.71.md、progress-completion-v1.71.md。
+
 ## 第119轮（v1.19）：tier 联动 OpenMetrics
 
 35 抽页。见 test-report-v1.19.md。

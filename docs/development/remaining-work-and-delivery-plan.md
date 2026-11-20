@@ -690,4 +690,8 @@ S5 发布运营清单彩排；真实联合环境挂钩清单；rehearsal-only �
 
 R22 真人 UAT 签收 shape 彩排；未签字 production apply 阻断。见 test-report-v1.70.md。
 
-**建议下一轮（v1.71+）**：联合环境挂钩逐项转 CONNECTED shape（仍 rehearsal）；真人签收字段仍为 PLACEHOLDER。
+### 第171轮增量（v1.71）
+
+联合环境挂钩 **CONNECTED shape** 彩排；与未签字 apply 闸口同窗。见 test-report-v1.71.md。
+
+**建议下一轮（v1.72+）**：R22 真人签收 dry-run 台账（仍为 PLACEHOLDER）；挂钩从 shape 到 LIVE 须单独门禁。

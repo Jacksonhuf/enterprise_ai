@@ -1,0 +1,211 @@
+{
+  "chain_status": "RUNBOOK_REHEARSAL_CHAIN_V171",
+  "not_production": true,
+  "steps": [
+    {
+      "script": "validate-runbook-first-fill-rehearsal-table.py",
+      "fixture": "schema8-runbook-first-fill-rehearsal-table-v1.71.json"
+    },
+    {
+      "script": "validate-runbook-log-rehearsal-alignment.py",
+      "fixture": "runbook-log-rehearsal-alignment-v1.71.json"
+    },
+    {
+      "script": "validate-runbook-main-table-rows4-6-log-shape.py",
+      "fixture": "runbook-main-table-rows4-6-log-shape-v1.64.json"
+    },
+    {
+      "script": "validate-runbook-main-table-row5-rollback-shape.py",
+      "fixture": "runbook-main-table-row5-rollback-shape-v1.64.json"
+    },
+    {
+      "script": "validate-runbook-main-table-rows1-7-filled-log-rehearsal.py",
+      "fixture": "runbook-main-table-rows1-7-filled-log-rehearsal-v1.64.json"
+    },
+    {
+      "script": "validate-runbook-section3-fill-c6-defer-linkage.py",
+      "fixture": "runbook-section3-fill-c6-defer-linkage-v1.60.json"
+    },
+    {
+      "script": "validate-runbook-main-table8-dashboard-window-check.py",
+      "fixture": "runbook-main-table8-dashboard-window-check-v1.65.json"
+    },
+    {
+      "script": "validate-runbook-main-table-signoff-path-rehearsal.py",
+      "fixture": "runbook-main-table-signoff-path-rehearsal-v1.65.json"
+    },
+    {
+      "script": "validate-runbook-g4-filled-log-sha-linkage.py",
+      "fixture": "runbook-g4-filled-log-sha-linkage-v1.60.json"
+    },
+    {
+      "script": "validate-runbook-g4-staging-ticket-triple-sync.py",
+      "fixture": "runbook-g4-staging-ticket-triple-sync-v1.61.json"
+    },
+    {
+      "script": "validate-runbook-entered-crossref-warehouse-rehearsal.py",
+      "fixture": "runbook-entered-crossref-warehouse-rehearsal-v1.62.json"
+    },
+    {
+      "script": "validate-runbook-confirmed-warehouse-bundle-rehearsal.py",
+      "fixture": "runbook-confirmed-warehouse-bundle-rehearsal-v1.63.json"
+    },
+    {
+      "script": "validate-r18-groups-roles-tab-defer-decision.py",
+      "fixture": "r18-groups-roles-tab-defer-decision-v1.60.json"
+    },
+    {
+      "script": "validate-r18-narrow-only-defer-inventory.py",
+      "fixture": "r18-narrow-only-defer-inventory-v1.61.json"
+    },
+    {
+      "script": "validate-r18-narrow-open-batch-wait.py",
+      "fixture": "r18-narrow-open-batch-wait-v1.65.json"
+    },
+    {
+      "script": "validate-r18-narrow-open-batch-closeout.py",
+      "fixture": "r18-narrow-open-batch-closeout-v1.66.json"
+    },
+    {
+      "script": "validate-r18-publish-review-narrow-closeout.py",
+      "fixture": "r18-publish-review-narrow-closeout-v1.66.json"
+    },
+    {
+      "script": "validate-runbook-main-table-production-signoff-template.py",
+      "fixture": "runbook-main-table-production-signoff-template-v1.66.json"
+    },
+    {
+      "script": "validate-runbook-entered-ledger-write-gate.py",
+      "fixture": "runbook-entered-ledger-write-gate-v1.66.json"
+    },
+    {
+      "script": "validate-r02-figma-pixel-green-uat-rehearsal.py",
+      "fixture": "r02-figma-pixel-green-uat-rehearsal-v1.67.json"
+    },
+    {
+      "script": "validate-runbook-sre-platform-dual-signoff-shape.py",
+      "fixture": "runbook-sre-platform-dual-signoff-shape-v1.67.json"
+    },
+    {
+      "script": "validate-runbook-dsn-dry-run-ledger-rehearsal.py",
+      "fixture": "runbook-dsn-dry-run-ledger-rehearsal-v1.67.json"
+    },
+    {
+      "script": "validate-r02-global-gap-item-closeout-rehearsal.py",
+      "fixture": "r02-global-gap-item-closeout-rehearsal-v1.68.json"
+    },
+    {
+      "script": "validate-r22-joint-uat-scenario-rehearsal.py",
+      "fixture": "r22-joint-uat-scenario-rehearsal-v1.68.json"
+    },
+    {
+      "script": "validate-runbook-production-apply-preflight-triple-dry-run.py",
+      "fixture": "runbook-production-apply-preflight-triple-dry-run-v1.68.json"
+    },
+    {
+      "script": "validate-runbook-s5-release-ops-checklist-rehearsal.py",
+      "fixture": "runbook-s5-release-ops-checklist-rehearsal-v1.69.json"
+    },
+    {
+      "script": "validate-runbook-real-joint-environment-hooklist-rehearsal.py",
+      "fixture": "runbook-real-joint-environment-hooklist-rehearsal-v1.69.json"
+    },
+    {
+      "script": "validate-runbook-rehearsal-only-gate-enforcement.py",
+      "fixture": "runbook-rehearsal-only-gate-enforcement-v1.69.json"
+    },
+    {
+      "script": "validate-r22-real-human-uat-signoff-shape-rehearsal.py",
+      "fixture": "r22-real-human-uat-signoff-shape-rehearsal-v1.70.json"
+    },
+    {
+      "script": "validate-runbook-unsigned-uat-apply-block-rehearsal.py",
+      "fixture": "runbook-unsigned-uat-apply-block-rehearsal-v1.70.json"
+    },
+    {
+      "script": "validate-runbook-real-joint-environment-connected-shape-rehearsal.py",
+      "fixture": "runbook-real-joint-environment-connected-shape-rehearsal-v1.71.json"
+    },
+    {
+      "script": "validate-runbook-joint-env-connected-unsigned-gate.py",
+      "fixture": "runbook-joint-env-connected-unsigned-gate-v1.71.json"
+    },
+    {
+      "script": "validate-runbook-main-table8-signoff-dashboard-path.py",
+      "fixture": "runbook-main-table8-signoff-dashboard-path-v1.65.json"
+    },
+    {
+      "script": "validate-runbook-section3-entered-warehouse-intake.py",
+      "fixture": "runbook-section3-entered-warehouse-intake-v1.65.json"
+    },
+    {
+      "script": "validate-r21-dashboard-triple-gate-window-registry.py",
+      "fixture": "r21-dashboard-triple-gate-window-registry-v1.65.json"
+    },
+    {
+      "script": "validate-r18-publish-review-narrow-wait-decision.py",
+      "fixture": "r18-publish-review-narrow-wait-decision-v1.62.json"
+    },
+    {
+      "script": "validate-r02-matrix-entry-gap-r18-slug-drilldown.py",
+      "fixture": "r02-matrix-entry-gap-r18-slug-drilldown-v1.59.json"
+    },
+    {
+      "script": "validate-r21-dashboard-triple-gate-window-registry.py",
+      "fixture": "r21-dashboard-triple-gate-window-registry-v1.60.json"
+    },
+    {
+      "script": "validate-production-gate-entered-filled-log-joint.py",
+      "fixture": "production-gate-entered-filled-log-joint-v1.58.json"
+    },
+    {
+      "script": "validate-r18-services-wide-slug-decision.py",
+      "fixture": "r18-services-wide-slug-decision-v1.58.json"
+    },
+    {
+      "script": "validate-runbook-section3-defer-rollup-linkage.py",
+      "fixture": "runbook-section3-defer-rollup-linkage-v1.58.json"
+    },
+    {
+      "script": "validate-production-gate-filled-log-ticket-linkage.py",
+      "fixture": "production-gate-filled-log-ticket-linkage-v1.57.json"
+    },
+    {
+      "script": "validate-production-gate-three-table-window.py",
+      "fixture": "production-gate-three-table-window-v1.57.json"
+    },
+    {
+      "script": "validate-schema8-production-ledger-first-entered-rehearsal.py",
+      "fixture": "schema8-production-ledger-first-entered-rehearsal-v1.57.json"
+    },
+    {
+      "script": "validate-r02-page-api-open-gap-registry.py",
+      "fixture": "r02-page-api-open-gap-registry-v1.52.json"
+    },
+    {
+      "script": "validate-r02-matrix-global-gap-visualization.py",
+      "fixture": "r02-matrix-global-gap-visualization-v1.57.json"
+    },
+    {
+      "script": "validate-r02-matrix-global-gap-r18-cross-index.py",
+      "fixture": "r02-matrix-global-gap-r18-cross-index-v1.57.json"
+    },
+    {
+      "script": "validate-r02-global-gap-dashboard-matrix-joint.py",
+      "fixture": "r02-global-gap-dashboard-matrix-joint-v1.57.json"
+    },
+    {
+      "script": "validate-r02-gap-closeout-figma-crossref.py",
+      "fixture": "r02-gap-closeout-figma-crossref-v1.51.json"
+    },
+    {
+      "script": "validate-r02-matrix-figma-bidirectional.py",
+      "fixture": "r02-matrix-figma-bidirectional-link-v1.55.json"
+    },
+    {
+      "script": "validate-r02-figma-pending-closeout-plan.py",
+      "fixture": "r02-figma-pending-closeout-plan-v1.55.json"
+    }
+  ],
+  "notes": "v1.71 挂钩 CONNECTED shape、未签字闸口同窗"
+}
