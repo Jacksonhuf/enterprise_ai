@@ -1,0 +1,17 @@
+{
+  "rehearsal_status": "R02_GLOBAL_GAP_ITEM_CLOSEOUT_V168",
+  "not_production": true,
+  "open_gap_registry_fixture": "r02-page-api-open-gap-registry-v1.52.json",
+  "global_gap_visual_fixture": "r02-matrix-global-gap-visualization-v1.57.json",
+  "gap_r18_cross_index_fixture": "r02-matrix-global-gap-r18-cross-index-v1.57.json",
+  "figma_uat_rehearsal_fixture": "r02-figma-pixel-green-uat-rehearsal-v1.67.json",
+  "item_closeouts": [
+    {"gap_id": "FIGMA_SIGNOFF_ALL", "closeout_rehearsal": "PLANNED_ENGINEERING_ONLY", "evidence_round": "v1.67"},
+    {"gap_id": "KEYBOARD_A11Y_FULL", "closeout_rehearsal": "PLANNED_ENGINEERING_ONLY", "evidence_round": "v1.68"},
+    {"gap_id": "EMPTY_ERROR_LOADING_ALL_STATES", "closeout_rehearsal": "PLANNED_ENGINEERING_ONLY", "evidence_round": "v1.68"},
+    {"gap_id": "REAL_IDENTITY_NAV", "closeout_rehearsal": "PLANNED_ENGINEERING_ONLY", "evidence_round": "v1.68"},
+    {"gap_id": "PRODUCTION_UAT_SIGNOFF", "closeout_rehearsal": "PLANNED_ENGINEERING_ONLY", "evidence_round": "v1.67"}
+  ],
+  "global_gaps_still_open": true,
+  "notes": "逐项关单彩排登记；registry 中 5 项全局 gap 仍开放"
+}
