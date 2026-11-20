@@ -13,8 +13,12 @@ PY = sys.executable
 def main() -> None:
     path = Path(sys.argv[1])
     doc = json.loads(path.read_text())
-    if doc.get("binding_status") != "RUNBOOK_MAIN_TABLE_ROWS1_7_LOG_V162":
-        raise SystemExit("binding_status must be RUNBOOK_MAIN_TABLE_ROWS1_7_LOG_V162")
+    binding_status = doc.get("binding_status")
+    if binding_status not in (
+        "RUNBOOK_MAIN_TABLE_ROWS1_7_LOG_V162",
+        "RUNBOOK_MAIN_TABLE_ROWS1_7_LOG_V163",
+    ):
+        raise SystemExit("binding_status must be V162 or V163")
     if not doc.get("not_production"):
         raise SystemExit("not_production must be true")
     if not doc.get("production_main_table_unchecked"):
@@ -52,7 +56,18 @@ def main() -> None:
             verified_rows.append(row["row"])
         elif row.get("rehearsal_log_verified") is not False:
             raise SystemExit(f"row {row['row']} must declare rehearsal_log_verified")
-    if len(verified_rows) < 3:
+    if binding_status == "RUNBOOK_MAIN_TABLE_ROWS1_7_LOG_V163":
+        shape = doc.get("rows4_6_shape_fixture", "")
+        if "v1.63" not in shape:
+            raise SystemExit("V163 requires rows4_6_shape_fixture v1.63")
+        subprocess.run(
+            [PY, str(ROOT / "scripts/validate-runbook-main-table-rows4-6-log-shape.py"), str(FX / shape)],
+            check=True,
+            cwd=ROOT,
+        )
+        if len(verified_rows) < 7:
+            raise SystemExit("V163 expects rows 1–7 log bindings verified")
+    elif len(verified_rows) < 3:
         raise SystemExit("expected at least rows 1–3 verified")
     signoff = json.loads((FX / doc["signoff_path_fixture"]).read_text())
     for r in signoff.get("main_table_rows", []):

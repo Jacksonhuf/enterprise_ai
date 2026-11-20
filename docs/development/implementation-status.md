@@ -732,6 +732,10 @@ SIGNOFF_PATH #1–#8；narrow defer inventory；G4 staging triple shape；彩排
 
 ROWS1_7_LOG；publish-review-narrow wait；ENTERED warehouse crossref；彩排链 **V162**。见 test-report-v1.62.md。
 
+## 第163轮（v1.63）：#4–#6 log、narrow 分批、CONFIRMED warehouse
+
+ROWS4_6_LOG；narrow batch wait；CONFIRMED bundle warehouse；彩排链 **V163**。见 test-report-v1.63.md、progress-completion-v1.63.md。
+
 ## 第119轮（v1.19）：tier 联动 OpenMetrics
 
 35 抽页。见 test-report-v1.19.md。

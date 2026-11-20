@@ -1,0 +1,9 @@
+{
+  "rehearsal_status": "CONFIRMED_WAREHOUSE_BUNDLE_V163",
+  "not_production": true,
+  "confirmed_joint_fixture": "production-gate-crossref-bundle-confirmed-joint-shape-example.json",
+  "entered_warehouse_fixture": "runbook-entered-crossref-warehouse-rehearsal-v1.62.json",
+  "bundle_fixture": "engineering-pilot-bundle-confirmed-warehouse-ticket-shape-example.json",
+  "crossref_fixture": "production-gate-ticket-crossref-warehouse-shape-example.json",
+  "notes": "CONFIRMED bundle 与 warehouse 工单真格式入库 shape；签核 PLACEHOLDER"
+}
