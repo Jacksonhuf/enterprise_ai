@@ -708,6 +708,10 @@ REHEARSAL_ALL_FIELDS_MATCHED；RUNBOOK_REHEARSAL_CHAIN_V155。见 test-report-v1
 
 JOINT_V156；REHEARSAL 实填 log；FIGMA 全局阻塞说明。见 test-report-v1.56.md。
 
+## 第157轮（v1.57）：三联表、log 工单与 R18 缺口索引
+
+THREE_TABLE V157；ENTERED 首条彩排；gap↔R18 cross-index。见 test-report-v1.57.md。
+
 ## 第119轮（v1.19）：tier 联动 OpenMetrics
 
 35 抽页。见 test-report-v1.19.md。

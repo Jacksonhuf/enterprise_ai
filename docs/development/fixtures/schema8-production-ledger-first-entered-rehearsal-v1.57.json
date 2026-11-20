@@ -1,0 +1,11 @@
+{
+  "ledger_status": "ENTERED",
+  "apply_runbook_section": "3",
+  "production_cluster_id": "PLACEHOLDER-NOT-PRODUCTION",
+  "applied_at_cst": "PLACEHOLDER-NOT-PRODUCTION",
+  "verified_by_platform": "PLACEHOLDER-NOT-SIGNED",
+  "runbook_smoke_summary_artifact": "runbook-smoke-summary-validation",
+  "runbook_smoke_summary_sha256": "PLACEHOLDER-NOT-PRODUCTION",
+  "apply_change_ticket_ref": "CHG-ENG-WAREHOUSE-REHEARSAL-0001",
+  "notes": "FIRST_ENTERED_REHEARSAL_V157 — §3 首条 ENTERED 彩排；签核字段仍 PLACEHOLDER 门禁"
+}

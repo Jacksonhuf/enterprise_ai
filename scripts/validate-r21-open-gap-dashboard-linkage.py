@@ -23,8 +23,9 @@ def main() -> None:
         "R21_OPEN_GAP_DASHBOARD_V154",
         "R21_OPEN_GAP_DASHBOARD_V155",
         "R21_OPEN_GAP_DASHBOARD_V156",
+        "R21_OPEN_GAP_DASHBOARD_V157",
     ):
-        raise SystemExit("linkage_status must be V153–V156")
+        raise SystemExit("linkage_status must be V153–V157")
     for doc in link.get("runbook_docs", []):
         if not (ROOT / "docs/development" / doc).is_file():
             raise SystemExit(f"missing doc {doc}")
@@ -55,6 +56,18 @@ def main() -> None:
         if "r02-global-figma-blocker-v1.56.md" not in link.get("runbook_docs", []):
             raise SystemExit("V156 dashboard must list figma blocker doc")
         run("validate-r02-global-gap-dashboard-matrix-joint.py", joint)
+    if link_status == "R21_OPEN_GAP_DASHBOARD_V157":
+        if "v1.57" not in chain_fixture:
+            raise SystemExit("V157 dashboard must use v1.57 rehearsal chain")
+        joint = link.get("dashboard_matrix_joint_fixture", "")
+        if "v1.57" not in joint:
+            raise SystemExit("V157 dashboard must use joint v1.57")
+        if "r18-gap-checklist-v1.43.md" not in link.get("runbook_docs", []):
+            raise SystemExit("V157 dashboard must list r18 gap checklist doc")
+        win = link.get("three_table_window_fixture", "")
+        if not win:
+            raise SystemExit("V157 dashboard requires three_table_window_fixture")
+        run("validate-production-gate-three-table-window.py", win)
     print("OK: R21 open-gap dashboard linkage")
     print(f"Validated {path}")
 

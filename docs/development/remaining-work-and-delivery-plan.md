@@ -634,4 +634,8 @@ CAND-17 双字段收口；rehearsal V155 链；Figma **22/22** engineering match
 
 全局 gap↔dashboard↔matrix 联合门；生产 log 实填彩排；`FIGMA_SIGNOFF_ALL` 阻塞说明文档。见 test-report-v1.56.md 及 PR CI。
 
-**建议下一轮（v1.57+）**：生产 gate 三联表与实填 log 工单联动；R21 §3 首条 ENTERED 彩排（仍 PLACEHOLDER 门禁）；matrix gap 可视化与 R18 缺口 enum 交叉索引。
+### 第157轮增量（v1.57）
+
+三联表与实填 log 工单联动；首条 ENTERED 彩排；gap↔R18 交叉索引。见 test-report-v1.57.md 及 PR CI。
+
+**建议下一轮（v1.58+）**：defer rollup 挂 v1.57 三联窗；生产 gate ENTERED 与 filled log 联席签字形状；R18 services 宽屏 slug 决策 artifact。
