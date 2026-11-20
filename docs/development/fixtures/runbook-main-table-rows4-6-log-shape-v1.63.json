@@ -1,0 +1,12 @@
+{
+  "shape_status": "RUNBOOK_MAIN_TABLE_ROWS4_6_LOG_V163",
+  "not_production": true,
+  "prior_binding_fixture": "runbook-main-table-rows1-7-filled-log-rehearsal-v1.62.json",
+  "filled_log_fixture": "schema8-production-log-rehearsal-filled-v1.63.json",
+  "row_shape_fields": [
+    {"row": "4", "log_fields": ["runbook_smoke_mixed_read_ok", "runbook_smoke_artifact"], "rehearsal_shape_ok": true},
+    {"row": "5", "log_fields": ["rollback_decision_recorded", "rollback_approver"], "rehearsal_shape_ok": true, "production_value_required": true},
+    {"row": "6", "log_fields": ["r21_slo_signoff_status", "production_signoff_ticket"], "rehearsal_shape_ok": true}
+  ],
+  "notes": "主表 #4–#6 log shape 扩展；#5 字段在、真批准仍为 false/PLACEHOLDER"
+}

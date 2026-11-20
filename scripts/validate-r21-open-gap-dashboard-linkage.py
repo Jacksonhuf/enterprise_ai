@@ -29,8 +29,9 @@ def main() -> None:
         "R21_OPEN_GAP_DASHBOARD_V160",
         "R21_OPEN_GAP_DASHBOARD_V161",
         "R21_OPEN_GAP_DASHBOARD_V162",
+        "R21_OPEN_GAP_DASHBOARD_V163",
     ):
-        raise SystemExit("linkage_status must be V153–V162")
+        raise SystemExit("linkage_status must be V153–V163")
     for doc in link.get("runbook_docs", []):
         if not (ROOT / "docs/development" / doc).is_file():
             raise SystemExit(f"missing doc {doc}")
@@ -137,6 +138,21 @@ def main() -> None:
             if not fx:
                 raise SystemExit(f"V162 dashboard must name {key}")
             run(script, fx)
+    if link_status == "R21_OPEN_GAP_DASHBOARD_V163":
+        if "v1.63" not in chain_fixture:
+            raise SystemExit("V163 dashboard must use v1.63 rehearsal chain")
+        for key, script in (
+            ("main_table_rows4_6_shape_fixture", "validate-runbook-main-table-rows4-6-log-shape.py"),
+            ("narrow_open_batch_wait_fixture", "validate-r18-narrow-open-batch-wait.py"),
+            ("confirmed_warehouse_bundle_fixture", "validate-runbook-confirmed-warehouse-bundle-rehearsal.py"),
+        ):
+            fx = link.get(key, "")
+            if not fx:
+                raise SystemExit(f"V163 dashboard must name {key}")
+            run(script, fx)
+        if "v1.63" not in link.get("main_table_rows1_7_log_fixture", ""):
+            raise SystemExit("V163 must use rows1_7 log v1.63")
+        run("validate-runbook-main-table-rows1-7-filled-log-rehearsal.py", link["main_table_rows1_7_log_fixture"])
     print("OK: R21 open-gap dashboard linkage")
     print(f"Validated {path}")
 
