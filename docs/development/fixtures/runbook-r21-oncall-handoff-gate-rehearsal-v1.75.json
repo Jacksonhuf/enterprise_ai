@@ -1,0 +1,12 @@
+{
+  "gate_status": "R21_ONCALL_HANDOFF_GATE_V175",
+  "not_production": true,
+  "alert_dryrun_ledger_fixture": "runbook-r21-alert-dryrun-shape-ledger-v1.75.json",
+  "r21_backup_rpo_gate_fixture": "runbook-r21-backup-rpo-rto-rehearsal-gate-v1.74.json",
+  "oncall_primary_owner": "PLACEHOLDER-PRIMARY-ONCALL",
+  "oncall_secondary_owner": "PLACEHOLDER-SECONDARY-ONCALL",
+  "handoff_recorded": false,
+  "production_apply_forbidden": true,
+  "release_window_id": "WIN-WAREHOUSE-REHEARSAL-0146",
+  "notes": "on-call 交接 shape 与告警 dry-run 同窗"
+}
