@@ -692,6 +692,10 @@ RUNBOOK_LOG_REHEARSAL_ALIGNMENT；Figma V151。见 test-report-v1.51.md。
 
 RUNBOOK_FIRST_FILL_REHEARSAL_TABLE_V152；open gap registry。见 test-report-v1.52.md。
 
+## 第153轮（v1.53）：rehearsal 链与 R21 open gap 看板
+
+RUNBOOK_REHEARSAL_CHAIN_V153；Figma V153。见 test-report-v1.53.md。
+
 ## 第119轮（v1.19）：tier 联动 OpenMetrics
 
 35 抽页。见 test-report-v1.19.md。

@@ -44,6 +44,9 @@ def main() -> None:
             raise SystemExit(f"missing global gap {g}")
     if matrix.get("gap_registry_link") != path.name:
         raise SystemExit("matrix gap_registry_link must point to this registry file")
+    dash = reg.get("r21_dashboard_linkage_fixture", "")
+    if dash and not (FX / dash).is_file():
+        raise SystemExit("missing r21_dashboard_linkage_fixture file")
     print(f"OK: open gap registry ({len(rollup)} entries, {len(global_gaps)} global)")
     print(f"Validated {path}")
 

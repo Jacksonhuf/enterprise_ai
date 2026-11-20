@@ -1,0 +1,13 @@
+{
+  "chain_status": "RUNBOOK_REHEARSAL_CHAIN_V153",
+  "not_production": true,
+  "steps": [
+    {"script": "validate-runbook-first-fill-rehearsal-table.py", "fixture": "schema8-runbook-first-fill-rehearsal-table-v1.52.json"},
+    {"script": "validate-runbook-log-rehearsal-alignment.py", "fixture": "runbook-log-rehearsal-alignment-v1.52.json"},
+    {"script": "validate-runbook-section3-defer-rollup-linkage.py", "fixture": "runbook-section3-defer-rollup-linkage-v1.49.json"},
+    {"script": "validate-r02-page-api-open-gap-registry.py", "fixture": "r02-page-api-open-gap-registry-v1.52.json"},
+    {"script": "validate-r02-gap-closeout-figma-crossref.py", "fixture": "r02-gap-closeout-figma-crossref-v1.51.json"},
+    {"script": "validate-r02-matrix-figma-bidirectional.py", "fixture": "r02-matrix-figma-bidirectional-link-v1.51.json"}
+  ],
+  "notes": "首填/对齐/defer/R02 门禁单入口链式彩排"
+}

@@ -1,0 +1,12 @@
+{
+  "linkage_status": "R21_OPEN_GAP_DASHBOARD_V153",
+  "open_gap_registry_fixture": "r02-page-api-open-gap-registry-v1.52.json",
+  "rehearsal_chain_fixture": "runbook-rehearsal-chain-orchestration-v1.53.json",
+  "first_fill_rehearsal_fixture": "schema8-runbook-first-fill-rehearsal-table-v1.52.json",
+  "figma_pending_plan_fixture": "r02-figma-pending-closeout-plan-v1.53.json",
+  "runbook_docs": [
+    "mysql-schema8-runbook-first-fill-rehearsal-table-v1.50.md",
+    "mysql-schema8-runbook-production-fill-checklist.md"
+  ],
+  "notes": "R21 彩排链与 R02 open gap 看板 + Figma pending 计划联动"
+}
