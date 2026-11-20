@@ -1,0 +1,35 @@
+{
+  "ledger_status": "R22_REAL_HUMAN_UAT_SIGNOFF_DRYRUN_LEDGER_V172",
+  "not_production": true,
+  "signoff_shape_fixture": "r22-real-human-uat-signoff-shape-rehearsal-v1.70.json",
+  "joint_uat_scenario_fixture": "r22-joint-uat-scenario-rehearsal-v1.68.json",
+  "filled_log_fixture": "schema8-production-log-rehearsal-filled-v1.64.json",
+  "ledger_entries": [
+    {
+      "session_id": "UAT-DRYRUN-001",
+      "persona": "platform_admin",
+      "matrix_design_id": "CAND-06",
+      "uat_minutes": 0,
+      "signoff_ref": "PLACEHOLDER-NOT-SIGNED"
+    },
+    {
+      "session_id": "UAT-DRYRUN-002",
+      "persona": "app_developer",
+      "matrix_design_id": "CAND-17",
+      "uat_minutes": 0,
+      "signoff_ref": "PLACEHOLDER-NOT-SIGNED"
+    },
+    {
+      "session_id": "UAT-DRYRUN-003",
+      "persona": "business_user",
+      "matrix_design_id": "CAND-08",
+      "uat_minutes": 0,
+      "signoff_ref": "PLACEHOLDER-NOT-SIGNED"
+    }
+  ],
+  "expected_entry_count": 3,
+  "real_human_signoff_obtained": false,
+  "production_apply_forbidden": true,
+  "pilot_doc": "remaining-work-and-delivery-plan.md",
+  "notes": "真人 UAT 签收 dry-run 台账；全 PLACEHOLDER"
+}

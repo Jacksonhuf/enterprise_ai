@@ -37,8 +37,9 @@ def main() -> None:
         "RUNBOOK_FIRST_FILL_REHEARSAL_TABLE_V169",
         "RUNBOOK_FIRST_FILL_REHEARSAL_TABLE_V170",
         "RUNBOOK_FIRST_FILL_REHEARSAL_TABLE_V171",
+        "RUNBOOK_FIRST_FILL_REHEARSAL_TABLE_V172",
     ):
-        raise SystemExit("rehearsal_status must be V150–V171")
+        raise SystemExit("rehearsal_status must be V150–V172")
     if not doc.get("not_production"):
         raise SystemExit("not_production must be true")
     links = doc.get("links", {})
@@ -256,6 +257,18 @@ def main() -> None:
         ):
             if "v1.71" not in links.get(key, ""):
                 raise SystemExit(f"V171 requires {key} v1.71")
+    if status == "RUNBOOK_FIRST_FILL_REHEARSAL_TABLE_V172":
+        for need in ("C53", "C54"):
+            if need not in refs:
+                raise SystemExit(f"V172 checklist_rows must include {need}")
+        if "v1.72" not in links.get("log_alignment_fixture", ""):
+            raise SystemExit("V172 requires log_alignment_fixture v1.72")
+        for key in (
+            "uat_signoff_dryrun_ledger_fixture",
+            "joint_env_shape_to_live_gate_fixture",
+        ):
+            if "v1.72" not in links.get(key, ""):
+                raise SystemExit(f"V172 requires {key} v1.72")
     for row in doc.get("checklist_rows", []):
         val = str(row.get("rehearsal_value", ""))
         if "PLACEHOLDER" in val.upper():
