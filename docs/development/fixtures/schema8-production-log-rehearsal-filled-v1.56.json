@@ -1,0 +1,20 @@
+{
+  "disclaimer": "REHEARSAL_ONLY — 非生产库，勿写入生产台账",
+  "production_signoff_ticket": "PENDING-SRE-SIGNOFF",
+  "executed_at_cst": "2026-11-20T10:00:00+08:00",
+  "dsn_database_host": "REHEARSAL-MYSQL-NOT-PRODUCTION",
+  "change_ticket": "REHEARSAL-V156-FG-VALIDATION",
+  "migrate_plan_sha256": {
+    "audit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "applications": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "grants": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+    "sessions": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+    "settings": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+    "exceptions": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+    "usage": "1111111111111111111111111111111111111111111111111111111111111111"
+  },
+  "apply_exit_codes": [0, 0, 0, 0, 0, 0, 0],
+  "dual_instance_ready": true,
+  "runbook_smoke_artifact": "validate-r02-global-gap-dashboard-matrix-joint",
+  "r18_artifact": "r18-spot-screenshots"
+}

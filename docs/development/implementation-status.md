@@ -704,6 +704,10 @@ GLOBAL_GAP_VISUAL_V154；Figma V154。见 test-report-v1.54.md。
 
 REHEARSAL_ALL_FIELDS_MATCHED；RUNBOOK_REHEARSAL_CHAIN_V155。见 test-report-v1.55.md。
 
+## 第156轮（v1.56）：联合门与实填 log 彩排
+
+JOINT_V156；REHEARSAL 实填 log；FIGMA 全局阻塞说明。见 test-report-v1.56.md。
+
 ## 第119轮（v1.19）：tier 联动 OpenMetrics
 
 35 抽页。见 test-report-v1.19.md。

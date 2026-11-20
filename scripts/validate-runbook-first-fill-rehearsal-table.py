@@ -21,8 +21,9 @@ def main() -> None:
     if status not in (
         "RUNBOOK_FIRST_FILL_REHEARSAL_TABLE_V150",
         "RUNBOOK_FIRST_FILL_REHEARSAL_TABLE_V152",
+        "RUNBOOK_FIRST_FILL_REHEARSAL_TABLE_V156",
     ):
-        raise SystemExit("rehearsal_status must be V150 or V152")
+        raise SystemExit("rehearsal_status must be V150, V152, or V156")
     if not doc.get("not_production"):
         raise SystemExit("not_production must be true")
     links = doc.get("links", {})
@@ -40,6 +41,15 @@ def main() -> None:
         align = links.get("log_alignment_fixture", "")
         if not align or not (FX / align).is_file():
             raise SystemExit("V152 requires log_alignment_fixture file")
+    if status == "RUNBOOK_FIRST_FILL_REHEARSAL_TABLE_V156":
+        for need in ("C8", "C9", "log_align"):
+            if need not in refs:
+                raise SystemExit(f"V156 checklist_rows must include {need}")
+        align = links.get("log_alignment_fixture", "")
+        if "v1.56" not in align:
+            raise SystemExit("V156 requires log_alignment_fixture v1.56")
+        if not (FX / align).is_file():
+            raise SystemExit("V156 log_alignment_fixture missing")
     for row in doc.get("checklist_rows", []):
         val = str(row.get("rehearsal_value", ""))
         if "PLACEHOLDER" in val.upper():

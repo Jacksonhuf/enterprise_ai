@@ -630,4 +630,8 @@ CAND-16 usage 收口；全局 gap 可视化；Figma 20 matched。见 test-report
 
 CAND-17 双字段收口；rehearsal V155 链；Figma **22/22** engineering matched。见 test-report-v1.55.md 及 PR CI。
 
-**建议下一轮（v1.56+）**：全局 gap 看板与 matrix 双向联合门；生产 log 实填彩排（仍非真值）；R02 全局 FIGMA 阻塞说明文档。
+### 第156轮增量（v1.56）
+
+全局 gap↔dashboard↔matrix 联合门；生产 log 实填彩排；`FIGMA_SIGNOFF_ALL` 阻塞说明文档。见 test-report-v1.56.md 及 PR CI。
+
+**建议下一轮（v1.57+）**：生产 gate 三联表与实填 log 工单联动；R21 §3 首条 ENTERED 彩排（仍 PLACEHOLDER 门禁）；matrix gap 可视化与 R18 缺口 enum 交叉索引。
