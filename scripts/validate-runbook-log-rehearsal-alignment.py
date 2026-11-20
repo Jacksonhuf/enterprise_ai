@@ -31,8 +31,9 @@ def main() -> None:
         "RUNBOOK_LOG_REHEARSAL_ALIGNMENT_V167",
         "RUNBOOK_LOG_REHEARSAL_ALIGNMENT_V168",
         "RUNBOOK_LOG_REHEARSAL_ALIGNMENT_V169",
+        "RUNBOOK_LOG_REHEARSAL_ALIGNMENT_V170",
     ):
-        raise SystemExit("alignment_status must be V151–V169")
+        raise SystemExit("alignment_status must be V151–V170")
     table_path = FX / align["rehearsal_table_fixture"]
     log_path = FX / align["production_log_shape_fixture"]
     subprocess.run(
@@ -130,6 +131,9 @@ def main() -> None:
     if align_status == "RUNBOOK_LOG_REHEARSAL_ALIGNMENT_V169":
         if table_name != "schema8-runbook-first-fill-rehearsal-table-v1.69.json":
             raise SystemExit("v1.69 alignment must use v1.69 rehearsal table")
+    if align_status == "RUNBOOK_LOG_REHEARSAL_ALIGNMENT_V170":
+        if table_name != "schema8-runbook-first-fill-rehearsal-table-v1.70.json":
+            raise SystemExit("v1.70 alignment must use v1.70 rehearsal table")
     for mapping in align.get("row_field_map", []):
         if mapping.get("require_log_nonempty"):
             for field in mapping.get("log_fields", []):
