@@ -1,0 +1,35 @@
+{
+  "ledger_status": "R21_OPS_OBSERVABILITY_SHAPE_LEDGER_V174",
+  "not_production": true,
+  "slo_signoff_pending_fixture": "r21-slo-signoff-record-pending.json",
+  "dual_signoff_shape_fixture": "runbook-sre-platform-dual-signoff-shape-v1.67.json",
+  "filled_log_fixture": "schema8-production-log-rehearsal-filled-v1.64.json",
+  "ops_items": [
+    {
+      "item_id": "mysql-backup-restore",
+      "backup_snapshot_shape_ref": "PLACEHOLDER-BACKUP-SNAPSHOT",
+      "last_drill_at_cst": "PLACEHOLDER-NOT-PRODUCTION",
+      "restore_verified": false
+    },
+    {
+      "item_id": "rpo-rto-targets",
+      "rpo_hours_shape": "PLACEHOLDER-RPO-TEAM-TBD",
+      "rto_hours_shape": "PLACEHOLDER-RTO-TEAM-TBD",
+      "targets_adopted": false
+    },
+    {
+      "item_id": "observability-stack",
+      "health_ready_shape": "/ready",
+      "metrics_export_shape": "openmetrics-rehearsal",
+      "log_correlation_field": "request_id",
+      "observability_gate_met": false
+    }
+  ],
+  "expected_item_count": 3,
+  "production_apply_forbidden": true,
+  "pilot_docs": [
+    "mysql-schema8-r21-slo-pilot-signoff.md",
+    "remaining-work-and-delivery-plan.md"
+  ],
+  "notes": "R21 备份/RPO/RTO/可观测 shape 台账；全 rehearsal"
+}

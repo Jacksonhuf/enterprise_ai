@@ -1,0 +1,10 @@
+{
+  "gate_status": "R21_BACKUP_RPO_RTO_REHEARSAL_GATE_V174",
+  "not_production": true,
+  "ops_observability_ledger_fixture": "runbook-r21-ops-observability-shape-ledger-v1.74.json",
+  "r20_s5_capacity_gate_fixture": "runbook-r20-s5-capacity-gate-rehearsal-v1.73.json",
+  "s5_release_ops_fixture": "runbook-s5-release-ops-checklist-rehearsal-v1.69.json",
+  "production_apply_forbidden": true,
+  "release_window_id": "WIN-WAREHOUSE-REHEARSAL-0146",
+  "notes": "R21 运维 shape 与 R20/R20 S5 门禁同窗"
+}
