@@ -1,0 +1,19 @@
+{
+  "batch_status": "R18_NARROW_OPEN_BATCH_WAIT_V165",
+  "batch_id": "settings-login-batch-3-closeout",
+  "resolution": "WAIT_PIXEL_GREEN_NO_NEW_DEFER",
+  "inventory_fixture": "r18-narrow-only-defer-inventory-v1.61.json",
+  "publish_review_narrow_fixture": "r18-publish-review-narrow-wait-decision-v1.62.json",
+  "prior_batch_fixture": "r18-narrow-open-batch-wait-v1.64.json",
+  "batch_slugs": [
+    "app-detail-build-narrow",
+    "assets-narrow",
+    "login-public-narrow",
+    "settings-models-narrow",
+    "settings-tenant-narrow"
+  ],
+  "expected_batch_count": 5,
+  "remaining_open_after_batch": 1,
+  "batch_closeout_except_publish_review_narrow": true,
+  "notes": "open narrow 第三批收尾；仅 publish-review-narrow 仍开"
+}

@@ -31,8 +31,9 @@ def main() -> None:
         "R21_OPEN_GAP_DASHBOARD_V162",
         "R21_OPEN_GAP_DASHBOARD_V163",
         "R21_OPEN_GAP_DASHBOARD_V164",
+        "R21_OPEN_GAP_DASHBOARD_V165",
     ):
-        raise SystemExit("linkage_status must be V153–V164")
+        raise SystemExit("linkage_status must be V153–V165")
     for doc in link.get("runbook_docs", []):
         if not (ROOT / "docs/development" / doc).is_file():
             raise SystemExit(f"missing doc {doc}")
@@ -174,6 +175,31 @@ def main() -> None:
             "validate-runbook-confirmed-warehouse-bundle-rehearsal.py",
             link.get("confirmed_warehouse_bundle_fixture", ""),
         )
+    if link_status == "R21_OPEN_GAP_DASHBOARD_V165":
+        if "v1.65" not in chain_fixture:
+            raise SystemExit("V165 dashboard must use v1.65 rehearsal chain")
+        for key, script in (
+            ("narrow_open_batch_wait_fixture", "validate-r18-narrow-open-batch-wait.py"),
+            ("main_table8_signoff_dashboard_path_fixture", "validate-runbook-main-table8-signoff-dashboard-path.py"),
+            ("section3_entered_warehouse_intake_fixture", "validate-runbook-section3-entered-warehouse-intake.py"),
+            ("main_table_signoff_path_fixture", "validate-runbook-main-table-signoff-path-rehearsal.py"),
+        ):
+            fx = link.get(key, "")
+            if not fx:
+                raise SystemExit(f"V165 dashboard must name {key}")
+            run(script, fx)
+        reg = link.get("triple_gate_window_registry_fixture", "")
+        if "v1.65" not in reg:
+            raise SystemExit("V165 dashboard must use triple-gate registry v1.65")
+        run("validate-r21-dashboard-triple-gate-window-registry.py", reg)
+        # retain v1.64 gates
+        for key, script in (
+            ("main_table_rows4_6_shape_fixture", "validate-runbook-main-table-rows4-6-log-shape.py"),
+            ("row5_rollback_shape_fixture", "validate-runbook-main-table-row5-rollback-shape.py"),
+            ("teamfill_confirmed_warehouse_window_fixture", "validate-runbook-teamfill-confirmed-warehouse-window.py"),
+        ):
+            run(script, link[key])
+        run("validate-runbook-main-table-rows1-7-filled-log-rehearsal.py", link["main_table_rows1_7_log_fixture"])
     print("OK: R21 open-gap dashboard linkage")
     print(f"Validated {path}")
 

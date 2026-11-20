@@ -13,8 +13,12 @@ PY = sys.executable
 def main() -> None:
     path = Path(sys.argv[1])
     doc = json.loads(path.read_text())
-    if doc.get("check_status") != "RUNBOOK_MAIN_TABLE8_DASHBOARD_WINDOW_V160":
-        raise SystemExit("check_status must be RUNBOOK_MAIN_TABLE8_DASHBOARD_WINDOW_V160")
+    check_status = doc.get("check_status")
+    if check_status not in (
+        "RUNBOOK_MAIN_TABLE8_DASHBOARD_WINDOW_V160",
+        "RUNBOOK_MAIN_TABLE8_DASHBOARD_WINDOW_V165",
+    ):
+        raise SystemExit("check_status must be V160 or V165")
     if doc.get("main_table_row") != "8":
         raise SystemExit("main_table_row must be 8")
     if not doc.get("rehearsal_checked"):
@@ -22,8 +26,17 @@ def main() -> None:
     if doc.get("production_checked"):
         raise SystemExit("production_checked must be false in rehearsal")
     reg_name = doc.get("triple_gate_window_registry_fixture", "")
-    if "v1.60" not in reg_name:
-        raise SystemExit("registry fixture must be v1.60")
+    if check_status == "RUNBOOK_MAIN_TABLE8_DASHBOARD_WINDOW_V160":
+        if "v1.60" not in reg_name:
+            raise SystemExit("registry fixture must be v1.60")
+    else:
+        if "v1.65" not in reg_name:
+            raise SystemExit("V165 registry fixture must be v1.65")
+        dash_name = doc.get("dashboard_linkage_fixture", "")
+        if "v1.65" not in dash_name:
+            raise SystemExit("V165 requires dashboard_linkage v1.65")
+        if not doc.get("production_signoff_still_placeholder"):
+            raise SystemExit("production_signoff_still_placeholder must be true")
     subprocess.run(
         [PY, str(ROOT / "scripts/validate-r21-dashboard-triple-gate-window-registry.py"), str(FX / reg_name)],
         check=True,

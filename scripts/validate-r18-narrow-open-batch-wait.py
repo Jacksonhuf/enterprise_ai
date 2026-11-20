@@ -17,8 +17,9 @@ def main() -> None:
     if batch_status not in (
         "R18_NARROW_OPEN_BATCH_WAIT_V163",
         "R18_NARROW_OPEN_BATCH_WAIT_V164",
+        "R18_NARROW_OPEN_BATCH_WAIT_V165",
     ):
-        raise SystemExit("batch_status must be V163 or V164")
+        raise SystemExit("batch_status must be V163, V164, or V165")
     subprocess.run(
         [PY, str(ROOT / "scripts/validate-r18-narrow-only-defer-inventory.py"), str(FX / doc["inventory_fixture"])],
         check=True,
@@ -40,15 +41,31 @@ def main() -> None:
     pr_slug = "publish-review-narrow"
     if pr_slug in batch:
         raise SystemExit("publish-review-narrow must use dedicated wait fixture, not batch defer")
-    if batch_status == "R18_NARROW_OPEN_BATCH_WAIT_V164":
+    if batch_status in (
+        "R18_NARROW_OPEN_BATCH_WAIT_V164",
+        "R18_NARROW_OPEN_BATCH_WAIT_V165",
+    ):
         prior_name = doc.get("prior_batch_fixture", "")
-        if "v1.63" not in prior_name:
-            raise SystemExit("V164 requires prior_batch_fixture v1.63")
         prior = json.loads((FX / prior_name).read_text())
         prior_slugs = set(prior.get("batch_slugs", []))
-        if prior_slugs & set(batch):
-            raise SystemExit("batch 2 must not overlap batch 1 slugs")
-        remain = len(open_slugs) - len(prior_slugs) - len(batch)
+        if batch_status == "R18_NARROW_OPEN_BATCH_WAIT_V164":
+            if "v1.63" not in prior_name:
+                raise SystemExit("V164 requires prior_batch_fixture v1.63")
+            if prior_slugs & set(batch):
+                raise SystemExit("batch 2 must not overlap batch 1 slugs")
+            prior_batch = json.loads((FX / prior_name).read_text())
+            batch1 = set(prior_batch.get("batch_slugs", []))
+            remain = len(open_slugs) - len(batch1) - len(batch)
+        else:
+            if "v1.64" not in prior_name:
+                raise SystemExit("V165 requires prior_batch_fixture v1.64")
+            b164 = json.loads((FX / prior_name).read_text())
+            b163_name = b164.get("prior_batch_fixture", "")
+            b163 = json.loads((FX / b163_name).read_text())
+            used = set(b163.get("batch_slugs", [])) | set(b164.get("batch_slugs", []))
+            if used & set(batch):
+                raise SystemExit("batch 3 must not overlap prior batches")
+            remain = len(open_slugs) - len(used) - len(batch)
     else:
         remain = len(open_slugs) - len(batch)
     if remain != int(doc.get("remaining_open_after_batch", -1)):

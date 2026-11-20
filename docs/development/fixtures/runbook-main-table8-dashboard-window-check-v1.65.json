@@ -1,0 +1,16 @@
+{
+  "check_status": "RUNBOOK_MAIN_TABLE8_DASHBOARD_WINDOW_V165",
+  "not_production": true,
+  "main_table_row": "8",
+  "rehearsal_checked": true,
+  "production_checked": false,
+  "maps_to_checklist": ["C6", "mysql-schema8-runbook-production-fill-checklist.md"],
+  "prior_check_fixture": "runbook-main-table8-dashboard-window-check-v1.60.json",
+  "triple_gate_window_registry_fixture": "r21-dashboard-triple-gate-window-registry-v1.65.json",
+  "dashboard_linkage_fixture": "r21-open-gap-dashboard-linkage-v1.65.json",
+  "three_table_window_fixture": "production-gate-three-table-window-v1.57.json",
+  "release_window_id": "WIN-WAREHOUSE-REHEARSAL-0146",
+  "filled_log_fixture": "schema8-production-log-rehearsal-filled-v1.64.json",
+  "production_signoff_still_placeholder": true,
+  "notes": "主表 #8↔R21 dashboard 真签路径 shape；生产勾选仍为 false"
+}

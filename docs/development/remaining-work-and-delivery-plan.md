@@ -666,4 +666,8 @@ filled log v1.63；主表 #4–#6 shape；narrow 首批 5 条等待决；CONFIRM
 
 filled log v1.64；主表 #5 回退生产 shape（签核 PLACEHOLDER）；narrow open 第二批 6 条；team-fill CONFIRMED 与 warehouse 真格式工单同窗彩排。见 test-report-v1.64.md。
 
-**建议下一轮（v1.65+）**：narrow open 第三批/收尾；主表 #8 与 dashboard 真签路径；真 §3 ENTERED 入库（仍无 SRE 真人签）。
+### 第165轮增量（v1.65）
+
+narrow open 第三批收尾（余 publish-review-narrow）；主表 #8 与 R21 dashboard 签路径 shape；§3 ENTERED 真格式入库联席彩排。见 test-report-v1.65.md。
+
+**建议下一轮（v1.66+）**：publish-review-narrow 等待决收口；主表 #1–#8 生产真签彩排模板；真台账 ENTERED 写入门禁（仍无真人签）。

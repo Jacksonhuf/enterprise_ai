@@ -14,8 +14,12 @@ PY = sys.executable
 def main() -> None:
     path = Path(sys.argv[1])
     doc = json.loads(path.read_text())
-    if doc.get("path_status") != "RUNBOOK_MAIN_TABLE_SIGNOFF_PATH_V161":
-        raise SystemExit("path_status must be RUNBOOK_MAIN_TABLE_SIGNOFF_PATH_V161")
+    path_status = doc.get("path_status")
+    if path_status not in (
+        "RUNBOOK_MAIN_TABLE_SIGNOFF_PATH_V161",
+        "RUNBOOK_MAIN_TABLE_SIGNOFF_PATH_V165",
+    ):
+        raise SystemExit("path_status must be V161 or V165")
     if not doc.get("not_production"):
         raise SystemExit("not_production must be true")
     for name in (doc.get("runbook_checklist_doc"), doc.get("signoff_sequence_doc")):
@@ -28,8 +32,17 @@ def main() -> None:
     if nums != [str(i) for i in range(1, 9)]:
         raise SystemExit("rows must be 1..8 in order")
     row8 = next(r for r in rows if r.get("row") == "8")
-    if not row8.get("rehearsal_only") or "v1.60" not in row8.get("evidence_fixture", ""):
-        raise SystemExit("row 8 must reference v1.60 main_table8 check")
+    if path_status == "RUNBOOK_MAIN_TABLE_SIGNOFF_PATH_V161":
+        if not row8.get("rehearsal_only") or "v1.60" not in row8.get("evidence_fixture", ""):
+            raise SystemExit("row 8 must reference v1.60 main_table8 check")
+    else:
+        if not row8.get("rehearsal_only") or "v1.65" not in row8.get("evidence_fixture", ""):
+            raise SystemExit("V165 row 8 must reference v1.65 main_table8 check")
+        dash_path = row8.get("dashboard_signoff_path_fixture", "")
+        if "v1.65" not in dash_path:
+            raise SystemExit("V165 row 8 must name dashboard_signoff_path_fixture v1.65")
+        if not (FX / dash_path).is_file():
+            raise SystemExit("missing dashboard_signoff_path_fixture")
     subprocess.run(
         [
             PY,

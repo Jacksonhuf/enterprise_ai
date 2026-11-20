@@ -1,0 +1,12 @@
+{
+  "path_status": "RUNBOOK_MAIN_TABLE8_SIGNOFF_DASHBOARD_PATH_V165",
+  "not_production": true,
+  "main_table8_check_fixture": "runbook-main-table8-dashboard-window-check-v1.65.json",
+  "signoff_path_fixture": "runbook-main-table-signoff-path-rehearsal-v1.65.json",
+  "dashboard_linkage_fixture": "r21-open-gap-dashboard-linkage-v1.65.json",
+  "triple_gate_registry_fixture": "r21-dashboard-triple-gate-window-registry-v1.65.json",
+  "filled_log_fixture": "schema8-production-log-rehearsal-filled-v1.64.json",
+  "required_log_fields": ["production_signoff_ticket", "change_ticket", "runbook_smoke_artifact"],
+  "production_signoff_still_placeholder": true,
+  "notes": "主表 #8 与 R21 dashboard 签核路径联席彩排"
+}
