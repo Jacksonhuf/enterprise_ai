@@ -1,0 +1,11 @@
+{
+  "gate_status": "REHEARSAL_ONLY_GATE_ENFORCEMENT_V169",
+  "not_production": true,
+  "rehearsal_only_enforced": true,
+  "production_apply_forbidden": true,
+  "s5_release_ops_fixture": "runbook-s5-release-ops-checklist-rehearsal-v1.69.json",
+  "joint_environment_hooklist_fixture": "runbook-real-joint-environment-hooklist-rehearsal-v1.69.json",
+  "production_apply_preflight_fixture": "runbook-production-apply-preflight-triple-dry-run-v1.68.json",
+  "release_window_id": "WIN-WAREHOUSE-REHEARSAL-0146",
+  "notes": "真环境可用前强制 rehearsal-only；禁止 production apply"
+}
