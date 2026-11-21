@@ -718,4 +718,8 @@ R20 **正式 SLO 定标 shape** 台账与 **SLO 演练证据门禁**（mock，�
 
 R21 **备份/RPO 与 R20 SLO 证据门禁同窗复检** 台账与联合门禁（mock）。见 test-report-v1.77.md。
 
-**建议下一轮（v1.78+）**：R22 联合 UAT 场景与 `r21-slo-signoff-record-pending` / 正式 SLO 台账交叉引用（仍为彩排）。
+### 第178轮增量（v1.78）
+
+R22 **联合 UAT** 与 **SLO 定标 / pending 签收** 交叉引用台账与门禁（mock）。见 test-report-v1.78.md。
+
+**建议下一轮（v1.79+）**：R22 真人签收 shape dry-run 与 UAT↔SLO 交叉引用同窗复检，或 R20 SLO 定标团队采纳 shape（仍为 PLACEHOLDER）。

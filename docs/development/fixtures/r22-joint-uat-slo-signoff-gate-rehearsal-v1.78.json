@@ -1,0 +1,9 @@
+{
+  "gate_status": "R22_JOINT_UAT_SLO_SIGNOFF_GATE_V178",
+  "not_production": true,
+  "joint_uat_slo_crossref_ledger_fixture": "r22-joint-uat-slo-signoff-crossref-ledger-v1.78.json",
+  "r21_backup_slo_joint_gate_fixture": "runbook-r21-backup-slo-evidence-joint-gate-v1.77.json",
+  "production_apply_forbidden": true,
+  "release_window_id": "WIN-WAREHOUSE-REHEARSAL-0146",
+  "notes": "联合 UAT↔SLO 交叉引用与运维联合门禁同窗"
+}

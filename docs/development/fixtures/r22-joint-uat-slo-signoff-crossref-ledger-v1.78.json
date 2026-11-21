@@ -1,0 +1,35 @@
+{
+  "ledger_status": "R22_JOINT_UAT_SLO_SIGNOFF_CROSSREF_V178",
+  "not_production": true,
+  "joint_uat_scenario_fixture": "r22-joint-uat-scenario-rehearsal-v1.68.json",
+  "slo_signoff_pending_fixture": "r21-slo-signoff-record-pending.json",
+  "formal_slo_target_ledger_fixture": "runbook-r20-formal-slo-target-shape-ledger-v1.76.json",
+  "crossref_rows": [
+    {
+      "scenario_id": "admin-grants-apply-read",
+      "linked_slo_target_id": "governance-usage-p99-ms",
+      "uat_evidence_shape": "PLACEHOLDER-NOT-SIGNED",
+      "crossref_documented": true
+    },
+    {
+      "scenario_id": "developer-app-publish",
+      "linked_slo_target_id": "message-load-p99-ms",
+      "uat_evidence_shape": "PLACEHOLDER-NOT-SIGNED",
+      "crossref_documented": true
+    },
+    {
+      "scenario_id": "business-usage-review",
+      "linked_slo_target_id": "dual-host-ready-ms",
+      "uat_evidence_shape": "PLACEHOLDER-NOT-SIGNED",
+      "crossref_documented": true
+    }
+  ],
+  "expected_crossref_count": 3,
+  "slo_signoff_crossref_ready": false,
+  "production_apply_forbidden": true,
+  "pilot_docs": [
+    "mysql-schema8-r21-slo-pilot-signoff.md",
+    "remaining-work-and-delivery-plan.md"
+  ],
+  "notes": "R22 联合 UAT 与 SLO 定标/pending 签收交叉引用 shape"
+}
