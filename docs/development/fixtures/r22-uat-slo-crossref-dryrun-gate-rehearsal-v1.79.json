@@ -1,0 +1,9 @@
+{
+  "gate_status": "R22_UAT_SLO_CROSSREF_DRYRUN_GATE_V179",
+  "not_production": true,
+  "uat_slo_crossref_dryrun_recheck_fixture": "r22-uat-slo-crossref-dryrun-recheck-ledger-v1.79.json",
+  "joint_uat_slo_signoff_gate_fixture": "r22-joint-uat-slo-signoff-gate-rehearsal-v1.78.json",
+  "production_apply_forbidden": true,
+  "release_window_id": "WIN-WAREHOUSE-REHEARSAL-0146",
+  "notes": "dry-run 复检与 v1.78 UAT/SLO 门禁同窗"
+}

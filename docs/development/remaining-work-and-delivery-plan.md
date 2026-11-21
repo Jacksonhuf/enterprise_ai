@@ -722,4 +722,8 @@ R21 **备份/RPO 与 R20 SLO 证据门禁同窗复检** 台账与联合门禁（
 
 R22 **联合 UAT** 与 **SLO 定标 / pending 签收** 交叉引用台账与门禁（mock）。见 test-report-v1.78.md。
 
-**建议下一轮（v1.79+）**：R22 真人签收 shape dry-run 与 UAT↔SLO 交叉引用同窗复检，或 R20 SLO 定标团队采纳 shape（仍为 PLACEHOLDER）。
+### 第179轮增量（v1.79）
+
+R22 **真人 UAT dry-run** 与 **v1.78 UAT↔SLO 交叉引用同窗复检** 台账与门禁。见 test-report-v1.79.md。
+
+**建议下一轮（v1.80+）**：R20 SLO 定标 **团队采纳 shape** 彩排台账（仍为 PLACEHOLDER），或与 R22 签收 dry-run 同窗发布窗登记。
