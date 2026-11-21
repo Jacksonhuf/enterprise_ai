@@ -800,6 +800,10 @@ R22 joint UAT SLO crossref ledger；UAT SLO signoff gate；彩排链 **V178**（
 
 R22 UAT/SLO dry-run recheck ledger；dry-run gate；彩排链 **V179**（67 步）。见 test-report-v1.79.md、progress-completion-v1.79.md。
 
+## 第180轮（v1.80）：R20 SLO 团队采纳 shape
+
+R20 SLO team adoption ledger；adoption rehearsal gate；彩排链 **V180**（69 步）。见 test-report-v1.80.md、progress-completion-v1.80.md。
+
 ## 第119轮（v1.19）：tier 联动 OpenMetrics
 
 35 抽页。见 test-report-v1.19.md。
