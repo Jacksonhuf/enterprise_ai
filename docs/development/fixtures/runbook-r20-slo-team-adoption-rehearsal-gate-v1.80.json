@@ -1,0 +1,9 @@
+{
+  "gate_status": "R20_SLO_TEAM_ADOPTION_REHEARSAL_GATE_V180",
+  "not_production": true,
+  "slo_team_adoption_ledger_fixture": "runbook-r20-slo-team-adoption-shape-ledger-v1.80.json",
+  "uat_slo_dryrun_gate_fixture": "r22-uat-slo-crossref-dryrun-gate-rehearsal-v1.79.json",
+  "production_apply_forbidden": true,
+  "release_window_id": "WIN-WAREHOUSE-REHEARSAL-0146",
+  "notes": "SLO 团队采纳 shape 与 R22 dry-run 同窗"
+}

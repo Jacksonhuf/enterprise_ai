@@ -1,0 +1,38 @@
+{
+  "ledger_status": "R20_SLO_TEAM_ADOPTION_SHAPE_V180",
+  "not_production": true,
+  "formal_slo_target_ledger_fixture": "runbook-r20-formal-slo-target-shape-ledger-v1.76.json",
+  "slo_signoff_pending_fixture": "r21-slo-signoff-record-pending.json",
+  "uat_slo_dryrun_gate_fixture": "r22-uat-slo-crossref-dryrun-gate-rehearsal-v1.79.json",
+  "adoption_rows": [
+    {
+      "target_id": "message-load-p99-ms",
+      "proposed_value_shape": "PLACEHOLDER-TEAM-TBD",
+      "team_review_recorded": false
+    },
+    {
+      "target_id": "governance-usage-p99-ms",
+      "proposed_value_shape": "PLACEHOLDER-TEAM-TBD",
+      "team_review_recorded": false
+    },
+    {
+      "target_id": "sse-reconnect-recovery-ms",
+      "proposed_value_shape": "PLACEHOLDER-TEAM-TBD",
+      "team_review_recorded": false
+    },
+    {
+      "target_id": "dual-host-ready-ms",
+      "proposed_value_shape": "PLACEHOLDER-TEAM-TBD",
+      "team_review_recorded": false
+    }
+  ],
+  "expected_adoption_count": 4,
+  "team_slo_adopted": false,
+  "production_apply_forbidden": true,
+  "release_window_id": "WIN-WAREHOUSE-REHEARSAL-0146",
+  "pilot_docs": [
+    "mysql-schema8-r21-slo-draft.md",
+    "remaining-work-and-delivery-plan.md"
+  ],
+  "notes": "R20 SLO 团队采纳 shape；数值仍为 PLACEHOLDER"
+}
