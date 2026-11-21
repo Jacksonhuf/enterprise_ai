@@ -1,0 +1,10 @@
+{
+  "gate_status": "R21_BACKUP_SLO_EVIDENCE_JOINT_GATE_V177",
+  "not_production": true,
+  "backup_rpo_slo_recheck_ledger_fixture": "runbook-r21-backup-rpo-slo-evidence-recheck-ledger-v1.77.json",
+  "backup_rpo_gate_fixture": "runbook-r21-backup-rpo-rto-rehearsal-gate-v1.74.json",
+  "slo_evidence_gate_fixture": "runbook-r20-slo-evidence-rehearsal-gate-v1.76.json",
+  "production_apply_forbidden": true,
+  "release_window_id": "WIN-WAREHOUSE-REHEARSAL-0146",
+  "notes": "备份/RPO 与 SLO 证据门禁同窗联合复检"
+}

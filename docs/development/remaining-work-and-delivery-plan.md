@@ -714,4 +714,8 @@ R21 **告警 dry-run** 与 **on-call 交接 shape** 台账。见 test-report-v1.
 
 R20 **正式 SLO 定标 shape** 台账与 **SLO 演练证据门禁**（mock，未团队定标）。见 test-report-v1.76.md。
 
-**建议下一轮（v1.77+）**：R21 备份/RPO 演练与 SLO 证据门禁同窗复检，或 R22 联合 UAT 场景与 SLO 签收 pending 交叉引用（仍为彩排）。
+### 第177轮增量（v1.77）
+
+R21 **备份/RPO 与 R20 SLO 证据门禁同窗复检** 台账与联合门禁（mock）。见 test-report-v1.77.md。
+
+**建议下一轮（v1.78+）**：R22 联合 UAT 场景与 `r21-slo-signoff-record-pending` / 正式 SLO 台账交叉引用（仍为彩排）。

@@ -1,0 +1,36 @@
+{
+  "ledger_status": "R21_BACKUP_SLO_EVIDENCE_RECHECK_V177",
+  "not_production": true,
+  "backup_rpo_gate_fixture": "runbook-r21-backup-rpo-rto-rehearsal-gate-v1.74.json",
+  "slo_evidence_gate_fixture": "runbook-r20-slo-evidence-rehearsal-gate-v1.76.json",
+  "ops_observability_ledger_fixture": "runbook-r21-ops-observability-shape-ledger-v1.74.json",
+  "formal_slo_target_ledger_fixture": "runbook-r20-formal-slo-target-shape-ledger-v1.76.json",
+  "slo_signoff_pending_fixture": "r21-slo-signoff-record-pending.json",
+  "recheck_items": [
+    {
+      "recheck_id": "backup-rpo-window",
+      "linked_gate_fixture": "runbook-r21-backup-rpo-rto-rehearsal-gate-v1.74.json",
+      "recheck_executed": false
+    },
+    {
+      "recheck_id": "slo-evidence-window",
+      "linked_gate_fixture": "runbook-r20-slo-evidence-rehearsal-gate-v1.76.json",
+      "recheck_executed": false
+    },
+    {
+      "recheck_id": "ops-slo-pending-crossref",
+      "ops_targets_adopted_allowed": false,
+      "formal_slo_adopted_allowed": false,
+      "crossref_documented": true
+    }
+  ],
+  "expected_recheck_count": 3,
+  "joint_recheck_passed": false,
+  "production_apply_forbidden": true,
+  "release_window_id": "WIN-WAREHOUSE-REHEARSAL-0146",
+  "pilot_docs": [
+    "mysql-schema8-r21-slo-pilot-signoff.md",
+    "remaining-work-and-delivery-plan.md"
+  ],
+  "notes": "R21 备份/RPO 与 R20 SLO 证据门禁同窗复检 shape；未执行真 drill"
+}
