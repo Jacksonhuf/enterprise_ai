@@ -1,0 +1,34 @@
+{
+  "ledger_status": "R22_UAT_SLO_CROSSREF_DRYRUN_RECHECK_V179",
+  "not_production": true,
+  "uat_signoff_dryrun_ledger_fixture": "r22-real-human-uat-signoff-dryrun-ledger-v1.72.json",
+  "joint_uat_slo_crossref_ledger_fixture": "r22-joint-uat-slo-signoff-crossref-ledger-v1.78.json",
+  "recheck_items": [
+    {
+      "recheck_id": "dryrun-personas-match-crossref",
+      "dryrun_ledger_fixture": "r22-real-human-uat-signoff-dryrun-ledger-v1.72.json",
+      "crossref_ledger_fixture": "r22-joint-uat-slo-signoff-crossref-ledger-v1.78.json",
+      "recheck_executed": false
+    },
+    {
+      "recheck_id": "pending-signoff-aligned",
+      "slo_signoff_pending_fixture": "r21-slo-signoff-record-pending.json",
+      "real_human_signoff_obtained_allowed": false,
+      "recheck_executed": false
+    },
+    {
+      "recheck_id": "slo-crossref-not-ready",
+      "slo_signoff_crossref_ready_allowed": false,
+      "recheck_documented": true
+    }
+  ],
+  "expected_recheck_count": 3,
+  "joint_recheck_passed": false,
+  "production_apply_forbidden": true,
+  "release_window_id": "WIN-WAREHOUSE-REHEARSAL-0146",
+  "pilot_docs": [
+    "remaining-work-and-delivery-plan.md",
+    "mysql-schema8-r21-slo-pilot-signoff.md"
+  ],
+  "notes": "真人 UAT dry-run 与 UAT↔SLO 交叉引用同窗复检；无真人签"
+}
